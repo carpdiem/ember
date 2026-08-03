@@ -200,8 +200,8 @@ that path in Oklab, measures cumulative distance after the target transform, and
 resamples it at equal transformed-distance intervals.
 
 The result is a 256-sample float map with strictly monotonic transformed lightness and
-nearly constant perceptual steps. The Hex8 and CSS exports are convenient quantized
-previews; the JSON and Python float arrays carry the numerical guarantee.
+nearly equal transformed Oklab-distance steps. The Hex8 and CSS exports are convenient
+quantized previews; the JSON and Python float arrays carry the numerical guarantee.
 
 ## Measured properties
 
@@ -220,7 +220,7 @@ The build also checks primary text against every declared background and selecti
 surface, verifies selection visibility, parses every terminal format, and reproduces
 all generated artifacts from source.
 
-## Verification and development
+## Verification
 
 ```bash
 uv sync --extra dev
@@ -241,22 +241,6 @@ The release gates enforce:
 - visible selection surfaces after transformation;
 - 256 unique, monotonic, evenly stepped float samples per sequential map; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
-
-Generated files should not be edited by hand. Change
-[`src/redshift_safe/definitions.py`](src/redshift_safe/definitions.py), rebuild, inspect
-the full-size specimens, and rerun the gates.
-
-```text
-palettes/                JSON manifest and CSS tokens
-src/redshift_safe/       definitions, color math, generator, and Matplotlib API
-themes/terminal/         Alacritty, iTerm2, and Windows Terminal themes
-docs/samples/            commanded and transformed usage specimens
-docs/diagrams/           visual explanations
-docs/swatches/           palette specifications and comparisons
-examples/                executable Matplotlib gallery
-tests/                   numerical and export contracts
-tools/                   deterministic artifact builders
-```
 
 Version 0.2 uses temperature-based palette IDs. Existing users can consult the
 [migration guide](MIGRATION.md) for legacy aliases and removed deep-light themes.
