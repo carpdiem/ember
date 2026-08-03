@@ -19,7 +19,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from redshift_safe.color import hex_to_srgb, srgb_to_hex, warm_transform  # noqa: E402
+from redshift_safe.color import contrast_ratio, hex_to_srgb, warm_transform  # noqa: E402
 from redshift_safe.generate import ANSI_NAMES, generate_manifest  # noqa: E402
 
 MANAGED_TEXT = (
@@ -140,6 +140,15 @@ def _svg_text(x: int, y: int, value: str, size: int = 14, fill: str = "#E9E1D4")
     return f'<text x="{x}" y="{y}" fill="{fill}" font-size="{size}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">{escaped}</text>'
 
 
+def _label_color(background: str) -> str:
+    dark = "#14110E"
+    light = "#FFF0D8"
+    background_rgb = hex_to_srgb(background)
+    dark_contrast = contrast_ratio(background_rgb, hex_to_srgb(dark))
+    light_contrast = contrast_ratio(background_rgb, hex_to_srgb(light))
+    return dark if dark_contrast >= light_contrast else light
+
+
 def _family_svg(family: dict, profile: dict) -> str:
     width, height = 1180, 430
     canvas = [
@@ -151,7 +160,7 @@ def _family_svg(family: dict, profile: dict) -> str:
     x, y = 28, 88
     for name, value in family["surfaces"].items():
         canvas.append(f'<rect x="{x}" y="{y}" width="142" height="52" rx="6" fill="{value}" stroke="#665D50"/>')
-        label_fill = family["surfaces"]["foreground"] if family["mode"] == "dark" else family["surfaces"]["foreground"]
+        label_fill = _label_color(value)
         canvas.append(_svg_text(x + 8, y + 21, name.replace("background", "bg").replace("foreground", "fg"), 11, label_fill))
         canvas.append(_svg_text(x + 8, y + 41, value, 12, label_fill))
         x += 158
@@ -164,7 +173,7 @@ def _family_svg(family: dict, profile: dict) -> str:
     x, y = 28, 278
     for value in family["categorical"].values():
         canvas.append(f'<rect x="{x}" y="{y}" width="132" height="58" rx="5" fill="{value}"/>')
-        canvas.append(_svg_text(x + 21, y + 36, value, 13, "#10100F"))
+        canvas.append(_svg_text(x + 21, y + 36, value, 13, _label_color(value)))
         x += 140
     continuous = family["continuous"]
     canvas.append(_svg_text(28, 370, "Sequential (low → high)", 13, "#B9AC98"))
@@ -182,11 +191,15 @@ def _overview_svg(manifest: dict) -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" rx="18" fill="#12100E"/>',
     ]
+    profile_labels = {
+        "nightshift": "~3400 K warm-white surrogate",
+        "redshift": "~2000 K software-redshift surrogate",
+        "safelight": "deep-red ~1200 K stress surrogate",
+    }
     for row, family in enumerate(manifest["families"].values()):
         y = 24 + row * row_height
-        profile = manifest["profiles"][family["profile"]]
         parts.append(_svg_text(24, y + 22, family["name"], 20))
-        parts.append(_svg_text(24, y + 43, profile["target"], 12, "#AFA18D"))
+        parts.append(_svg_text(24, y + 43, profile_labels[family["profile"]], 12, "#AFA18D"))
         x = 285
         for value in family["categorical"].values():
             parts.append(f'<rect x="{x}" y="{y}" width="63" height="52" rx="5" fill="{value}"/>')

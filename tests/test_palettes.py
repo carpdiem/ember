@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
-
-import numpy as np
 
 from redshift_safe.color import hex_to_srgb, srgb_to_hex
 from redshift_safe.generate import generate_manifest
@@ -80,3 +79,14 @@ def test_dimmed_metrics_degrade_smoothly_not_catastrophically() -> None:
         assert full > medium > low > 0
         assert medium >= full * 0.65
         assert low >= full * 0.40
+
+
+def test_readme_local_links_exist() -> None:
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    local_targets = [
+        target
+        for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", text)
+        if "://" not in target and not target.startswith("#")
+    ]
+    assert local_targets
+    assert not [target for target in local_targets if not (ROOT / target).exists()]

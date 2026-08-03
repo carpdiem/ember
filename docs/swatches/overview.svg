@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="960" viewBox="0 0 1200 960">
 <rect width="100%" height="100%" rx="18" fill="#12100E"/>
 <text x="24" y="46" fill="#E9E1D4" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Ember Dark</text>
-<text x="24" y="67" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">approximately 3400 K warm-white stress profile</text>
+<text x="24" y="67" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">~3400 K warm-white surrogate</text>
 <rect x="285" y="24" width="63" height="52" rx="5" fill="#FF00FF"/>
 <rect x="353" y="24" width="63" height="52" rx="5" fill="#00F600"/>
 <rect x="421" y="24" width="63" height="52" rx="5" fill="#A4BFFF"/>
@@ -269,7 +269,7 @@
 <rect x="285" y="132" width="860" height="22" rx="4" fill="#171512"/>
 <text x="300" y="148" fill="#F4E9D5" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Aa  foreground / background</text>
 <text x="24" y="200" fill="#E9E1D4" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Ember Light</text>
-<text x="24" y="221" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">approximately 3400 K warm-white stress profile</text>
+<text x="24" y="221" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">~3400 K warm-white surrogate</text>
 <rect x="285" y="178" width="63" height="52" rx="5" fill="#9200F6"/>
 <rect x="353" y="178" width="63" height="52" rx="5" fill="#008900"/>
 <rect x="421" y="178" width="63" height="52" rx="5" fill="#0964FF"/>
@@ -537,7 +537,7 @@
 <rect x="285" y="286" width="860" height="22" rx="4" fill="#F8F0E2"/>
 <text x="300" y="302" fill="#29251F" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Aa  foreground / background</text>
 <text x="24" y="354" fill="#E9E1D4" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Lowfire Dark</text>
-<text x="24" y="375" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">approximately 2000 K</text>
+<text x="24" y="375" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">~2000 K software-redshift surrogate</text>
 <rect x="285" y="332" width="63" height="52" rx="5" fill="#DB0000"/>
 <rect x="353" y="332" width="63" height="52" rx="5" fill="#00FF00"/>
 <rect x="421" y="332" width="63" height="52" rx="5" fill="#89ADFF"/>
@@ -805,7 +805,7 @@
 <rect x="285" y="440" width="860" height="22" rx="4" fill="#140D0B"/>
 <text x="300" y="456" fill="#FFF0D0" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Aa  foreground / background</text>
 <text x="24" y="508" fill="#E9E1D4" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Lowfire Light</text>
-<text x="24" y="529" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">approximately 2000 K</text>
+<text x="24" y="529" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">~2000 K software-redshift surrogate</text>
 <rect x="285" y="486" width="63" height="52" rx="5" fill="#9B0000"/>
 <rect x="353" y="486" width="63" height="52" rx="5" fill="#00B600"/>
 <rect x="421" y="486" width="63" height="52" rx="5" fill="#5B6DFF"/>
@@ -1073,7 +1073,7 @@
 <rect x="285" y="594" width="860" height="22" rx="4" fill="#FFF2D8"/>
 <text x="300" y="610" fill="#281A14" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Aa  foreground / background</text>
 <text x="24" y="662" fill="#E9E1D4" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Safelight Dark</text>
-<text x="24" y="683" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">deep-red, approximately 1200 K with 1.5% blue leakage</text>
+<text x="24" y="683" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">deep-red ~1200 K stress surrogate</text>
 <rect x="285" y="640" width="63" height="52" rx="5" fill="#FF0000"/>
 <rect x="353" y="640" width="63" height="52" rx="5" fill="#A4FF00"/>
 <rect x="421" y="640" width="63" height="52" rx="5" fill="#C812FF"/>
@@ -1341,7 +1341,7 @@
 <rect x="285" y="748" width="860" height="22" rx="4" fill="#0D0404"/>
 <text x="300" y="764" fill="#FFE9C8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Aa  foreground / background</text>
 <text x="24" y="816" fill="#E9E1D4" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Safelight Light</text>
-<text x="24" y="837" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">deep-red, approximately 1200 K with 1.5% blue leakage</text>
+<text x="24" y="837" fill="#AFA18D" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">deep-red ~1200 K stress surrogate</text>
 <rect x="285" y="794" width="63" height="52" rx="5" fill="#640000"/>
 <rect x="353" y="794" width="63" height="52" rx="5" fill="#00BF00"/>
 <rect x="421" y="794" width="63" height="52" rx="5" fill="#2452FF"/>
