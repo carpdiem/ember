@@ -74,7 +74,9 @@ def _terminal_colors(family: FamilyDefinition, categories: np.ndarray) -> list[s
     accents = [_terminal_accent(family, categories[index]) for index in accent_indices]
     semantic_slots = [accents[index % len(accents)] for index in range(6)]
     normal = [first_neutral, *semantic_slots, hex_to_srgb(surfaces["foreground"])]
-    bright = [hex_to_srgb(surfaces["foreground_muted"])]
+    # Bright black is commonly used for comments and metadata. Keep it readable
+    # rather than treating it as a decorative low-contrast gray.
+    bright = [hex_to_srgb(surfaces["foreground"])]
     bright.extend(semantic_slots)
     bright.append(hex_to_srgb(surfaces["foreground"]))
     return [srgb_to_hex(color) for color in normal + bright]
@@ -189,8 +191,12 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
     transformed_terminal = [
         warm_transform(hex_to_srgb(value), family.profile.gains) for value in terminal_values
     ]
+    # ANSI black is background-like only in dark themes. Every foreground-capable
+    # small-text slot participates in the release floor.
     small_text_terminal = [
-        value for index, value in enumerate(transformed_terminal) if index not in (0, 8)
+        value
+        for index, value in enumerate(transformed_terminal)
+        if family.mode == "light" or index != 0
     ]
     return {
         "slug": family.slug,
@@ -200,7 +206,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "surfaces": family.surfaces,
         "terminal": dict(zip(ANSI_NAMES, terminal_values)),
         "terminal_semantic_color_count": family.terminal_color_count,
-        "terminal_minimum_shifted_contrast": round(
+        "terminal_minimum_shifted_foreground_contrast": round(
             min(contrast_ratio(value, transformed_background) for value in small_text_terminal),
             2,
         ),
@@ -227,8 +233,18 @@ def generate_manifest() -> dict[str, Any]:
         "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
-            "spectral measurements. All derived metrics use the transformed sRGB values."
+            "spectral measurements. Metrics are explicitly labeled as commanded or transformed."
         ),
+        "legacy_aliases": {
+            "ember-dark": "3400k-dark",
+            "ember-light": "3400k-light",
+            "lowfire-dark": "2000k-dark",
+            "safelight-dark": "1200k-dark",
+        },
+        "removed_families": {
+            "lowfire-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
+            "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
+        },
         "profiles": profiles,
         "families": {family.slug: generate_family(family) for family in FAMILIES},
     }

@@ -8,6 +8,7 @@ import numpy as np
 
 from redshift_safe.color import (
     contrast_ratio,
+    delta_e_ok,
     hex_to_srgb,
     pairwise_distances,
     perceived_lab,
@@ -98,13 +99,22 @@ def test_continuous_maps_are_monotonic_and_nearly_even_after_shift() -> None:
 def test_primary_text_contrast_survives_profile() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
-        contrasts = family["metrics"]["shifted_text_contrast"]
-        primary = [value for key, value in contrasts.items() if key.startswith("foreground_on_")]
-        assert min(primary) >= 4.5, family["slug"]
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
         foreground = warm_transform(hex_to_srgb(family["surfaces"]["foreground"]), gains)
+        for name in ("background", "background_alt", "background_high"):
+            background = warm_transform(hex_to_srgb(family["surfaces"][name]), gains)
+            assert contrast_ratio(foreground, background) >= 4.5, (family["slug"], name)
         selection = warm_transform(hex_to_srgb(family["surfaces"]["selection"]), gains)
         assert contrast_ratio(foreground, selection) >= 4.5, family["slug"]
+
+
+def test_selection_state_remains_visible_after_shift() -> None:
+    manifest = generate_manifest()
+    for family in manifest["families"].values():
+        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+        background = warm_transform(hex_to_srgb(family["surfaces"]["background"]), gains)
+        selection = warm_transform(hex_to_srgb(family["surfaces"]["selection"]), gains)
+        assert delta_e_ok(background, selection) >= 10.0, family["slug"]
 
 
 def test_terminal_foregrounds_remain_visible_after_shift() -> None:
@@ -116,16 +126,14 @@ def test_terminal_foregrounds_remain_visible_after_shift() -> None:
             name: warm_transform(hex_to_srgb(value), gains)
             for name, value in family["terminal"].items()
         }
-        small_text_slots = {
+        foreground_slots = {
             name: value
             for name, value in transformed.items()
-            if name not in {"black", "bright_black"}
+            if family["mode"] == "light" or name != "black"
         }
-        measured = min(contrast_ratio(value, background) for value in small_text_slots.values())
+        measured = min(contrast_ratio(value, background) for value in foreground_slots.values())
         assert measured >= 4.5
-        assert family["terminal_minimum_shifted_contrast"] == round(measured, 2)
-        if family["mode"] == "light":
-            assert contrast_ratio(transformed["black"], background) >= 4.5
+        assert family["terminal_minimum_shifted_foreground_contrast"] == round(measured, 2)
 
 
 def test_hex_round_trip_is_stable() -> None:

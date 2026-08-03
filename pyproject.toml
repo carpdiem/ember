@@ -1,6 +1,6 @@
 [project]
-name = "ember-redshift-safe-palettes"
-version = "0.1.0"
+name = "redshift-safe-palettes"
+version = "0.2.0"
 description = "Calm terminal and data palettes for warm- and red-shifted displays"
 readme = "README.md"
 requires-python = ">=3.10"

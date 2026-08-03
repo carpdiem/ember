@@ -1,0 +1,46 @@
+# Migrating from 0.1 to 0.2
+
+Ember is the public name of the project. The Python distribution and import package
+remain `redshift-safe-palettes` and `redshift_safe` so an upgrade cannot install a
+second distribution over the same import path.
+
+Version 0.2 replaces the six aspirational palette names with temperature-based IDs
+and removes the two deep-shift light themes that produced large orange/red emitting
+surfaces.
+
+| 0.1 ID | 0.2 ID | Status |
+|---|---|---|
+| `ember-dark` | `3400k-dark` | generated alias; migrate when convenient |
+| `ember-light` | `3400k-light` | generated alias; migrate when convenient |
+| `lowfire-dark` | `2000k-dark` | generated alias; migrate when convenient |
+| `safelight-dark` | `1200k-dark` | generated alias; migrate when convenient |
+| `lowfire-light` | none | removed; use `3400k-light` or a dark deep tier |
+| `safelight-light` | none | removed; use `3400k-light` or a dark deep tier |
+
+The four retained aliases work in the Python/Matplotlib API, CSS selectors, and all
+three generated terminal formats. Alias files contain the 0.2 palette values, not the
+rejected 0.1 colors.
+
+## Manifest changes
+
+The JSON schema is version 3. Family category counts are now variable, and the
+manifest records `legacy_aliases` plus `removed_families`. Code that assumed eight
+categories must instead read `len(family["categorical"])`.
+
+The terminal metric is now named
+`terminal_minimum_shifted_foreground_contrast`. It covers every foreground-capable
+ANSI slot; only background-like ANSI black is excluded in dark themes.
+
+## Python
+
+```python
+from redshift_safe import categorical, categorical_norm, encode_categories
+
+palette = "2000k-dark"
+colors = categorical(palette)
+norm = categorical_norm(palette)
+ids = encode_categories(labels, order, slug=palette)
+```
+
+Pass the palette slug to category helpers so their capacity checks match the selected
+family.

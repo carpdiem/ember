@@ -24,6 +24,13 @@ def _rgb(value: str) -> tuple[int, int, int]:
     return tuple(round(channel * 255) for channel in hex_to_srgb(value))
 
 
+def _blend_rgb(foreground: str, background: str, weight: float) -> tuple[int, int, int]:
+    foreground_rgb = hex_to_srgb(foreground)
+    background_rgb = hex_to_srgb(background)
+    mixed = background_rgb * (1.0 - weight) + foreground_rgb * weight
+    return tuple(round(channel * 255) for channel in mixed)
+
+
 def _transform_box(
     image: Image.Image,
     box: tuple[int, int, int, int],
@@ -48,14 +55,19 @@ def _draw_segments(
 
 
 def _terminal_samples(manifest: dict, destination: Path) -> None:
-    width, header, row_height = 1500, 64, 258
+    width, header, row_height = 1500, 64, 292
     families = list(manifest["families"].values())
     image = Image.new("RGB", (width, header + row_height * len(families)), "#171512")
     draw = ImageDraw.Draw(image)
     title_font = ImageFont.load_default(size=22)
-    code_font = ImageFont.load_default(size=18)
-    label_font = ImageFont.load_default(size=16)
-    draw.text((24, 18), "Terminal work · commanded sRGB", font=title_font, fill="#D7C8AC")
+    code_font = ImageFont.load_default(size=24)
+    label_font = ImageFont.load_default(size=18)
+    draw.text(
+        (24, 18),
+        "Generated terminal specimen · commanded sRGB",
+        font=title_font,
+        fill="#D7C8AC",
+    )
 
     for row, family in enumerate(families):
         y = header + row * row_height
@@ -80,7 +92,7 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
             (1120, y + 18),
             f"{count} semantic accents · ANSI aliases repeated",
             font=label_font,
-            fill=_rgb(surfaces["foreground_muted"]),
+            fill=_rgb(surfaces["foreground"]),
         )
 
         lines = [
@@ -92,14 +104,14 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
             [
                 (
                     "    # Measure what survives the display transform",
-                    surfaces["foreground_muted"],
+                    surfaces["foreground"],
                 ),
             ],
             [
                 ("    shifted", terminal["blue"]),
-                (" = ", surfaces["foreground_soft"]),
+                (" = ", surfaces["foreground"]),
                 ("colors", terminal["cyan"]),
-                (" * ", surfaces["foreground_soft"]),
+                (" * ", surfaces["foreground"]),
                 ("gains", terminal["yellow"]),
             ],
             [
@@ -110,35 +122,43 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
             [
                 ("$ ", terminal["green"]),
                 ("pytest -q", surfaces["foreground"]),
-                ("     64 passed", terminal["green"]),
-                (" in 1.83s", surfaces["foreground_muted"]),
+                ("     tests passed", terminal["green"]),
+                (" · generated example", surfaces["foreground"]),
             ],
         ]
         for line_number, segments in enumerate(lines, start=1):
-            baseline = y + 58 + (line_number - 1) * 35
+            baseline = y + 60 + (line_number - 1) * 42
+            if line_number == 3:
+                draw.rounded_rectangle(
+                    (34, baseline - 4, width - 36, baseline + 31),
+                    radius=4,
+                    fill=_rgb(surfaces["selection"]),
+                )
             draw.text(
                 (40, baseline),
                 f"{line_number:>2}",
                 font=code_font,
-                fill=_rgb(surfaces["foreground_muted"]),
+                fill=_rgb(surfaces["foreground"]),
             )
             _draw_segments(draw, (84, baseline), segments, code_font)
 
     destination.mkdir(parents=True, exist_ok=True)
     image.save(destination / "terminal-commanded.png", optimize=True)
     simulated = image.copy()
-    for row, family in enumerate(families):
-        y = header + row * row_height
-        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
-        _transform_box(simulated, (0, y, width, y + row_height), gains)
     simulated_draw = ImageDraw.Draw(simulated)
     simulated_draw.rectangle((0, 0, width, header), fill="#171512")
     simulated_draw.text(
         (24, 18),
-        "Terminal work · simulated target transform",
+        "Generated terminal specimen · simulated target transforms",
         font=title_font,
         fill="#D7C8AC",
     )
+    header_gains = manifest["profiles"][families[0]["profile"]]["rgb_gains"]
+    _transform_box(simulated, (0, 0, width, header), header_gains)
+    for row, family in enumerate(families):
+        y = header + row * row_height
+        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+        _transform_box(simulated, (0, y, width, y + row_height), gains)
     simulated.save(destination / "terminal-simulated.png", optimize=True)
 
 
@@ -166,14 +186,19 @@ def _draw_marker(
 
 
 def _data_samples(manifest: dict, destination: Path) -> None:
-    width, header, row_height = 1500, 64, 300
+    width, header, row_height = 1500, 64, 330
     families = list(manifest["families"].values())
     image = Image.new("RGB", (width, header + row_height * len(families)), "#171512")
     draw = ImageDraw.Draw(image)
     title_font = ImageFont.load_default(size=22)
     label_font = ImageFont.load_default(size=16)
     small_font = ImageFont.load_default(size=14)
-    draw.text((24, 18), "Data work · commanded sRGB", font=title_font, fill="#D7C8AC")
+    draw.text(
+        (24, 18),
+        "Generated data specimen · commanded sRGB",
+        font=title_font,
+        fill="#D7C8AC",
+    )
 
     for row, family in enumerate(families):
         y = header + row * row_height
@@ -215,6 +240,23 @@ def _data_samples(manifest: dict, destination: Path) -> None:
                     fill=_rgb(continuous[index]),
                 )
 
+        colorbar_y = heat_y + 190
+        for index, color in enumerate(continuous):
+            colorbar_x = heat_x + round(index * 352 / 256)
+            draw.line((colorbar_x, colorbar_y, colorbar_x, colorbar_y + 10), fill=_rgb(color))
+        draw.text(
+            (heat_x, colorbar_y + 14),
+            "low",
+            font=small_font,
+            fill=_rgb(surfaces["foreground"]),
+        )
+        draw.text(
+            (heat_x + 320, colorbar_y + 14),
+            "high",
+            font=small_font,
+            fill=_rgb(surfaces["foreground"]),
+        )
+
         bar_x, bar_y, bar_w, bar_h = 430, y + 62, 330, 182
         draw.text(
             (bar_x, y + 42),
@@ -231,8 +273,24 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             draw.rounded_rectangle(
                 (left, bar_y + bar_h - height, left + each, bar_y + bar_h),
                 radius=3,
-                fill=_rgb(color),
+                fill=_blend_rgb(color, surfaces["background"], 0.30),
+                outline=_rgb(color),
+                width=2,
             )
+            top = bar_y + bar_h - height
+            if index % 3 == 0:
+                for hatch_x in range(left + 8, left + each, 12):
+                    draw.line((hatch_x, top + 3, hatch_x, bar_y + bar_h - 3), fill=_rgb(color))
+            elif index % 3 == 1:
+                for hatch_y in range(top + 8, bar_y + bar_h, 12):
+                    draw.line((left + 3, hatch_y, left + each - 3, hatch_y), fill=_rgb(color))
+            else:
+                for hatch_y in range(top + 8, bar_y + bar_h, 14):
+                    for hatch_x in range(left + 8, left + each, 14):
+                        draw.ellipse(
+                            (hatch_x - 1, hatch_y - 1, hatch_x + 1, hatch_y + 1),
+                            fill=_rgb(color),
+                        )
             draw.text(
                 (left + 4, bar_y + bar_h + 8),
                 chr(65 + index),
@@ -243,22 +301,26 @@ def _data_samples(manifest: dict, destination: Path) -> None:
         plot_x, plot_y, plot_w, plot_h = 825, y + 62, 500, 182
         draw.text(
             (plot_x, y + 42),
-            "overlapping series · color + dash + marker + label",
+            "overlapping series · color + dash + marker + direct label",
             font=small_font,
             fill=_rgb(surfaces["foreground_muted"]),
         )
         axis = _rgb(surfaces["foreground_muted"])
         draw.line((plot_x, plot_y + plot_h, plot_x + plot_w, plot_y + plot_h), fill=axis)
         draw.line((plot_x, plot_y, plot_x, plot_y + plot_h), fill=axis)
+        series_endpoints = []
         for series, color in enumerate(categorical):
             points = []
             for step in range(25):
+                progress = step / 24
                 px = plot_x + round(step * plot_w / 24)
-                wave = np.sin(step * 0.42 + series * 0.9) * 0.28
-                trend = (step / 24 - 0.5) * (0.22 - series * 0.04)
-                offset = (series - (len(categorical) - 1) / 2) * 0.07
-                py = plot_y + round(plot_h * (0.50 - wave - trend + offset))
-                py = int(np.clip(py, plot_y + 5, plot_y + plot_h - 5))
+                wave = np.sin(step * 0.42 + series * 0.9) * 0.18
+                trend = (progress - 0.5) * (0.10 - series * 0.01)
+                base = 0.50 - wave - trend
+                endpoint = 0.16 + series * 0.68 / max(1, len(categorical) - 1)
+                endpoint_blend = np.clip((progress - 0.72) / 0.28, 0.0, 1.0)
+                normalized_y = base * (1.0 - endpoint_blend) + endpoint * endpoint_blend
+                py = plot_y + round(plot_h * normalized_y)
                 points.append((px, py))
             color_rgb = _rgb(color)
             dash_period = series + 2
@@ -272,22 +334,11 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             for marker_index in range(series + 2, 25, 6):
                 marker_x, marker_y = points[marker_index]
                 _draw_marker(draw, marker_x, marker_y, color_rgb, series)
-        legend_x = plot_x + plot_w + 18
-        for series, color in enumerate(categorical):
-            color_rgb = _rgb(color)
-            legend_y = plot_y + 8 + series * 27
-            dash_period = series + 2
-            for segment in range(4):
-                if (segment + series) % dash_period != 0:
-                    start = legend_x + segment * 7
-                    draw.line(
-                        (start, legend_y + 6, start + 6, legend_y + 6),
-                        fill=color_rgb,
-                        width=2,
-                    )
-            _draw_marker(draw, legend_x + 12, legend_y + 6, color_rgb, series)
+            series_endpoints.append((points[-1], color_rgb, series))
+        for (endpoint_x, endpoint_y), color_rgb, series in series_endpoints:
+            _draw_marker(draw, endpoint_x, endpoint_y, color_rgb, series)
             draw.text(
-                (legend_x + 32, legend_y),
+                (endpoint_x + 10, endpoint_y - 8),
                 chr(65 + series),
                 font=small_font,
                 fill=color_rgb,
@@ -296,18 +347,20 @@ def _data_samples(manifest: dict, destination: Path) -> None:
     destination.mkdir(parents=True, exist_ok=True)
     image.save(destination / "data-commanded.png", optimize=True)
     simulated = image.copy()
-    for row, family in enumerate(families):
-        y = header + row * row_height
-        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
-        _transform_box(simulated, (0, y, width, y + row_height), gains)
     simulated_draw = ImageDraw.Draw(simulated)
     simulated_draw.rectangle((0, 0, width, header), fill="#171512")
     simulated_draw.text(
         (24, 18),
-        "Data work · simulated target transform",
+        "Generated data specimen · simulated target transforms",
         font=title_font,
         fill="#D7C8AC",
     )
+    header_gains = manifest["profiles"][families[0]["profile"]]["rgb_gains"]
+    _transform_box(simulated, (0, 0, width, header), header_gains)
+    for row, family in enumerate(families):
+        y = header + row * row_height
+        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+        _transform_box(simulated, (0, y, width, y + row_height), gains)
     simulated.save(destination / "data-simulated.png", optimize=True)
 
 
@@ -328,9 +381,9 @@ def redundant_encoding_svg() -> str:
     return """<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="330" viewBox="0 0 1180 330">
 <rect width="1180" height="330" rx="18" fill="#2c211d"/><text x="34" y="42" fill="#f2d9b5" font-size="22" font-family="system-ui">At deep red, color becomes a hint—not the identity</text>
 <text x="34" y="72" fill="#a28b70" font-size="14" font-family="system-ui">Direct labels, dash patterns, and markers survive even when hue collapses.</text>
-<g transform="translate(45 105)" fill="none"><path d="M0 100 C80 15 160 175 260 70 S430 125 500 35" stroke="#e0c49a" stroke-width="4"/><path d="M0 130 C90 55 170 155 270 105 S420 35 500 95" stroke="#b08e76" stroke-width="4" stroke-dasharray="14 9"/><path d="M0 55 C90 135 190 15 280 80 S420 155 500 115" stroke="#8f8a6a" stroke-width="4" stroke-dasharray="3 8"/></g>
-<g font-family="ui-monospace, monospace" font-size="15"><text x="565" y="142" fill="#e0c49a">● A — solid</text><text x="565" y="183" fill="#b08e76">■ B – – dashed</text><text x="565" y="224" fill="#8f8a6a">▲ C · · dotted</text></g>
-<text x="565" y="273" fill="#a28b70" font-size="14" font-family="system-ui">If the labels disappear, the chart is not done.</text></svg>"""
+<g transform="translate(45 105)" fill="none"><path d="M0 100 C80 15 160 175 260 70 S430 125 500 35" stroke="#e0c49a" stroke-width="4"/><circle cx="500" cy="35" r="6" fill="#e0c49a"/><path d="M0 130 C90 55 170 155 270 105 S420 35 500 95" stroke="#b08e76" stroke-width="4" stroke-dasharray="14 9"/><rect x="494" y="89" width="12" height="12" fill="#b08e76"/><path d="M0 55 C90 135 190 15 280 80 S420 155 500 115" stroke="#8f8a6a" stroke-width="4" stroke-dasharray="3 8"/><path d="M500 108 L493 121 L507 121 Z" fill="#8f8a6a"/></g>
+<g font-family="ui-monospace, monospace" font-size="15"><text x="565" y="145" fill="#e0c49a">A — solid + circle</text><text x="565" y="205" fill="#b08e76">B — dashed + square</text><text x="565" y="225" fill="#8f8a6a">C — dotted + triangle</text></g>
+<text x="565" y="273" fill="#a28b70" font-size="14" font-family="system-ui">The label sits on the line it identifies.</text></svg>"""
 
 
 def render_samples(manifest: dict, destination: Path) -> None:
@@ -380,13 +433,13 @@ def sample_analysis_markdown(manifest: dict, destination: Path) -> str:
             f"{family['terminal_semantic_color_count']} | "
             f"{categorical['normal_chroma_max']:.4f} | "
             f"{categorical['shifted_min_delta_e_ok']:.2f} | "
-            f"{family['terminal_minimum_shifted_contrast']:.2f}:1 |"
+            f"{family['terminal_minimum_shifted_foreground_contrast']:.2f}:1 |"
         )
     lines.extend(
         [
             "",
             "Release gates: categorical commanded chroma ≤ 0.09; transformed terminal",
-            "small-text roles ≥ 4.5:1; category count and terminal accent count must never",
+            "foreground-capable ANSI slots ≥ 4.5:1; category and accent counts must never",
             "increase as the target temperature falls.",
             "",
             "## Screenshot-level diagnostics",

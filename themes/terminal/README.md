@@ -40,3 +40,9 @@ collapses. Bold should come from typography, not a second glaring rainbow.
 supporting text or graphics, and `foreground_muted` for nonessential metadata or
 decoration. The latter two are not universal body-text colors; inspect each
 pairing under `metrics.shifted_text_contrast` in the JSON manifest.
+
+## Legacy filenames
+
+The 0.1 dark-theme filenames and `ember-light` remain generated aliases. The
+unsafe `lowfire-light` and `safelight-light` themes have no deep-shift light
+replacement. See `MIGRATION.md` at the repository root.

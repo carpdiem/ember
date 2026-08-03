@@ -16,11 +16,15 @@ def _manifest() -> dict:
 
 
 def _family(slug: str) -> dict:
-    families = _manifest()["families"]
-    if slug not in families:
+    manifest = _manifest()
+    if slug in manifest.get("removed_families", {}):
+        raise KeyError(f"{slug}: {manifest['removed_families'][slug]}")
+    resolved = manifest.get("legacy_aliases", {}).get(slug, slug)
+    families = manifest["families"]
+    if resolved not in families:
         choices = ", ".join(sorted(families))
         raise KeyError(f"unknown family {slug!r}; choose one of: {choices}")
-    return families[slug]
+    return families[resolved]
 
 
 def categorical(slug: str) -> ListedColormap:

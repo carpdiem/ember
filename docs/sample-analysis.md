@@ -11,20 +11,20 @@ edges but cannot substitute for long-duration viewing on real hardware.
 | 3400K Dark | 6 | 6 | 0.0786 | 7.31 | 4.56:1 |
 | 3400K Light | 6 | 6 | 0.0846 | 10.04 | 4.55:1 |
 | 2000K Dark | 4 | 2 | 0.0677 | 6.25 | 4.57:1 |
-| 1200K Dark | 3 | 1 | 0.0640 | 6.95 | 4.55:1 |
+| 1200K Dark | 3 | 1 | 0.0640 | 6.95 | 4.54:1 |
 
 Release gates: categorical commanded chroma ≤ 0.09; transformed terminal
-small-text roles ≥ 4.5:1; category count and terminal accent count must never
+foreground-capable ANSI slots ≥ 4.5:1; category and accent counts must never
 increase as the target temperature falls.
 
 ## Screenshot-level diagnostics
 
 | Screenshot | High-contrast edge fraction | High-chroma pixel fraction | Oklab chroma p99 |
 |---|---:|---:|---:|
-| `terminal-commanded.png` | 1.0567% | 0.0000% | 0.0553 |
-| `terminal-simulated.png` | 0.4826% | 18.3333% | 0.1214 |
-| `data-commanded.png` | 1.1128% | 0.0000% | 0.0795 |
-| `data-simulated.png` | 0.6238% | 25.9149% | 0.2068 |
+| `terminal-commanded.png` | 1.9732% | 0.0000% | 0.0556 |
+| `terminal-simulated.png` | 0.7479% | 16.6353% | 0.1610 |
+| `data-commanded.png` | 1.4472% | 0.0000% | 0.0743 |
+| `data-simulated.png` | 0.6132% | 22.1657% | 0.1761 |
 
 Interpretation: small high-contrast edge fractions are expected around glyphs,
 axes, and markers. Commanded high-chroma area should remain scarce. A deep warm

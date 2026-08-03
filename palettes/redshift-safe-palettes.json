@@ -1,7 +1,17 @@
 {
   "schema_version": 3,
   "project": "Ember: Redshift Safe Color Palettes",
-  "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. All derived metrics use the transformed sRGB values.",
+  "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
+  "legacy_aliases": {
+    "ember-dark": "3400k-dark",
+    "ember-light": "3400k-light",
+    "lowfire-dark": "2000k-dark",
+    "safelight-dark": "1200k-dark"
+  },
+  "removed_families": {
+    "lowfire-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
+    "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier."
+  },
   "profiles": {
     "3400k": {
       "name": "3400 K",
@@ -61,7 +71,7 @@
         "magenta": "#C6A791",
         "cyan": "#C9A4A4",
         "white": "#DDD0B2",
-        "bright_black": "#928374",
+        "bright_black": "#DDD0B2",
         "bright_red": "#B1B3BA",
         "bright_green": "#C9AA78",
         "bright_yellow": "#AAB8A4",
@@ -71,7 +81,7 @@
         "bright_white": "#DDD0B2"
       },
       "terminal_semantic_color_count": 6,
-      "terminal_minimum_shifted_contrast": 4.56,
+      "terminal_minimum_shifted_foreground_contrast": 4.56,
       "categorical": {
         "one": "#8798C2",
         "two": "#C9AA78",
@@ -1672,7 +1682,7 @@
         "magenta": "#405333",
         "cyan": "#5C5A82",
         "white": "#342F2C",
-        "bright_black": "#665C54",
+        "bright_black": "#342F2C",
         "bright_red": "#386B5B",
         "bright_green": "#333360",
         "bright_yellow": "#764A4E",
@@ -1682,7 +1692,7 @@
         "bright_white": "#342F2C"
       },
       "terminal_semantic_color_count": 6,
-      "terminal_minimum_shifted_contrast": 4.55,
+      "terminal_minimum_shifted_foreground_contrast": 4.55,
       "categorical": {
         "one": "#39806C",
         "two": "#333360",
@@ -3283,7 +3293,7 @@
         "magenta": "#DCC49F",
         "cyan": "#D8B3A1",
         "white": "#E9D3AD",
-        "bright_black": "#9F8B70",
+        "bright_black": "#E9D3AD",
         "bright_red": "#DCC49F",
         "bright_green": "#D8B3A1",
         "bright_yellow": "#DCC49F",
@@ -3293,7 +3303,7 @@
         "bright_white": "#E9D3AD"
       },
       "terminal_semantic_color_count": 2,
-      "terminal_minimum_shifted_contrast": 4.57,
+      "terminal_minimum_shifted_foreground_contrast": 4.57,
       "categorical": {
         "one": "#DCC49F",
         "two": "#A57C68",
@@ -4878,31 +4888,31 @@
         "background": "#2C211D",
         "background_alt": "#322520",
         "background_high": "#3A2B25",
-        "foreground": "#F2D9B5",
+        "foreground": "#FFE5BE",
         "foreground_soft": "#CBB58F",
         "foreground_muted": "#A28B70",
-        "selection": "#3A2B25"
+        "selection": "#473128"
       },
       "terminal": {
         "black": "#3A2B25",
-        "red": "#EAD0A9",
-        "green": "#EAD0A9",
-        "yellow": "#EAD0A9",
-        "blue": "#EAD0A9",
-        "magenta": "#EAD0A9",
-        "cyan": "#EAD0A9",
-        "white": "#F2D9B5",
-        "bright_black": "#A28B70",
-        "bright_red": "#EAD0A9",
-        "bright_green": "#EAD0A9",
-        "bright_yellow": "#EAD0A9",
-        "bright_blue": "#EAD0A9",
-        "bright_magenta": "#EAD0A9",
-        "bright_cyan": "#EAD0A9",
-        "bright_white": "#F2D9B5"
+        "red": "#EACFA6",
+        "green": "#EACFA6",
+        "yellow": "#EACFA6",
+        "blue": "#EACFA6",
+        "magenta": "#EACFA6",
+        "cyan": "#EACFA6",
+        "white": "#FFE5BE",
+        "bright_black": "#FFE5BE",
+        "bright_red": "#EACFA6",
+        "bright_green": "#EACFA6",
+        "bright_yellow": "#EACFA6",
+        "bright_blue": "#EACFA6",
+        "bright_magenta": "#EACFA6",
+        "bright_cyan": "#EACFA6",
+        "bright_white": "#FFE5BE"
       },
       "terminal_semantic_color_count": 1,
-      "terminal_minimum_shifted_contrast": 4.55,
+      "terminal_minimum_shifted_foreground_contrast": 4.54,
       "categorical": {
         "one": "#E0C49A",
         "two": "#B08E76",
@@ -6465,9 +6475,9 @@
           "delta_e_ok_max_to_min": 1.0
         },
         "shifted_text_contrast": {
-          "foreground_on_background": 4.85,
-          "foreground_on_background_alt": 4.71,
-          "foreground_on_background_high": 4.5,
+          "foreground_on_background": 5.34,
+          "foreground_on_background_alt": 5.19,
+          "foreground_on_background_high": 4.96,
           "foreground_soft_on_background": 3.57,
           "foreground_soft_on_background_alt": 3.46,
           "foreground_soft_on_background_high": 3.31,

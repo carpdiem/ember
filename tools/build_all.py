@@ -60,7 +60,15 @@ def _css(manifest: dict) -> str:
         "",
     ]
     for slug, family in manifest["families"].items():
-        lines.append(f'[data-redshift-palette="{slug}"] {{')
+        selectors = [slug]
+        selectors.extend(
+            legacy
+            for legacy, current in manifest.get("legacy_aliases", {}).items()
+            if current == slug
+        )
+        lines.append(
+            ",\n".join(f'[data-redshift-palette="{selector}"]' for selector in selectors) + " {"
+        )
         for name, value in family["surfaces"].items():
             lines.append(f"  --rs-{name.replace('_', '-')}: {value};")
         for name, value in family["categorical"].items():
@@ -217,11 +225,19 @@ def _family_svg(family: dict, profile: dict) -> str:
 
 
 def _overview_svg(manifest: dict) -> str:
-    width, row_height = 1200, 154
-    height = row_height * len(manifest["families"]) + 36
+    width, row_height = 1200, 184
+    height = row_height * len(manifest["families"]) + 88
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" rx="18" fill="#12100E"/>',
+        _svg_text(24, 32, "Commanded sRGB overview", 20),
+        _svg_text(
+            285,
+            54,
+            "categorical colors · sequential low → high · foreground/background",
+            12,
+            "#AFA18D",
+        ),
     ]
     profile_labels = {
         "3400k": "~3400 K warm-white surrogate",
@@ -229,7 +245,7 @@ def _overview_svg(manifest: dict) -> str:
         "1200k": "Redshift 1200 K pinned LUT",
     }
     for row, family in enumerate(manifest["families"].values()):
-        y = 24 + row * row_height
+        y = 78 + row * row_height
         parts.append(_svg_text(24, y + 22, family["name"], 20))
         parts.append(_svg_text(24, y + 43, profile_labels[family["profile"]], 12, "#AFA18D"))
         x = 285
@@ -238,20 +254,20 @@ def _overview_svg(manifest: dict) -> str:
         for value in categorical:
             parts.append(
                 f'<rect x="{x}" y="{y}" width="{swatch_width - 5}" '
-                f'height="52" rx="5" fill="{value}"/>'
+                f'height="48" rx="5" fill="{value}"/>'
             )
             x += swatch_width
-        x, gradient_y = 285, y + 68
+        x, gradient_y = 285, y + 70
         for index, value in enumerate(family["continuous_hex8"]):
             parts.append(
                 f'<rect x="{x + index * 3.37:.2f}" y="{gradient_y}" width="3.6" height="28" fill="{value}"/>'
             )
         parts.append(
-            f'<rect x="{285}" y="{y + 108}" width="860" height="22" rx="4" fill="{family["surfaces"]["background"]}"/>'
+            f'<rect x="{285}" y="{y + 122}" width="860" height="28" rx="4" fill="{family["surfaces"]["background"]}"/>'
         )
         parts.append(
             _svg_text(
-                300, y + 124, "Aa  foreground / background", 12, family["surfaces"]["foreground"]
+                300, y + 141, "Aa  foreground / background", 12, family["surfaces"]["foreground"]
             )
         )
     parts.append("</svg>")
@@ -341,6 +357,12 @@ collapses. Bold should come from typography, not a second glaring rainbow.
 supporting text or graphics, and `foreground_muted` for nonessential metadata or
 decoration. The latter two are not universal body-text colors; inspect each
 pairing under `metrics.shifted_text_contrast` in the JSON manifest.
+
+## Legacy filenames
+
+The 0.1 dark-theme filenames and `ember-light` remain generated aliases. The
+unsafe `lowfire-light` and `safelight-light` themes have no deep-shift light
+replacement. See `MIGRATION.md` at the repository root.
 """
     _write(destination / "themes/terminal/README.md", terminal_readme)
 
@@ -352,6 +374,17 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
         _write(destination / f"themes/terminal/iterm2/{slug}.itermcolors", _iterm(family))
         profile = manifest["profiles"][family["profile"]]
         _write(destination / f"docs/swatches/{slug}.svg", _family_svg(family, profile))
+
+    for legacy, current in manifest.get("legacy_aliases", {}).items():
+        family = manifest["families"][current]
+        profile = manifest["profiles"][family["profile"]]
+        _write(destination / f"themes/terminal/alacritty/{legacy}.toml", _alacritty(family))
+        _write(
+            destination / f"themes/terminal/windows-terminal/{legacy}.json",
+            _windows_terminal(family),
+        )
+        _write(destination / f"themes/terminal/iterm2/{legacy}.itermcolors", _iterm(family))
+        _write(destination / f"docs/swatches/{legacy}.svg", _family_svg(family, profile))
 
     _write(destination / "docs/swatches/overview.svg", _overview_svg(manifest))
     _preview_png(manifest, destination / "docs/swatches/command-vs-simulated.png")
@@ -390,6 +423,15 @@ def check() -> int:
                     Path(f"themes/terminal/alacritty/{slug}.toml"),
                     Path(f"themes/terminal/iterm2/{slug}.itermcolors"),
                     Path(f"themes/terminal/windows-terminal/{slug}.json"),
+                )
+            )
+        for legacy in manifest.get("legacy_aliases", {}):
+            generated_paths.extend(
+                (
+                    Path(f"docs/swatches/{legacy}.svg"),
+                    Path(f"themes/terminal/alacritty/{legacy}.toml"),
+                    Path(f"themes/terminal/iterm2/{legacy}.itermcolors"),
+                    Path(f"themes/terminal/windows-terminal/{legacy}.json"),
                 )
             )
         for relative in generated_paths:

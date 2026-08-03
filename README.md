@@ -17,7 +17,7 @@ display transform destroys the usable gamut.
 | Palette | Mode | Categories | Terminal accents | Design target |
 |---|---|---:|---:|---|
 | [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 | warmest macOS Night Shift surrogate |
-| [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 | warmest macOS Night Shift surrogate |
+| [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 | bright-room polarity alternative at the 3400 K surrogate |
 | [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 2 | pinned Redshift 2000 K signal LUT |
 | [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 1 | pinned Redshift 1200 K signal LUT |
 
@@ -31,27 +31,40 @@ Terminal file formats still require 16 ANSI slots. At 2000 K and 1200 K those sl
 intentionally alias the same two or one semantic accents. **Protocol slots are not a
 license to invent colors the transformed display cannot support.**
 
-## See the actual screens, not just swatches
+## See generated screen specimens, not just swatches
 
 “Commanded” is the raw sRGB an application requests. “Simulated” applies the named
-RGB gain profile to every pixel, approximating what the same screen looks like when
-the relevant warm transform is active.
+RGB gain profile to every pixel in each family panel. These are deterministic Pillow
+specimens—not captures from iTerm2, Alacritty, or a physical MacBook display.
 
 ### Terminal work at small code size
 
-| Commanded sRGB / no warm transform | Simulated target transform |
-|---|---|
-| ![Raw terminal samples](docs/samples/terminal-commanded.png) | ![Simulated warm-shift terminal samples](docs/samples/terminal-simulated.png) |
+**Commanded sRGB / no warm transform**
+
+![Commanded terminal specimen](docs/samples/terminal-commanded.png)
+
+**Simulated target transforms**
+
+![Simulated warm-shift terminal specimen](docs/samples/terminal-simulated.png)
 
 ### Data work: heatmaps, bars, and overlapping lines
 
-| Commanded sRGB / no warm transform | Simulated target transform |
-|---|---|
-| ![Raw data-visualization samples](docs/samples/data-commanded.png) | ![Simulated warm-shift data-visualization samples](docs/samples/data-simulated.png) |
+**Commanded sRGB / no warm transform**
+
+![Commanded data-visualization specimen](docs/samples/data-commanded.png)
+
+**Simulated target transforms**
+
+![Simulated warm-shift data-visualization specimen](docs/samples/data-simulated.png)
 
 The overlapping lines deliberately combine **color + dash + marker + text label**.
 At 1200 K, blue is zero. No clever palette can make hue carry information through a
 channel that no longer exists.
+
+View the simulated specimens with Night Shift, Redshift, True Tone, and browser
+color-altering extensions disabled; otherwise the transform is applied twice or
+made irreproducible. Use 100% browser zoom in SDR at a fixed, comfortable brightness.
+The specimens are regression evidence—not a claim of physical-device validation.
 
 - [Generated screenshot diagnostics](docs/sample-analysis.md)
 - [Compact commanded-versus-simulated swatches](docs/swatches/command-vs-simulated.png)
@@ -130,6 +143,9 @@ Ready-to-import themes are included for:
 `foreground_muted` are quieter hierarchy roles, not universal body-text colors.
 Inspect every exact pairing in `metrics.shifted_text_contrast` in the manifest.
 
+Upgrading from 0.1? See the [migration guide](MIGRATION.md). Four old IDs remain
+generated aliases; the two unsafe deep-shift light themes are deliberately removed.
+
 ---
 
 # How this works, from five-year-old to color nerd
@@ -144,8 +160,9 @@ Ember asks:
 > After the glasses damage these colors, what remains readable—and how many colors
 > are still honestly useful?
 
-The answer is six at the mild tier, four data colors at 2000 K, and three at 1200 K.
-For tiny terminal text, the honest answer collapses faster: six, two, then one.
+Ember's authored design budget is six at the mild tier, four data colors at 2000 K,
+and three at 1200 K. For tiny terminal text, that budget collapses faster: six, two,
+then one. These are conservative product constraints, not psychophysical maxima.
 
 ## The Feynman version: the channel loses dimensions
 
@@ -193,7 +210,7 @@ Ember now makes comfort and composition authored constraints:
 |---|---:|---:|---:|---:|---:|
 | 3400 K, rejected → Ember | 8 → 6 | 0.3225 → 0.0786 | 0.3225 → 0.0755 | 15.15 → 8.59 | 9.91 → 6.34 |
 | 2000 K, rejected → Ember | 8 → 4 | 0.3034 → 0.0677 | 0.3034 → 0.0563 | 17.06 → 10.00 | 7.99 → 5.59 |
-| 1200 K, rejected → Ember | 8 → 3 | 0.2753 → 0.0640 | 0.2753 → 0.0591 | 17.12 → 11.45 | 6.05 → 4.85 |
+| 1200 K, rejected → Ember | 8 → 3 | 0.2753 → 0.0640 | 0.2753 → 0.0591 | 17.12 → 12.82 | 6.05 → 5.34 |
 
 This is not cosmetic dimming. The new commanded categorical chroma ceiling is below
 one quarter of the rejected maximum at every dark tier, and primary text no longer
@@ -250,8 +267,9 @@ not silently imply a false ordering.
 
 Each categorical accent is blended toward the family foreground only until its
 transformed contrast reaches the small-text floor. The 16 ANSI slots then alias the
-small surviving set. Transformed terminal small-text roles measure at 4.55–4.57:1;
-body foregrounds range from 4.85:1 to 7.64:1 against the primary backgrounds.
+small surviving set. Every foreground-capable ANSI slot meets 4.5:1 after the target
+transform; only background-like ANSI black is excluded in dark themes. `bright_black`
+maps to readable body text because terminals commonly use it for comments and metadata.
 
 ## Sequential maps
 
@@ -265,22 +283,21 @@ the convenient quantized preview; the float map carries the strict guarantee.
 
 ## Screenshot analysis
 
-The build renders actual code, heatmaps, bars, and overlapping lines from the final
-manifest. It then measures high-contrast luminance-edge density and pixel chroma.
+The build renders generated code, heatmap, bar, and overlapping-line specimens from
+the final manifest. It then measures high-contrast luminance-edge density and pixel chroma.
 The release also receives a manual visual audit at full resolution.
 
 See [`docs/sample-analysis.md`](docs/sample-analysis.md) for the generated report.
-The transformed screenshots naturally become chromatic when the transform removes
-green/blue; that is a property of the modeled filter. The meaningful comfort signals
-are that commanded high-chroma area is zero at the report threshold, transformed
-high-contrast edge density decreases, and information survives through redundant
-encodings rather than a compensating neon rainbow.
+The transformed specimens naturally become chromatic when the transform removes
+green/blue; that is a property of the modeled filter. These image metrics are weak
+regression diagnostics, not comfort evidence. The release decision also requires
+full-resolution visual review of hierarchy, fill area, clipping, and redundant encoding.
 
 ---
 
-# MacBook Pro display target
+# MacBook Pro display context
 
-The practical display target is the built-in MacBook Pro Liquid Retina XDR panel.
+The practical display context is the built-in MacBook Pro Liquid Retina XDR panel.
 Apple documents wide-color P3, 1 billion colors, and a 254 ppi panel on current
 14-inch models, with a P3-based general-use reference mode. Ember still exports sRGB
 because terminals, CSS, Matplotlib, and interchange formats need portable values;
@@ -289,7 +306,8 @@ macOS color management maps those values to the panel.
 The model does **not** attempt to emulate mini-LED local dimming, viewing angle,
 True Tone, ambient adaptation, panel brightness, or spectral output. Samples should
 be judged in SDR at a sane nighttime brightness. XDR peak-nit specifications are not
-a target.
+a target. A comparable inspection records the display preset, glass type, fixed SDR
+brightness, ambient lighting, True Tone state, active transform, and browser zoom.
 
 Apple does not publish a universal Night Shift matrix or Kelvin value. The 3400 K
 profile is therefore an explicit surrogate. The Redshift 2000 K and 1200 K profiles
@@ -306,8 +324,9 @@ The suite rejects a release unless:
 - terminal semantic counts are `6, 6, 2, 1` while all required ANSI slots parse;
 - commanded categorical Oklab chroma is ≤ 0.09;
 - categorical transformed separation meets the profile floor;
-- transformed terminal small-text roles are ≥ 4.5:1;
-- primary text is ≥ 4.5:1 on all declared backgrounds and selections;
+- every foreground-capable ANSI slot is ≥ 4.5:1 after transformation;
+- primary text is recomputed exactly at ≥ 4.5:1 on every background and selection;
+- selection surfaces remain perceptually visible after transformation;
 - 256 float sequential samples remain unique, monotonic, and nearly even after the
   target transform; and
 - JSON, CSS, terminal imports, screenshots, diagrams, and diagnostics reproduce
@@ -347,7 +366,7 @@ remains more trustworthy than software alone.
 palettes/                         canonical float JSON + quantized CSS exports
 src/redshift_safe/               color math, definitions, generator, Matplotlib API
 themes/terminal/                 Alacritty, iTerm2, Windows Terminal imports
-docs/samples/                    commanded and simulated real-work screens
+docs/samples/                    commanded and simulated generated specimens
 docs/diagrams/                   Feynman-level visual explanations
 docs/swatches/                   exact specifications and compact comparisons
 examples/                        executable Matplotlib gallery

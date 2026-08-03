@@ -22,6 +22,12 @@ SLUGS = (
     "2000k-dark",
     "1200k-dark",
 )
+LEGACY_ALIASES = {
+    "ember-dark": "3400k-dark",
+    "ember-light": "3400k-light",
+    "lowfire-dark": "2000k-dark",
+    "safelight-dark": "1200k-dark",
+}
 
 
 def test_matplotlib_adapters() -> None:
@@ -34,6 +40,29 @@ def test_matplotlib_adapters() -> None:
         assert categorical_map.N == len(manifest["families"][slug]["categorical"])
         assert sequential_map.N == 256
         assert np.allclose(sequential_map.colors, manifest["families"][slug]["continuous_rgb"])
+
+
+@pytest.mark.parametrize(
+    ("legacy", "current"),
+    list(LEGACY_ALIASES.items()),
+)
+def test_legacy_matplotlib_slugs_resolve(legacy: str, current: str) -> None:
+    assert categorical(legacy).colors == categorical(current).colors
+
+
+@pytest.mark.parametrize("legacy", ["lowfire-light", "safelight-light"])
+def test_removed_deep_light_slugs_fail_with_migration_message(legacy: str) -> None:
+    with pytest.raises(KeyError, match="No deep-shift light replacement"):
+        categorical(legacy)
+
+
+def test_legacy_css_and_terminal_exports_remain_available() -> None:
+    css = (ROOT / "palettes/redshift-safe-palettes.css").read_text()
+    for legacy in LEGACY_ALIASES:
+        assert f'data-redshift-palette="{legacy}"' in css
+        assert (ROOT / f"themes/terminal/alacritty/{legacy}.toml").is_file()
+        assert (ROOT / f"themes/terminal/iterm2/{legacy}.itermcolors").is_file()
+        assert (ROOT / f"themes/terminal/windows-terminal/{legacy}.json").is_file()
 
 
 def test_categorical_encoding_is_stable_for_strings_and_subsets() -> None:

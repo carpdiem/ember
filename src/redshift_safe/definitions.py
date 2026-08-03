@@ -132,10 +132,10 @@ FAMILIES = (
             "background": "#2C211D",
             "background_alt": "#322520",
             "background_high": "#3A2B25",
-            "foreground": "#F2D9B5",
+            "foreground": "#FFE5BE",
             "foreground_soft": "#CBB58F",
             "foreground_muted": "#A28B70",
-            "selection": "#3A2B25",
+            "selection": "#473128",
         },
         # Blue is physically gone at this tier.  Three excellent, redundant
         # encodings are more honest than pretending a larger hue set survives.
