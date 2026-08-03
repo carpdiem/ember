@@ -1,0 +1,22 @@
+{
+  "name": "Lowfire Light",
+  "black": "#DEC49D",
+  "red": "#9B0000",
+  "green": "#00B600",
+  "yellow": "#5B6DFF",
+  "blue": "#2E8989",
+  "purple": "#76129B",
+  "cyan": "#805B00",
+  "white": "#493226",
+  "brightBlack": "#72513E",
+  "brightRed": "#760000",
+  "brightGreen": "#008B00",
+  "brightYellow": "#4452C4",
+  "brightBlue": "#206868",
+  "brightPurple": "#590B76",
+  "brightCyan": "#604400",
+  "brightWhite": "#281A14",
+  "background": "#FFF2D8",
+  "foreground": "#281A14",
+  "selectionBackground": "#D7B17C"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Ember Light",
+  "black": "#DFD1BD",
+  "red": "#9200F6",
+  "green": "#008900",
+  "yellow": "#0964FF",
+  "blue": "#9B0000",
+  "purple": "#5B6476",
+  "cyan": "#6452E4",
+  "white": "#453E34",
+  "brightBlack": "#6B6153",
+  "brightRed": "#6F00BD",
+  "brightGreen": "#006800",
+  "brightYellow": "#054BC4",
+  "brightBlue": "#760000",
+  "brightPurple": "#444B59",
+  "brightCyan": "#4B3DAF",
+  "brightWhite": "#29251F",
+  "background": "#F8F0E2",
+  "foreground": "#29251F",
+  "selectionBackground": "#D2C1A7"
+}

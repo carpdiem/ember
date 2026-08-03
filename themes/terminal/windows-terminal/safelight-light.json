@@ -1,0 +1,22 @@
+{
+  "name": "Safelight Light",
+  "black": "#DDAE80",
+  "red": "#640000",
+  "green": "#00BF00",
+  "yellow": "#2452FF",
+  "blue": "#4992A4",
+  "purple": "#400089",
+  "cyan": "#008000",
+  "white": "#48170F",
+  "brightBlack": "#70301F",
+  "brightRed": "#4B0000",
+  "brightGreen": "#009200",
+  "brightYellow": "#193DC4",
+  "brightBlue": "#366F7D",
+  "brightPurple": "#2F0068",
+  "brightCyan": "#006000",
+  "brightWhite": "#160403",
+  "background": "#FFE8C5",
+  "foreground": "#160403",
+  "selectionBackground": "#CF8755"
+}

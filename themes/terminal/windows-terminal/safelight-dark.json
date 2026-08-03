@@ -1,0 +1,22 @@
+{
+  "name": "Safelight Dark",
+  "black": "#260B08",
+  "red": "#FF0000",
+  "green": "#A4FF00",
+  "yellow": "#C812FF",
+  "blue": "#D1E4FF",
+  "purple": "#E4009B",
+  "cyan": "#B6B664",
+  "white": "#DDBA94",
+  "brightBlack": "#A77F62",
+  "brightRed": "#FF5948",
+  "brightGreen": "#B5FF61",
+  "brightYellow": "#D45CFF",
+  "brightBlue": "#DAE9FF",
+  "brightPurple": "#EE54AD",
+  "brightCyan": "#C3C382",
+  "brightWhite": "#FFE9C8",
+  "background": "#0D0404",
+  "foreground": "#FFE9C8",
+  "selectionBackground": "#4B1D13"
+}
