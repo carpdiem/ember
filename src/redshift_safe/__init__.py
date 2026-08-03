@@ -1,5 +1,5 @@
 """Redshift Safe Palettes public Python API."""
 
-from .matplotlib import categorical, sequential
+from .matplotlib import categorical, categorical_norm, encode_categories, sequential
 
-__all__ = ["categorical", "sequential"]
+__all__ = ["categorical", "categorical_norm", "encode_categories", "sequential"]

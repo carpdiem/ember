@@ -68,11 +68,22 @@ python -m pip install "git+https://github.com/carpdiem/redshift-safe-palettes.gi
 
 ```python
 import matplotlib.pyplot as plt
-from redshift_safe import categorical, sequential
+from redshift_safe import categorical, categorical_norm, encode_categories, sequential
 
-plt.scatter(x, y, c=labels, cmap=categorical("lowfire-dark"))
+# Define this once and reuse it for full-data and subset plots.
+category_order = ["control", "alpha", "beta", "gamma"]
+category_ids = encode_categories(labels, category_order)
+plt.scatter(
+    x,
+    y,
+    c=category_ids,
+    cmap=categorical("lowfire-dark"),
+    norm=categorical_norm(),
+)
 plt.imshow(data, cmap=sequential("lowfire-dark"))
 ```
+
+The explicit order and fixed normalization matter: raw strings are not valid Matplotlib color values, and default normalization can silently remap a numeric subset to different colors.
 
 Available slugs:
 
@@ -113,7 +124,7 @@ Ready-to-import themes are included for:
 - [iTerm2](themes/terminal/iterm2/)
 - [Windows Terminal](themes/terminal/windows-terminal/)
 
-Each import uses the primary background and foreground. The JSON manifest exposes two alternate backgrounds and two alternate foreground levels when a display needs a quieter canvas or more separation.
+Each import uses the primary background and foreground. The JSON manifest also exposes alternate surfaces. `foreground` is the body-text role and is guaranteed at 4.5:1 against all three backgrounds after the target transform. `foreground_soft` is for larger supporting text or graphics; `foreground_muted` is for nonessential metadata and decoration. The latter two are intentionally quieter and are **not** universal body-text colors—consult `shifted_text_contrast` in the manifest for each exact pairing.
 
 ---
 

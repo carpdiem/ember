@@ -5,7 +5,7 @@ from __future__ import annotations
 import matplotlib.pyplot as plt
 import numpy as np
 
-from redshift_safe import categorical, sequential
+from redshift_safe import categorical, categorical_norm, sequential
 
 SLUGS = (
     "ember-dark",
@@ -19,7 +19,12 @@ SLUGS = (
 fig, axes = plt.subplots(len(SLUGS), 2, figsize=(11, 10), constrained_layout=True)
 heat = np.outer(np.linspace(0, 1, 80), np.ones(320))
 for row, slug in enumerate(SLUGS):
-    axes[row, 0].imshow(np.arange(8)[None, :], cmap=categorical(slug), aspect="auto")
+    axes[row, 0].imshow(
+        np.arange(8)[None, :],
+        cmap=categorical(slug),
+        norm=categorical_norm(),
+        aspect="auto",
+    )
     axes[row, 0].set_title(f"{slug} · categorical")
     axes[row, 1].imshow(heat.T, cmap=sequential(slug), aspect="auto", origin="lower")
     axes[row, 1].set_title(f"{slug} · sequential")

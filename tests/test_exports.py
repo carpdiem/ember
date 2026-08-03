@@ -12,7 +12,7 @@ try:
 except ModuleNotFoundError:  # Python 3.10
     import tomli as tomllib
 
-from redshift_safe import categorical, sequential
+from redshift_safe import categorical, categorical_norm, encode_categories, sequential
 
 ROOT = Path(__file__).resolve().parents[1]
 SLUGS = (
@@ -35,6 +35,13 @@ def test_matplotlib_adapters() -> None:
         assert categorical_map.N == 8
         assert sequential_map.N == 256
         assert np.allclose(sequential_map.colors, manifest["families"][slug]["continuous_rgb"])
+
+
+def test_categorical_encoding_is_stable_for_strings_and_subsets() -> None:
+    order = ["control", "alpha", "beta", "gamma"]
+    assert encode_categories(["control", "beta", "gamma"], order).tolist() == [0, 2, 3]
+    assert encode_categories(["beta", "gamma"], order).tolist() == [2, 3]
+    assert categorical_norm()(np.asarray([0, 2, 3])).tolist() == [0, 2, 3]
 
 
 def test_alacritty_exports_parse() -> None:
