@@ -266,6 +266,15 @@ def build(destination: Path) -> None:
     _preview_png(manifest, destination / "docs/swatches/command-vs-simulated.png")
 
 
+def _artifacts_equal(expected: Path, actual: Path) -> bool:
+    if not actual.exists():
+        return False
+    if expected.suffix == ".png":
+        with Image.open(expected) as left, Image.open(actual) as right:
+            return np.array_equal(np.asarray(left.convert("RGB")), np.asarray(right.convert("RGB")))
+    return actual.read_bytes() == expected.read_bytes()
+
+
 def check() -> int:
     with tempfile.TemporaryDirectory() as directory:
         temp = Path(directory)
@@ -285,7 +294,7 @@ def check() -> int:
         for relative in generated_paths:
             expected = temp / relative
             actual = ROOT / relative
-            if not actual.exists() or actual.read_bytes() != expected.read_bytes():
+            if not _artifacts_equal(expected, actual):
                 failures.append(str(relative))
         if failures:
             print("stale generated files:")
