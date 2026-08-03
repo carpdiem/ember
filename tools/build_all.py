@@ -22,11 +22,13 @@ if str(SRC) not in sys.path:
 from redshift_safe.color import contrast_ratio, hex_to_srgb, warm_transform  # noqa: E402
 from redshift_safe.generate import ANSI_NAMES, generate_manifest  # noqa: E402
 
-MANAGED_TEXT = (
+BASE_MANAGED_PATHS = (
     "palettes/redshift-safe-palettes.json",
     "palettes/redshift-safe-palettes.css",
     "src/redshift_safe/palettes.json",
     "themes/terminal/README.md",
+    "docs/swatches/overview.svg",
+    "docs/swatches/command-vs-simulated.png",
 )
 
 
@@ -269,9 +271,17 @@ def check() -> int:
         temp = Path(directory)
         build(temp)
         failures = []
-        generated_paths = [Path(path) for path in MANAGED_TEXT]
-        generated_paths.extend(Path("docs/swatches") / f"{slug}.svg" for slug in generate_manifest()["families"])
-        generated_paths.append(Path("docs/swatches/overview.svg"))
+        manifest = generate_manifest()
+        generated_paths = [Path(path) for path in BASE_MANAGED_PATHS]
+        for slug in manifest["families"]:
+            generated_paths.extend(
+                (
+                    Path(f"docs/swatches/{slug}.svg"),
+                    Path(f"themes/terminal/alacritty/{slug}.toml"),
+                    Path(f"themes/terminal/iterm2/{slug}.itermcolors"),
+                    Path(f"themes/terminal/windows-terminal/{slug}.json"),
+                )
+            )
         for relative in generated_paths:
             expected = temp / relative
             actual = ROOT / relative
@@ -281,7 +291,7 @@ def check() -> int:
             print("stale generated files:")
             print("\n".join(f"  {path}" for path in failures))
             return 1
-    print("generated text artifacts are current")
+    print("generated artifacts are current")
     return 0
 
 
