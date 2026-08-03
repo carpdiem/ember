@@ -1622,10 +1622,10 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 11.32,
-          "shifted_min_delta_e_ok": 9.24,
+          "normal_min_delta_e_ok": 11.42,
+          "shifted_min_delta_e_ok": 9.21,
           "shifted_lightness_mean": 0.6521,
-          "shifted_lightness_range": 0.0372
+          "shifted_lightness_range": 0.0366
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",
@@ -3232,10 +3232,10 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 8.99,
+          "normal_min_delta_e_ok": 8.94,
           "shifted_min_delta_e_ok": 9.45,
-          "shifted_lightness_mean": 0.4293,
-          "shifted_lightness_range": 0.045
+          "shifted_lightness_mean": 0.4297,
+          "shifted_lightness_range": 0.0458
         },
         "continuous": {
           "shifted_lightness_direction": "decreasing",
@@ -3282,11 +3282,11 @@
         "cyan": "#BF00FF",
         "white": "#E2CCAA",
         "bright_black": "#AD967A",
-        "bright_red": "#E75242",
+        "bright_red": "#E85242",
         "bright_green": "#66FF5F",
-        "bright_yellow": "#9DBCFF",
-        "bright_blue": "#78D3A5",
-        "bright_magenta": "#BD87AC",
+        "bright_yellow": "#9EBCFF",
+        "bright_blue": "#78D2A5",
+        "bright_magenta": "#BD87AD",
         "bright_cyan": "#CC59FF",
         "bright_white": "#FFF0D0"
       },
@@ -4842,10 +4842,10 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 10.36,
-          "shifted_min_delta_e_ok": 5.8,
-          "shifted_lightness_mean": 0.5314,
-          "shifted_lightness_range": 0.0638
+          "normal_min_delta_e_ok": 10.28,
+          "shifted_min_delta_e_ok": 5.94,
+          "shifted_lightness_mean": 0.5316,
+          "shifted_lightness_range": 0.0651
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",
@@ -6452,10 +6452,10 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 10.42,
-          "shifted_min_delta_e_ok": 5.14,
-          "shifted_lightness_mean": 0.4319,
-          "shifted_lightness_range": 0.0664
+          "normal_min_delta_e_ok": 10.51,
+          "shifted_min_delta_e_ok": 5.07,
+          "shifted_lightness_mean": 0.432,
+          "shifted_lightness_range": 0.0658
         },
         "continuous": {
           "shifted_lightness_direction": "decreasing",
@@ -6502,12 +6502,12 @@
         "cyan": "#BFA449",
         "white": "#DDBA94",
         "bright_black": "#AE8669",
-        "bright_red": "#F65545",
+        "bright_red": "#F75545",
         "bright_green": "#A8FF61",
         "bright_yellow": "#C368FF",
         "bright_blue": "#CBF8FF",
         "bright_magenta": "#DF50A5",
-        "bright_cyan": "#CBB46E",
+        "bright_cyan": "#CAB46E",
         "bright_white": "#FFE9C8"
       },
       "categorical": {
@@ -8062,10 +8062,10 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 13.83,
-          "shifted_min_delta_e_ok": 4.39,
-          "shifted_lightness_mean": 0.5384,
-          "shifted_lightness_range": 0.1029
+          "normal_min_delta_e_ok": 13.74,
+          "shifted_min_delta_e_ok": 4.4,
+          "shifted_lightness_mean": 0.5383,
+          "shifted_lightness_range": 0.1034
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",
@@ -8113,10 +8113,10 @@
         "white": "#48170F",
         "bright_black": "#70301F",
         "bright_red": "#4B0000",
-        "bright_green": "#00A7C4",
+        "bright_green": "#00A8C4",
         "bright_yellow": "#1944A0",
         "bright_blue": "#367600",
-        "bright_magenta": "#2F0060",
+        "bright_magenta": "#2F0061",
         "bright_cyan": "#12768B",
         "bright_white": "#160403"
       },
@@ -9672,10 +9672,10 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 12.95,
-          "shifted_min_delta_e_ok": 4.44,
-          "shifted_lightness_mean": 0.2841,
-          "shifted_lightness_range": 0.1034
+          "normal_min_delta_e_ok": 12.97,
+          "shifted_min_delta_e_ok": 4.39,
+          "shifted_lightness_mean": 0.2842,
+          "shifted_lightness_range": 0.1045
         },
         "continuous": {
           "shifted_lightness_direction": "decreasing",

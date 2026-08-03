@@ -9,6 +9,7 @@ import numpy as np
 from redshift_safe.color import (
     contrast_ratio,
     hex_to_srgb,
+    pairwise_distances,
     perceived_lab,
     srgb_to_hex,
     warm_transform,
@@ -42,12 +43,23 @@ def test_categorical_shifted_separation_and_lightness_budget() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
         profile = manifest["profiles"][family["profile"]]
+        categories = np.asarray(
+            [hex_to_srgb(color) for color in family["categorical"].values()]
+        )
+        shifted = perceived_lab(categories, profile["rgb_gains"])
+        normal = perceived_lab(categories, (1.0, 1.0, 1.0))
+        shifted_min = float(pairwise_distances(shifted).min())
+        normal_min = float(pairwise_distances(normal).min())
+        lightness_range = float(np.ptp(shifted[:, 0]))
         metrics = family["metrics"]["categorical"]
-        assert metrics["shifted_min_delta_e_ok"] >= profile[
+        assert shifted_min >= profile[
             "categorical_minimum_delta_e_ok_target"
         ], family["slug"]
-        assert metrics["shifted_lightness_range"] <= 0.11, family["slug"]
-        assert metrics["normal_min_delta_e_ok"] >= 8.0, family["slug"]
+        assert lightness_range <= 0.11, family["slug"]
+        assert normal_min >= 8.0, family["slug"]
+        assert metrics["shifted_min_delta_e_ok"] == round(shifted_min, 2)
+        assert metrics["normal_min_delta_e_ok"] == round(normal_min, 2)
+        assert metrics["shifted_lightness_range"] == round(lightness_range, 4)
 
 
 def test_continuous_maps_are_monotonic_and_nearly_even_after_shift() -> None:

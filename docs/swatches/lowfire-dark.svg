@@ -33,11 +33,11 @@
 <rect x="436" y="187" width="68" height="44" fill="#BF00FF"/>
 <rect x="504" y="187" width="68" height="44" fill="#E2CCAA"/>
 <rect x="572" y="187" width="68" height="44" fill="#AD967A"/>
-<rect x="640" y="187" width="68" height="44" fill="#E75242"/>
+<rect x="640" y="187" width="68" height="44" fill="#E85242"/>
 <rect x="708" y="187" width="68" height="44" fill="#66FF5F"/>
-<rect x="776" y="187" width="68" height="44" fill="#9DBCFF"/>
-<rect x="844" y="187" width="68" height="44" fill="#78D3A5"/>
-<rect x="912" y="187" width="68" height="44" fill="#BD87AC"/>
+<rect x="776" y="187" width="68" height="44" fill="#9EBCFF"/>
+<rect x="844" y="187" width="68" height="44" fill="#78D2A5"/>
+<rect x="912" y="187" width="68" height="44" fill="#BD87AD"/>
 <rect x="980" y="187" width="68" height="44" fill="#CC59FF"/>
 <rect x="1048" y="187" width="68" height="44" fill="#FFF0D0"/>
 <text x="28" y="264" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical 1–8</text>

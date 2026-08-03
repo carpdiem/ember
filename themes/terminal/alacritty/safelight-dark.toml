@@ -20,10 +20,10 @@ white = "#DDBA94"
 
 [colors.bright]
 black = "#AE8669"
-red = "#F65545"
+red = "#F75545"
 green = "#A8FF61"
 yellow = "#C368FF"
 blue = "#CBF8FF"
 magenta = "#DF50A5"
-cyan = "#CBB46E"
+cyan = "#CAB46E"
 white = "#FFE9C8"

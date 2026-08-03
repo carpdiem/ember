@@ -205,7 +205,10 @@ def _metrics(family: FamilyDefinition, categories: np.ndarray, sequential: np.nd
 
 
 def generate_family(family: FamilyDefinition) -> dict[str, Any]:
-    categories = _categorical_colors(family)
+    category_hex = [srgb_to_hex(color) for color in _categorical_colors(family)]
+    # Categorical and terminal consumers receive Hex8, so their guarantees must
+    # be measured from the reparsed serialized values rather than optimizer floats.
+    categories = np.asarray([hex_to_srgb(color) for color in category_hex])
     # The float samples are the canonical colormap.  Round them to a stable JSON
     # representation *before* calculating metrics so the published guarantees
     # describe exactly what downstream consumers receive.  Hex8 is a convenient
@@ -220,7 +223,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "profile": family.profile.slug,
         "surfaces": family.surfaces,
         "terminal": dict(zip(ANSI_NAMES, terminal_values)),
-        "categorical": dict(zip(CATEGORY_NAMES, (srgb_to_hex(c) for c in categories))),
+        "categorical": dict(zip(CATEGORY_NAMES, category_hex)),
         "continuous_rgb": sequential.tolist(),
         "continuous_hex8": [srgb_to_hex(color) for color in sequential],
         "metrics": _metrics(family, categories, sequential),

@@ -206,6 +206,8 @@ For each family:
 3. pick a high-chroma seed; then
 4. repeatedly choose the candidate farthest from everything already selected.
 
+The chosen colors are serialized to Hex8 and reparsed before categorical metrics or derived ANSI colors are calculated. The published guarantees therefore describe the exact values consumers receive, not the optimizer's higher-precision intermediates.
+
 As the red shift becomes stronger, the allowed lightness budget expands from roughly 4–5 Oklab points to about 10. That trade is deliberate: at the Safelight tier, strict isoluminance would cause more actual category collisions.
 
 ## 5. Build sequential maps with no false brightness cliffs
@@ -238,12 +240,12 @@ Current generated metrics:
 
 | Family | Min shifted category ΔE<sub>OK</sub> | Shifted category L range | Sequential step CV | Min primary-text contrast |
 |---|---:|---:|---:|---:|
-| Ember Dark | 9.24 | 0.0372 | 0.0006 | 8.41:1 |
-| Ember Light | 9.45 | 0.0450 | 0.0005 | 7.12:1 |
-| Lowfire Dark | 5.80 | 0.0638 | 0.0024 | 7.05:1 |
-| Lowfire Light | 5.14 | 0.0664 | 0.0004 | 5.37:1 |
-| Safelight Dark | 4.39 | 0.1029 | 0.0000 | 5.63:1 |
-| Safelight Light | 4.44 | 0.1034 | 0.0000 | 4.62:1 |
+| Ember Dark | 9.21 | 0.0366 | 0.0006 | 8.41:1 |
+| Ember Light | 9.45 | 0.0458 | 0.0005 | 7.12:1 |
+| Lowfire Dark | 5.94 | 0.0651 | 0.0024 | 7.05:1 |
+| Lowfire Light | 5.07 | 0.0658 | 0.0004 | 5.37:1 |
+| Safelight Dark | 4.40 | 0.1034 | 0.0000 | 5.63:1 |
+| Safelight Light | 4.39 | 0.1045 | 0.0000 | 4.62:1 |
 
 The test suite rejects a generated release unless:
 
