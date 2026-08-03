@@ -212,7 +212,12 @@ def _metrics(family: FamilyDefinition, categories: np.ndarray, sequential: np.nd
 
 def generate_family(family: FamilyDefinition) -> dict[str, Any]:
     categories = _categorical_colors(family)
-    sequential = _sequential_colors(family)
+    # The float samples are the canonical colormap.  Round them to a stable JSON
+    # representation *before* calculating metrics so the published guarantees
+    # describe exactly what downstream consumers receive.  Hex8 is a convenient
+    # preview/fallback, but 8-bit quantization is too coarse to carry the strict
+    # uniform-step guarantee at 256 samples.
+    sequential = np.round(_sequential_colors(family), 10)
     terminal_values = _terminal_colors(family, categories)
     return {
         "slug": family.slug,
@@ -222,7 +227,8 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "surfaces": family.surfaces,
         "terminal": dict(zip(ANSI_NAMES, terminal_values)),
         "categorical": dict(zip(CATEGORY_NAMES, (srgb_to_hex(c) for c in categories))),
-        "continuous": [srgb_to_hex(color) for color in sequential],
+        "continuous_rgb": sequential.tolist(),
+        "continuous_hex8": [srgb_to_hex(color) for color in sequential],
         "metrics": _metrics(family, categories, sequential),
     }
 
@@ -239,7 +245,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "project": "Redshift Safe Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "

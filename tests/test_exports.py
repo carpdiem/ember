@@ -2,10 +2,15 @@ from __future__ import annotations
 
 import json
 import plistlib
-import tomllib
 from pathlib import Path
 
 import matplotlib.colors
+import numpy as np
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10
+    import tomli as tomllib
 
 from redshift_safe import categorical, sequential
 
@@ -21,6 +26,7 @@ SLUGS = (
 
 
 def test_matplotlib_adapters() -> None:
+    manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
     for slug in SLUGS:
         categorical_map = categorical(slug)
         sequential_map = sequential(slug)
@@ -28,6 +34,7 @@ def test_matplotlib_adapters() -> None:
         assert isinstance(sequential_map, matplotlib.colors.ListedColormap)
         assert categorical_map.N == 8
         assert sequential_map.N == 256
+        assert np.allclose(sequential_map.colors, manifest["families"][slug]["continuous_rgb"])
 
 
 def test_alacritty_exports_parse() -> None:

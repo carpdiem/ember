@@ -52,7 +52,7 @@ def _css(manifest: dict) -> str:
             lines.append(f"  --rs-{name.replace('_', '-')}: {value};")
         for name, value in family["categorical"].items():
             lines.append(f"  --rs-category-{name}: {value};")
-        continuous = family["continuous"]
+        continuous = family["continuous_hex8"]
         stops = [continuous[round(i * 255 / 10)] for i in range(11)]
         gradient = ", ".join(f"{color} {i * 10}%" for i, color in enumerate(stops))
         lines.append(f"  --rs-sequential: linear-gradient(90deg, {gradient});")
@@ -177,7 +177,7 @@ def _family_svg(family: dict, profile: dict) -> str:
         canvas.append(f'<rect x="{x}" y="{y}" width="132" height="58" rx="5" fill="{value}"/>')
         canvas.append(_svg_text(x + 21, y + 36, value, 13, _label_color(value)))
         x += 140
-    continuous = family["continuous"]
+    continuous = family["continuous_hex8"]
     canvas.append(_svg_text(28, 370, "Sequential (low → high)", 13, "#B9AC98"))
     x, y = 28, 384
     for index, value in enumerate(continuous):
@@ -207,7 +207,7 @@ def _overview_svg(manifest: dict) -> str:
             parts.append(f'<rect x="{x}" y="{y}" width="63" height="52" rx="5" fill="{value}"/>')
             x += 68
         x, gradient_y = 285, y + 68
-        for index, value in enumerate(family["continuous"]):
+        for index, value in enumerate(family["continuous_hex8"]):
             parts.append(f'<rect x="{x + index * 3.37:.2f}" y="{gradient_y}" width="3.6" height="28" fill="{value}"/>')
         parts.append(f'<rect x="{285}" y="{y + 108}" width="860" height="22" rx="4" fill="{family["surfaces"]["background"]}"/>')
         parts.append(_svg_text(300, y + 124, "Aa  foreground / background", 12, family["surfaces"]["foreground"]))
@@ -235,7 +235,7 @@ def _preview_png(manifest: dict, path: Path) -> None:
             x = 150 + index * 112
             draw.rounded_rectangle((x, y + 18, x + 100, y + 74), 5, fill=rgb)
             draw.rounded_rectangle((x, y + 88, x + 100, y + 144), 5, fill=shifted)
-        sequence = family["continuous"]
+        sequence = family["continuous_hex8"]
         for index, value in enumerate(sequence):
             rgb = tuple(round(channel * 255) for channel in hex_to_srgb(value))
             shifted = tuple(round(channel * 255) for channel in warm_transform(hex_to_srgb(value), gains))

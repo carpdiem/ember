@@ -4,7 +4,15 @@ import json
 import re
 from pathlib import Path
 
-from redshift_safe.color import contrast_ratio, hex_to_srgb, srgb_to_hex, warm_transform
+import numpy as np
+
+from redshift_safe.color import (
+    contrast_ratio,
+    hex_to_srgb,
+    perceived_lab,
+    srgb_to_hex,
+    warm_transform,
+)
 from redshift_safe.generate import generate_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,7 +30,11 @@ def test_six_complete_families() -> None:
     for family in manifest["families"].values():
         assert len(family["terminal"]) == 16
         assert len(family["categorical"]) == 8
-        assert len(family["continuous"]) == 256
+        assert len(family["continuous_rgb"]) == 256
+        assert len(family["continuous_hex8"]) == 256
+        assert [srgb_to_hex(color) for color in family["continuous_rgb"]] == family[
+            "continuous_hex8"
+        ]
         assert len(family["surfaces"]) >= 7
 
 
@@ -41,11 +53,23 @@ def test_categorical_shifted_separation_and_lightness_budget() -> None:
 def test_continuous_maps_are_monotonic_and_nearly_even_after_shift() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
+        sequence = np.asarray(family["continuous_rgb"], dtype=float)
+        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+        shifted = perceived_lab(sequence, gains)
+        direction = 1.0 if shifted[-1, 0] >= shifted[0, 0] else -1.0
+        lightness_steps = np.diff(shifted[:, 0]) * direction
+        perceptual_steps = np.linalg.norm(np.diff(shifted, axis=0), axis=1) * 100.0
+        cv = float(perceptual_steps.std() / perceptual_steps.mean())
+        max_to_min = float(perceptual_steps.max() / perceptual_steps.min())
         metrics = family["metrics"]["continuous"]
-        assert metrics["minimum_signed_lightness_step"] > 0.0, family["slug"]
-        assert metrics["shifted_lightness_range"] >= 0.50, family["slug"]
-        assert metrics["delta_e_ok_cv"] <= 0.08, family["slug"]
-        assert metrics["delta_e_ok_max_to_min"] <= 1.60, family["slug"]
+        assert len({tuple(color) for color in sequence}) == 256, family["slug"]
+        assert lightness_steps.min() > 0.0, family["slug"]
+        assert np.ptp(shifted[:, 0]) >= 0.50, family["slug"]
+        assert cv <= 0.08, family["slug"]
+        assert max_to_min <= 1.60, family["slug"]
+        assert metrics["minimum_signed_lightness_step"] == round(float(lightness_steps.min()), 6)
+        assert metrics["delta_e_ok_cv"] == round(cv, 4)
+        assert metrics["delta_e_ok_max_to_min"] == round(max_to_min, 3)
 
 
 def test_primary_text_contrast_survives_profile() -> None:

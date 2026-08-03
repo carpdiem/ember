@@ -9,7 +9,12 @@ authors = [{ name = "Michael Woods" }]
 dependencies = ["matplotlib>=3.8", "numpy>=1.26"]
 
 [project.optional-dependencies]
-dev = ["pillow>=10", "pytest>=8", "scipy>=1.12"]
+dev = [
+  "pillow>=10",
+  "pytest>=8",
+  "scipy>=1.12",
+  "tomli>=2; python_version < '3.11'",
+]
 
 [build-system]
 requires = ["hatchling"]

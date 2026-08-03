@@ -23,9 +23,9 @@ Each linked specification sheet contains:
 - exact hex values for three backgrounds, three foregrounds, and a selection surface;
 - exact hex values for eight categorical colors;
 - swatches for ANSI 0–15 terminal colors; and
-- the full 256-sample sequential map.
+- an 8-bit preview of the full 256-sample sequential map.
 
-Every exact terminal and continuous value is in the canonical JSON manifest.
+Every exact terminal value and every canonical continuous sample is in the JSON manifest. `continuous_rgb` contains the 10-decimal sRGB floats used by Python and by the published metrics; `continuous_hex8` is the deliberately quantized preview/fallback used in SVG and CSS artifacts.
 
 <details>
 <summary><strong>Expand the exact specification sheets</strong></summary>
@@ -103,7 +103,7 @@ Load [`redshift-safe-palettes.css`](palettes/redshift-safe-palettes.css), then s
 .heatmap-key { background: var(--rs-sequential); }
 ```
 
-CSS exposes eleven representative gradient stops. JSON and Python preserve all 256 samples.
+CSS exposes eleven representative 8-bit gradient stops. JSON and Python preserve all 256 canonical float samples.
 
 ### Terminals
 
@@ -201,12 +201,15 @@ As the red shift becomes stronger, the allowed lightness budget expands from rou
 
 Each sequential map starts from a small set of human-chosen sRGB/Oklab path anchors. The generator then:
 
-1. interpolates a dense path in commanded Oklab;
-2. applies the target redshift to every dense sample;
-3. measures cumulative distance in transformed Oklab; and
-4. resamples 256 colors at equal transformed-distance intervals.
+1. rounds the hand-authored anchor corners into a smooth Oklab path;
+2. interpolates that into a dense commanded-color path;
+3. applies the target redshift to every dense sample;
+4. measures cumulative distance in transformed Oklab; and
+5. resamples 256 colors at equal transformed-distance intervals.
 
-The result has monotonic transformed lightness and nearly constant perceptual step size. Light families run light → dark so low values can merge quietly into a light canvas; dark families run dark → light.
+The canonical result is serialized as 10-decimal sRGB floats, then its metrics are recomputed from those exact serialized values. It has monotonic transformed lightness and nearly constant perceptual step size. Light families run light → dark so low values can merge quietly into a light canvas; dark families run dark → light.
+
+The companion `continuous_hex8` arrays are convenient for previews and older consumers, but 8-bit quantization adds visible numerical jitter at 256 samples. The strict monotonicity and step-uniformity guarantees apply to `continuous_rgb`, which is also what the Matplotlib adapter consumes.
 
 This follows the core lesson behind Viridis and other perceptual maps: ordered data should be carried by monotonic lightness, and equal data steps should not create fake visual boundaries.
 
@@ -233,11 +236,11 @@ Current generated metrics:
 
 The test suite rejects a generated release unless:
 
-- all six families contain 16 ANSI, 8 categorical, and 256 sequential colors;
+- all six families contain 16 ANSI, 8 categorical, 256 canonical float sequential samples, and 256 matching 8-bit previews;
 - categorical colors meet profile-specific transformed separation floors;
 - transformed categorical lightness stays inside the declared budget;
-- sequential lightness is strictly monotonic;
-- sequential transformed-step coefficient of variation is ≤ 0.08;
+- canonical serialized sequential lightness is strictly monotonic;
+- canonical serialized transformed-step coefficient of variation is ≤ 0.08;
 - primary and selected text remain at least 4.5:1 against their transformed surfaces;
 - every non-background ANSI slot remains at least 3:1 against the primary background, and light-mode ANSI black remains at least 4.5:1;
 - 35% and 12% linear-light dimming preserve ordering and degrade separation smoothly; and
@@ -275,13 +278,14 @@ For serious field astronomy, a measured dim display plus a physical deep-red fil
 - **Not color-vision-deficiency certification.** Redshift and CVD are different transforms. Critical interfaces must test both and retain redundant encoding.
 - **Not isoluminant at the extreme tier.** Safelight uses up to about 0.104 Oklab lightness range across eight categories because the transformed hue gamut is too narrow for strict equal-lightness separation.
 - **Not universally optimal.** A palette is a system component; font weight, line width, area, surrounding colors, ambient light, and data density still matter.
+- **Hex8 gradients are previews, not the metric-bearing map.** Eight-bit channel quantization is too coarse to preserve strict 256-step monotonicity and uniformity under the severe transforms; use `continuous_rgb` or the Python adapter when those properties matter.
 
 ---
 
 # Repository map
 
 ```text
-palettes/                         canonical JSON + CSS exports
+palettes/                         canonical float JSON + quantized CSS exports
 src/redshift_safe/               color math, definitions, generator, Matplotlib API
 themes/terminal/                 Alacritty, iTerm2, Windows Terminal imports
 docs/swatches/                   exact SVG specs and transform comparisons
@@ -297,7 +301,7 @@ Generated artifacts should not be hand-edited. Change [`definitions.py`](src/red
 # Sources and intellectual lineage
 
 - Apple, [Use Night Shift on your Mac](https://support.apple.com/en-us/102191) — behavior and display-dependence; no universal transform published.
-- Redshift, [pinned color-ramp implementation](https://github.com/jonls/redshift/blob/490ba2aae9cfee097a88b6e2be98aeb1ce990050/src/colorramp.c) and [2000 K ramp table](https://github.com/jonls/redshift/blob/490ba2aae9cfee097a88b6e2be98aeb1ce990050/README-colorramp) — exact middle-tier signal gains and gamma-LUT ordering.
+- Redshift, [pinned color-ramp implementation](https://github.com/jonls/redshift/blob/490ba2aae9cfee097a88b6e2be98aeb1ce990050/src/colorramp.c) and [temperature ramp table](https://github.com/jonls/redshift/blob/490ba2aae9cfee097a88b6e2be98aeb1ce990050/README-colorramp) — exact 2000 K and 1200 K signal gains and gamma-LUT ordering.
 - Matplotlib, [Choosing Colormaps](https://matplotlib.org/stable/users/explain/colors/colormaps.html) — monotonic lightness and perceptually uniform sequential maps.
 - Smith & van der Walt, [A Better Default Colormap / Viridis design](https://bids.github.io/colormap/) — equal perceptual steps, gamut awareness, and transform-based evaluation.
 - Björn Ottosson, [A perceptual color space for image processing](https://bottosson.github.io/posts/oklab/) — Oklab definition and matrices.

@@ -10,13 +10,16 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.13"]
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: astral-sh/setup-uv@v9.0.0
         with:
           enable-cache: true
-      - run: uv python install 3.11
-      - run: uv sync --locked --extra dev --python 3.11
-      - run: uv run --python 3.11 pytest -q
-      - run: uv run --python 3.11 --extra dev python tools/build_all.py --check
+      - run: uv python install ${{ matrix.python-version }}
+      - run: uv sync --locked --extra dev --python ${{ matrix.python-version }}
+      - run: uv run --python ${{ matrix.python-version }} pytest -q
+      - run: uv run --python ${{ matrix.python-version }} --extra dev python tools/build_all.py --check
       - run: uv build

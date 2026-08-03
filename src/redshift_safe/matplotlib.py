@@ -30,4 +30,4 @@ def categorical(slug: str) -> ListedColormap:
 def sequential(slug: str) -> ListedColormap:
     """Return the 256-sample sequential map for a family."""
     family = _family(slug)
-    return ListedColormap(family["continuous"], name=f"{slug}-sequential")
+    return ListedColormap(family["continuous_rgb"], name=f"{slug}-sequential")
