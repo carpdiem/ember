@@ -9,7 +9,7 @@ background = "#D7B17C"
 text = "#281A14"
 
 [colors.normal]
-black = "#DEC49D"
+black = "#281A14"
 red = "#9B0000"
 green = "#00B600"
 yellow = "#5B6DFF"

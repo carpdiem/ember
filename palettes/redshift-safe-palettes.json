@@ -383,7 +383,7 @@
         "selection": "#D2C1A7"
       },
       "terminal": {
-        "black": "#DFD1BD",
+        "black": "#29251F",
         "red": "#9200F6",
         "green": "#008900",
         "yellow": "#0964FF",
@@ -1043,7 +1043,7 @@
         "selection": "#D7B17C"
       },
       "terminal": {
-        "black": "#DEC49D",
+        "black": "#281A14",
         "red": "#9B0000",
         "green": "#00B600",
         "yellow": "#5B6DFF",
@@ -1369,7 +1369,7 @@
         "background_high": "#260B08",
         "foreground": "#FFE9C8",
         "foreground_soft": "#DDBA94",
-        "foreground_muted": "#A77F62",
+        "foreground_muted": "#AA8265",
         "selection": "#4B1D13"
       },
       "terminal": {
@@ -1381,7 +1381,7 @@
         "magenta": "#E4009B",
         "cyan": "#B6B664",
         "white": "#DDBA94",
-        "bright_black": "#A77F62",
+        "bright_black": "#AA8265",
         "bright_red": "#FF5948",
         "bright_green": "#B5FF61",
         "bright_yellow": "#D45CFF",
@@ -1682,9 +1682,9 @@
           "foreground_soft_on_background": 4.68,
           "foreground_soft_on_background_alt": 4.57,
           "foreground_soft_on_background_high": 4.36,
-          "foreground_muted_on_background": 2.92,
-          "foreground_muted_on_background_alt": 2.85,
-          "foreground_muted_on_background_high": 2.72
+          "foreground_muted_on_background": 3.0,
+          "foreground_muted_on_background_alt": 2.93,
+          "foreground_muted_on_background_high": 2.8
         }
       }
     },
@@ -1703,7 +1703,7 @@
         "selection": "#CF8755"
       },
       "terminal": {
-        "black": "#DDAE80",
+        "black": "#160403",
         "red": "#640000",
         "green": "#00BF00",
         "yellow": "#2452FF",

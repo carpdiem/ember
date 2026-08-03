@@ -4,7 +4,7 @@ import json
 import re
 from pathlib import Path
 
-from redshift_safe.color import hex_to_srgb, srgb_to_hex
+from redshift_safe.color import contrast_ratio, hex_to_srgb, srgb_to_hex, warm_transform
 from redshift_safe.generate import generate_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +54,23 @@ def test_primary_text_contrast_survives_profile() -> None:
         contrasts = family["metrics"]["shifted_text_contrast"]
         primary = [value for key, value in contrasts.items() if key.startswith("foreground_on_")]
         assert min(primary) >= 4.5, family["slug"]
+
+
+def test_terminal_foregrounds_remain_visible_after_shift() -> None:
+    manifest = generate_manifest()
+    for family in manifest["families"].values():
+        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+        background = warm_transform(hex_to_srgb(family["surfaces"]["background"]), gains)
+        transformed = {
+            name: warm_transform(hex_to_srgb(value), gains)
+            for name, value in family["terminal"].items()
+        }
+        visible_slots = {
+            name: value for name, value in transformed.items() if name != "black"
+        }
+        assert min(contrast_ratio(value, background) for value in visible_slots.values()) >= 3.0
+        if family["mode"] == "light":
+            assert contrast_ratio(transformed["black"], background) >= 4.5
 
 
 def test_hex_round_trip_is_stable() -> None:

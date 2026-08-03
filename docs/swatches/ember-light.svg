@@ -24,7 +24,7 @@
 <text x="984" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">selection</text>
 <text x="984" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#D2C1A7</text>
 <text x="28" y="174" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">ANSI 0–15</text>
-<rect x="28" y="187" width="68" height="44" fill="#DFD1BD"/>
+<rect x="28" y="187" width="68" height="44" fill="#29251F"/>
 <rect x="96" y="187" width="68" height="44" fill="#9200F6"/>
 <rect x="164" y="187" width="68" height="44" fill="#008900"/>
 <rect x="232" y="187" width="68" height="44" fill="#0964FF"/>

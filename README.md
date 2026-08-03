@@ -237,6 +237,7 @@ The test suite rejects a generated release unless:
 - sequential lightness is strictly monotonic;
 - sequential transformed-step coefficient of variation is ≤ 0.08;
 - primary text remains at least 4.5:1 against all three family backgrounds after the target transform;
+- every non-background ANSI slot remains at least 3:1 against the primary background, and light-mode ANSI black remains at least 4.5:1;
 - 35% and 12% linear-light dimming preserve ordering and degrade separation smoothly; and
 - JSON, CSS, Alacritty, iTerm2, Windows Terminal, Matplotlib, and rendered swatch artifacts agree with the generator.
 

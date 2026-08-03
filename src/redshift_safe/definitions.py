@@ -143,7 +143,7 @@ FAMILIES = (
             "background_high": "#260B08",
             "foreground": "#FFE9C8",
             "foreground_soft": "#DDBA94",
-            "foreground_muted": "#A77F62",
+            "foreground_muted": "#AA8265",
             "selection": "#4B1D13",
         },
         categorical_lightness=0.58,

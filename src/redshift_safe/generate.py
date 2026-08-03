@@ -102,8 +102,13 @@ def _mix_oklab(color: np.ndarray, target: np.ndarray, amount: float) -> np.ndarr
 
 def _terminal_colors(family: FamilyDefinition, categories: np.ndarray) -> list[str]:
     surfaces = family.surfaces
+    first_neutral = (
+        hex_to_srgb(surfaces["background_high"])
+        if family.mode == "dark"
+        else hex_to_srgb(surfaces["foreground"])
+    )
     normal = [
-        hex_to_srgb(surfaces["background_high"]),
+        first_neutral,
         *categories[:6],
         hex_to_srgb(surfaces["foreground_soft"]),
     ]
