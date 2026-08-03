@@ -161,7 +161,7 @@ FAMILIES = (
             "foreground": "#160403",
             "foreground_soft": "#48170F",
             "foreground_muted": "#70301F",
-            "selection": "#CF8755",
+            "selection": "#E5A876",
         },
         categorical_lightness=0.28,
         sequential_anchors=("#FFE8C5", "#D98C3E", "#A85B45", "#74304E", "#45143C", "#160405"),

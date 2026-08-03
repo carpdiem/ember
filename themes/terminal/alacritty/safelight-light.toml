@@ -5,7 +5,7 @@ background = "#FFE8C5"
 foreground = "#160403"
 
 [colors.selection]
-background = "#CF8755"
+background = "#E5A876"
 text = "#160403"
 
 [colors.normal]

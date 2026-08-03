@@ -54,6 +54,10 @@ def test_primary_text_contrast_survives_profile() -> None:
         contrasts = family["metrics"]["shifted_text_contrast"]
         primary = [value for key, value in contrasts.items() if key.startswith("foreground_on_")]
         assert min(primary) >= 4.5, family["slug"]
+        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+        foreground = warm_transform(hex_to_srgb(family["surfaces"]["foreground"]), gains)
+        selection = warm_transform(hex_to_srgb(family["surfaces"]["selection"]), gains)
+        assert contrast_ratio(foreground, selection) >= 4.5, family["slug"]
 
 
 def test_terminal_foregrounds_remain_visible_after_shift() -> None:
