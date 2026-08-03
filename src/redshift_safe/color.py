@@ -81,16 +81,9 @@ def warm_transform(rgb: Array, gains: Iterable[float]) -> Array:
     return np.clip(np.asarray(rgb, dtype=float) * np.asarray(tuple(gains), dtype=float), 0, 1)
 
 
-def brightness_transform(rgb: Array, level: float) -> Array:
-    """Scale emitted linear-light energy to approximate a dimmed display."""
-    return linear_to_srgb(srgb_to_linear(np.asarray(rgb, dtype=float)) * level)
-
-
-def perceived_lab(rgb: Array, gains: Iterable[float], brightness: float = 1.0) -> Array:
-    shifted = warm_transform(rgb, gains)
-    if brightness != 1.0:
-        shifted = brightness_transform(shifted, brightness)
-    return srgb_to_oklab(shifted)
+def perceived_lab(rgb: Array, gains: Iterable[float]) -> Array:
+    """Convert commanded sRGB to Oklab after an explicit warm-display transform."""
+    return srgb_to_oklab(warm_transform(rgb, gains))
 
 
 def wcag_luminance(rgb: Array) -> Array:

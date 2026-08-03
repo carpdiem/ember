@@ -114,18 +114,6 @@ def test_committed_manifest_matches_generator() -> None:
     assert packaged == expected
 
 
-def test_dimmed_metrics_degrade_smoothly_not_catastrophically() -> None:
-    manifest = generate_manifest()
-    for family in manifest["families"].values():
-        metrics = family["metrics"]["categorical"]
-        full = metrics["shifted_min_delta_e_ok"]
-        medium = metrics["shifted_min_delta_e_ok_at_0.35_brightness"]
-        low = metrics["shifted_min_delta_e_ok_at_0.12_brightness"]
-        assert full > medium > low > 0
-        assert medium >= full * 0.65
-        assert low >= full * 0.40
-
-
 def test_readme_local_links_exist() -> None:
     text = (ROOT / "README.md").read_text(encoding="utf-8")
     local_targets = [

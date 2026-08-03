@@ -225,14 +225,14 @@ At strong shifts, syntax color should be a fast cue—not the only cue. Good ter
 
 Current generated metrics:
 
-| Family | Min shifted category ΔE<sub>OK</sub> | Shifted category L range | ΔE<sub>OK</sub> at 12% brightness | Sequential step CV | Min primary-text contrast |
-|---|---:|---:|---:|---:|---:|
-| Ember Dark | 9.24 | 0.0372 | 4.56 | 0.0006 | 8.41:1 |
-| Ember Light | 9.45 | 0.0450 | 4.66 | 0.0005 | 7.12:1 |
-| Lowfire Dark | 5.80 | 0.0638 | 2.86 | 0.0024 | 7.05:1 |
-| Lowfire Light | 5.14 | 0.0664 | 2.53 | 0.0004 | 5.37:1 |
-| Safelight Dark | 4.39 | 0.1029 | 2.17 | 0.0000 | 5.63:1 |
-| Safelight Light | 4.44 | 0.1034 | 2.19 | 0.0000 | 4.62:1 |
+| Family | Min shifted category ΔE<sub>OK</sub> | Shifted category L range | Sequential step CV | Min primary-text contrast |
+|---|---:|---:|---:|---:|
+| Ember Dark | 9.24 | 0.0372 | 0.0006 | 8.41:1 |
+| Ember Light | 9.45 | 0.0450 | 0.0005 | 7.12:1 |
+| Lowfire Dark | 5.80 | 0.0638 | 0.0024 | 7.05:1 |
+| Lowfire Light | 5.14 | 0.0664 | 0.0004 | 5.37:1 |
+| Safelight Dark | 4.39 | 0.1029 | 0.0000 | 5.63:1 |
+| Safelight Light | 4.44 | 0.1034 | 0.0000 | 4.62:1 |
 
 The test suite rejects a generated release unless:
 
@@ -242,8 +242,7 @@ The test suite rejects a generated release unless:
 - canonical serialized sequential lightness is strictly monotonic;
 - canonical serialized transformed-step coefficient of variation is ≤ 0.08;
 - primary and selected text remain at least 4.5:1 against their transformed surfaces;
-- every non-background ANSI slot remains at least 3:1 against the primary background, and light-mode ANSI black remains at least 4.5:1;
-- 35% and 12% linear-light dimming preserve ordering and degrade separation smoothly; and
+- every non-background ANSI slot remains at least 3:1 against the primary background, and light-mode ANSI black remains at least 4.5:1; and
 - JSON, CSS, Alacritty, iTerm2, Windows Terminal, Matplotlib, and rendered swatch artifacts agree with the generator.
 
 Run the gates locally:
@@ -258,7 +257,9 @@ uv build
 
 # Display brightness and astronomy safety
 
-Turning down display brightness scales emitted linear-light energy. In an ideal black room it does not change the RGB ratios, but it **does** compress perceptual distances because fewer photons reach the eye. The generator therefore reports category separation at 35% and 12% linear-light output rather than assuming the full-brightness result holds.
+Turning down display brightness scales emitted energy, but a simple uniform linear-light multiplier is **not a meaningful palette robustness test**. Under this repository's Oklab math it merely multiplies every coordinate and pairwise distance by the same cube-root factor, regardless of palette quality. The generator therefore makes no low-brightness discrimination guarantee.
+
+Useful low-light validation needs absolute screen luminance, black level and flare, ambient illumination, adaptation state, viewing duration, and ideally measured spectral output. Those inputs are display- and situation-specific, so this repository treats brightness as an operational constraint rather than manufacturing a universal score.
 
 Three practical rules follow:
 

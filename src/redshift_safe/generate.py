@@ -174,12 +174,6 @@ def _metrics(family: FamilyDefinition, categories: np.ndarray, sequential: np.nd
         "shifted_lightness_mean": round(float(warm_categories[:, 0].mean()), 4),
         "shifted_lightness_range": round(float(np.ptp(warm_categories[:, 0])), 4),
     }
-    for brightness in (0.35, 0.12):
-        lab = perceived_lab(categories, gains, brightness)
-        category_metrics[f"shifted_min_delta_e_ok_at_{brightness:.2f}_brightness"] = round(
-            float(pairwise_distances(lab).min()), 2
-        )
-
     shifted_sequence = perceived_lab(sequential, gains)
     sequence_steps = np.linalg.norm(np.diff(shifted_sequence, axis=0), axis=1) * 100.0
     direction = 1.0 if shifted_sequence[-1, 0] >= shifted_sequence[0, 0] else -1.0

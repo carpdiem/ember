@@ -1625,9 +1625,7 @@
           "normal_min_delta_e_ok": 11.32,
           "shifted_min_delta_e_ok": 9.24,
           "shifted_lightness_mean": 0.6521,
-          "shifted_lightness_range": 0.0372,
-          "shifted_min_delta_e_ok_at_0.35_brightness": 6.51,
-          "shifted_min_delta_e_ok_at_0.12_brightness": 4.56
+          "shifted_lightness_range": 0.0372
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",
@@ -3237,9 +3235,7 @@
           "normal_min_delta_e_ok": 8.99,
           "shifted_min_delta_e_ok": 9.45,
           "shifted_lightness_mean": 0.4293,
-          "shifted_lightness_range": 0.045,
-          "shifted_min_delta_e_ok_at_0.35_brightness": 6.66,
-          "shifted_min_delta_e_ok_at_0.12_brightness": 4.66
+          "shifted_lightness_range": 0.045
         },
         "continuous": {
           "shifted_lightness_direction": "decreasing",
@@ -4849,9 +4845,7 @@
           "normal_min_delta_e_ok": 10.36,
           "shifted_min_delta_e_ok": 5.8,
           "shifted_lightness_mean": 0.5314,
-          "shifted_lightness_range": 0.0638,
-          "shifted_min_delta_e_ok_at_0.35_brightness": 4.09,
-          "shifted_min_delta_e_ok_at_0.12_brightness": 2.86
+          "shifted_lightness_range": 0.0638
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",
@@ -6461,9 +6455,7 @@
           "normal_min_delta_e_ok": 10.42,
           "shifted_min_delta_e_ok": 5.14,
           "shifted_lightness_mean": 0.4319,
-          "shifted_lightness_range": 0.0664,
-          "shifted_min_delta_e_ok_at_0.35_brightness": 3.62,
-          "shifted_min_delta_e_ok_at_0.12_brightness": 2.53
+          "shifted_lightness_range": 0.0664
         },
         "continuous": {
           "shifted_lightness_direction": "decreasing",
@@ -8073,9 +8065,7 @@
           "normal_min_delta_e_ok": 13.83,
           "shifted_min_delta_e_ok": 4.39,
           "shifted_lightness_mean": 0.5384,
-          "shifted_lightness_range": 0.1029,
-          "shifted_min_delta_e_ok_at_0.35_brightness": 3.1,
-          "shifted_min_delta_e_ok_at_0.12_brightness": 2.17
+          "shifted_lightness_range": 0.1029
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",
@@ -9685,9 +9675,7 @@
           "normal_min_delta_e_ok": 12.95,
           "shifted_min_delta_e_ok": 4.44,
           "shifted_lightness_mean": 0.2841,
-          "shifted_lightness_range": 0.1034,
-          "shifted_min_delta_e_ok_at_0.35_brightness": 3.13,
-          "shifted_min_delta_e_ok_at_0.12_brightness": 2.19
+          "shifted_lightness_range": 0.1034
         },
         "continuous": {
           "shifted_lightness_direction": "decreasing",
