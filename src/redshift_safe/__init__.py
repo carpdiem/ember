@@ -1,4 +1,4 @@
-"""Redshift Safe Palettes public Python API."""
+"""Ember redshift-safe palettes public Python API."""
 
 from .matplotlib import categorical, categorical_norm, encode_categories, sequential
 

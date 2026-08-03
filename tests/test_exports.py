@@ -6,6 +6,7 @@ from pathlib import Path
 
 import matplotlib.colors
 import numpy as np
+import pytest
 
 try:
     import tomllib
@@ -16,12 +17,10 @@ from redshift_safe import categorical, categorical_norm, encode_categories, sequ
 
 ROOT = Path(__file__).resolve().parents[1]
 SLUGS = (
-    "ember-dark",
-    "ember-light",
-    "lowfire-dark",
-    "lowfire-light",
-    "safelight-dark",
-    "safelight-light",
+    "3400k-dark",
+    "3400k-light",
+    "2000k-dark",
+    "1200k-dark",
 )
 
 
@@ -32,7 +31,7 @@ def test_matplotlib_adapters() -> None:
         sequential_map = sequential(slug)
         assert isinstance(categorical_map, matplotlib.colors.ListedColormap)
         assert isinstance(sequential_map, matplotlib.colors.ListedColormap)
-        assert categorical_map.N == 8
+        assert categorical_map.N == len(manifest["families"][slug]["categorical"])
         assert sequential_map.N == 256
         assert np.allclose(sequential_map.colors, manifest["families"][slug]["continuous_rgb"])
 
@@ -41,7 +40,11 @@ def test_categorical_encoding_is_stable_for_strings_and_subsets() -> None:
     order = ["control", "alpha", "beta", "gamma"]
     assert encode_categories(["control", "beta", "gamma"], order).tolist() == [0, 2, 3]
     assert encode_categories(["beta", "gamma"], order).tolist() == [2, 3]
-    assert categorical_norm()(np.asarray([0, 2, 3])).tolist() == [0, 2, 3]
+    assert categorical_norm("2000k-dark")(np.asarray([0, 2, 3])).tolist() == [0, 2, 3]
+    with pytest.raises(ValueError, match="1 and 6"):
+        encode_categories(["a"], list("abcdefg"))
+    with pytest.raises(ValueError, match="1 and 4"):
+        encode_categories(["a"], list("abcde"), slug="2000k-dark")
 
 
 def test_alacritty_exports_parse() -> None:

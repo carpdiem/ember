@@ -19,18 +19,31 @@ from redshift_safe.generate import generate_manifest
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_six_complete_families() -> None:
+def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert len(manifest["families"]) == 6
+    assert list(manifest["families"]) == [
+        "3400k-dark",
+        "3400k-light",
+        "2000k-dark",
+        "1200k-dark",
+    ]
     assert {family["mode"] for family in manifest["families"].values()} == {"dark", "light"}
     assert {family["profile"] for family in manifest["families"].values()} == {
-        "nightshift",
-        "redshift",
-        "safelight",
+        "3400k",
+        "2000k",
+        "1200k",
     }
+    assert [len(family["categorical"]) for family in manifest["families"].values()] == [
+        6,
+        6,
+        4,
+        3,
+    ]
+    assert [
+        family["terminal_semantic_color_count"] for family in manifest["families"].values()
+    ] == [6, 6, 2, 1]
     for family in manifest["families"].values():
         assert len(family["terminal"]) == 16
-        assert len(family["categorical"]) == 8
         assert len(family["continuous_rgb"]) == 256
         assert len(family["continuous_hex8"]) == 256
         assert [srgb_to_hex(color) for color in family["continuous_rgb"]] == family[
@@ -39,27 +52,25 @@ def test_six_complete_families() -> None:
         assert len(family["surfaces"]) >= 7
 
 
-def test_categorical_shifted_separation_and_lightness_budget() -> None:
+def test_categorical_shifted_separation_and_commanded_chroma_budget() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
         profile = manifest["profiles"][family["profile"]]
-        categories = np.asarray(
-            [hex_to_srgb(color) for color in family["categorical"].values()]
-        )
+        categories = np.asarray([hex_to_srgb(color) for color in family["categorical"].values()])
         shifted = perceived_lab(categories, profile["rgb_gains"])
         normal = perceived_lab(categories, (1.0, 1.0, 1.0))
         shifted_min = float(pairwise_distances(shifted).min())
         normal_min = float(pairwise_distances(normal).min())
         lightness_range = float(np.ptp(shifted[:, 0]))
+        normal_chroma_max = float(np.linalg.norm(normal[:, 1:], axis=1).max())
         metrics = family["metrics"]["categorical"]
-        assert shifted_min >= profile[
-            "categorical_minimum_delta_e_ok_target"
-        ], family["slug"]
-        assert lightness_range <= 0.11, family["slug"]
-        assert normal_min >= 8.0, family["slug"]
+        assert shifted_min >= profile["categorical_minimum_delta_e_ok_target"], family["slug"]
+        assert normal_chroma_max <= 0.09, family["slug"]
+        assert normal_min >= 5.0, family["slug"]
         assert metrics["shifted_min_delta_e_ok"] == round(shifted_min, 2)
         assert metrics["normal_min_delta_e_ok"] == round(normal_min, 2)
         assert metrics["shifted_lightness_range"] == round(lightness_range, 4)
+        assert metrics["normal_chroma_max"] == round(normal_chroma_max, 4)
 
 
 def test_continuous_maps_are_monotonic_and_nearly_even_after_shift() -> None:
@@ -105,10 +116,14 @@ def test_terminal_foregrounds_remain_visible_after_shift() -> None:
             name: warm_transform(hex_to_srgb(value), gains)
             for name, value in family["terminal"].items()
         }
-        visible_slots = {
-            name: value for name, value in transformed.items() if name != "black"
+        small_text_slots = {
+            name: value
+            for name, value in transformed.items()
+            if name not in {"black", "bright_black"}
         }
-        assert min(contrast_ratio(value, background) for value in visible_slots.values()) >= 3.0
+        measured = min(contrast_ratio(value, background) for value in small_text_slots.values())
+        assert measured >= 4.5
+        assert family["terminal_minimum_shifted_contrast"] == round(measured, 2)
         if family["mode"] == "light":
             assert contrast_ratio(transformed["black"], background) >= 4.5
 

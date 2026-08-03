@@ -1,0 +1,22 @@
+{
+  "name": "1200K Dark",
+  "black": "#3A2B25",
+  "red": "#EAD0A9",
+  "green": "#EAD0A9",
+  "yellow": "#EAD0A9",
+  "blue": "#EAD0A9",
+  "purple": "#EAD0A9",
+  "cyan": "#EAD0A9",
+  "white": "#F2D9B5",
+  "brightBlack": "#A28B70",
+  "brightRed": "#EAD0A9",
+  "brightGreen": "#EAD0A9",
+  "brightYellow": "#EAD0A9",
+  "brightBlue": "#EAD0A9",
+  "brightPurple": "#EAD0A9",
+  "brightCyan": "#EAD0A9",
+  "brightWhite": "#F2D9B5",
+  "background": "#2C211D",
+  "foreground": "#F2D9B5",
+  "selectionBackground": "#3A2B25"
+}

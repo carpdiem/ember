@@ -1,7 +1,7 @@
 [project]
-name = "redshift-safe-palettes"
+name = "ember-redshift-safe-palettes"
 version = "0.1.0"
-description = "Terminal, categorical, and sequential palettes engineered for warm-shifted displays"
+description = "Calm terminal and data palettes for warm- and red-shifted displays"
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -12,6 +12,7 @@ dependencies = ["matplotlib>=3.8", "numpy>=1.26"]
 dev = [
   "pillow>=10",
   "pytest>=8",
+  "ruff>=0.14",
   "scipy>=1.12",
   "tomli>=2; python_version < '3.11'",
 ]

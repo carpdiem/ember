@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="330" viewBox="0 0 1180 330">
+<rect width="1180" height="330" rx="18" fill="#282522"/>
+<text x="34" y="42" fill="#ded0b2" font-size="22" font-family="system-ui">The warm filter squeezes three channels toward one</text>
+<text x="34" y="72" fill="#9b8d79" font-size="14" font-family="system-ui">Each rail shows how much of a commanded channel survives. Blue is gone at 1200 K.</text>
+<g font-family="ui-monospace, monospace" font-size="14">
+<text x="34" y="126" fill="#bda98e">3400 K</text><text x="34" y="192" fill="#bda98e">2000 K</text><text x="34" y="258" fill="#bda98e">1200 K</text>
+<g transform="translate(130 98)"><rect width="300" height="22" rx="4" fill="#a86658"/><rect x="315" width="222" height="22" rx="4" fill="#859a65"/><rect x="552" width="159" height="22" rx="4" fill="#6e7e91"/><text x="725" y="17" fill="#d2c2a5">R 100% · G 74% · B 53%</text></g>
+<g transform="translate(130 164)"><rect width="300" height="22" rx="4" fill="#a86658"/><rect x="315" width="163" height="22" rx="4" fill="#7c8355"/><rect x="493" width="26" height="22" rx="4" fill="#4f5661"/><text x="535" y="17" fill="#d2c2a5">R 100% · G 54% · B 9%</text></g>
+<g transform="translate(130 230)"><rect width="300" height="22" rx="4" fill="#a86658"/><rect x="315" width="93" height="22" rx="4" fill="#6d6a47"/><rect x="423" width="2" height="22" fill="#4f5661"/><text x="445" y="17" fill="#d2c2a5">R 100% · G 31% · B 0%</text></g>
+</g><path d="M1030 116 C1080 126 1080 240 1135 240" fill="none" stroke="#c49b6e" stroke-width="3"/><text x="900" y="286" fill="#d2c2a5" font-size="15" font-family="system-ui">Fewer honest colors</text><text x="900" y="307" fill="#9b8d79" font-size="13" font-family="system-ui">plus shape, dash, label</text></svg>

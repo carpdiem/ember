@@ -8,21 +8,19 @@ import numpy as np
 from redshift_safe import categorical, categorical_norm, sequential
 
 SLUGS = (
-    "ember-dark",
-    "ember-light",
-    "lowfire-dark",
-    "lowfire-light",
-    "safelight-dark",
-    "safelight-light",
+    "3400k-dark",
+    "3400k-light",
+    "2000k-dark",
+    "1200k-dark",
 )
 
-fig, axes = plt.subplots(len(SLUGS), 2, figsize=(11, 10), constrained_layout=True)
+fig, axes = plt.subplots(len(SLUGS), 2, figsize=(11, 7), constrained_layout=True)
 heat = np.outer(np.linspace(0, 1, 80), np.ones(320))
 for row, slug in enumerate(SLUGS):
     axes[row, 0].imshow(
-        np.arange(8)[None, :],
+        np.arange(categorical(slug).N)[None, :],
         cmap=categorical(slug),
-        norm=categorical_norm(),
+        norm=categorical_norm(slug),
         aspect="auto",
     )
     axes[row, 0].set_title(f"{slug} · categorical")

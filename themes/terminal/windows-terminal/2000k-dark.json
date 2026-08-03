@@ -1,0 +1,22 @@
+{
+  "name": "2000K Dark",
+  "black": "#3C3029",
+  "red": "#DCC49F",
+  "green": "#D8B3A1",
+  "yellow": "#DCC49F",
+  "blue": "#D8B3A1",
+  "purple": "#DCC49F",
+  "cyan": "#D8B3A1",
+  "white": "#E9D3AD",
+  "brightBlack": "#9F8B70",
+  "brightRed": "#DCC49F",
+  "brightGreen": "#D8B3A1",
+  "brightYellow": "#DCC49F",
+  "brightBlue": "#D8B3A1",
+  "brightPurple": "#DCC49F",
+  "brightCyan": "#D8B3A1",
+  "brightWhite": "#E9D3AD",
+  "background": "#302722",
+  "foreground": "#E9D3AD",
+  "selectionBackground": "#48382F"
+}

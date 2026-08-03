@@ -14,7 +14,7 @@ from `alacritty.toml`:
 
 ```toml
 [general]
-import = ["~/.config/alacritty/themes/lowfire-dark.toml"]
+import = ["~/.config/alacritty/themes/2000k-dark.toml"]
 ```
 
 Restart Alacritty or reload its configuration.
@@ -28,9 +28,13 @@ Open **Settings → Profiles → Colors → Color Presets… → Import…**, ch
 
 Open **Settings → Open JSON file**. Copy one generated scheme object into the
 root `schemes` array, then set a profile’s `colorScheme` to the object’s exact
-`name` value, such as `Lowfire Dark`.
+`name` value, such as `2000K Dark`.
 
 ## Surface roles
+
+The file formats still require all 16 ANSI slots, but Ember intentionally aliases
+the same 6, 2, or 1 semantic accents across those slots as the target gamut
+collapses. Bold should come from typography, not a second glaring rainbow.
 
 `foreground` is the body-text role. `foreground_soft` is intended for larger
 supporting text or graphics, and `foreground_muted` for nonessential metadata or

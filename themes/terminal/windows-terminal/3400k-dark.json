@@ -1,0 +1,22 @@
+{
+  "name": "3400K Dark",
+  "black": "#403B37",
+  "red": "#B1B3BA",
+  "green": "#C9AA78",
+  "yellow": "#AAB8A4",
+  "blue": "#9CBFA1",
+  "purple": "#C6A791",
+  "cyan": "#C9A4A4",
+  "white": "#DDD0B2",
+  "brightBlack": "#928374",
+  "brightRed": "#B1B3BA",
+  "brightGreen": "#C9AA78",
+  "brightYellow": "#AAB8A4",
+  "brightBlue": "#9CBFA1",
+  "brightPurple": "#C6A791",
+  "brightCyan": "#C9A4A4",
+  "brightWhite": "#DDD0B2",
+  "background": "#32302F",
+  "foreground": "#DDD0B2",
+  "selectionBackground": "#4A433D"
+}

@@ -21,6 +21,8 @@ jobs:
           cache-suffix: py${{ matrix.python-version }}
       - run: uv python install ${{ matrix.python-version }}
       - run: uv sync --locked --extra dev --python ${{ matrix.python-version }}
+      - run: uv run --python ${{ matrix.python-version }} ruff check src tests tools examples
+      - run: uv run --python ${{ matrix.python-version }} ruff format --check src tests tools examples
       - run: uv run --python ${{ matrix.python-version }} pytest -q
       - run: uv run --python ${{ matrix.python-version }} --extra dev python tools/build_all.py --check
       - run: uv build

@@ -1,8 +1,7 @@
-"""Deterministic generation and measurement of the six palette families."""
+"""Deterministic generation and measurement of the Ember palette families."""
 
 from __future__ import annotations
 
-from itertools import product
 from typing import Any
 
 import numpy as np
@@ -40,64 +39,28 @@ ANSI_NAMES = (
 )
 
 
-def _candidate_grid() -> np.ndarray:
-    levels = np.linspace(0.0, 1.0, 29)
-    return np.array(tuple(product(levels, repeat=3)), dtype=float)
+def _categorical_colors(family: FamilyDefinition) -> np.ndarray:
+    """Return the deliberately small, human-composed categorical set.
+
+    The old optimizer seeded on maximum chroma and rewarded additional chroma.
+    That produced impressive separation scores and hostile sustained viewing.
+    Comfort and composition are now authored inputs; generation measures them.
+    """
+
+    return np.asarray([hex_to_srgb(value) for value in family.categorical_colors])
 
 
-def _categorical_colors(family: FamilyDefinition, count: int = 8) -> np.ndarray:
-    candidates = _candidate_grid()
-    warm_lab = perceived_lab(candidates, family.profile.gains)
-    normal_lab = srgb_to_oklab(candidates)
-    background = hex_to_srgb(family.surfaces["background"])
-    warm_background = warm_transform(background, family.profile.gains)
-    warm_rgb = warm_transform(candidates, family.profile.gains)
-    contrast = np.array([contrast_ratio(color, warm_background) for color in warm_rgb])
+def _terminal_accent(family: FamilyDefinition, color: np.ndarray) -> np.ndarray:
+    """Lift an accent only as far as transformed small text requires."""
 
-    tolerance = {"nightshift": 0.025, "redshift": 0.040, "safelight": 0.055}[
-        family.profile.slug
-    ]
-    wanted_contrast = 3.0
-    mask = np.zeros(len(candidates), dtype=bool)
-    while mask.sum() < 500 and tolerance <= 0.13:
-        mask = (np.abs(warm_lab[:, 0] - family.categorical_lightness) <= tolerance) & (
-            contrast >= wanted_contrast
-        )
-        if mask.sum() < 500:
-            tolerance += 0.01
-            wanted_contrast = max(2.2, wanted_contrast - 0.1)
-
-    candidates = candidates[mask]
-    warm_lab = warm_lab[mask]
-    normal_lab = normal_lab[mask]
-    chroma = np.linalg.norm(warm_lab[:, 1:], axis=1)
-    first = int(np.argmax(chroma))
-    chosen = [first]
-
-    while len(chosen) < count:
-        warm_delta = np.linalg.norm(warm_lab[:, None, :] - warm_lab[chosen][None, :, :], axis=2)
-        normal_delta = np.linalg.norm(
-            normal_lab[:, None, :] - normal_lab[chosen][None, :, :], axis=2
-        )
-        min_warm = warm_delta.min(axis=1)
-        min_normal = normal_delta.min(axis=1)
-        lightness_penalty = np.abs(warm_lab[:, 0] - family.categorical_lightness)
-        normal_weight = 0.20 if family.profile.slug == "nightshift" else 0.05
-        score = (
-            min_warm
-            + normal_weight * min_normal
-            + 0.04 * chroma
-            - 0.25 * lightness_penalty
-        )
-        score[chosen] = -np.inf
-        chosen.append(int(np.argmax(score)))
-
-    return candidates[chosen]
-
-
-def _mix_oklab(color: np.ndarray, target: np.ndarray, amount: float) -> np.ndarray:
-    mixed = srgb_to_oklab(color) * (1.0 - amount) + srgb_to_oklab(target) * amount
-    return np.clip(oklab_to_srgb(mixed), 0.0, 1.0)
+    foreground = hex_to_srgb(family.surfaces["foreground"])
+    background = warm_transform(hex_to_srgb(family.surfaces["background"]), family.profile.gains)
+    for amount in np.linspace(0.0, 1.0, 101):
+        mixed = color * (1.0 - amount) + foreground * amount
+        transformed = warm_transform(mixed, family.profile.gains)
+        if contrast_ratio(transformed, background) >= 4.55:
+            return mixed
+    return foreground
 
 
 def _terminal_colors(family: FamilyDefinition, categories: np.ndarray) -> list[str]:
@@ -107,14 +70,12 @@ def _terminal_colors(family: FamilyDefinition, categories: np.ndarray) -> list[s
         if family.mode == "dark"
         else hex_to_srgb(surfaces["foreground"])
     )
-    normal = [
-        first_neutral,
-        *categories[:6],
-        hex_to_srgb(surfaces["foreground_soft"]),
-    ]
-    target = np.ones(3) if family.mode == "dark" else np.zeros(3)
+    accent_indices = np.linspace(0, len(categories) - 1, family.terminal_color_count, dtype=int)
+    accents = [_terminal_accent(family, categories[index]) for index in accent_indices]
+    semantic_slots = [accents[index % len(accents)] for index in range(6)]
+    normal = [first_neutral, *semantic_slots, hex_to_srgb(surfaces["foreground"])]
     bright = [hex_to_srgb(surfaces["foreground_muted"])]
-    bright.extend(_mix_oklab(color, target, 0.18) for color in categories[:6])
+    bright.extend(semantic_slots)
     bright.append(hex_to_srgb(surfaces["foreground"]))
     return [srgb_to_hex(color) for color in normal + bright]
 
@@ -164,7 +125,9 @@ def _sequential_colors(family: FamilyDefinition, count: int = 256) -> np.ndarray
     return np.clip(oklab_to_srgb(sampled_lab), 0.0, 1.0)
 
 
-def _metrics(family: FamilyDefinition, categories: np.ndarray, sequential: np.ndarray) -> dict[str, Any]:
+def _metrics(
+    family: FamilyDefinition, categories: np.ndarray, sequential: np.ndarray
+) -> dict[str, Any]:
     gains = family.profile.gains
     warm_categories = perceived_lab(categories, gains)
     normal_categories = srgb_to_oklab(categories)
@@ -173,6 +136,9 @@ def _metrics(family: FamilyDefinition, categories: np.ndarray, sequential: np.nd
         "shifted_min_delta_e_ok": round(float(pairwise_distances(warm_categories).min()), 2),
         "shifted_lightness_mean": round(float(warm_categories[:, 0].mean()), 4),
         "shifted_lightness_range": round(float(np.ptp(warm_categories[:, 0])), 4),
+        "normal_chroma_max": round(
+            float(np.linalg.norm(normal_categories[:, 1:], axis=1).max()), 4
+        ),
     }
     shifted_sequence = perceived_lab(sequential, gains)
     sequence_steps = np.linalg.norm(np.diff(shifted_sequence, axis=0), axis=1) * 100.0
@@ -194,7 +160,8 @@ def _metrics(family: FamilyDefinition, categories: np.ndarray, sequential: np.nd
     for foreground in ("foreground", "foreground_soft", "foreground_muted"):
         for background in ("background", "background_alt", "background_high"):
             text_metrics[f"{foreground}_on_{background}"] = round(
-                contrast_ratio(transformed_surfaces[foreground], transformed_surfaces[background]), 2
+                contrast_ratio(transformed_surfaces[foreground], transformed_surfaces[background]),
+                2,
             )
 
     return {
@@ -216,6 +183,15 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
     # uniform-step guarantee at 256 samples.
     sequential = np.round(_sequential_colors(family), 10)
     terminal_values = _terminal_colors(family, categories)
+    transformed_background = warm_transform(
+        hex_to_srgb(family.surfaces["background"]), family.profile.gains
+    )
+    transformed_terminal = [
+        warm_transform(hex_to_srgb(value), family.profile.gains) for value in terminal_values
+    ]
+    small_text_terminal = [
+        value for index, value in enumerate(transformed_terminal) if index not in (0, 8)
+    ]
     return {
         "slug": family.slug,
         "name": family.name,
@@ -223,6 +199,11 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "profile": family.profile.slug,
         "surfaces": family.surfaces,
         "terminal": dict(zip(ANSI_NAMES, terminal_values)),
+        "terminal_semantic_color_count": family.terminal_color_count,
+        "terminal_minimum_shifted_contrast": round(
+            min(contrast_ratio(value, transformed_background) for value in small_text_terminal),
+            2,
+        ),
         "categorical": dict(zip(CATEGORY_NAMES, category_hex)),
         "continuous_rgb": sequential.tolist(),
         "continuous_hex8": [srgb_to_hex(color) for color in sequential],
@@ -242,8 +223,8 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 2,
-        "project": "Redshift Safe Palettes",
+        "schema_version": 3,
+        "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
             "spectral measurements. All derived metrics use the transformed sRGB values."

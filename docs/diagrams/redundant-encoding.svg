@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="330" viewBox="0 0 1180 330">
+<rect width="1180" height="330" rx="18" fill="#2c211d"/><text x="34" y="42" fill="#f2d9b5" font-size="22" font-family="system-ui">At deep red, color becomes a hint—not the identity</text>
+<text x="34" y="72" fill="#a28b70" font-size="14" font-family="system-ui">Direct labels, dash patterns, and markers survive even when hue collapses.</text>
+<g transform="translate(45 105)" fill="none"><path d="M0 100 C80 15 160 175 260 70 S430 125 500 35" stroke="#e0c49a" stroke-width="4"/><path d="M0 130 C90 55 170 155 270 105 S420 35 500 95" stroke="#b08e76" stroke-width="4" stroke-dasharray="14 9"/><path d="M0 55 C90 135 190 15 280 80 S420 155 500 115" stroke="#8f8a6a" stroke-width="4" stroke-dasharray="3 8"/></g>
+<g font-family="ui-monospace, monospace" font-size="15"><text x="565" y="142" fill="#e0c49a">● A — solid</text><text x="565" y="183" fill="#b08e76">■ B – – dashed</text><text x="565" y="224" fill="#8f8a6a">▲ C · · dotted</text></g>
+<text x="565" y="273" fill="#a28b70" font-size="14" font-family="system-ui">If the labels disappear, the chart is not done.</text></svg>
