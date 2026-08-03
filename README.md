@@ -1,6 +1,6 @@
 # Ember: Redshift Safe Color Palettes
 
-**Calm terminal and data-visualization palettes designed for displays under strong warm/red transforms.**
+**Calm terminal and data-visualization palettes for displays under strong warm and red shifts.**
 
 [![CI](https://github.com/carpdiem/ember-redshift-safe-palettes/actions/workflows/ci.yml/badge.svg)](https://github.com/carpdiem/ember-redshift-safe-palettes/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
@@ -8,73 +8,70 @@
 
 ![Ember palette overview](docs/swatches/overview.svg)
 
-Ember is deliberately **not** a maximum-separation rainbow. It uses warm neutrals,
-moderate text contrast, low commanded chroma, and progressively fewer colors as the
-display transform destroys the usable gamut.
+Ember provides coordinated color systems for terminals, charts, heatmaps, and user
+interfaces viewed through software color-temperature filters. Each palette is designed
+for a specific warm-shift profile, then measured again after that transform is applied.
 
-## The four palettes
+Warm filters do more than tint a screen. They attenuate green and blue by different
+amounts, reducing the number of colors that remain distinct. Ember responds with warm
+neutral surfaces, restrained chroma, moderate text contrast, and a smaller semantic
+color set as the available gamut contracts.
 
-| Palette | Mode | Categories | Terminal accents | Design target |
+## Choose a palette
+
+| Palette | Mode | Data categories | Terminal accents | Intended use |
 |---|---|---:|---:|---|
-| [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 | warmest macOS Night Shift surrogate |
-| [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 | bright-room polarity alternative at the 3400 K surrogate |
-| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 2 | pinned Redshift 2000 K signal LUT |
-| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 1 | pinned Redshift 1200 K signal LUT |
+| [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 | moderate warm shift; general terminal and data work |
+| [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 | light-surface work under a moderate warm shift |
+| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 2 | deep warm shift with limited green and blue |
+| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 1 | extreme red shift; redundant encoding required |
 
-There are no 2000 K or 1200 K light palettes. Screenshot QA showed the mechanism
-clearly: because red remains at full gain, a light canvas becomes a large, saturated
-orange/red emitter after those transforms. That is hostile for the intended nighttime
-use. Ember deletes the unsafe option instead of pretending every tier deserves a
-symmetric feature matrix.
+The deepest profiles are dark-only. Under the 2000 K and 1200 K gain vectors, a light
+canvas becomes a large orange-red field, while a dark canvas preserves a subdued
+working surface.
 
-Terminal file formats still require 16 ANSI slots. At 2000 K and 1200 K those slots
-intentionally alias the same two or one semantic accents. **Protocol slots are not a
-license to invent colors the transformed display cannot support.**
+Terminal formats require sixteen ANSI slots. The 2000 K and 1200 K themes fill those
+slots by repeating the smaller semantic accent set rather than inventing distinctions
+that disappear after transformation.
 
-## See generated screen specimens, not just swatches
+## See the palettes in use
 
-“Commanded” is the raw sRGB an application requests. “Simulated” applies the named
-RGB gain profile to every pixel in each family panel. These are deterministic Pillow
-specimens—not captures from iTerm2, Alacritty, or a physical MacBook display.
+The commanded specimens show the sRGB colors an application requests. The simulated
+specimens apply each target gain vector to the corresponding panel.
 
-### Terminal work at small code size
-
-**Commanded sRGB / no warm transform**
+### Terminal text
 
 ![Commanded terminal specimen](docs/samples/terminal-commanded.png)
 
-**Simulated target transforms**
-
 ![Simulated warm-shift terminal specimen](docs/samples/terminal-simulated.png)
 
-### Data work: heatmaps, bars, and overlapping lines
-
-**Commanded sRGB / no warm transform**
+### Heatmaps, bars, and overlapping series
 
 ![Commanded data-visualization specimen](docs/samples/data-commanded.png)
 
-**Simulated target transforms**
-
 ![Simulated warm-shift data-visualization specimen](docs/samples/data-simulated.png)
 
-The overlapping lines deliberately combine **color + dash + marker + text label**.
-At 1200 K, blue is zero. No clever palette can make hue carry information through a
-channel that no longer exists.
+The line charts combine color with dash pattern, marker shape, and direct labels. These
+structural cues carry identity when hue differences become small or vanish entirely.
 
-View the simulated specimens with Night Shift, Redshift, True Tone, and browser
-color-altering extensions disabled; otherwise the transform is applied twice or
-made irreproducible. Use 100% browser zoom in SDR at a fixed, comfortable brightness.
-The specimens are regression evidence—not a claim of physical-device validation.
-
-- [Generated screenshot diagnostics](docs/sample-analysis.md)
-- [Compact commanded-versus-simulated swatches](docs/swatches/command-vs-simulated.png)
-- [Canonical machine-readable manifest](palettes/redshift-safe-palettes.json)
-- [CSS tokens](palettes/redshift-safe-palettes.css)
-- [Terminal imports](themes/terminal/)
-
----
+To inspect a simulated image, disable any active color-temperature filter first;
+otherwise the transform is applied twice. The specimens are generated regression
+artifacts rather than photographs or display-calibration measurements.
 
 ## Use Ember
+
+### Terminal themes
+
+Ready-to-import themes are included for:
+
+- [Alacritty](themes/terminal/alacritty/)
+- [iTerm2](themes/terminal/iterm2/)
+- [Windows Terminal](themes/terminal/windows-terminal/)
+
+Choose the file whose temperature and polarity match your display profile. In each
+theme, the normal and bright ANSI banks intentionally reuse a compact semantic set.
+`bright_black` remains readable because terminals commonly use it for comments,
+timestamps, and metadata.
 
 ### Matplotlib
 
@@ -84,34 +81,34 @@ python -m pip install "git+https://github.com/carpdiem/ember-redshift-safe-palet
 
 ```python
 import matplotlib.pyplot as plt
+
 from redshift_safe import categorical, categorical_norm, encode_categories, sequential
 
 palette = "2000k-dark"
-category_order = ["control", "alpha", "beta", "gamma"]
-category_ids = encode_categories(labels, category_order, slug=palette)
+labels = ["control", "alpha", "beta", "gamma"]
+order = ["control", "alpha", "beta", "gamma"]
+category_ids = encode_categories(labels, order, slug=palette)
 
-plt.scatter(
-    x,
-    y,
+fig, (points, image) = plt.subplots(1, 2)
+points.scatter(
+    [1, 2, 3, 4],
+    [1.2, 2.4, 1.8, 3.1],
     c=category_ids,
     cmap=categorical(palette),
     norm=categorical_norm(palette),
 )
-plt.imshow(data, cmap=sequential(palette))
+image.imshow([[0.0, 0.4], [0.7, 1.0]], cmap=sequential(palette))
+plt.show()
 ```
 
-Pass the slug to `categorical_norm()` and `encode_categories()` so their category
-limits match the selected palette. The defaults match the largest current family,
-`3400k-dark`.
-
-Every sequential map still provides 256 canonical float samples for Matplotlib and
-other numerical consumers. Fewer **categories** do not mean a banded **continuous**
-map.
+Pass the palette slug to `categorical_norm()` and `encode_categories()` so their
+capacity checks match the selected family. Sequential maps always expose 256 canonical
+float samples, independent of the number of categorical colors.
 
 ### CSS
 
-Load [`redshift-safe-palettes.css`](palettes/redshift-safe-palettes.css), then select
-a family:
+Load [`redshift-safe-palettes.css`](palettes/redshift-safe-palettes.css), then select a
+family:
 
 ```html
 <section data-redshift-palette="3400k-dark">
@@ -124,287 +121,169 @@ a family:
   color: var(--rs-foreground);
   background: var(--rs-background);
 }
-.series-a { color: var(--rs-category-one); }
-.heatmap-key { background: var(--rs-sequential); }
+
+.series-a {
+  color: var(--rs-category-one);
+}
+
+.heatmap-key {
+  background: var(--rs-sequential);
+}
 ```
 
-CSS exposes eleven representative 8-bit gradient stops. JSON and Python preserve
-all 256 canonical float samples.
+CSS exposes eleven representative 8-bit gradient stops. The
+[JSON manifest](palettes/redshift-safe-palettes.json) and Python package preserve all
+256 canonical float samples, along with surfaces, categorical colors, ANSI slots, gain
+profiles, and measured results.
 
-### Terminals
+## Design and scientific basis
 
-Ready-to-import themes are included for:
+### Design in the transformed color space
 
-- [Alacritty](themes/terminal/alacritty/)
-- [iTerm2](themes/terminal/iterm2/)
-- [Windows Terminal](themes/terminal/windows-terminal/)
-
-`foreground` is the transformed small-text role. `foreground_soft` and
-`foreground_muted` are quieter hierarchy roles, not universal body-text colors.
-Inspect every exact pairing in `metrics.shifted_text_contrast` in the manifest.
-
-Upgrading from 0.1? See the [migration guide](MIGRATION.md). Four old IDs remain
-generated aliases; the two unsafe deep-shift light themes are deliberately removed.
-
----
-
-# How this works, from five-year-old to color nerd
-
-## The five-year-old version: colored sunglasses
-
-Imagine orange sunglasses over a box of crayons. Blue does not become “slightly
-warmer”; most of its light is blocked. Different crayons can become the same brown.
-
-Ember asks:
-
-> After the glasses damage these colors, what remains readable—and how many colors
-> are still honestly useful?
-
-Ember's authored design budget is six at the mild tier, four data colors at 2000 K,
-and three at 1200 K. For tiny terminal text, that budget collapses faster: six, two,
-then one. These are conservative product constraints, not psychophysical maxima.
-
-## The Feynman version: the channel loses dimensions
-
-An sRGB pixel begins with three controls. The modeled display transform multiplies
-them by unequal gains:
+Ember models a warm display transform as an independent gain on each sRGB channel:
 
 ```text
-emitted RGB ≈ commanded RGB × [red gain, green gain, blue gain]
+display RGB ≈ commanded RGB × [red gain, green gain, blue gain]
 ```
+
+| Profile | RGB gains | Source |
+|---|---:|---|
+| `3400k` | `[1.00, 0.74, 0.53]` | warm-white engineering surrogate |
+| `2000k` | `[1.0000, 0.5436, 0.0868]` | pinned Redshift 2000 K signal LUT |
+| `1200k` | `[1.0000, 0.3094, 0.0000]` | pinned Redshift 1200 K signal LUT |
 
 ![RGB channel collapse at 3400 K, 2000 K, and 1200 K](docs/diagrams/channel-collapse.svg)
 
-| Profile | RGB gains | Interpretation |
-|---|---:|---|
-| `3400k` | `[1.00, 0.74, 0.53]` | warm-white Night Shift surrogate |
-| `2000k` | `[1.0000, 0.5436, 0.0868]` | Redshift 2000 K, reset ramps, brightness 1, gamma 1 |
-| `1200k` | `[1.0000, 0.3094, 0.0000]` | Redshift 1200 K, reset ramps, brightness 1, gamma 1 |
+At 1200 K, the modeled blue channel contributes nothing and green is heavily
+attenuated. Colors that are far apart in ordinary sRGB can therefore converge after
+the filter. Ember evaluates contrast, lightness, chroma, and separation after applying
+the selected profile, not only before it.
 
-At 1200 K, blue contributes nothing and green is heavily attenuated. The remaining
-signal is effectively a red-versus-dim-red axis. Identity therefore needs another
-channel—shape, pattern, position, text, or weight.
+These are software signal models, not calibrated physical color temperatures. Actual
+output also depends on the display, operating system, calibration, brightness, and
+ambient light.
+
+### Keep high-frequency detail quiet and readable
+
+Human vision resolves luminance detail more sharply than chromatic detail. Tiny
+saturated glyphs and adjacent opposing hues can look unstable because chromatic
+channels have lower spatial resolution and the eye focuses different wavelengths at
+slightly different planes.
+
+Ember therefore puts most pixels in warm neutral surfaces and reserves color for
+meaning. Body text uses cream rather than pure white on dark themes, while every
+foreground-capable ANSI slot still reaches a 4.5:1 contrast floor after its target
+transform. Softer foreground roles remain available for larger or nonessential text.
+
+The visual hierarchy draws on Gruvbox's warm-neutral foundation: grays carry the
+interface, and accents remain distinguishable without becoming the brightest objects
+on the screen.
+
+### Match semantic capacity to the surviving gamut
+
+Categorical palettes use six colors at 3400 K, four at 2000 K, and three at 1200 K.
+Terminal accents contract faster because small monospaced glyphs need stronger
+foreground contrast than large chart marks.
+
+The category colors are authored as restrained compositions, then serialized,
+transformed, and measured in Oklab. Their lightness range is wide enough to preserve
+separation after severe channel loss. Because lightness can imply order, categorical
+charts should also carry identity through labels, position, texture, marker, or line
+style.
 
 ![Redundant line encoding under deep red](docs/diagrams/redundant-encoding.svg)
 
-## Why the old “maximize separation” objective failed
+### Build continuous maps for the transformed view
 
-The first generator seeded categorical selection with the **maximum-chroma** legal
-color, rewarded additional chroma, and optimized farthest-point distance. It passed
-its mathematical gates and produced painful, candy-bright dark themes. That was not
-a tuning error. It was the predictable result of the wrong objective function.
+Each sequential map starts with a human-chosen earth-tone path. The generator smooths
+that path in Oklab, measures cumulative distance after the target transform, and
+resamples it at equal transformed-distance intervals.
 
-Ember now makes comfort and composition authored constraints:
+The result is a 256-sample float map with strictly monotonic transformed lightness and
+nearly constant perceptual steps. The Hex8 and CSS exports are convenient quantized
+previews; the JSON and Python float arrays carry the numerical guarantee.
 
-1. category colors are human-composed, low-chroma sets rather than optimizer output;
-2. warm gray/brown surfaces carry most pixels;
-3. terminal accents are lifted only until transformed small-text contrast reaches
-   roughly 4.5:1;
-4. ANSI “bright” colors repeat the calm semantic accents instead of creating a
-   second rainbow; and
-5. category and terminal counts decrease with the surviving gamut.
+## Measured properties
 
-### Before/after audit of the rejected dark palettes
+`ΔEOK` below is Euclidean Oklab distance multiplied by 100. It is an engineering
+measure used consistently by the generator and tests, not a standardized CIE ΔE
+formula.
 
-| Target | Categories | Max categorical chroma | Max terminal chroma | Raw body contrast | Shifted body contrast |
+| Family | Categories | Max raw Oklab chroma | Min transformed ΔEOK | Transformed L range | Min ANSI contrast |
 |---|---:|---:|---:|---:|---:|
-| 3400 K, rejected → Ember | 8 → 6 | 0.3225 → 0.0786 | 0.3225 → 0.0755 | 15.15 → 8.59 | 9.91 → 6.34 |
-| 2000 K, rejected → Ember | 8 → 4 | 0.3034 → 0.0677 | 0.3034 → 0.0563 | 17.06 → 10.00 | 7.99 → 5.59 |
-| 1200 K, rejected → Ember | 8 → 3 | 0.2753 → 0.0640 | 0.2753 → 0.0591 | 17.12 → 12.82 | 6.05 → 5.34 |
+| 3400K Dark | 6 | 0.0786 | 7.31 | 0.1700 | 4.56:1 |
+| 3400K Light | 6 | 0.0846 | 10.04 | 0.2026 | 4.55:1 |
+| 2000K Dark | 4 | 0.0677 | 6.25 | 0.1659 | 4.57:1 |
+| 1200K Dark | 3 | 0.0640 | 6.95 | 0.1616 | 4.54:1 |
 
-This is not cosmetic dimming. The new commanded categorical chroma ceiling is below
-one quarter of the rejected maximum at every dark tier, and primary text no longer
-targets near-white-on-near-black contrast.
+The build also checks primary text against every declared background and selection
+surface, verifies selection visibility, parses every terminal format, and reproduces
+all generated artifacts from source.
 
-## What the visual literature changes in practice
-
-- **Small detail rides luminance, not hue alone.** Human chromatic channels have
-  poorer spatial resolution than luminance. Saturated opposing hues on tiny glyphs
-  can shimmer or fuzz; red/blue adjacency is especially vulnerable to chromatic
-  aberration. Ember avoids such pairings and uses redundant structure.
-- **More contrast is not always more comfort.** Minimum contrast protects
-  legibility; unlimited white-on-black contrast can create glare/halation for some
-  readers. Ember uses off-black warm surfaces and cream rather than pure white.
-- **Color should be sparse.** MIT's interface guidance recommends few, weakly
-  saturated colors; Datawrapper and the EU data-visualization guide likewise advise
-  against too many categories and overly bright/saturated hues.
-- **Gray is active design material.** Warm neutrals establish hierarchy so accents
-  do not all shout at once.
-- **Dark mode is not universally superior.** Polarity research is mixed and depends
-  on task, ambient light, and observer. Ember keeps a 3400 K light option. It rejects
-  deep-shift light canvases because the rendered evidence is bad, not because “dark
-  mode always wins.”
-
-Gruvbox is the aesthetic benchmark: its stated goal is distinguishable, sufficient-
-contrast colors that remain pleasant to the eyes, built on warm grays and restrained
-“retro groove” accents. Ember does not copy Gruvbox values; it adopts that hierarchy
-and then evaluates the result after each destructive transform.
-
----
-
-# Derivation and measurable gates
-
-## Categorical colors
-
-The category sets are authored in sRGB, serialized to Hex8, reparsed, transformed,
-and measured in Oklab. Published `delta_e_ok` is Euclidean Oklab distance × 100, a
-practical engineering score—not a standardized CIE ΔE claim.
-
-Current gates and results:
-
-| Family | Categories | Max raw Oklab chroma | Min shifted category ΔEOK | Shifted L range |
-|---|---:|---:|---:|---:|
-| 3400K Dark | 6 | 0.0786 | 7.31 | 0.1700 |
-| 3400K Light | 6 | 0.0846 | 10.04 | 0.2026 |
-| 2000K Dark | 4 | 0.0677 | 6.25 | 0.1659 |
-| 1200K Dark | 3 | 0.0640 | 6.95 | 0.1616 |
-
-The wider lightness range is deliberate. At severe shifts, equal-lightness hues
-collapse. Lines and small marks must also use patterns and labels so lightness does
-not silently imply a false ordering.
-
-## Terminal colors
-
-Each categorical accent is blended toward the family foreground only until its
-transformed contrast reaches the small-text floor. The 16 ANSI slots then alias the
-small surviving set. Every foreground-capable ANSI slot meets 4.5:1 after the target
-transform; only background-like ANSI black is excluded in dark themes. `bright_black`
-maps to readable body text because terminals commonly use it for comments and metadata.
-
-## Sequential maps
-
-Each 256-sample map begins with a restrained, human-chosen earth-tone path. The
-generator smooths it in Oklab, applies the target transform, measures cumulative
-transformed distance, and resamples at equal transformed-distance intervals.
-
-The canonical `continuous_rgb` arrays remain strictly monotonic in transformed
-lightness and nearly constant in transformed perceptual step. `continuous_hex8` is
-the convenient quantized preview; the float map carries the strict guarantee.
-
-## Screenshot analysis
-
-The build renders generated code, heatmap, bar, and overlapping-line specimens from
-the final manifest. It then measures high-contrast luminance-edge density and pixel chroma.
-The release also receives a manual visual audit at full resolution.
-
-See [`docs/sample-analysis.md`](docs/sample-analysis.md) for the generated report.
-The transformed specimens naturally become chromatic when the transform removes
-green/blue; that is a property of the modeled filter. These image metrics are weak
-regression diagnostics, not comfort evidence. The release decision also requires
-full-resolution visual review of hierarchy, fill area, clipping, and redundant encoding.
-
----
-
-# MacBook Pro display context
-
-The practical display context is the built-in MacBook Pro Liquid Retina XDR panel.
-Apple documents wide-color P3, 1 billion colors, and a 254 ppi panel on current
-14-inch models, with a P3-based general-use reference mode. Ember still exports sRGB
-because terminals, CSS, Matplotlib, and interchange formats need portable values;
-macOS color management maps those values to the panel.
-
-The model does **not** attempt to emulate mini-LED local dimming, viewing angle,
-True Tone, ambient adaptation, panel brightness, or spectral output. Samples should
-be judged in SDR at a sane nighttime brightness. XDR peak-nit specifications are not
-a target. A comparable inspection records the display preset, glass type, fixed SDR
-brightness, ambient lighting, True Tone state, active transform, and browser zoom.
-
-Apple does not publish a universal Night Shift matrix or Kelvin value. The 3400 K
-profile is therefore an explicit surrogate. The Redshift 2000 K and 1200 K profiles
-come from pinned signal-LUT rows, but physical output still varies with calibration,
-OS gamma-ramp precision, and display behavior.
-
----
-
-# Verification
-
-The suite rejects a release unless:
-
-- exactly the intended four families exist with category counts `6, 6, 4, 3`;
-- terminal semantic counts are `6, 6, 2, 1` while all required ANSI slots parse;
-- commanded categorical Oklab chroma is ≤ 0.09;
-- categorical transformed separation meets the profile floor;
-- every foreground-capable ANSI slot is ≥ 4.5:1 after transformation;
-- primary text is recomputed exactly at ≥ 4.5:1 on every background and selection;
-- selection surfaces remain perceptually visible after transformation;
-- 256 float sequential samples remain unique, monotonic, and nearly even after the
-  target transform; and
-- JSON, CSS, terminal imports, screenshots, diagrams, and diagnostics reproduce
-  exactly from source.
+## Verification and development
 
 ```bash
-uv run --extra dev python tools/build_all.py --check
-uv run --extra dev pytest -q
+uv sync --extra dev
+uv run python tools/build_all.py --check
+uv run pytest -q
+uv run ruff check src tests tools examples
 uv build
 ```
 
----
+The release gates enforce:
 
-# Limits and non-claims
+- exactly four palette families with categorical capacities `6, 6, 4, 3`;
+- terminal semantic capacities `6, 6, 2, 1` with valid sixteen-slot exports;
+- commanded categorical Oklab chroma no greater than `0.09`;
+- transformed category separation appropriate to each profile;
+- at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
+- at least 4.5:1 primary-text contrast on every background and selection;
+- visible selection surfaces after transformation;
+- 256 unique, monotonic, evenly stepped float samples per sequential map; and
+- exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
 
-- **Not a device calibration.** RGB gains are inspectable stress profiles, not
-  spectroradiometric measurements.
-- **Not a medical or sleep claim.** Warmer does not automatically mean safer,
-  healthier, or less fatiguing.
-- **Not color-vision-deficiency certification.** Redshift and CVD are different
-  transforms; critical graphics still need redundant encoding.
-- **Not astronomy certification.** Absolute luminance, black leakage, spectrum,
-  ambient light, adaptation state, and viewing time all matter.
-- **Not a promise that hue survives 1200 K.** It does not. Ember says so and reduces
-  the available semantic set.
-- **Not proof from image metrics alone.** Screenshot metrics catch regressions; they
-  do not measure a human observer's discomfort.
-
-For serious field astronomy, a measured dim display plus a physical deep-red filter
-remains more trustworthy than software alone.
-
----
-
-# Repository map
+Generated files should not be edited by hand. Change
+[`src/redshift_safe/definitions.py`](src/redshift_safe/definitions.py), rebuild, inspect
+the full-size specimens, and rerun the gates.
 
 ```text
-palettes/                         canonical float JSON + quantized CSS exports
-src/redshift_safe/               color math, definitions, generator, Matplotlib API
-themes/terminal/                 Alacritty, iTerm2, Windows Terminal imports
-docs/samples/                    commanded and simulated generated specimens
-docs/diagrams/                   Feynman-level visual explanations
-docs/swatches/                   exact specifications and compact comparisons
-examples/                        executable Matplotlib gallery
-tests/                           numerical, comfort, and export contracts
-tools/build_all.py               deterministic artifact builder
-tools/render_samples.py          screenshot renderer and image diagnostics
+palettes/                JSON manifest and CSS tokens
+src/redshift_safe/       definitions, color math, generator, and Matplotlib API
+themes/terminal/         Alacritty, iTerm2, and Windows Terminal themes
+docs/samples/            commanded and transformed usage specimens
+docs/diagrams/           visual explanations
+docs/swatches/           palette specifications and comparisons
+examples/                executable Matplotlib gallery
+tests/                   numerical and export contracts
+tools/                   deterministic artifact builders
 ```
 
-Generated artifacts should not be hand-edited. Change
-[`definitions.py`](src/redshift_safe/definitions.py), rebuild, inspect the screenshots
-at full size, and rerun the gates.
+Version 0.2 uses temperature-based palette IDs. Existing users can consult the
+[migration guide](MIGRATION.md) for legacy aliases and removed deep-light themes.
 
----
+## Sources and design lineage
 
-# Sources and design lineage
-
-- Gruvbox, [original project and palette](https://github.com/morhetz/gruvbox) — warm
-  neutrals, sufficient contrast, and pleasant sustained use as explicit goals.
-- MIT 6.813, [Color](https://web.mit.edu/6.813/www/sp18/classes/15-color/) — chromatic
-  aberration, poor blue spatial resolution, sparse color, and weak saturation.
+- Gruvbox, [original project and palette](https://github.com/morhetz/gruvbox): warm
+  neutrals, sufficient contrast, and restrained accents for sustained use.
+- MIT 6.813, [Color](https://web.mit.edu/6.813/www/sp18/classes/15-color/): chromatic
+  aberration, the lower spatial resolution of chromatic channels, sparse color, and
+  restrained saturation.
 - Fan et al. (2024), [The Effect of Ambient Illumination and Text Color on Visual
-  Fatigue under Negative Polarity](https://doi.org/10.3390/s24113516) — controlled
-  low-light negative-polarity study; red text produced the most fatigue in its tested
-  conditions, reinforcing the need not to add gratuitous chroma under a red transform.
-- EU Data Visualisation Guide, [Colour for categories](https://data.europa.eu/apps/data-visualisation-guide/colour-for-categories)
-  — avoid too many, overly saturated, or very bright categories; test CVD.
-- Datawrapper, [What to consider when choosing colors](https://www.datawrapper.de/academy/what-to-consider-when-choosing-colors-for-data-visualization)
-  — use gray, limit categories, preserve small-text contrast, and add redundancy.
-- Apple, [Use presets and reference modes with your Apple display](https://support.apple.com/en-us/108321)
-  and [MacBook Pro display specifications](https://support.apple.com/en-us/125405) —
-  P3 general-use/reference modes, panel density, and XDR context.
-- Apple, [Use Night Shift on your Mac](https://support.apple.com/en-us/102191) —
-  documented behavior and display dependence; no universal transform published.
+  Fatigue under Negative Polarity](https://doi.org/10.3390/s24113516): controlled
+  evidence that text color and ambient illumination affect fatigue under dark polarity.
+- EU Data Visualisation Guide,
+  [Colour for categories](https://data.europa.eu/apps/data-visualisation-guide/colour-for-categories):
+  limit categorical count and avoid overly saturated or bright colors.
+- Datawrapper,
+  [What to consider when choosing colors](https://www.datawrapper.de/academy/what-to-consider-when-choosing-colors-for-data-visualization):
+  use neutral structure, protect small-text contrast, and add redundant cues.
 - Redshift, [pinned color-ramp implementation](https://github.com/jonls/redshift/blob/490ba2aae9cfee097a88b6e2be98aeb1ce990050/src/colorramp.c)
   and [temperature table](https://github.com/jonls/redshift/blob/490ba2aae9cfee097a88b6e2be98aeb1ce990050/README-colorramp).
-- Björn Ottosson, [A perceptual color space for image processing](https://bottosson.github.io/posts/oklab/).
+- Björn Ottosson,
+  [A perceptual color space for image processing](https://bottosson.github.io/posts/oklab/).
 - Matplotlib, [Choosing Colormaps](https://matplotlib.org/stable/users/explain/colors/colormaps.html).
-- W3C WAI, [Understanding contrast minimum](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html).
+- W3C WAI,
+  [Understanding contrast minimum](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html).
 
 ## License
 
