@@ -59,19 +59,6 @@
 		<key>Alpha Component</key>
 		<real>1.0</real>
 		<key>Blue Component</key>
-		<real>0.6745098039215687</real>
-		<key>Color Space</key>
-		<string>sRGB</string>
-		<key>Green Component</key>
-		<real>0.5294117647058824</real>
-		<key>Red Component</key>
-		<real>0.7411764705882353</real>
-	</dict>
-	<key>Ansi 13 Color</key>
-	<dict>
-		<key>Alpha Component</key>
-		<real>1.0</real>
-		<key>Blue Component</key>
 		<real>0.6470588235294118</real>
 		<key>Color Space</key>
 		<string>sRGB</string>
@@ -79,6 +66,19 @@
 		<real>0.8274509803921568</real>
 		<key>Red Component</key>
 		<real>0.47058823529411764</real>
+	</dict>
+	<key>Ansi 13 Color</key>
+	<dict>
+		<key>Alpha Component</key>
+		<real>1.0</real>
+		<key>Blue Component</key>
+		<real>0.6745098039215687</real>
+		<key>Color Space</key>
+		<string>sRGB</string>
+		<key>Green Component</key>
+		<real>0.5294117647058824</real>
+		<key>Red Component</key>
+		<real>0.7411764705882353</real>
 	</dict>
 	<key>Ansi 14 Color</key>
 	<dict>
@@ -137,19 +137,6 @@
 		<key>Alpha Component</key>
 		<real>1.0</real>
 		<key>Blue Component</key>
-		<real>0.6078431372549019</real>
-		<key>Color Space</key>
-		<string>sRGB</string>
-		<key>Green Component</key>
-		<real>0.42745098039215684</real>
-		<key>Red Component</key>
-		<real>0.6784313725490196</real>
-	</dict>
-	<key>Ansi 5 Color</key>
-	<dict>
-		<key>Alpha Component</key>
-		<real>1.0</real>
-		<key>Blue Component</key>
 		<real>0.5725490196078431</real>
 		<key>Color Space</key>
 		<string>sRGB</string>
@@ -157,6 +144,19 @@
 		<real>0.7843137254901961</real>
 		<key>Red Component</key>
 		<real>0.3215686274509804</real>
+	</dict>
+	<key>Ansi 5 Color</key>
+	<dict>
+		<key>Alpha Component</key>
+		<real>1.0</real>
+		<key>Blue Component</key>
+		<real>0.6078431372549019</real>
+		<key>Color Space</key>
+		<string>sRGB</string>
+		<key>Green Component</key>
+		<real>0.42745098039215684</real>
+		<key>Red Component</key>
+		<real>0.6784313725490196</real>
 	</dict>
 	<key>Ansi 6 Color</key>
 	<dict>

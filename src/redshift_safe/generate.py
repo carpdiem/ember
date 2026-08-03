@@ -119,6 +119,17 @@ def _terminal_colors(family: FamilyDefinition, categories: np.ndarray) -> list[s
     return [srgb_to_hex(color) for color in normal + bright]
 
 
+def _smooth_polyline(points: np.ndarray, iterations: int = 3) -> np.ndarray:
+    """Round anchor corners with Chaikin subdivision while preserving endpoints."""
+    smoothed = points
+    for _ in range(iterations):
+        left = 0.75 * smoothed[:-1] + 0.25 * smoothed[1:]
+        right = 0.25 * smoothed[:-1] + 0.75 * smoothed[1:]
+        interior = np.column_stack((left, right)).reshape(-1, smoothed.shape[1])
+        smoothed = np.vstack((smoothed[0], interior, smoothed[-1]))
+    return smoothed
+
+
 def _interpolate_polyline(points: np.ndarray, samples_per_segment: int = 512) -> np.ndarray:
     chunks = []
     for index in range(len(points) - 1):
@@ -130,17 +141,27 @@ def _interpolate_polyline(points: np.ndarray, samples_per_segment: int = 512) ->
 
 
 def _sequential_colors(family: FamilyDefinition, count: int = 256) -> np.ndarray:
-    anchors = np.array([hex_to_srgb(value) for value in family.sequential_anchors])
-    anchor_lab = srgb_to_oklab(anchors)
+    anchors_rgb = np.array([hex_to_srgb(value) for value in family.sequential_anchors])
+    anchor_lab = _smooth_polyline(srgb_to_oklab(anchors_rgb))
     dense_lab = _interpolate_polyline(anchor_lab)
+
     dense_rgb = np.clip(oklab_to_srgb(dense_lab), 0.0, 1.0)
     shifted_lab = perceived_lab(dense_rgb, family.profile.gains)
     step = np.linalg.norm(np.diff(shifted_lab, axis=0), axis=1)
     distance = np.concatenate(([0.0], np.cumsum(step)))
     targets = np.linspace(0.0, float(distance[-1]), count)
     indices = np.searchsorted(distance, targets, side="left")
-    indices = np.clip(indices, 0, len(dense_rgb) - 1)
-    return dense_rgb[indices]
+    upper = np.clip(indices, 1, len(dense_lab) - 1)
+    lower = upper - 1
+    span = distance[upper] - distance[lower]
+    fraction = np.divide(
+        targets - distance[lower],
+        span,
+        out=np.zeros_like(targets),
+        where=span > 0,
+    )[:, None]
+    sampled_lab = dense_lab[lower] * (1.0 - fraction) + dense_lab[upper] * fraction
+    return np.clip(oklab_to_srgb(sampled_lab), 0.0, 1.0)
 
 
 def _metrics(family: FamilyDefinition, categories: np.ndarray, sequential: np.ndarray) -> dict[str, Any]:

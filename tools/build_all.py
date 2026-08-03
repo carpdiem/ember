@@ -195,8 +195,8 @@ def _overview_svg(manifest: dict) -> str:
     ]
     profile_labels = {
         "nightshift": "~3400 K warm-white surrogate",
-        "redshift": "~2000 K software-redshift surrogate",
-        "safelight": "deep-red ~1200 K stress surrogate",
+        "redshift": "Redshift 2000 K pinned signal-LUT",
+        "safelight": "Redshift 1200 K pinned LUT",
     }
     for row, family in enumerate(manifest["families"].values()):
         y = 24 + row * row_height

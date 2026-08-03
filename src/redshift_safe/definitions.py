@@ -40,24 +40,25 @@ PROFILES = {
     ),
     "redshift": ShiftProfile(
         slug="redshift",
-        name="Deep software redshift",
-        target="approximately 2000 K",
-        gains=(1.0, 0.54, 0.055),
+        name="Redshift 2000 K signal-LUT",
+        target="Redshift 2000 K with reset ramps, brightness 1, gamma 1",
+        gains=(1.0, 0.54360078, 0.08679949),
         categorical_threshold=4.5,
         description=(
-            "A severe f.lux/Redshift-style profile near 2000 K, where blue is nearly removed "
-            "and green is strongly reduced."
+            "The pinned Redshift 2000 K gamma-ramp signal transform with identity input "
+            "ramps, unit brightness, and unit per-channel gamma."
         ),
     ),
     "safelight": ShiftProfile(
         slug="safelight",
-        name="Astronomy safelight stress profile",
-        target="deep-red, approximately 1200 K with 1.5% blue leakage",
-        gains=(1.0, 0.34, 0.015),
+        name="Deep-red 1200 K stress profile",
+        target="Redshift 1200 K with reset ramps, brightness 1, gamma 1",
+        gains=(1.0, 0.30942099, 0.0),
         categorical_threshold=4.0,
         description=(
-            "An intentionally extreme red-screen surrogate. It is a robustness target, not "
-            "a promise of dark-adaptation safety; actual safety depends mostly on emitted light."
+            "The pinned Redshift 1200 K signal-LUT transform: blue is removed and green "
+            "is heavily attenuated. This is a severe visibility stress test, not a claim "
+            "of physical astronomy safety."
         ),
     ),
 }
@@ -129,7 +130,7 @@ FAMILIES = (
             "foreground_muted": "#72513E",
             "selection": "#D7B17C",
         },
-        categorical_lightness=0.40,
+        categorical_lightness=0.44,
         sequential_anchors=("#FFF2D8", "#D5A94D", "#758257", "#66516E", "#5B2948", "#1B0C0B"),
     ),
     FamilyDefinition(
@@ -143,10 +144,10 @@ FAMILIES = (
             "background_high": "#260B08",
             "foreground": "#FFE9C8",
             "foreground_soft": "#DDBA94",
-            "foreground_muted": "#AA8265",
+            "foreground_muted": "#AE8669",
             "selection": "#4B1D13",
         },
-        categorical_lightness=0.58,
+        categorical_lightness=0.54,
         sequential_anchors=("#090203", "#38104D", "#7C315B", "#B85E4C", "#EFA24E", "#FFE0A0"),
     ),
     FamilyDefinition(
@@ -157,7 +158,7 @@ FAMILIES = (
         surfaces={
             "background": "#FFE8C5",
             "background_alt": "#EFCBA1",
-            "background_high": "#DDAE80",
+            "background_high": "#E2B689",
             "foreground": "#160403",
             "foreground_soft": "#48170F",
             "foreground_muted": "#70301F",

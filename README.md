@@ -15,8 +15,8 @@ The image above shows the **commanded sRGB colors**—the values a UI, terminal,
 | Warmth tier | Dark canvas | Light canvas | Intended target |
 |---|---|---|---|
 | Minimum | [**Ember Dark**](docs/swatches/ember-dark.svg) | [**Ember Light**](docs/swatches/ember-light.svg) | warmest macOS Night Shift surrogate (~3400 K) |
-| Middle | [**Lowfire Dark**](docs/swatches/lowfire-dark.svg) | [**Lowfire Light**](docs/swatches/lowfire-light.svg) | deep software redshift (~2000 K) |
-| Maximum | [**Safelight Dark**](docs/swatches/safelight-dark.svg) | [**Safelight Light**](docs/swatches/safelight-light.svg) | extreme deep-red stress profile (~1200 K) |
+| Middle | [**Lowfire Dark**](docs/swatches/lowfire-dark.svg) | [**Lowfire Light**](docs/swatches/lowfire-light.svg) | pinned Redshift signal-LUT at 2000 K |
+| Maximum | [**Safelight Dark**](docs/swatches/safelight-dark.svg) | [**Safelight Light**](docs/swatches/safelight-light.svg) | pinned Redshift signal-LUT at 1200 K; deep-red stress tier |
 
 Each linked specification sheet contains:
 
@@ -142,10 +142,10 @@ The profiles in this repository are explicit engineering stress tests:
 | Profile | RGB gains | Interpretation |
 |---|---:|---|
 | `nightshift` | `[1.00, 0.74, 0.53]` | ~3400 K warm-white surrogate |
-| `redshift` | `[1.00, 0.54, 0.055]` | ~2000 K; almost all blue removed |
-| `safelight` | `[1.00, 0.34, 0.015]` | deep red; only 1.5% blue leakage |
+| `redshift` | `[1.0000, 0.5436, 0.0868]` | Redshift 2000 K with reset ramps, brightness 1, gamma 1 |
+| `safelight` | `[1.0000, 0.3094, 0.0000]` | Redshift 1200 K with reset ramps, brightness 1, gamma 1 |
 
-The last row is nearly a one-dimensional display. No algorithm can create eight equally bright, wildly separated hues when the hardware is effectively emitting variations of red and amber. The honest strategy is:
+The last row removes blue and heavily attenuates green. No algorithm can create eight equally bright, wildly separated hues in that compressed output gamut. The honest strategy is:
 
 1. preserve as much chromatic distance as the surviving gamut permits;
 2. allow a **small, controlled lightness spread** when hue alone cannot carry eight categories;
@@ -156,7 +156,9 @@ That is why Safelight is robust engineering, not magic.
 
 ## Why these are surrogates, not device calibrations
 
-Apple documents that Night Shift makes the display warmer—“more yellow and less blue”—and that behavior on external displays depends on the display. Apple does **not** publish a universal RGB matrix or Kelvin value for the slider. Redshift/f.lux behavior also varies by OS, display, calibration, and gamma-ramp implementation.
+Apple documents that Night Shift makes the display warmer—“more yellow and less blue”—and that behavior on external displays depends on the display. Apple does **not** publish a universal RGB matrix or Kelvin value for the slider.
+
+The middle and maximum profiles are more concrete: their gains come from Redshift's pinned 2000 K and 1200 K ramp-table rows. They match `redshift -P -O 2000` and `redshift -P -O 1200` when the incoming ramps are identity and brightness/gamma are both 1. Physical output still varies with the display, calibration, operating system, and gamma-ramp precision.
 
 So the repository makes the model inspectable instead of pretending to know every screen. The exact gains are versioned in JSON and code. If measured device data becomes available, a new profile can replace the surrogate and regenerate every artifact.
 
@@ -222,12 +224,12 @@ Current generated metrics:
 
 | Family | Min shifted category ΔE<sub>OK</sub> | Shifted category L range | ΔE<sub>OK</sub> at 12% brightness | Sequential step CV | Min primary-text contrast |
 |---|---:|---:|---:|---:|---:|
-| Ember Dark | 9.24 | 0.0372 | 4.56 | 0.0440 | 8.41:1 |
-| Ember Light | 9.45 | 0.0450 | 4.66 | 0.0400 | 7.12:1 |
-| Lowfire Dark | 5.75 | 0.0681 | 2.84 | 0.0544 | 7.01:1 |
-| Lowfire Light | 4.70 | 0.0760 | 2.32 | 0.0578 | 5.34:1 |
-| Safelight Dark | 4.15 | 0.1033 | 2.05 | 0.0407 | 5.81:1 |
-| Safelight Light | 5.83 | 0.1040 | 2.88 | 0.0438 | 4.52:1 |
+| Ember Dark | 9.24 | 0.0372 | 4.56 | 0.0006 | 8.41:1 |
+| Ember Light | 9.45 | 0.0450 | 4.66 | 0.0005 | 7.12:1 |
+| Lowfire Dark | 5.80 | 0.0638 | 2.86 | 0.0024 | 7.05:1 |
+| Lowfire Light | 5.14 | 0.0664 | 2.53 | 0.0004 | 5.37:1 |
+| Safelight Dark | 4.39 | 0.1029 | 2.17 | 0.0000 | 5.63:1 |
+| Safelight Light | 4.44 | 0.1034 | 2.19 | 0.0000 | 4.62:1 |
 
 The test suite rejects a generated release unless:
 
@@ -295,6 +297,7 @@ Generated artifacts should not be hand-edited. Change [`definitions.py`](src/red
 # Sources and intellectual lineage
 
 - Apple, [Use Night Shift on your Mac](https://support.apple.com/en-us/102191) — behavior and display-dependence; no universal transform published.
+- Redshift, [pinned color-ramp implementation](https://github.com/jonls/redshift/blob/490ba2aae9cfee097a88b6e2be98aeb1ce990050/src/colorramp.c) and [2000 K ramp table](https://github.com/jonls/redshift/blob/490ba2aae9cfee097a88b6e2be98aeb1ce990050/README-colorramp) — exact middle-tier signal gains and gamma-LUT ordering.
 - Matplotlib, [Choosing Colormaps](https://matplotlib.org/stable/users/explain/colors/colormaps.html) — monotonic lightness and perceptually uniform sequential maps.
 - Smith & van der Walt, [A Better Default Colormap / Viridis design](https://bids.github.io/colormap/) — equal perceptual steps, gamut awareness, and transform-based evaluation.
 - Björn Ottosson, [A perceptual color space for image processing](https://bottosson.github.io/posts/oklab/) — Oklab definition and matrices.
