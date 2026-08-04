@@ -24,8 +24,17 @@ class FamilyDefinition:
     surfaces: dict[str, str]
     categorical_colors: tuple[str, ...]
     daylight_minimum_delta_e_ok: float
-    terminal_color_count: int
+    terminal_colors: tuple[str, ...]
+    terminal_night_groups: tuple[int, ...]
+    terminal_daylight_minimum_delta_e_ok: float
+    terminal_night_minimum_delta_e_ok: float | None
     sequential_anchors: tuple[str, ...]
+
+    @property
+    def terminal_color_count(self) -> int:
+        """Number of distinct accent groups after the target transform."""
+
+        return len(set(self.terminal_night_groups))
 
 
 PROFILES = {
@@ -85,7 +94,10 @@ FAMILIES = (
         # the transformed view. Thin lines also receive dash and marker cues.
         categorical_colors=("#6E96D5", "#DDAA69", "#2E8A7E", "#67BE95", "#945D48", "#C3779A"),
         daylight_minimum_delta_e_ok=14.0,
-        terminal_color_count=6,
+        terminal_colors=("#B4C6F7", "#CEA866", "#70DBD8", "#9ABEA2", "#F5AD9A", "#D895C2"),
+        terminal_night_groups=(0, 1, 2, 3, 4, 5),
+        terminal_daylight_minimum_delta_e_ok=9.0,
+        terminal_night_minimum_delta_e_ok=7.0,
         sequential_anchors=("#282527", "#51404F", "#7F5E69", "#A17C6C", "#C49D70", "#E2CDA1"),
     ),
     FamilyDefinition(
@@ -104,7 +116,10 @@ FAMILIES = (
         },
         categorical_colors=("#158F7A", "#322865", "#AE5D63", "#6E2626", "#33531D", "#676DB1"),
         daylight_minimum_delta_e_ok=15.0,
-        terminal_color_count=6,
+        terminal_colors=("#0E7361", "#20214A", "#833C50", "#571C0D", "#0F4510", "#3B4D87"),
+        terminal_night_groups=(0, 1, 2, 3, 4, 5),
+        terminal_daylight_minimum_delta_e_ok=14.0,
+        terminal_night_minimum_delta_e_ok=11.0,
         sequential_anchors=("#F2E5BC", "#D7BF8D", "#B08061", "#80515A", "#533844", "#252126"),
     ),
     FamilyDefinition(
@@ -125,7 +140,10 @@ FAMILIES = (
         # improves daytime identity while the transformed composition stays warm.
         categorical_colors=("#DCC482", "#A57C29", "#8497E0", "#C28B93"),
         daylight_minimum_delta_e_ok=13.0,
-        terminal_color_count=2,
+        terminal_colors=("#DCC4D5", "#DCC464", "#D8B3FF", "#D8B396"),
+        terminal_night_groups=(0, 0, 1, 1),
+        terminal_daylight_minimum_delta_e_ok=8.0,
+        terminal_night_minimum_delta_e_ok=2.0,
         sequential_anchors=("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
     ),
     FamilyDefinition(
@@ -146,7 +164,10 @@ FAMILIES = (
         # separate the daytime gold, lavender, and olive without changing night.
         categorical_colors=("#E0C48E", "#B08ED7", "#8F8A31"),
         daylight_minimum_delta_e_ok=20.0,
-        terminal_color_count=1,
+        terminal_colors=("#EACF6F", "#EACFFF", "#EACFBC"),
+        terminal_night_groups=(0, 0, 0),
+        terminal_daylight_minimum_delta_e_ok=9.0,
+        terminal_night_minimum_delta_e_ok=None,
         sequential_anchors=("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
     ),
 )

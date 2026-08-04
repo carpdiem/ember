@@ -87,10 +87,11 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
             font=label_font,
             fill=_rgb(surfaces["foreground"]),
         )
-        count = family["terminal_semantic_color_count"]
+        day_count = family["terminal_daylight_color_count"]
+        night_count = family["terminal_semantic_color_count"]
         draw.text(
             (1030, y + 22),
-            f"{count} semantic accents · ANSI aliases repeated",
+            f"ANSI accents: {day_count} day · {night_count} night",
             font=label_font,
             fill=_rgb(surfaces["foreground"]),
         )

@@ -8,8 +8,8 @@ edges but cannot substitute for long-duration viewing on real hardware.
 
 | Family | Categories | Day min ΔEOK | Shifted min ΔEOK | Mean / max raw chroma | Min shifted terminal contrast |
 |---|---:|---:|---:|---:|---:|
-| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 4.55:1 |
-| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 4.53:1 |
+| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 4.51:1 |
+| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 4.50:1 |
 | 2000K Dark | 4 | 13.62 | 6.26 | 0.0941 / 0.1099 | 4.57:1 |
 | 1200K Dark | 3 | 21.61 | 6.95 | 0.0990 / 0.1100 | 4.54:1 |
 
@@ -22,8 +22,8 @@ accent counts must never increase as the target temperature falls.
 
 | Screenshot | High-contrast edge fraction | High-chroma pixel fraction | Oklab chroma p99 |
 |---|---:|---:|---:|
-| `terminal-commanded.png` | 2.1467% | 0.0000% | 0.0582 |
-| `terminal-simulated.png` | 0.8195% | 16.3466% | 0.1728 |
+| `terminal-commanded.png` | 2.0561% | 0.0260% | 0.0629 |
+| `terminal-simulated.png` | 0.7952% | 16.3247% | 0.1728 |
 | `data-commanded.png` | 1.3976% | 0.0000% | 0.1043 |
 | `data-simulated.png` | 0.5456% | 22.5253% | 0.1741 |
 

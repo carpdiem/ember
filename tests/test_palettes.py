@@ -44,6 +44,9 @@ def test_honest_temperature_families() -> None:
     assert [
         family["terminal_semantic_color_count"] for family in manifest["families"].values()
     ] == [6, 6, 2, 1]
+    assert [
+        family["terminal_daylight_color_count"] for family in manifest["families"].values()
+    ] == [6, 6, 4, 3]
     for family in manifest["families"].values():
         assert len(family["terminal"]) == 16
         assert len(family["continuous_rgb"]) == 256
@@ -134,6 +137,44 @@ def test_selection_state_remains_visible_after_shift() -> None:
         background = warm_transform(hex_to_srgb(family["surfaces"]["background"]), gains)
         selection = warm_transform(hex_to_srgb(family["surfaces"]["selection"]), gains)
         assert delta_e_ok(background, selection) >= 10.0, family["slug"]
+
+
+def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
+    manifest = generate_manifest()
+    semantic_names = ("red", "green", "yellow", "blue", "magenta", "cyan")
+    for family in manifest["families"].values():
+        count = family["terminal_daylight_color_count"]
+        colors = np.asarray(
+            [hex_to_srgb(family["terminal"][name]) for name in semantic_names[:count]]
+        )
+        normal = perceived_lab(colors, (1.0, 1.0, 1.0))
+        shifted = perceived_lab(colors, manifest["profiles"][family["profile"]]["rgb_gains"])
+        groups = np.asarray(family["terminal_night_groups"])
+        group_ids = sorted(set(groups))
+        group_members = [shifted[groups == group_id] for group_id in group_ids]
+        group_spreads = [
+            float(pairwise_distances(members).max()) if len(members) > 1 else 0.0
+            for members in group_members
+        ]
+        group_centers = np.asarray([members.mean(axis=0) for members in group_members])
+        day_min = float(pairwise_distances(normal).min())
+        metrics = family["metrics"]["terminal"]
+
+        assert len(groups) == count
+        assert len(group_ids) == family["terminal_semantic_color_count"]
+        assert day_min >= family["terminal_daylight_minimum_delta_e_ok_target"]
+        assert max(group_spreads) <= 1.5
+        assert np.linalg.norm(normal[:, 1:], axis=1).max() <= 0.121
+        assert metrics["normal_min_delta_e_ok"] == round(day_min, 2)
+        assert metrics["shifted_group_max_delta_e_ok"] == round(max(group_spreads), 2)
+        night_target = family["terminal_night_minimum_delta_e_ok_target"]
+        if night_target is None:
+            assert len(group_centers) == 1
+            assert metrics["shifted_group_center_min_delta_e_ok"] is None
+        else:
+            night_min = float(pairwise_distances(group_centers).min())
+            assert night_min >= night_target
+            assert metrics["shifted_group_center_min_delta_e_ok"] == round(night_min, 2)
 
 
 def test_terminal_foregrounds_remain_visible_after_shift() -> None:

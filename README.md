@@ -20,20 +20,21 @@ accents expressive within a controlled saturation range.
 
 ## Choose a palette
 
-| Palette | Mode | Data categories | Terminal accents | Intended use |
+| Palette | Mode | Data categories | Terminal accents, day / night | Intended use |
 |---|---|---:|---:|---|
-| [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 | moderate warm shift; general terminal and data work |
-| [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 | light-surface work under a moderate warm shift |
-| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 2 | deep warm shift with limited green and blue |
-| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 1 | extreme red shift; redundant encoding required |
+| [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 / 6 | moderate warm shift; general terminal and data work |
+| [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 / 6 | light-surface work under a moderate warm shift |
+| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 4 / 2 | deep Redshift work; reduced semantic color capacity |
+| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 3 / 1 | extreme red-shift stress case; rely on lightness and shape |
 
 The deepest profiles are dark-only. Under the 2000 K and 1200 K gain vectors, a light
 canvas becomes a large orange-red field, while a dark canvas preserves a subdued
 working surface.
 
-Terminal formats require sixteen ANSI slots. The 2000 K and 1200 K themes fill those
-slots by repeating the smaller semantic accent set rather than inventing distinctions
-that disappear after transformation.
+Terminal formats require sixteen ANSI slots. Ember repeats the available commanded
+accents to fill those banks. At 2000 K and 1200 K, four and three useful daytime
+identities collapse into two and one tightly grouped nighttime identities rather than
+pretending that every ANSI name remains a separate visible color.
 
 ## See the palettes in use
 
@@ -70,7 +71,8 @@ Ready-to-import themes are included for:
 - [Windows Terminal](themes/terminal/windows-terminal/)
 
 Choose the file whose temperature and polarity match your display profile. In each
-theme, the normal and bright ANSI banks intentionally reuse a compact semantic set.
+theme, the normal and bright ANSI banks share the same semantic roles. Deep profiles
+use extra commanded-channel variation to preserve daytime distinctions.
 `bright_black` remains readable because terminals commonly use it for comments,
 timestamps, and metadata.
 
@@ -190,7 +192,9 @@ on the screen.
 
 Categorical palettes use six colors at 3400 K, four at 2000 K, and three at 1200 K.
 Terminal accents contract faster because small monospaced glyphs need stronger
-foreground contrast than large chart marks.
+foreground contrast than large chart marks. The ANSI exports therefore separate
+daytime color count from transformed semantic count: `6 / 6`, `6 / 6`, `4 / 2`, and
+`3 / 1` across the four families.
 
 The category colors are authored as moderate-chroma compositions, then serialized and
 measured in unshifted and transformed Oklab. Each family has independent minimum-distance
@@ -220,8 +224,8 @@ formula.
 
 | Family | Categories | Day min ΔEOK | Transformed min ΔEOK | Mean / max raw chroma | Transformed L range | Min ANSI contrast |
 |---|---:|---:|---:|---:|---:|---:|
-| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 4.55:1 |
-| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 4.53:1 |
+| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 4.51:1 |
+| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 4.50:1 |
 | 2000K Dark | 4 | 13.62 | 6.26 | 0.0941 / 0.1099 | 0.1654 | 4.57:1 |
 | 1200K Dark | 3 | 21.61 | 6.95 | 0.0990 / 0.1100 | 0.1616 | 4.54:1 |
 
@@ -242,11 +246,10 @@ uv build
 The release gates enforce:
 
 - exactly four palette families with categorical capacities `6, 6, 4, 3`;
-- terminal semantic capacities `6, 6, 2, 1` with valid sixteen-slot exports;
-- commanded categorical mean Oklab chroma between `0.09` and `0.105`, with no color
+- categorical commanded mean Oklab chroma between `0.09` and `0.105`, with no color
   above `0.111`;
-- family-specific category-separation floors in both unshifted daylight and the target
-  transform;
+- categorical minimum-distance floors in both unshifted and transformed states;
+- terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 2`, `3 / 1`;
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
 - at least 4.5:1 primary-text contrast on every background and selection;
 - visible selection surfaces after transformation;

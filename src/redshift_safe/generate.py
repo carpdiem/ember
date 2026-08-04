@@ -45,28 +45,16 @@ def _categorical_colors(family: FamilyDefinition) -> np.ndarray:
     return np.asarray([hex_to_srgb(value) for value in family.categorical_colors])
 
 
-def _terminal_accent(family: FamilyDefinition, color: np.ndarray) -> np.ndarray:
-    """Lift an accent only as far as transformed small text requires."""
+def _terminal_colors(family: FamilyDefinition) -> list[str]:
+    """Return authored day accents that collapse into the configured night groups."""
 
-    foreground = hex_to_srgb(family.surfaces["foreground"])
-    background = warm_transform(hex_to_srgb(family.surfaces["background"]), family.profile.gains)
-    for amount in np.linspace(0.0, 1.0, 101):
-        mixed = color * (1.0 - amount) + foreground * amount
-        transformed = warm_transform(mixed, family.profile.gains)
-        if contrast_ratio(transformed, background) >= 4.55:
-            return mixed
-    return foreground
-
-
-def _terminal_colors(family: FamilyDefinition, categories: np.ndarray) -> list[str]:
     surfaces = family.surfaces
     first_neutral = (
         hex_to_srgb(surfaces["background_high"])
         if family.mode == "dark"
         else hex_to_srgb(surfaces["foreground"])
     )
-    accent_indices = np.linspace(0, len(categories) - 1, family.terminal_color_count, dtype=int)
-    accents = [_terminal_accent(family, categories[index]) for index in accent_indices]
+    accents = [hex_to_srgb(value) for value in family.terminal_colors]
     semantic_slots = [accents[index % len(accents)] for index in range(6)]
     normal = [first_neutral, *semantic_slots, hex_to_srgb(surfaces["foreground"])]
     # Bright black is commonly used for comments and metadata. Keep it readable
@@ -140,6 +128,28 @@ def _metrics(
             float(np.linalg.norm(normal_categories[:, 1:], axis=1).mean()), 4
         ),
     }
+    terminal_colors = np.asarray([hex_to_srgb(value) for value in family.terminal_colors])
+    normal_terminal = srgb_to_oklab(terminal_colors)
+    shifted_terminal = perceived_lab(terminal_colors, gains)
+    group_ids = sorted(set(family.terminal_night_groups))
+    group_members = [
+        shifted_terminal[np.asarray(family.terminal_night_groups) == group_id]
+        for group_id in group_ids
+    ]
+    group_spreads = [
+        float(pairwise_distances(members).max()) if len(members) > 1 else 0.0
+        for members in group_members
+    ]
+    group_centers = np.asarray([members.mean(axis=0) for members in group_members])
+    terminal_metrics = {
+        "normal_min_delta_e_ok": round(float(pairwise_distances(normal_terminal).min()), 2),
+        "shifted_group_max_delta_e_ok": round(max(group_spreads), 2),
+        "shifted_group_center_min_delta_e_ok": (
+            round(float(pairwise_distances(group_centers).min()), 2)
+            if len(group_centers) > 1
+            else None
+        ),
+    }
     shifted_sequence = perceived_lab(sequential, gains)
     sequence_steps = np.linalg.norm(np.diff(shifted_sequence, axis=0), axis=1) * 100.0
     direction = 1.0 if shifted_sequence[-1, 0] >= shifted_sequence[0, 0] else -1.0
@@ -174,6 +184,7 @@ def _metrics(
 
     return {
         "categorical": category_metrics,
+        "terminal": terminal_metrics,
         "continuous": sequence_metrics,
         "shifted_text_contrast": text_metrics,
     }
@@ -190,7 +201,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
     # preview/fallback, but 8-bit quantization is too coarse to carry the strict
     # uniform-step guarantee at 256 samples.
     sequential = np.round(_sequential_colors(family), 10)
-    terminal_values = _terminal_colors(family, categories)
+    terminal_values = _terminal_colors(family)
     transformed_background = warm_transform(
         hex_to_srgb(family.surfaces["background"]), family.profile.gains
     )
@@ -211,7 +222,13 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "profile": family.profile.slug,
         "surfaces": family.surfaces,
         "terminal": dict(zip(ANSI_NAMES, terminal_values)),
+        "terminal_daylight_color_count": len(family.terminal_colors),
         "terminal_semantic_color_count": family.terminal_color_count,
+        "terminal_night_groups": list(family.terminal_night_groups),
+        "terminal_daylight_minimum_delta_e_ok_target": (
+            family.terminal_daylight_minimum_delta_e_ok
+        ),
+        "terminal_night_minimum_delta_e_ok_target": (family.terminal_night_minimum_delta_e_ok),
         "terminal_minimum_shifted_foreground_contrast": round(
             min(contrast_ratio(value, transformed_background) for value in small_text_terminal),
             2,

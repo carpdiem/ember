@@ -25,20 +25,20 @@
 <text x="984" y="129" fill="#FFF0D8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#4A433D</text>
 <text x="28" y="174" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">ANSI 0–15</text>
 <rect x="28" y="187" width="68" height="44" fill="#403B37"/>
-<rect x="96" y="187" width="68" height="44" fill="#ABB6C2"/>
-<rect x="164" y="187" width="68" height="44" fill="#DDAA69"/>
-<rect x="232" y="187" width="68" height="44" fill="#A7BAA2"/>
-<rect x="300" y="187" width="68" height="44" fill="#8FC49F"/>
-<rect x="368" y="187" width="68" height="44" fill="#C4A98E"/>
-<rect x="436" y="187" width="68" height="44" fill="#CF9FA5"/>
+<rect x="96" y="187" width="68" height="44" fill="#B4C6F7"/>
+<rect x="164" y="187" width="68" height="44" fill="#CEA866"/>
+<rect x="232" y="187" width="68" height="44" fill="#70DBD8"/>
+<rect x="300" y="187" width="68" height="44" fill="#9ABEA2"/>
+<rect x="368" y="187" width="68" height="44" fill="#F5AD9A"/>
+<rect x="436" y="187" width="68" height="44" fill="#D895C2"/>
 <rect x="504" y="187" width="68" height="44" fill="#DDD0B2"/>
 <rect x="572" y="187" width="68" height="44" fill="#DDD0B2"/>
-<rect x="640" y="187" width="68" height="44" fill="#ABB6C2"/>
-<rect x="708" y="187" width="68" height="44" fill="#DDAA69"/>
-<rect x="776" y="187" width="68" height="44" fill="#A7BAA2"/>
-<rect x="844" y="187" width="68" height="44" fill="#8FC49F"/>
-<rect x="912" y="187" width="68" height="44" fill="#C4A98E"/>
-<rect x="980" y="187" width="68" height="44" fill="#CF9FA5"/>
+<rect x="640" y="187" width="68" height="44" fill="#B4C6F7"/>
+<rect x="708" y="187" width="68" height="44" fill="#CEA866"/>
+<rect x="776" y="187" width="68" height="44" fill="#70DBD8"/>
+<rect x="844" y="187" width="68" height="44" fill="#9ABEA2"/>
+<rect x="912" y="187" width="68" height="44" fill="#F5AD9A"/>
+<rect x="980" y="187" width="68" height="44" fill="#D895C2"/>
 <rect x="1048" y="187" width="68" height="44" fill="#DDD0B2"/>
 <text x="28" y="264" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical 1–6</text>
 <rect x="28" y="278" width="162" height="58" rx="5" fill="#6E96D5"/>
