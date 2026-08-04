@@ -1,32 +1,19 @@
-"""Print a compact usage gallery for manual Matplotlib smoke testing."""
+"""Render the generated Matplotlib gallery."""
 
 from __future__ import annotations
 
-import matplotlib.pyplot as plt
-import numpy as np
+import sys
+from pathlib import Path
 
-from redshift_safe import categorical, categorical_norm, sequential
+ROOT = Path(__file__).resolve().parents[1]
+TOOLS = ROOT / "tools"
+SRC = ROOT / "src"
+for path in (TOOLS, SRC):
+    if str(path) not in sys.path:
+        sys.path.insert(0, str(path))
 
-SLUGS = (
-    "3400k-dark",
-    "3400k-light",
-    "2000k-dark",
-    "1200k-dark",
-)
+from render_gallery import render_matplotlib_gallery
 
-fig, axes = plt.subplots(len(SLUGS), 2, figsize=(11, 7), constrained_layout=True)
-heat = np.outer(np.linspace(0, 1, 80), np.ones(320))
-for row, slug in enumerate(SLUGS):
-    axes[row, 0].imshow(
-        np.arange(categorical(slug).N)[None, :],
-        cmap=categorical(slug),
-        norm=categorical_norm(slug),
-        aspect="auto",
-    )
-    axes[row, 0].set_title(f"{slug} · categorical")
-    axes[row, 1].imshow(heat.T, cmap=sequential(slug), aspect="auto", origin="lower")
-    axes[row, 1].set_title(f"{slug} · sequential")
-    for axis in axes[row]:
-        axis.set_axis_off()
+from redshift_safe.generate import generate_manifest
 
-fig.savefig("docs/matplotlib-gallery.png", dpi=180)
+render_matplotlib_gallery(generate_manifest(), ROOT / "docs/matplotlib-gallery.png")

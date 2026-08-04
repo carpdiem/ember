@@ -18,6 +18,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+from render_gallery import GALLERY_FINGERPRINT_KEY, render_matplotlib_gallery
 from render_samples import (
     channel_collapse_svg,
     redundant_encoding_svg,
@@ -35,6 +36,7 @@ BASE_MANAGED_PATHS = (
     "themes/terminal/README.md",
     "docs/swatches/overview.svg",
     "docs/swatches/command-vs-simulated.png",
+    "docs/matplotlib-gallery.png",
     "docs/samples/terminal-commanded.png",
     "docs/samples/terminal-simulated.png",
     "docs/samples/data-commanded.png",
@@ -385,6 +387,7 @@ replacement. See `MIGRATION.md` at the repository root.
 
     _write(destination / "docs/swatches/overview.svg", _overview_svg(manifest))
     _preview_png(manifest, destination / "docs/swatches/command-vs-simulated.png")
+    render_matplotlib_gallery(manifest, destination / "docs/matplotlib-gallery.png")
     render_samples(manifest, destination / "docs/samples")
     _write(destination / "docs/diagrams/channel-collapse.svg", channel_collapse_svg())
     _write(
@@ -402,6 +405,12 @@ def _artifacts_equal(expected: Path, actual: Path) -> bool:
         return False
     if expected.suffix == ".png":
         with Image.open(expected) as left, Image.open(actual) as right:
+            if expected.name == "matplotlib-gallery.png":
+                # Matplotlib text rasterization varies across supported Python/platform
+                # wheels. Compare the source fingerprint and canvas, not incidental pixels.
+                return left.size == right.size and left.info.get(
+                    GALLERY_FINGERPRINT_KEY
+                ) == right.info.get(GALLERY_FINGERPRINT_KEY)
             return np.array_equal(np.asarray(left.convert("RGB")), np.asarray(right.convert("RGB")))
     return actual.read_bytes() == expected.read_bytes()
 
