@@ -25,34 +25,34 @@
 <text x="984" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#C9B796</text>
 <text x="28" y="174" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">ANSI 0–15</text>
 <rect x="28" y="187" width="68" height="44" fill="#342F2C"/>
-<rect x="96" y="187" width="68" height="44" fill="#386B5B"/>
-<rect x="164" y="187" width="68" height="44" fill="#333360"/>
-<rect x="232" y="187" width="68" height="44" fill="#764A4E"/>
-<rect x="300" y="187" width="68" height="44" fill="#6C3333"/>
-<rect x="368" y="187" width="68" height="44" fill="#405333"/>
-<rect x="436" y="187" width="68" height="44" fill="#5C5A82"/>
+<rect x="96" y="187" width="68" height="44" fill="#1F6F60"/>
+<rect x="164" y="187" width="68" height="44" fill="#322865"/>
+<rect x="232" y="187" width="68" height="44" fill="#77484A"/>
+<rect x="300" y="187" width="68" height="44" fill="#6E2626"/>
+<rect x="368" y="187" width="68" height="44" fill="#33531D"/>
+<rect x="436" y="187" width="68" height="44" fill="#595C8C"/>
 <rect x="504" y="187" width="68" height="44" fill="#342F2C"/>
 <rect x="572" y="187" width="68" height="44" fill="#342F2C"/>
-<rect x="640" y="187" width="68" height="44" fill="#386B5B"/>
-<rect x="708" y="187" width="68" height="44" fill="#333360"/>
-<rect x="776" y="187" width="68" height="44" fill="#764A4E"/>
-<rect x="844" y="187" width="68" height="44" fill="#6C3333"/>
-<rect x="912" y="187" width="68" height="44" fill="#405333"/>
-<rect x="980" y="187" width="68" height="44" fill="#5C5A82"/>
+<rect x="640" y="187" width="68" height="44" fill="#1F6F60"/>
+<rect x="708" y="187" width="68" height="44" fill="#322865"/>
+<rect x="776" y="187" width="68" height="44" fill="#77484A"/>
+<rect x="844" y="187" width="68" height="44" fill="#6E2626"/>
+<rect x="912" y="187" width="68" height="44" fill="#33531D"/>
+<rect x="980" y="187" width="68" height="44" fill="#595C8C"/>
 <rect x="1048" y="187" width="68" height="44" fill="#342F2C"/>
 <text x="28" y="264" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical 1–6</text>
-<rect x="28" y="278" width="162" height="58" rx="5" fill="#39806C"/>
-<text x="42" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#39806C</text>
-<rect x="198" y="278" width="162" height="58" rx="5" fill="#333360"/>
-<text x="212" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#333360</text>
-<rect x="368" y="278" width="162" height="58" rx="5" fill="#995960"/>
-<text x="382" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#995960</text>
-<rect x="538" y="278" width="162" height="58" rx="5" fill="#6C3333"/>
-<text x="552" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#6C3333</text>
-<rect x="708" y="278" width="162" height="58" rx="5" fill="#405333"/>
-<text x="722" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#405333</text>
-<rect x="878" y="278" width="162" height="58" rx="5" fill="#666699"/>
-<text x="892" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#666699</text>
+<rect x="28" y="278" width="162" height="58" rx="5" fill="#158F7A"/>
+<text x="42" y="314" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#158F7A</text>
+<rect x="198" y="278" width="162" height="58" rx="5" fill="#322865"/>
+<text x="212" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#322865</text>
+<rect x="368" y="278" width="162" height="58" rx="5" fill="#AE5D63"/>
+<text x="382" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#AE5D63</text>
+<rect x="538" y="278" width="162" height="58" rx="5" fill="#6E2626"/>
+<text x="552" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#6E2626</text>
+<rect x="708" y="278" width="162" height="58" rx="5" fill="#33531D"/>
+<text x="722" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#33531D</text>
+<rect x="878" y="278" width="162" height="58" rx="5" fill="#676DB1"/>
+<text x="892" y="314" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#676DB1</text>
 <text x="28" y="370" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Sequential (low → high)</text>
 <rect x="28.00" y="384" width="4.5" height="24" fill="#F2E5BC"/>
 <rect x="32.32" y="384" width="4.5" height="24" fill="#F1E4BB"/>

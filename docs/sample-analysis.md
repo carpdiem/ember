@@ -4,27 +4,28 @@ Generated from the exact README screenshots. These image-level diagnostics are
 guardrails, not a model of eye strain: they detect saturation and abrupt luminance
 edges but cannot substitute for long-duration viewing on real hardware.
 
-## Palette-level comfort gates
+## Palette-level bi-state gates
 
-| Family | Categories | Terminal accents | Max raw Oklab chroma | Min shifted category ΔEOK | Min shifted terminal contrast |
+| Family | Categories | Day min ΔEOK | Shifted min ΔEOK | Mean / max raw chroma | Min shifted terminal contrast |
 |---|---:|---:|---:|---:|---:|
-| 3400K Dark | 6 | 6 | 0.0786 | 7.31 | 4.56:1 |
-| 3400K Light | 6 | 6 | 0.0846 | 10.04 | 4.55:1 |
-| 2000K Dark | 4 | 2 | 0.0677 | 6.25 | 4.57:1 |
-| 1200K Dark | 3 | 1 | 0.0640 | 6.95 | 4.54:1 |
+| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 4.55:1 |
+| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 4.53:1 |
+| 2000K Dark | 4 | 13.62 | 6.26 | 0.0941 / 0.1099 | 4.57:1 |
+| 1200K Dark | 3 | 21.61 | 6.95 | 0.0990 / 0.1100 | 4.54:1 |
 
-Release gates: categorical commanded chroma ≤ 0.09; transformed terminal
-foreground-capable ANSI slots ≥ 4.5:1; category and accent counts must never
-increase as the target temperature falls.
+Release gates: categorical commanded mean chroma 0.09–0.105 and maximum
+chroma ≤ 0.111; family-specific daytime and transformed separation floors;
+transformed terminal foreground-capable ANSI slots ≥ 4.5:1; category and
+accent counts must never increase as the target temperature falls.
 
 ## Screenshot-level diagnostics
 
 | Screenshot | High-contrast edge fraction | High-chroma pixel fraction | Oklab chroma p99 |
 |---|---:|---:|---:|
-| `terminal-commanded.png` | 1.9732% | 0.0000% | 0.0556 |
-| `terminal-simulated.png` | 0.7479% | 16.6353% | 0.1610 |
-| `data-commanded.png` | 1.4472% | 0.0000% | 0.0743 |
-| `data-simulated.png` | 0.6132% | 22.1657% | 0.1761 |
+| `terminal-commanded.png` | 2.1467% | 0.0000% | 0.0582 |
+| `terminal-simulated.png` | 0.8195% | 16.3466% | 0.1728 |
+| `data-commanded.png` | 1.3976% | 0.0000% | 0.1043 |
+| `data-simulated.png` | 0.5456% | 22.5253% | 0.1741 |
 
 Interpretation: small high-contrast edge fractions are expected around glyphs,
 axes, and markers. Commanded high-chroma area should remain scarce. A deep warm

@@ -1,6 +1,6 @@
 # Ember: Redshift Safe Color Palettes
 
-**Calm terminal and data-visualization palettes for displays under strong warm and red shifts.**
+**Terminal and data-visualization palettes that stay distinct by day and under strong warm shifts at night.**
 
 [![CI](https://github.com/carpdiem/ember-redshift-safe-palettes/actions/workflows/ci.yml/badge.svg)](https://github.com/carpdiem/ember-redshift-safe-palettes/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
@@ -9,13 +9,14 @@
 ![Ember palette overview](docs/swatches/overview.svg)
 
 Ember provides coordinated color systems for terminals, charts, heatmaps, and user
-interfaces viewed through software color-temperature filters. Each palette is designed
-for a specific warm-shift profile, then measured again after that transform is applied.
+interfaces that move between an ordinary daytime display and a software-filtered night
+display. Each palette is measured in both states.
 
 Warm filters do more than tint a screen. They attenuate green and blue by different
-amounts, reducing the number of colors that remain distinct. Ember responds with warm
-neutral surfaces, restrained chroma, moderate text contrast, and a smaller semantic
-color set as the available gamut contracts.
+amounts, reducing the number of colors that remain distinct. Ember uses that same channel
+compression as design room: colors meet nighttime contrast and separation floors, then
+use the attenuated dimensions to improve daytime spacing. Moderate chroma keeps the
+accents expressive within a controlled saturation range.
 
 ## Choose a palette
 
@@ -138,7 +139,7 @@ profiles, and measured results.
 
 ## Design and scientific basis
 
-### Design in the transformed color space
+### Model the transformed color space
 
 Ember models a warm display transform as an independent gain on each sRGB channel:
 
@@ -156,8 +157,14 @@ display RGB ≈ commanded RGB × [red gain, green gain, blue gain]
 
 At 1200 K, the modeled blue channel contributes nothing and green is heavily
 attenuated. Colors that are far apart in ordinary sRGB can therefore converge after
-the filter. Ember evaluates contrast, lightness, chroma, and separation after applying
-the selected profile, not only before it.
+the filter.
+
+This creates a bi-state design problem. At 1200 K, many commanded blue values produce
+the same transformed color. At 2000 K, blue differences survive only weakly. Ember first
+requires each category set to clear its transformed separation floor, then uses those
+compressed channel dimensions to increase unshifted daytime separation. The 3400 K
+families have less free room, so their colors are composed to improve the minimum Oklab
+distance in both states together.
 
 These are software signal models, not calibrated physical color temperatures. Actual
 output also depends on the display, operating system, calibration, brightness, and
@@ -179,15 +186,15 @@ The visual hierarchy draws on Gruvbox's warm-neutral foundation: grays carry the
 interface, and accents remain distinguishable without becoming the brightest objects
 on the screen.
 
-### Match semantic capacity to the surviving gamut
+### Optimize semantic color for day and night
 
 Categorical palettes use six colors at 3400 K, four at 2000 K, and three at 1200 K.
 Terminal accents contract faster because small monospaced glyphs need stronger
 foreground contrast than large chart marks.
 
-The category colors are authored as restrained compositions, then serialized,
-transformed, and measured in Oklab. Their lightness range is wide enough to preserve
-separation after severe channel loss. Because lightness can imply order, categorical
+The category colors are authored as moderate-chroma compositions, then serialized and
+measured in unshifted and transformed Oklab. Each family has independent minimum-distance
+floors for daytime and nighttime use. Because lightness can imply order, categorical
 charts should also carry identity through labels, position, texture, marker, or line
 style.
 
@@ -209,12 +216,12 @@ quantized previews; the JSON and Python float arrays carry the numerical guarant
 measure used consistently by the generator and tests, not a standardized CIE ΔE
 formula.
 
-| Family | Categories | Max raw Oklab chroma | Min transformed ΔEOK | Transformed L range | Min ANSI contrast |
-|---|---:|---:|---:|---:|---:|
-| 3400K Dark | 6 | 0.0786 | 7.31 | 0.1700 | 4.56:1 |
-| 3400K Light | 6 | 0.0846 | 10.04 | 0.2026 | 4.55:1 |
-| 2000K Dark | 4 | 0.0677 | 6.25 | 0.1659 | 4.57:1 |
-| 1200K Dark | 3 | 0.0640 | 6.95 | 0.1616 | 4.54:1 |
+| Family | Categories | Day min ΔEOK | Transformed min ΔEOK | Mean / max raw chroma | Transformed L range | Min ANSI contrast |
+|---|---:|---:|---:|---:|---:|---:|
+| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 4.55:1 |
+| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 4.53:1 |
+| 2000K Dark | 4 | 13.62 | 6.26 | 0.0941 / 0.1099 | 0.1654 | 4.57:1 |
+| 1200K Dark | 3 | 21.61 | 6.95 | 0.0990 / 0.1100 | 0.1616 | 4.54:1 |
 
 The build also checks primary text against every declared background and selection
 surface, verifies selection visibility, parses every terminal format, and reproduces
@@ -234,8 +241,10 @@ The release gates enforce:
 
 - exactly four palette families with categorical capacities `6, 6, 4, 3`;
 - terminal semantic capacities `6, 6, 2, 1` with valid sixteen-slot exports;
-- commanded categorical Oklab chroma no greater than `0.09`;
-- transformed category separation appropriate to each profile;
+- commanded categorical mean Oklab chroma between `0.09` and `0.105`, with no color
+  above `0.111`;
+- family-specific category-separation floors in both unshifted daylight and the target
+  transform;
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
 - at least 4.5:1 primary-text contrast on every background and selection;
 - visible selection surfaces after transformation;

@@ -40,12 +40,7 @@ ANSI_NAMES = (
 
 
 def _categorical_colors(family: FamilyDefinition) -> np.ndarray:
-    """Return the deliberately small, human-composed categorical set.
-
-    The old optimizer seeded on maximum chroma and rewarded additional chroma.
-    That produced impressive separation scores and hostile sustained viewing.
-    Comfort and composition are now authored inputs; generation measures them.
-    """
+    """Return the small categorical set composed for day and transformed use."""
 
     return np.asarray([hex_to_srgb(value) for value in family.categorical_colors])
 
@@ -141,6 +136,9 @@ def _metrics(
         "normal_chroma_max": round(
             float(np.linalg.norm(normal_categories[:, 1:], axis=1).max()), 4
         ),
+        "normal_chroma_mean": round(
+            float(np.linalg.norm(normal_categories[:, 1:], axis=1).mean()), 4
+        ),
     }
     shifted_sequence = perceived_lab(sequential, gains)
     sequence_steps = np.linalg.norm(np.diff(shifted_sequence, axis=0), axis=1) * 100.0
@@ -211,6 +209,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
             2,
         ),
         "categorical": dict(zip(CATEGORY_NAMES, category_hex)),
+        "daylight_minimum_delta_e_ok_target": family.daylight_minimum_delta_e_ok,
         "continuous_rgb": sequential.tolist(),
         "continuous_hex8": [srgb_to_hex(color) for color in sequential],
         "metrics": _metrics(family, categories, sequential),

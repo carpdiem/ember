@@ -1,4 +1,4 @@
-"""Authoritative temperature profiles and restrained, human-chosen palette anchors."""
+"""Authoritative temperature profiles and bi-state palette anchors."""
 
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ class FamilyDefinition:
     profile: ShiftProfile
     surfaces: dict[str, str]
     categorical_colors: tuple[str, ...]
+    daylight_minimum_delta_e_ok: float
     terminal_color_count: int
     sequential_anchors: tuple[str, ...]
 
@@ -80,9 +81,10 @@ FAMILIES = (
             "foreground_muted": "#928374",
             "selection": "#4A433D",
         },
-        # Six low-chroma hues remain useful at this mildest shift.  Their wider
-        # lightness range is intentional: thin lines also receive dash/marker cues.
-        categorical_colors=("#8798C2", "#C9AA78", "#4E8E8A", "#83B89A", "#A0655B", "#B87F99"),
+        # Six moderate-chroma hues are composed for both unshifted daytime use and
+        # the transformed view. Thin lines also receive dash and marker cues.
+        categorical_colors=("#6E96D5", "#DDAA69", "#2E8A7E", "#67BE95", "#945D48", "#C3779A"),
+        daylight_minimum_delta_e_ok=14.0,
         terminal_color_count=6,
         sequential_anchors=("#282527", "#51404F", "#7F5E69", "#A17C6C", "#C49D70", "#E2CDA1"),
     ),
@@ -100,7 +102,8 @@ FAMILIES = (
             "foreground_muted": "#665C54",
             "selection": "#C9B796",
         },
-        categorical_colors=("#39806C", "#333360", "#995960", "#6C3333", "#405333", "#666699"),
+        categorical_colors=("#158F7A", "#322865", "#AE5D63", "#6E2626", "#33531D", "#676DB1"),
+        daylight_minimum_delta_e_ok=15.0,
         terminal_color_count=6,
         sequential_anchors=("#F2E5BC", "#D7BF8D", "#B08061", "#80515A", "#533844", "#252126"),
     ),
@@ -118,8 +121,10 @@ FAMILIES = (
             "foreground_muted": "#9F8B70",
             "selection": "#48382F",
         },
-        # At 2000 K four composed earth tones beat eight forced rainbow slots.
-        categorical_colors=("#DCC49F", "#A57C68", "#84977A", "#C28B92"),
+        # Blue contributes little after this transform, so its commanded range
+        # improves daytime identity while the transformed composition stays warm.
+        categorical_colors=("#DCC482", "#A57C29", "#8497E0", "#C28B93"),
+        daylight_minimum_delta_e_ok=13.0,
         terminal_color_count=2,
         sequential_anchors=("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
     ),
@@ -137,9 +142,10 @@ FAMILIES = (
             "foreground_muted": "#A28B70",
             "selection": "#473128",
         },
-        # Blue is physically gone at this tier.  Three excellent, redundant
-        # encodings are more honest than pretending a larger hue set survives.
-        categorical_colors=("#E0C49A", "#B08E76", "#8F8A6A"),
+        # Blue is absent after this transform. Its commanded values can therefore
+        # separate the daytime gold, lavender, and olive without changing night.
+        categorical_colors=("#E0C48E", "#B08ED7", "#8F8A31"),
+        daylight_minimum_delta_e_ok=20.0,
         terminal_color_count=1,
         sequential_anchors=("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
     ),

@@ -53,7 +53,7 @@ def test_honest_temperature_families() -> None:
         assert len(family["surfaces"]) >= 7
 
 
-def test_categorical_shifted_separation_and_commanded_chroma_budget() -> None:
+def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
         profile = manifest["profiles"][family["profile"]]
@@ -64,14 +64,17 @@ def test_categorical_shifted_separation_and_commanded_chroma_budget() -> None:
         normal_min = float(pairwise_distances(normal).min())
         lightness_range = float(np.ptp(shifted[:, 0]))
         normal_chroma_max = float(np.linalg.norm(normal[:, 1:], axis=1).max())
+        normal_chroma_mean = float(np.linalg.norm(normal[:, 1:], axis=1).mean())
         metrics = family["metrics"]["categorical"]
         assert shifted_min >= profile["categorical_minimum_delta_e_ok_target"], family["slug"]
-        assert normal_chroma_max <= 0.09, family["slug"]
-        assert normal_min >= 5.0, family["slug"]
+        assert normal_chroma_max <= 0.111, family["slug"]
+        assert 0.09 <= normal_chroma_mean <= 0.105, family["slug"]
+        assert normal_min >= family["daylight_minimum_delta_e_ok_target"], family["slug"]
         assert metrics["shifted_min_delta_e_ok"] == round(shifted_min, 2)
         assert metrics["normal_min_delta_e_ok"] == round(normal_min, 2)
         assert metrics["shifted_lightness_range"] == round(lightness_range, 4)
         assert metrics["normal_chroma_max"] == round(normal_chroma_max, 4)
+        assert metrics["normal_chroma_mean"] == round(normal_chroma_mean, 4)
 
 
 def test_continuous_maps_are_monotonic_and_nearly_even_after_shift() -> None:

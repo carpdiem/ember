@@ -64,32 +64,33 @@
       },
       "terminal": {
         "black": "#403B37",
-        "red": "#B1B3BA",
-        "green": "#C9AA78",
-        "yellow": "#AAB8A4",
-        "blue": "#9CBFA1",
-        "magenta": "#C6A791",
-        "cyan": "#C9A4A4",
+        "red": "#ABB6C2",
+        "green": "#DDAA69",
+        "yellow": "#A7BAA2",
+        "blue": "#8FC49F",
+        "magenta": "#C4A98E",
+        "cyan": "#CF9FA5",
         "white": "#DDD0B2",
         "bright_black": "#DDD0B2",
-        "bright_red": "#B1B3BA",
-        "bright_green": "#C9AA78",
-        "bright_yellow": "#AAB8A4",
-        "bright_blue": "#9CBFA1",
-        "bright_magenta": "#C6A791",
-        "bright_cyan": "#C9A4A4",
+        "bright_red": "#ABB6C2",
+        "bright_green": "#DDAA69",
+        "bright_yellow": "#A7BAA2",
+        "bright_blue": "#8FC49F",
+        "bright_magenta": "#C4A98E",
+        "bright_cyan": "#CF9FA5",
         "bright_white": "#DDD0B2"
       },
       "terminal_semantic_color_count": 6,
-      "terminal_minimum_shifted_foreground_contrast": 4.56,
+      "terminal_minimum_shifted_foreground_contrast": 4.55,
       "categorical": {
-        "one": "#8798C2",
-        "two": "#C9AA78",
-        "three": "#4E8E8A",
-        "four": "#83B89A",
-        "five": "#A0655B",
-        "six": "#B87F99"
+        "one": "#6E96D5",
+        "two": "#DDAA69",
+        "three": "#2E8A7E",
+        "four": "#67BE95",
+        "five": "#945D48",
+        "six": "#C3779A"
       },
+      "daylight_minimum_delta_e_ok_target": 14.0,
       "continuous_rgb": [
         [
           0.1568627504,
@@ -1632,11 +1633,12 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 9.57,
-          "shifted_min_delta_e_ok": 7.31,
-          "shifted_lightness_mean": 0.5711,
-          "shifted_lightness_range": 0.17,
-          "normal_chroma_max": 0.0786
+          "normal_min_delta_e_ok": 15.0,
+          "shifted_min_delta_e_ok": 11.45,
+          "shifted_lightness_mean": 0.5611,
+          "shifted_lightness_range": 0.2227,
+          "normal_chroma_max": 0.1045,
+          "normal_chroma_mean": 0.0969
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",
@@ -1675,32 +1677,33 @@
       },
       "terminal": {
         "black": "#342F2C",
-        "red": "#386B5B",
-        "green": "#333360",
-        "yellow": "#764A4E",
-        "blue": "#6C3333",
-        "magenta": "#405333",
-        "cyan": "#5C5A82",
+        "red": "#1F6F60",
+        "green": "#322865",
+        "yellow": "#77484A",
+        "blue": "#6E2626",
+        "magenta": "#33531D",
+        "cyan": "#595C8C",
         "white": "#342F2C",
         "bright_black": "#342F2C",
-        "bright_red": "#386B5B",
-        "bright_green": "#333360",
-        "bright_yellow": "#764A4E",
-        "bright_blue": "#6C3333",
-        "bright_magenta": "#405333",
-        "bright_cyan": "#5C5A82",
+        "bright_red": "#1F6F60",
+        "bright_green": "#322865",
+        "bright_yellow": "#77484A",
+        "bright_blue": "#6E2626",
+        "bright_magenta": "#33531D",
+        "bright_cyan": "#595C8C",
         "bright_white": "#342F2C"
       },
       "terminal_semantic_color_count": 6,
-      "terminal_minimum_shifted_foreground_contrast": 4.55,
+      "terminal_minimum_shifted_foreground_contrast": 4.53,
       "categorical": {
-        "one": "#39806C",
-        "two": "#333360",
-        "three": "#995960",
-        "four": "#6C3333",
-        "five": "#405333",
-        "six": "#666699"
+        "one": "#158F7A",
+        "two": "#322865",
+        "three": "#AE5D63",
+        "four": "#6E2626",
+        "five": "#33531D",
+        "six": "#676DB1"
       },
+      "daylight_minimum_delta_e_ok_target": 15.0,
       "continuous_rgb": [
         [
           0.9490196349,
@@ -3243,11 +3246,12 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 11.62,
-          "shifted_min_delta_e_ok": 10.04,
-          "shifted_lightness_mean": 0.3993,
-          "shifted_lightness_range": 0.2026,
-          "normal_chroma_max": 0.0846
+          "normal_min_delta_e_ok": 15.91,
+          "shifted_min_delta_e_ok": 13.76,
+          "shifted_lightness_mean": 0.4046,
+          "shifted_lightness_range": 0.2584,
+          "normal_chroma_max": 0.1053,
+          "normal_chroma_mean": 0.1016
         },
         "continuous": {
           "shifted_lightness_direction": "decreasing",
@@ -3286,30 +3290,31 @@
       },
       "terminal": {
         "black": "#3C3029",
-        "red": "#DCC49F",
-        "green": "#D8B3A1",
-        "yellow": "#DCC49F",
-        "blue": "#D8B3A1",
-        "magenta": "#DCC49F",
-        "cyan": "#D8B3A1",
+        "red": "#DCC482",
+        "green": "#D8B3A2",
+        "yellow": "#DCC482",
+        "blue": "#D8B3A2",
+        "magenta": "#DCC482",
+        "cyan": "#D8B3A2",
         "white": "#E9D3AD",
         "bright_black": "#E9D3AD",
-        "bright_red": "#DCC49F",
-        "bright_green": "#D8B3A1",
-        "bright_yellow": "#DCC49F",
-        "bright_blue": "#D8B3A1",
-        "bright_magenta": "#DCC49F",
-        "bright_cyan": "#D8B3A1",
+        "bright_red": "#DCC482",
+        "bright_green": "#D8B3A2",
+        "bright_yellow": "#DCC482",
+        "bright_blue": "#D8B3A2",
+        "bright_magenta": "#DCC482",
+        "bright_cyan": "#D8B3A2",
         "bright_white": "#E9D3AD"
       },
       "terminal_semantic_color_count": 2,
       "terminal_minimum_shifted_foreground_contrast": 4.57,
       "categorical": {
-        "one": "#DCC49F",
-        "two": "#A57C68",
-        "three": "#84977A",
-        "four": "#C28B92"
+        "one": "#DCC482",
+        "two": "#A57C29",
+        "three": "#8497E0",
+        "four": "#C28B93"
       },
+      "daylight_minimum_delta_e_ok_target": 13.0,
       "continuous_rgb": [
         [
           0.0901960813,
@@ -4852,11 +4857,12 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 8.08,
-          "shifted_min_delta_e_ok": 6.25,
-          "shifted_lightness_mean": 0.5525,
-          "shifted_lightness_range": 0.1659,
-          "normal_chroma_max": 0.0677
+          "normal_min_delta_e_ok": 13.62,
+          "shifted_min_delta_e_ok": 6.26,
+          "shifted_lightness_mean": 0.5526,
+          "shifted_lightness_range": 0.1654,
+          "normal_chroma_max": 0.1099,
+          "normal_chroma_mean": 0.0941
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",
@@ -4895,29 +4901,30 @@
       },
       "terminal": {
         "black": "#3A2B25",
-        "red": "#EACFA6",
-        "green": "#EACFA6",
-        "yellow": "#EACFA6",
-        "blue": "#EACFA6",
-        "magenta": "#EACFA6",
-        "cyan": "#EACFA6",
+        "red": "#EACF9E",
+        "green": "#EACF9E",
+        "yellow": "#EACF9E",
+        "blue": "#EACF9E",
+        "magenta": "#EACF9E",
+        "cyan": "#EACF9E",
         "white": "#FFE5BE",
         "bright_black": "#FFE5BE",
-        "bright_red": "#EACFA6",
-        "bright_green": "#EACFA6",
-        "bright_yellow": "#EACFA6",
-        "bright_blue": "#EACFA6",
-        "bright_magenta": "#EACFA6",
-        "bright_cyan": "#EACFA6",
+        "bright_red": "#EACF9E",
+        "bright_green": "#EACF9E",
+        "bright_yellow": "#EACF9E",
+        "bright_blue": "#EACF9E",
+        "bright_magenta": "#EACF9E",
+        "bright_cyan": "#EACF9E",
         "bright_white": "#FFE5BE"
       },
       "terminal_semantic_color_count": 1,
       "terminal_minimum_shifted_foreground_contrast": 4.54,
       "categorical": {
-        "one": "#E0C49A",
-        "two": "#B08E76",
-        "three": "#8F8A6A"
+        "one": "#E0C48E",
+        "two": "#B08ED7",
+        "three": "#8F8A31"
       },
+      "daylight_minimum_delta_e_ok_target": 20.0,
       "continuous_rgb": [
         [
           0.0627451005,
@@ -6460,11 +6467,12 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 5.69,
+          "normal_min_delta_e_ok": 21.61,
           "shifted_min_delta_e_ok": 6.95,
           "shifted_lightness_mean": 0.5124,
           "shifted_lightness_range": 0.1616,
-          "normal_chroma_max": 0.064
+          "normal_chroma_max": 0.11,
+          "normal_chroma_mean": 0.099
         },
         "continuous": {
           "shifted_lightness_direction": "increasing",

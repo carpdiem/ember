@@ -55,15 +55,15 @@ def _draw_segments(
 
 
 def _terminal_samples(manifest: dict, destination: Path) -> None:
-    width, header, row_height = 1500, 64, 292
+    width, header, row_height = 1600, 88, 370
     families = list(manifest["families"].values())
     image = Image.new("RGB", (width, header + row_height * len(families)), "#171512")
     draw = ImageDraw.Draw(image)
-    title_font = ImageFont.load_default(size=22)
-    code_font = ImageFont.load_default(size=24)
-    label_font = ImageFont.load_default(size=18)
+    title_font = ImageFont.load_default(size=36)
+    code_font = ImageFont.load_default(size=34)
+    label_font = ImageFont.load_default(size=28)
     draw.text(
-        (24, 18),
+        (32, 24),
         "Generated terminal specimen · commanded sRGB",
         font=title_font,
         fill="#D7C8AC",
@@ -74,22 +74,22 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
         surfaces = family["surfaces"]
         terminal = family["terminal"]
         draw.rounded_rectangle(
-            (18, y + 8, width - 18, y + row_height - 10),
-            radius=12,
+            (22, y + 10, width - 22, y + row_height - 12),
+            radius=16,
             fill=_rgb(surfaces["background"]),
             outline=_rgb(surfaces["background_high"]),
             width=2,
         )
-        draw.rectangle((20, y + 10, width - 20, y + 43), fill=_rgb(surfaces["background_alt"]))
+        draw.rectangle((24, y + 12, width - 24, y + 64), fill=_rgb(surfaces["background_alt"]))
         draw.text(
-            (36, y + 18),
+            (42, y + 22),
             family["name"],
             font=label_font,
             fill=_rgb(surfaces["foreground"]),
         )
         count = family["terminal_semantic_color_count"]
         draw.text(
-            (1120, y + 18),
+            (1030, y + 22),
             f"{count} semantic accents · ANSI aliases repeated",
             font=label_font,
             fill=_rgb(surfaces["foreground"]),
@@ -127,20 +127,20 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
             ],
         ]
         for line_number, segments in enumerate(lines, start=1):
-            baseline = y + 60 + (line_number - 1) * 42
+            baseline = y + 82 + (line_number - 1) * 53
             if line_number == 3:
                 draw.rounded_rectangle(
-                    (34, baseline - 4, width - 36, baseline + 31),
-                    radius=4,
+                    (38, baseline - 6, width - 40, baseline + 42),
+                    radius=6,
                     fill=_rgb(surfaces["selection"]),
                 )
             draw.text(
-                (40, baseline),
+                (46, baseline),
                 f"{line_number:>2}",
                 font=code_font,
                 fill=_rgb(surfaces["foreground"]),
             )
-            _draw_segments(draw, (84, baseline), segments, code_font)
+            _draw_segments(draw, (104, baseline), segments, code_font)
 
     destination.mkdir(parents=True, exist_ok=True)
     image.save(destination / "terminal-commanded.png", optimize=True)
@@ -148,7 +148,7 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
     simulated_draw = ImageDraw.Draw(simulated)
     simulated_draw.rectangle((0, 0, width, header), fill="#171512")
     simulated_draw.text(
-        (24, 18),
+        (32, 24),
         "Generated terminal specimen · simulated target transforms",
         font=title_font,
         fill="#D7C8AC",
@@ -169,7 +169,7 @@ def _draw_marker(
     color: tuple[int, int, int],
     shape: int,
 ) -> None:
-    radius = 4
+    radius = 7
     if shape % 3 == 0:
         draw.ellipse((x - radius, y - radius, x + radius, y + radius), fill=color)
     elif shape % 3 == 1:
@@ -186,15 +186,15 @@ def _draw_marker(
 
 
 def _data_samples(manifest: dict, destination: Path) -> None:
-    width, header, row_height = 1500, 64, 330
+    width, header, row_height = 1600, 88, 450
     families = list(manifest["families"].values())
     image = Image.new("RGB", (width, header + row_height * len(families)), "#171512")
     draw = ImageDraw.Draw(image)
-    title_font = ImageFont.load_default(size=22)
-    label_font = ImageFont.load_default(size=16)
-    small_font = ImageFont.load_default(size=14)
+    title_font = ImageFont.load_default(size=36)
+    label_font = ImageFont.load_default(size=30)
+    small_font = ImageFont.load_default(size=24)
     draw.text(
-        (24, 18),
+        (32, 24),
         "Generated data specimen · commanded sRGB",
         font=title_font,
         fill="#D7C8AC",
@@ -206,23 +206,23 @@ def _data_samples(manifest: dict, destination: Path) -> None:
         categorical = list(family["categorical"].values())
         continuous = family["continuous_hex8"]
         draw.rounded_rectangle(
-            (18, y + 8, width - 18, y + row_height - 10),
-            radius=12,
+            (22, y + 10, width - 22, y + row_height - 12),
+            radius=16,
             fill=_rgb(surfaces["background"]),
             outline=_rgb(surfaces["background_high"]),
             width=2,
         )
         draw.text(
-            (36, y + 20),
+            (42, y + 22),
             family["name"],
             font=label_font,
             fill=_rgb(surfaces["foreground"]),
         )
 
-        heat_x, heat_y, cell = 36, y + 62, 22
+        heat_x, heat_y, cell = 42, y + 112, 25
         draw.text(
-            (heat_x, y + 42),
-            "heatmap",
+            (heat_x, y + 74),
+            "Sequential heatmap",
             font=small_font,
             fill=_rgb(surfaces["foreground_muted"]),
         )
@@ -240,9 +240,9 @@ def _data_samples(manifest: dict, destination: Path) -> None:
                     fill=_rgb(continuous[index]),
                 )
 
-        colorbar_y = heat_y + 190
+        colorbar_y = heat_y + 218
         for index, color in enumerate(continuous):
-            colorbar_x = heat_x + round(index * 352 / 256)
+            colorbar_x = heat_x + round(index * 400 / 256)
             draw.line((colorbar_x, colorbar_y, colorbar_x, colorbar_y + 10), fill=_rgb(color))
         draw.text(
             (heat_x, colorbar_y + 14),
@@ -251,16 +251,16 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             fill=_rgb(surfaces["foreground"]),
         )
         draw.text(
-            (heat_x + 320, colorbar_y + 14),
+            (heat_x + 354, colorbar_y + 18),
             "high",
             font=small_font,
             fill=_rgb(surfaces["foreground"]),
         )
 
-        bar_x, bar_y, bar_w, bar_h = 430, y + 62, 330, 182
+        bar_x, bar_y, bar_w, bar_h = 500, y + 112, 400, 218
         draw.text(
-            (bar_x, y + 42),
-            "categories",
+            (bar_x, y + 74),
+            "Categorical bars",
             font=small_font,
             fill=_rgb(surfaces["foreground_muted"]),
         )
@@ -292,16 +292,16 @@ def _data_samples(manifest: dict, destination: Path) -> None:
                             fill=_rgb(color),
                         )
             draw.text(
-                (left + 4, bar_y + bar_h + 8),
+                (left + 6, bar_y + bar_h + 12),
                 chr(65 + index),
                 font=small_font,
                 fill=_rgb(surfaces["foreground_soft"]),
             )
 
-        plot_x, plot_y, plot_w, plot_h = 825, y + 62, 500, 182
+        plot_x, plot_y, plot_w, plot_h = 990, y + 112, 500, 218
         draw.text(
-            (plot_x, y + 42),
-            "overlapping series · color + dash + marker + direct label",
+            (plot_x, y + 74),
+            "Series: color + dash + marker + label",
             font=small_font,
             fill=_rgb(surfaces["foreground_muted"]),
         )
@@ -329,7 +329,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
                     draw.line(
                         (*points[segment], *points[segment + 1]),
                         fill=color_rgb,
-                        width=3,
+                        width=5,
                     )
             for marker_index in range(series + 2, 25, 6):
                 marker_x, marker_y = points[marker_index]
@@ -338,7 +338,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
         for (endpoint_x, endpoint_y), color_rgb, series in series_endpoints:
             _draw_marker(draw, endpoint_x, endpoint_y, color_rgb, series)
             draw.text(
-                (endpoint_x + 10, endpoint_y - 8),
+                (endpoint_x + 12, endpoint_y - 12),
                 chr(65 + series),
                 font=small_font,
                 fill=color_rgb,
@@ -350,7 +350,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
     simulated_draw = ImageDraw.Draw(simulated)
     simulated_draw.rectangle((0, 0, width, header), fill="#171512")
     simulated_draw.text(
-        (24, 18),
+        (32, 24),
         "Generated data specimen · simulated target transforms",
         font=title_font,
         fill="#D7C8AC",
@@ -365,25 +365,25 @@ def _data_samples(manifest: dict, destination: Path) -> None:
 
 
 def channel_collapse_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="330" viewBox="0 0 1180 330">
-<rect width="1180" height="330" rx="18" fill="#282522"/>
-<text x="34" y="42" fill="#ded0b2" font-size="22" font-family="system-ui">The warm filter squeezes three channels toward one</text>
-<text x="34" y="72" fill="#9b8d79" font-size="14" font-family="system-ui">Each rail shows how much of a commanded channel survives. Blue is gone at 1200 K.</text>
-<g font-family="ui-monospace, monospace" font-size="14">
-<text x="34" y="126" fill="#bda98e">3400 K</text><text x="34" y="192" fill="#bda98e">2000 K</text><text x="34" y="258" fill="#bda98e">1200 K</text>
-<g transform="translate(130 98)"><rect width="300" height="22" rx="4" fill="#a86658"/><rect x="315" width="222" height="22" rx="4" fill="#859a65"/><rect x="552" width="159" height="22" rx="4" fill="#6e7e91"/><text x="725" y="17" fill="#d2c2a5">R 100% · G 74% · B 53%</text></g>
-<g transform="translate(130 164)"><rect width="300" height="22" rx="4" fill="#a86658"/><rect x="315" width="163" height="22" rx="4" fill="#7c8355"/><rect x="493" width="26" height="22" rx="4" fill="#4f5661"/><text x="535" y="17" fill="#d2c2a5">R 100% · G 54% · B 9%</text></g>
-<g transform="translate(130 230)"><rect width="300" height="22" rx="4" fill="#a86658"/><rect x="315" width="93" height="22" rx="4" fill="#6d6a47"/><rect x="423" width="2" height="22" fill="#4f5661"/><text x="445" y="17" fill="#d2c2a5">R 100% · G 31% · B 0%</text></g>
-</g><path d="M1030 116 C1080 126 1080 240 1135 240" fill="none" stroke="#c49b6e" stroke-width="3"/><text x="900" y="286" fill="#d2c2a5" font-size="15" font-family="system-ui">Fewer honest colors</text><text x="900" y="307" fill="#9b8d79" font-size="13" font-family="system-ui">plus shape, dash, label</text></svg>"""
+    return """<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="390" viewBox="0 0 1180 390">
+<rect width="1180" height="390" rx="18" fill="#282522"/>
+<text x="38" y="52" fill="#ded0b2" font-size="32" font-family="system-ui">Warm filters compress the available color dimensions</text>
+<text x="38" y="86" fill="#b3a48d" font-size="20" font-family="system-ui">Each rail shows how much commanded red, green, and blue survives the transform.</text>
+<g font-family="ui-monospace, monospace" font-size="21">
+<text x="38" y="158" fill="#d2c2a5">3400 K</text><text x="38" y="238" fill="#d2c2a5">2000 K</text><text x="38" y="318" fill="#d2c2a5">1200 K</text>
+<g transform="translate(150 126)"><rect width="300" height="30" rx="5" fill="#a86658"/><rect x="315" width="222" height="30" rx="5" fill="#859a65"/><rect x="552" width="159" height="30" rx="5" fill="#6e7e91"/><text x="730" y="23" fill="#e0d2b9">R 100% · G 74% · B 53%</text></g>
+<g transform="translate(150 206)"><rect width="300" height="30" rx="5" fill="#a86658"/><rect x="315" width="163" height="30" rx="5" fill="#7c8355"/><rect x="493" width="26" height="30" rx="5" fill="#4f5661"/><text x="540" y="23" fill="#e0d2b9">R 100% · G 54% · B 9%</text></g>
+<g transform="translate(150 286)"><rect width="300" height="30" rx="5" fill="#a86658"/><rect x="315" width="93" height="30" rx="5" fill="#6d6a47"/><rect x="423" width="3" height="30" fill="#4f5661"/><text x="446" y="23" fill="#e0d2b9">R 100% · G 31% · B 0%</text></g>
+</g><text x="150" y="360" fill="#b3a48d" font-size="19" font-family="system-ui">The lost channels create room to improve daytime colors without disturbing the transformed view.</text></svg>"""
 
 
 def redundant_encoding_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="330" viewBox="0 0 1180 330">
-<rect width="1180" height="330" rx="18" fill="#2c211d"/><text x="34" y="42" fill="#f2d9b5" font-size="22" font-family="system-ui">At deep red, color becomes a hint—not the identity</text>
-<text x="34" y="72" fill="#a28b70" font-size="14" font-family="system-ui">Direct labels, dash patterns, and markers survive even when hue collapses.</text>
-<g transform="translate(45 105)" fill="none"><path d="M0 100 C80 15 160 175 260 70 S430 125 500 35" stroke="#e0c49a" stroke-width="4"/><circle cx="500" cy="35" r="6" fill="#e0c49a"/><path d="M0 130 C90 55 170 155 270 105 S420 35 500 95" stroke="#b08e76" stroke-width="4" stroke-dasharray="14 9"/><rect x="494" y="89" width="12" height="12" fill="#b08e76"/><path d="M0 55 C90 135 190 15 280 80 S420 155 500 115" stroke="#8f8a6a" stroke-width="4" stroke-dasharray="3 8"/><path d="M500 108 L493 121 L507 121 Z" fill="#8f8a6a"/></g>
-<g font-family="ui-monospace, monospace" font-size="15"><text x="565" y="145" fill="#e0c49a">A — solid + circle</text><text x="565" y="205" fill="#b08e76">B — dashed + square</text><text x="565" y="225" fill="#8f8a6a">C — dotted + triangle</text></g>
-<text x="565" y="273" fill="#a28b70" font-size="14" font-family="system-ui">The label sits on the line it identifies.</text></svg>"""
+    return """<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="390" viewBox="0 0 1180 390">
+<rect width="1180" height="390" rx="18" fill="#2c211d"/><text x="38" y="52" fill="#f2d9b5" font-size="32" font-family="system-ui">At deep red, color supports identity rather than carrying it alone</text>
+<text x="38" y="86" fill="#b8a184" font-size="20" font-family="system-ui">Direct labels, dash patterns, and markers remain distinct when hue collapses.</text>
+<g transform="translate(50 125)" fill="none"><path d="M0 110 C80 15 165 190 270 75 S445 135 520 35" stroke="#e0c49a" stroke-width="6"/><circle cx="520" cy="35" r="9" fill="#e0c49a"/><path d="M0 145 C95 60 175 175 280 115 S440 35 520 100" stroke="#b08e76" stroke-width="6" stroke-dasharray="18 12"/><rect x="511" y="91" width="18" height="18" fill="#b08e76"/><path d="M0 60 C95 150 195 15 290 90 S440 170 520 125" stroke="#8f8a6a" stroke-width="6" stroke-dasharray="4 11"/><path d="M520 114 L509 135 L531 135 Z" fill="#8f8a6a"/></g>
+<g font-family="ui-monospace, monospace" font-size="22"><text x="620" y="170" fill="#e0c49a">A  solid + circle</text><text x="620" y="230" fill="#b08e76">B  dashed + square</text><text x="620" y="290" fill="#8f8a6a">C  dotted + triangle</text></g>
+<text x="620" y="340" fill="#b8a184" font-size="20" font-family="system-ui">Labels sit beside the lines they identify.</text></svg>"""
 
 
 def render_samples(manifest: dict, destination: Path) -> None:
@@ -421,26 +421,27 @@ def sample_analysis_markdown(manifest: dict, destination: Path) -> str:
         "guardrails, not a model of eye strain: they detect saturation and abrupt luminance",
         "edges but cannot substitute for long-duration viewing on real hardware.",
         "",
-        "## Palette-level comfort gates",
+        "## Palette-level bi-state gates",
         "",
-        "| Family | Categories | Terminal accents | Max raw Oklab chroma | Min shifted category ΔEOK | Min shifted terminal contrast |",
+        "| Family | Categories | Day min ΔEOK | Shifted min ΔEOK | Mean / max raw chroma | Min shifted terminal contrast |",
         "|---|---:|---:|---:|---:|---:|",
     ]
     for family in manifest["families"].values():
         categorical = family["metrics"]["categorical"]
         lines.append(
             f"| {family['name']} | {len(family['categorical'])} | "
-            f"{family['terminal_semantic_color_count']} | "
-            f"{categorical['normal_chroma_max']:.4f} | "
+            f"{categorical['normal_min_delta_e_ok']:.2f} | "
             f"{categorical['shifted_min_delta_e_ok']:.2f} | "
+            f"{categorical['normal_chroma_mean']:.4f} / {categorical['normal_chroma_max']:.4f} | "
             f"{family['terminal_minimum_shifted_foreground_contrast']:.2f}:1 |"
         )
     lines.extend(
         [
             "",
-            "Release gates: categorical commanded chroma ≤ 0.09; transformed terminal",
-            "foreground-capable ANSI slots ≥ 4.5:1; category and accent counts must never",
-            "increase as the target temperature falls.",
+            "Release gates: categorical commanded mean chroma 0.09–0.105 and maximum",
+            "chroma ≤ 0.111; family-specific daytime and transformed separation floors;",
+            "transformed terminal foreground-capable ANSI slots ≥ 4.5:1; category and",
+            "accent counts must never increase as the target temperature falls.",
             "",
             "## Screenshot-level diagnostics",
             "",

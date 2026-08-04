@@ -10,12 +10,12 @@
   --rs-foreground-soft: #BDAE93;
   --rs-foreground-muted: #928374;
   --rs-selection: #4A433D;
-  --rs-category-one: #8798C2;
-  --rs-category-two: #C9AA78;
-  --rs-category-three: #4E8E8A;
-  --rs-category-four: #83B89A;
-  --rs-category-five: #A0655B;
-  --rs-category-six: #B87F99;
+  --rs-category-one: #6E96D5;
+  --rs-category-two: #DDAA69;
+  --rs-category-three: #2E8A7E;
+  --rs-category-four: #67BE95;
+  --rs-category-five: #945D48;
+  --rs-category-six: #C3779A;
   --rs-sequential: linear-gradient(90deg, #282527 0%, #3B3139 10%, #4D3E4A 20%, #614A58 30%, #765863 40%, #8A686A 50%, #9D796C 60%, #B08A6E 70%, #C39E75 80%, #D3B589 90%, #E2CDA1 100%);
 }
 
@@ -28,12 +28,12 @@
   --rs-foreground-soft: #504945;
   --rs-foreground-muted: #665C54;
   --rs-selection: #C9B796;
-  --rs-category-one: #39806C;
-  --rs-category-two: #333360;
-  --rs-category-three: #995960;
-  --rs-category-four: #6C3333;
-  --rs-category-five: #405333;
-  --rs-category-six: #666699;
+  --rs-category-one: #158F7A;
+  --rs-category-two: #322865;
+  --rs-category-three: #AE5D63;
+  --rs-category-four: #6E2626;
+  --rs-category-five: #33531D;
+  --rs-category-six: #676DB1;
   --rs-sequential: linear-gradient(90deg, #F2E5BC 0%, #DFCA9C 10%, #CEB083 20%, #BE9671 30%, #AB7D64 40%, #96675E 50%, #815459 60%, #6A4550 70%, #523843 80%, #3B2C34 90%, #252126 100%);
 }
 
@@ -46,10 +46,10 @@
   --rs-foreground-soft: #C8B38F;
   --rs-foreground-muted: #9F8B70;
   --rs-selection: #48382F;
-  --rs-category-one: #DCC49F;
-  --rs-category-two: #A57C68;
-  --rs-category-three: #84977A;
-  --rs-category-four: #C28B92;
+  --rs-category-one: #DCC482;
+  --rs-category-two: #A57C29;
+  --rs-category-three: #8497E0;
+  --rs-category-four: #C28B93;
   --rs-sequential: linear-gradient(90deg, #17110F 0%, #2B1F1F 10%, #3F2C2E 20%, #553A3D 30%, #6C484A 40%, #845955 50%, #9B6B5C 60%, #B18165 70%, #C89D75 80%, #DDBB90 90%, #F2D9AE 100%);
 }
 
@@ -62,8 +62,8 @@
   --rs-foreground-soft: #CBB58F;
   --rs-foreground-muted: #A28B70;
   --rs-selection: #473128;
-  --rs-category-one: #E0C49A;
-  --rs-category-two: #B08E76;
-  --rs-category-three: #8F8A6A;
+  --rs-category-one: #E0C48E;
+  --rs-category-two: #B08ED7;
+  --rs-category-three: #8F8A31;
   --rs-sequential: linear-gradient(90deg, #100C0B 0%, #241817 10%, #392523 20%, #4F322F 30%, #67413A 40%, #805247 50%, #986855 60%, #B08366 70%, #CAA37E 80%, #E5C49B 90%, #FFE5B8 100%);
 }

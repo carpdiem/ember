@@ -225,19 +225,12 @@ def _family_svg(family: dict, profile: dict) -> str:
 
 
 def _overview_svg(manifest: dict) -> str:
-    width, row_height = 1200, 184
-    height = row_height * len(manifest["families"]) + 88
+    width, row_height = 1280, 250
+    height = row_height * len(manifest["families"]) + 100
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
         '<rect width="100%" height="100%" rx="18" fill="#12100E"/>',
-        _svg_text(24, 32, "Commanded sRGB overview", 20),
-        _svg_text(
-            285,
-            54,
-            "categorical colors · sequential low → high · foreground/background",
-            12,
-            "#AFA18D",
-        ),
+        _svg_text(30, 48, "Commanded sRGB overview", 32),
     ]
     profile_labels = {
         "3400k": "~3400 K warm-white surrogate",
@@ -245,29 +238,32 @@ def _overview_svg(manifest: dict) -> str:
         "1200k": "Redshift 1200 K pinned LUT",
     }
     for row, family in enumerate(manifest["families"].values()):
-        y = 78 + row * row_height
-        parts.append(_svg_text(24, y + 22, family["name"], 20))
-        parts.append(_svg_text(24, y + 43, profile_labels[family["profile"]], 12, "#AFA18D"))
-        x = 285
+        y = 84 + row * row_height
+        parts.append(_svg_text(30, y + 42, family["name"], 28))
+        parts.append(_svg_text(30, y + 72, profile_labels[family["profile"]], 18, "#BDAE98"))
+        x = 320
+        parts.append(_svg_text(x, y + 20, "Categorical colors", 18, "#BDAE98"))
         categorical = list(family["categorical"].values())
-        swatch_width = min(90, 540 // len(categorical))
+        swatch_width = min(100, 600 // len(categorical))
         for value in categorical:
             parts.append(
-                f'<rect x="{x}" y="{y}" width="{swatch_width - 5}" '
-                f'height="48" rx="5" fill="{value}"/>'
+                f'<rect x="{x}" y="{y + 30}" width="{swatch_width - 7}" '
+                f'height="60" rx="7" fill="{value}"/>'
             )
             x += swatch_width
-        x, gradient_y = 285, y + 70
+        x, gradient_y = 320, y + 128
+        parts.append(_svg_text(x, y + 116, "Sequential: low → high", 18, "#BDAE98"))
         for index, value in enumerate(family["continuous_hex8"]):
             parts.append(
-                f'<rect x="{x + index * 3.37:.2f}" y="{gradient_y}" width="3.6" height="28" fill="{value}"/>'
+                f'<rect x="{x + index * 3.52:.2f}" y="{gradient_y}" width="3.7" height="38" fill="{value}"/>'
             )
+        parts.append(_svg_text(320, y + 188, "Primary text surface", 18, "#BDAE98"))
         parts.append(
-            f'<rect x="{285}" y="{y + 122}" width="860" height="28" rx="4" fill="{family["surfaces"]["background"]}"/>'
+            f'<rect x="320" y="{y + 198}" width="900" height="44" rx="6" fill="{family["surfaces"]["background"]}"/>'
         )
         parts.append(
             _svg_text(
-                300, y + 141, "Aa  foreground / background", 12, family["surfaces"]["foreground"]
+                338, y + 227, "Aa  foreground / background", 19, family["surfaces"]["foreground"]
             )
         )
     parts.append("</svg>")
