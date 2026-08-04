@@ -99,6 +99,8 @@ def contrast_ratio(left: Array, right: Array) -> float:
 
 
 def delta_e_ok(left: Array, right: Array) -> float:
+    """Return Euclidean Oklab distance for values already expressed in Oklab."""
+
     return float(np.linalg.norm(np.asarray(left) - np.asarray(right)) * 100.0)
 
 

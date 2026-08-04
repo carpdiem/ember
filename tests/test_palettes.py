@@ -134,9 +134,16 @@ def test_selection_state_remains_visible_after_shift() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
-        background = warm_transform(hex_to_srgb(family["surfaces"]["background"]), gains)
-        selection = warm_transform(hex_to_srgb(family["surfaces"]["selection"]), gains)
-        assert delta_e_ok(background, selection) >= 10.0, family["slug"]
+        transformed = perceived_lab(
+            np.asarray(
+                [
+                    hex_to_srgb(family["surfaces"]["background"]),
+                    hex_to_srgb(family["surfaces"]["selection"]),
+                ]
+            ),
+            gains,
+        )
+        assert delta_e_ok(transformed[0], transformed[1]) >= 6.0, family["slug"]
 
 
 def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:

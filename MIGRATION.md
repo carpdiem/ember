@@ -23,9 +23,10 @@ rejected 0.1 colors.
 
 ## Manifest changes
 
-The JSON schema is version 3. Family category counts are now variable, and the
-manifest records `legacy_aliases` plus `removed_families`. Code that assumed eight
-categories must instead read `len(family["categorical"])`.
+The JSON schema is version 4. Family category counts are variable, and the manifest
+records `legacy_aliases`, `removed_families`, separate terminal day/night capacities,
+night-group assignments, and bi-state measurements. Code that assumed eight categories
+must instead read `len(family["categorical"])`.
 
 The terminal metric is now named
 `terminal_minimum_shifted_foreground_contrast`. It covers every foreground-capable

@@ -252,7 +252,8 @@ The release gates enforce:
 - terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 2`, `3 / 1`;
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
 - at least 4.5:1 primary-text contrast on every background and selection;
-- visible selection surfaces after transformation;
+- at least `6.0 ΔEOK` between each transformed background and its large selection
+  surface;
 - 256 unique float samples per sequential map, with monotonic lightness in both display
   states and nearly even transformed steps; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
