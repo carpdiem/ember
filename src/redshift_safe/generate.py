@@ -228,7 +228,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 3,
+        "schema_version": 4,
         "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "

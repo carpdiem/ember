@@ -22,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
+    assert manifest["schema_version"] == 4
     assert list(manifest["families"]) == [
         "3400k-dark",
         "3400k-light",
@@ -161,3 +162,20 @@ def test_readme_local_links_exist() -> None:
     ]
     assert local_targets
     assert not [target for target in local_targets if not (ROOT / target).exists()]
+
+
+def test_readme_bi_state_metrics_match_manifest() -> None:
+    manifest = generate_manifest()
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    for family in manifest["families"].values():
+        categorical = family["metrics"]["categorical"]
+        expected = (
+            f"| {family['name']} | {len(family['categorical'])} | "
+            f"{categorical['normal_min_delta_e_ok']:.2f} | "
+            f"{categorical['shifted_min_delta_e_ok']:.2f} | "
+            f"{categorical['normal_chroma_mean']:.4f} / "
+            f"{categorical['normal_chroma_max']:.4f} | "
+            f"{categorical['shifted_lightness_range']:.4f} | "
+            f"{family['terminal_minimum_shifted_foreground_contrast']:.2f}:1 |"
+        )
+        assert expected in text, family["slug"]

@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "project": "Ember: Redshift Safe Color Palettes",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
   "legacy_aliases": {
