@@ -144,7 +144,15 @@ def _metrics(
     sequence_steps = np.linalg.norm(np.diff(shifted_sequence, axis=0), axis=1) * 100.0
     direction = 1.0 if shifted_sequence[-1, 0] >= shifted_sequence[0, 0] else -1.0
     lightness_steps = np.diff(shifted_sequence[:, 0]) * direction
+    normal_sequence = srgb_to_oklab(sequential)
+    normal_steps = np.linalg.norm(np.diff(normal_sequence, axis=0), axis=1) * 100.0
+    normal_direction = 1.0 if normal_sequence[-1, 0] >= normal_sequence[0, 0] else -1.0
+    normal_lightness_steps = np.diff(normal_sequence[:, 0]) * normal_direction
     sequence_metrics = {
+        "normal_lightness_range": round(float(np.ptp(normal_sequence[:, 0])), 4),
+        "normal_minimum_signed_lightness_step": round(float(normal_lightness_steps.min()), 6),
+        "normal_delta_e_ok_cv": round(float(normal_steps.std() / normal_steps.mean()), 4),
+        "normal_delta_e_ok_max_to_min": round(float(normal_steps.max() / normal_steps.min()), 3),
         "shifted_lightness_direction": "increasing" if direction > 0 else "decreasing",
         "shifted_lightness_range": round(float(np.ptp(shifted_sequence[:, 0])), 4),
         "minimum_signed_lightness_step": round(float(lightness_steps.min()), 6),

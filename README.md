@@ -207,8 +207,10 @@ that path in Oklab, measures cumulative distance after the target transform, and
 resamples it at equal transformed-distance intervals.
 
 The result is a 256-sample float map with strictly monotonic transformed lightness and
-nearly equal transformed Oklab-distance steps. The Hex8 and CSS exports are convenient
-quantized previews; the JSON and Python float arrays carry the numerical guarantee.
+nearly equal transformed Oklab-distance steps. Release checks also require monotonic
+daytime lightness and bounded daytime step variation. The Hex8 and CSS exports are
+convenient quantized previews; the JSON and Python float arrays carry the numerical
+guarantee.
 
 ## Measured properties
 
@@ -248,7 +250,8 @@ The release gates enforce:
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
 - at least 4.5:1 primary-text contrast on every background and selection;
 - visible selection surfaces after transformation;
-- 256 unique, monotonic, evenly stepped float samples per sequential map; and
+- 256 unique float samples per sequential map, with monotonic lightness in both display
+  states and nearly even transformed steps; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
 
 Version 0.2 uses temperature-based palette IDs. Existing users can consult the

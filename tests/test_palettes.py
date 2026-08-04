@@ -78,12 +78,18 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
         assert metrics["normal_chroma_mean"] == round(normal_chroma_mean, 4)
 
 
-def test_continuous_maps_are_monotonic_and_nearly_even_after_shift() -> None:
+def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shift() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
         sequence = np.asarray(family["continuous_rgb"], dtype=float)
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+        normal = perceived_lab(sequence, (1.0, 1.0, 1.0))
         shifted = perceived_lab(sequence, gains)
+        normal_direction = 1.0 if normal[-1, 0] >= normal[0, 0] else -1.0
+        normal_lightness_steps = np.diff(normal[:, 0]) * normal_direction
+        normal_perceptual_steps = np.linalg.norm(np.diff(normal, axis=0), axis=1) * 100.0
+        normal_cv = float(normal_perceptual_steps.std() / normal_perceptual_steps.mean())
+        normal_max_to_min = float(normal_perceptual_steps.max() / normal_perceptual_steps.min())
         direction = 1.0 if shifted[-1, 0] >= shifted[0, 0] else -1.0
         lightness_steps = np.diff(shifted[:, 0]) * direction
         perceptual_steps = np.linalg.norm(np.diff(shifted, axis=0), axis=1) * 100.0
@@ -91,11 +97,20 @@ def test_continuous_maps_are_monotonic_and_nearly_even_after_shift() -> None:
         max_to_min = float(perceptual_steps.max() / perceptual_steps.min())
         metrics = family["metrics"]["continuous"]
         assert len({tuple(color) for color in sequence}) == 256, family["slug"]
+        assert normal_lightness_steps.min() > 0.0, family["slug"]
+        assert np.ptp(normal[:, 0]) >= 0.50, family["slug"]
+        assert normal_cv <= 0.18, family["slug"]
+        assert normal_max_to_min <= 1.60, family["slug"]
         assert lightness_steps.min() > 0.0, family["slug"]
         assert np.ptp(shifted[:, 0]) >= 0.50, family["slug"]
         assert cv <= 0.08, family["slug"]
         assert max_to_min <= 1.60, family["slug"]
         assert metrics["minimum_signed_lightness_step"] == round(float(lightness_steps.min()), 6)
+        assert metrics["normal_minimum_signed_lightness_step"] == round(
+            float(normal_lightness_steps.min()), 6
+        )
+        assert metrics["normal_delta_e_ok_cv"] == round(normal_cv, 4)
+        assert metrics["normal_delta_e_ok_max_to_min"] == round(normal_max_to_min, 3)
         assert metrics["delta_e_ok_cv"] == round(cv, 4)
         assert metrics["delta_e_ok_max_to_min"] == round(max_to_min, 3)
 

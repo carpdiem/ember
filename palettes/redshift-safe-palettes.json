@@ -1641,6 +1641,10 @@
           "normal_chroma_mean": 0.0969
         },
         "continuous": {
+          "normal_lightness_range": 0.5864,
+          "normal_minimum_signed_lightness_step": 0.002169,
+          "normal_delta_e_ok_cv": 0.057,
+          "normal_delta_e_ok_max_to_min": 1.199,
           "shifted_lightness_direction": "increasing",
           "shifted_lightness_range": 0.5024,
           "minimum_signed_lightness_step": 0.001938,
@@ -3254,6 +3258,10 @@
           "normal_chroma_mean": 0.1016
         },
         "continuous": {
+          "normal_lightness_range": 0.6678,
+          "normal_minimum_signed_lightness_step": 0.002355,
+          "normal_delta_e_ok_cv": 0.0805,
+          "normal_delta_e_ok_max_to_min": 1.222,
           "shifted_lightness_direction": "decreasing",
           "shifted_lightness_range": 0.5666,
           "minimum_signed_lightness_step": 0.002142,
@@ -4865,6 +4873,10 @@
           "normal_chroma_mean": 0.0941
         },
         "continuous": {
+          "normal_lightness_range": 0.7109,
+          "normal_minimum_signed_lightness_step": 0.002433,
+          "normal_delta_e_ok_cv": 0.1182,
+          "normal_delta_e_ok_max_to_min": 1.377,
           "shifted_lightness_direction": "increasing",
           "shifted_lightness_range": 0.5399,
           "minimum_signed_lightness_step": 0.002071,
@@ -6475,6 +6487,10 @@
           "normal_chroma_mean": 0.099
         },
         "continuous": {
+          "normal_lightness_range": 0.7731,
+          "normal_minimum_signed_lightness_step": 0.002454,
+          "normal_delta_e_ok_cv": 0.1663,
+          "normal_delta_e_ok_max_to_min": 1.509,
           "shifted_lightness_direction": "increasing",
           "shifted_lightness_range": 0.5351,
           "minimum_signed_lightness_step": 0.002044,
