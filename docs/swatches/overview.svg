@@ -267,19 +267,25 @@
 <rect x="1210.56" y="212" width="3.7" height="38" fill="#E1CB9F"/>
 <rect x="1214.08" y="212" width="3.7" height="38" fill="#E1CCA0"/>
 <rect x="1217.60" y="212" width="3.7" height="38" fill="#E2CDA1"/>
-<text x="320" y="272" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Surface ladder: bg_0 → bg_4 · selection</text>
-<rect x="320.00" y="282" width="150.00" height="44" fill="#090807"/>
-<text x="332" y="310" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
-<rect x="470.00" y="282" width="150.00" height="44" fill="#100E0C"/>
-<text x="482" y="310" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
-<rect x="620.00" y="282" width="150.00" height="44" fill="#181612"/>
-<text x="632" y="310" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
-<rect x="770.00" y="282" width="150.00" height="44" fill="#201D19"/>
-<text x="782" y="310" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
-<rect x="920.00" y="282" width="150.00" height="44" fill="#29251F"/>
-<text x="932" y="310" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
-<rect x="1070.00" y="282" width="150.00" height="44" fill="#32241B"/>
-<text x="1082" y="310" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">selection</text>
+<text x="320" y="272" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Backgrounds: bg_0 → bg_5 · Foregrounds: fg_0 → fg_2</text>
+<rect x="320.00" y="282" width="100.00" height="44" fill="#090807"/>
+<text x="332" y="310" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
+<rect x="420.00" y="282" width="100.00" height="44" fill="#100E0C"/>
+<text x="432" y="310" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
+<rect x="520.00" y="282" width="100.00" height="44" fill="#181612"/>
+<text x="532" y="310" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
+<rect x="620.00" y="282" width="100.00" height="44" fill="#201D19"/>
+<text x="632" y="310" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
+<rect x="720.00" y="282" width="100.00" height="44" fill="#29251F"/>
+<text x="732" y="310" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
+<rect x="820.00" y="282" width="100.00" height="44" fill="#32241B"/>
+<text x="832" y="310" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
+<rect x="920.00" y="282" width="100.00" height="44" fill="#DDD0B2"/>
+<text x="932" y="310" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_0</text>
+<rect x="1020.00" y="282" width="100.00" height="44" fill="#BDAE93"/>
+<text x="1032" y="310" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_1</text>
+<rect x="1120.00" y="282" width="100.00" height="44" fill="#928374"/>
+<text x="1132" y="310" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_2</text>
 <text x="30" y="376" fill="#E9E1D4" font-size="28" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">3400K Light</text>
 <text x="30" y="406" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">~3400 K warm-white surrogate</text>
 <text x="320" y="354" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
@@ -546,19 +552,25 @@
 <rect x="1210.56" y="462" width="3.7" height="38" fill="#272227"/>
 <rect x="1214.08" y="462" width="3.7" height="38" fill="#262127"/>
 <rect x="1217.60" y="462" width="3.7" height="38" fill="#252126"/>
-<text x="320" y="522" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Surface ladder: bg_0 → bg_4 · selection</text>
-<rect x="320.00" y="532" width="150.00" height="44" fill="#FFF7D6"/>
-<text x="332" y="560" fill="#342F2C" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
-<rect x="470.00" y="532" width="150.00" height="44" fill="#F4EAC7"/>
-<text x="482" y="560" fill="#342F2C" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
-<rect x="620.00" y="532" width="150.00" height="44" fill="#E9DCB9"/>
-<text x="632" y="560" fill="#342F2C" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
-<rect x="770.00" y="532" width="150.00" height="44" fill="#DFCFAA"/>
-<text x="782" y="560" fill="#342F2C" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
-<rect x="920.00" y="532" width="150.00" height="44" fill="#D4C29C"/>
-<text x="932" y="560" fill="#342F2C" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
-<rect x="1070.00" y="532" width="150.00" height="44" fill="#C9B796"/>
-<text x="1082" y="560" fill="#342F2C" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">selection</text>
+<text x="320" y="522" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Backgrounds: bg_0 → bg_5 · Foregrounds: fg_0 → fg_2</text>
+<rect x="320.00" y="532" width="100.00" height="44" fill="#FFF7D6"/>
+<text x="332" y="560" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
+<rect x="420.00" y="532" width="100.00" height="44" fill="#F4EAC7"/>
+<text x="432" y="560" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
+<rect x="520.00" y="532" width="100.00" height="44" fill="#E9DCB9"/>
+<text x="532" y="560" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
+<rect x="620.00" y="532" width="100.00" height="44" fill="#DFCFAA"/>
+<text x="632" y="560" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
+<rect x="720.00" y="532" width="100.00" height="44" fill="#D4C29C"/>
+<text x="732" y="560" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
+<rect x="820.00" y="532" width="100.00" height="44" fill="#C9B796"/>
+<text x="832" y="560" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
+<rect x="920.00" y="532" width="100.00" height="44" fill="#342F2C"/>
+<text x="932" y="560" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_0</text>
+<rect x="1020.00" y="532" width="100.00" height="44" fill="#504945"/>
+<text x="1032" y="560" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_1</text>
+<rect x="1120.00" y="532" width="100.00" height="44" fill="#665C54"/>
+<text x="1132" y="560" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_2</text>
 <text x="30" y="626" fill="#E9E1D4" font-size="28" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">2000K Dark</text>
 <text x="30" y="656" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Redshift 2000 K pinned signal-LUT</text>
 <text x="320" y="604" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
@@ -823,19 +835,25 @@
 <rect x="1210.56" y="712" width="3.7" height="38" fill="#F0D7AC"/>
 <rect x="1214.08" y="712" width="3.7" height="38" fill="#F1D8AD"/>
 <rect x="1217.60" y="712" width="3.7" height="38" fill="#F2D9AE"/>
-<text x="320" y="772" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Surface ladder: bg_0 → bg_4 · selection</text>
-<rect x="320.00" y="782" width="150.00" height="44" fill="#070504"/>
-<text x="332" y="810" fill="#E9D3AD" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
-<rect x="470.00" y="782" width="150.00" height="44" fill="#0D0A09"/>
-<text x="482" y="810" fill="#E9D3AD" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
-<rect x="620.00" y="782" width="150.00" height="44" fill="#15110E"/>
-<text x="632" y="810" fill="#E9D3AD" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
-<rect x="770.00" y="782" width="150.00" height="44" fill="#1E1814"/>
-<text x="782" y="810" fill="#E9D3AD" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
-<rect x="920.00" y="782" width="150.00" height="44" fill="#271F1B"/>
-<text x="932" y="810" fill="#E9D3AD" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
-<rect x="1070.00" y="782" width="150.00" height="44" fill="#30221B"/>
-<text x="1082" y="810" fill="#E9D3AD" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">selection</text>
+<text x="320" y="772" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Backgrounds: bg_0 → bg_5 · Foregrounds: fg_0 → fg_2</text>
+<rect x="320.00" y="782" width="100.00" height="44" fill="#070504"/>
+<text x="332" y="810" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
+<rect x="420.00" y="782" width="100.00" height="44" fill="#0D0A09"/>
+<text x="432" y="810" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
+<rect x="520.00" y="782" width="100.00" height="44" fill="#15110E"/>
+<text x="532" y="810" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
+<rect x="620.00" y="782" width="100.00" height="44" fill="#1E1814"/>
+<text x="632" y="810" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
+<rect x="720.00" y="782" width="100.00" height="44" fill="#271F1B"/>
+<text x="732" y="810" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
+<rect x="820.00" y="782" width="100.00" height="44" fill="#30221B"/>
+<text x="832" y="810" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
+<rect x="920.00" y="782" width="100.00" height="44" fill="#E9D3AD"/>
+<text x="932" y="810" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_0</text>
+<rect x="1020.00" y="782" width="100.00" height="44" fill="#C8B38F"/>
+<text x="1032" y="810" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_1</text>
+<rect x="1120.00" y="782" width="100.00" height="44" fill="#9F8B70"/>
+<text x="1132" y="810" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_2</text>
 <text x="30" y="876" fill="#E9E1D4" font-size="28" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">1200K Dark</text>
 <text x="30" y="906" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Redshift 1200 K pinned LUT</text>
 <text x="320" y="854" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
@@ -1099,17 +1117,23 @@
 <rect x="1210.56" y="962" width="3.7" height="38" fill="#FDE2B6"/>
 <rect x="1214.08" y="962" width="3.7" height="38" fill="#FEE4B7"/>
 <rect x="1217.60" y="962" width="3.7" height="38" fill="#FFE5B8"/>
-<text x="320" y="1022" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Surface ladder: bg_0 → bg_4 · selection</text>
-<rect x="320.00" y="1032" width="150.00" height="44" fill="#060302"/>
-<text x="332" y="1060" fill="#FFE5BE" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
-<rect x="470.00" y="1032" width="150.00" height="44" fill="#0C0806"/>
-<text x="482" y="1060" fill="#FFE5BE" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
-<rect x="620.00" y="1032" width="150.00" height="44" fill="#130E0B"/>
-<text x="632" y="1060" fill="#FFE5BE" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
-<rect x="770.00" y="1032" width="150.00" height="44" fill="#1C1511"/>
-<text x="782" y="1060" fill="#FFE5BE" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
-<rect x="920.00" y="1032" width="150.00" height="44" fill="#251C17"/>
-<text x="932" y="1060" fill="#FFE5BE" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
-<rect x="1070.00" y="1032" width="150.00" height="44" fill="#2E1E17"/>
-<text x="1082" y="1060" fill="#FFE5BE" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">selection</text>
+<text x="320" y="1022" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Backgrounds: bg_0 → bg_5 · Foregrounds: fg_0 → fg_2</text>
+<rect x="320.00" y="1032" width="100.00" height="44" fill="#060302"/>
+<text x="332" y="1060" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
+<rect x="420.00" y="1032" width="100.00" height="44" fill="#0C0806"/>
+<text x="432" y="1060" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
+<rect x="520.00" y="1032" width="100.00" height="44" fill="#130E0B"/>
+<text x="532" y="1060" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
+<rect x="620.00" y="1032" width="100.00" height="44" fill="#1C1511"/>
+<text x="632" y="1060" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
+<rect x="720.00" y="1032" width="100.00" height="44" fill="#251C17"/>
+<text x="732" y="1060" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
+<rect x="820.00" y="1032" width="100.00" height="44" fill="#2E1E17"/>
+<text x="832" y="1060" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
+<rect x="920.00" y="1032" width="100.00" height="44" fill="#FFE5BE"/>
+<text x="932" y="1060" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_0</text>
+<rect x="1020.00" y="1032" width="100.00" height="44" fill="#CBB58F"/>
+<text x="1032" y="1060" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_1</text>
+<rect x="1120.00" y="1032" width="100.00" height="44" fill="#A28B70"/>
+<text x="1132" y="1060" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_2</text>
 </svg>

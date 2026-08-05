@@ -4,7 +4,7 @@ Generated imports are provided for Alacritty, iTerm2, and Windows Terminal. Each
 uses the family’s primary background and foreground. Alternative surfaces live in
 the JSON manifest, generated CSS, and Python `surfaces()` API; substitute them when a
 different canvas is needed. Terminal formats themselves expose only their native primary
-background and selection roles.
+background and selection roles; generated themes map those to `bg_0` and `bg_5`.
 
 ## Install
 
@@ -38,9 +38,9 @@ commanded daytime accents across those slots. Under the target transforms they f
 6, 6, 2, or 1 tightly grouped nighttime identities. Bold should come from typography,
 not a second high-chroma bank.
 
-`foreground` is the body-text role. `foreground_soft` is intended for larger
-supporting text or graphics, and `foreground_muted` for nonessential metadata or
-decoration. The latter two are not universal body-text colors; inspect each
+`fg_0` is the body-text role. `fg_1` is intended for larger supporting text or graphics,
+and `fg_2` for nonessential metadata or decoration. The latter two are not universal
+body-text colors; inspect each
 pairing under `metrics.shifted_text_contrast` in the JSON manifest.
 
 ## Legacy filenames

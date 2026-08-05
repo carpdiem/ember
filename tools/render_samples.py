@@ -85,7 +85,7 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
             (42, y + 22),
             family["name"],
             font=label_font,
-            fill=_rgb(surfaces["foreground"]),
+            fill=_rgb(surfaces["fg_0"]),
         )
         day_count = family["terminal_daylight_color_count"]
         night_count = family["terminal_semantic_color_count"]
@@ -93,38 +93,38 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
             (1030, y + 22),
             f"ANSI accents: {day_count} day · {night_count} night",
             font=label_font,
-            fill=_rgb(surfaces["foreground"]),
+            fill=_rgb(surfaces["fg_0"]),
         )
 
         lines = [
             [
                 ("def ", terminal["magenta"]),
                 ("shifted_distance", terminal["cyan"]),
-                ("(colors, gains):", surfaces["foreground"]),
+                ("(colors, gains):", surfaces["fg_0"]),
             ],
             [
                 (
                     "    # Measure what survives the display transform",
-                    surfaces["foreground"],
+                    surfaces["fg_0"],
                 ),
             ],
             [
                 ("    shifted", terminal["blue"]),
-                (" = ", surfaces["foreground"]),
+                (" = ", surfaces["fg_0"]),
                 ("colors", terminal["cyan"]),
-                (" * ", surfaces["foreground"]),
+                (" * ", surfaces["fg_0"]),
                 ("gains", terminal["yellow"]),
             ],
             [
                 ("    return ", terminal["magenta"]),
                 ("pairwise_oklab", terminal["cyan"]),
-                ("(shifted)", surfaces["foreground"]),
+                ("(shifted)", surfaces["fg_0"]),
             ],
             [
                 ("$ ", terminal["green"]),
-                ("pytest -q", surfaces["foreground"]),
+                ("pytest -q", surfaces["fg_0"]),
                 ("     tests passed", terminal["green"]),
-                (" · generated example", surfaces["foreground"]),
+                (" · generated example", surfaces["fg_0"]),
             ],
         ]
         for line_number, segments in enumerate(lines, start=1):
@@ -133,13 +133,13 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
                 draw.rounded_rectangle(
                     (38, baseline - 6, width - 40, baseline + 42),
                     radius=6,
-                    fill=_rgb(surfaces["selection"]),
+                    fill=_rgb(surfaces["bg_5"]),
                 )
             draw.text(
                 (46, baseline),
                 f"{line_number:>2}",
                 font=code_font,
-                fill=_rgb(surfaces["foreground"]),
+                fill=_rgb(surfaces["fg_0"]),
             )
             _draw_segments(draw, (104, baseline), segments, code_font)
 
@@ -217,7 +217,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             (42, y + 22),
             family["name"],
             font=label_font,
-            fill=_rgb(surfaces["foreground"]),
+            fill=_rgb(surfaces["fg_0"]),
         )
 
         heat_x, heat_y, cell = 42, y + 112, 25
@@ -225,7 +225,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             (heat_x, y + 74),
             "Sequential heatmap",
             font=small_font,
-            fill=_rgb(surfaces["foreground_muted"]),
+            fill=_rgb(surfaces["fg_2"]),
         )
         for iy in range(8):
             for ix in range(16):
@@ -249,13 +249,13 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             (heat_x, colorbar_y + 14),
             "low",
             font=small_font,
-            fill=_rgb(surfaces["foreground"]),
+            fill=_rgb(surfaces["fg_0"]),
         )
         draw.text(
             (heat_x + 354, colorbar_y + 18),
             "high",
             font=small_font,
-            fill=_rgb(surfaces["foreground"]),
+            fill=_rgb(surfaces["fg_0"]),
         )
 
         bar_x, bar_y, bar_w, bar_h = 500, y + 112, 400, 218
@@ -263,7 +263,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             (bar_x, y + 74),
             "Categorical bars",
             font=small_font,
-            fill=_rgb(surfaces["foreground_muted"]),
+            fill=_rgb(surfaces["fg_2"]),
         )
         values = (0.78, 0.56, 0.91, 0.68, 0.47, 0.82)
         gap = 10
@@ -296,7 +296,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
                 (left + 6, bar_y + bar_h + 12),
                 chr(65 + index),
                 font=small_font,
-                fill=_rgb(surfaces["foreground_soft"]),
+                fill=_rgb(surfaces["fg_1"]),
             )
 
         plot_x, plot_y, plot_w, plot_h = 990, y + 112, 500, 218
@@ -304,9 +304,9 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             (plot_x, y + 74),
             "Series: color + dash + marker + label",
             font=small_font,
-            fill=_rgb(surfaces["foreground_muted"]),
+            fill=_rgb(surfaces["fg_2"]),
         )
-        axis = _rgb(surfaces["foreground_muted"])
+        axis = _rgb(surfaces["fg_2"])
         draw.line((plot_x, plot_y + plot_h, plot_x + plot_w, plot_y + plot_h), fill=axis)
         draw.line((plot_x, plot_y, plot_x, plot_y + plot_h), fill=axis)
         series_endpoints = []

@@ -96,11 +96,11 @@ def _alacritty(family: dict) -> str:
         f"# Family: {family['name']}",
         "[colors.primary]",
         f'background = "{family["surfaces"]["bg_0"]}"',
-        f'foreground = "{family["surfaces"]["foreground"]}"',
+        f'foreground = "{family["surfaces"]["fg_0"]}"',
         "",
         "[colors.selection]",
-        f'background = "{family["surfaces"]["selection"]}"',
-        f'text = "{family["surfaces"]["foreground"]}"',
+        f'background = "{family["surfaces"]["bg_5"]}"',
+        f'text = "{family["surfaces"]["fg_0"]}"',
         "",
         "[colors.normal]",
     ]
@@ -133,8 +133,8 @@ def _windows_terminal(family: dict) -> str:
     payload = {"name": family["name"]}
     payload.update({key: terminal[value] for key, value in mapping.items()})
     payload["background"] = family["surfaces"]["bg_0"]
-    payload["foreground"] = family["surfaces"]["foreground"]
-    payload["selectionBackground"] = family["surfaces"]["selection"]
+    payload["foreground"] = family["surfaces"]["fg_0"]
+    payload["selectionBackground"] = family["surfaces"]["bg_5"]
     return json.dumps(payload, indent=2) + "\n"
 
 
@@ -153,10 +153,10 @@ def _iterm(family: dict) -> bytes:
     terminal = family["terminal"]
     payload = {
         "Background Color": _iterm_color(family["surfaces"]["bg_0"]),
-        "Foreground Color": _iterm_color(family["surfaces"]["foreground"]),
-        "Bold Color": _iterm_color(family["surfaces"]["foreground"]),
-        "Selection Color": _iterm_color(family["surfaces"]["selection"]),
-        "Selected Text Color": _iterm_color(family["surfaces"]["foreground"]),
+        "Foreground Color": _iterm_color(family["surfaces"]["fg_0"]),
+        "Bold Color": _iterm_color(family["surfaces"]["fg_0"]),
+        "Selection Color": _iterm_color(family["surfaces"]["bg_5"]),
+        "Selected Text Color": _iterm_color(family["surfaces"]["fg_0"]),
     }
     for index, name in enumerate(ANSI_NAMES):
         payload[f"Ansi {index} Color"] = _iterm_color(terminal[name])
@@ -245,6 +245,7 @@ def _overview_svg(manifest: dict) -> str:
         "1200k": "Redshift 1200 K pinned LUT",
     }
     background_roles = manifest["quality_targets"]["bg_roles_low_to_high"]
+    foreground_roles = ["fg_0", "fg_1", "fg_2"]
     for row, family in enumerate(manifest["families"].values()):
         y = 84 + row * row_height
         parts.append(_svg_text(30, y + 42, family["name"], 28))
@@ -266,9 +267,11 @@ def _overview_svg(manifest: dict) -> str:
                 f'<rect x="{x + index * 3.52:.2f}" y="{gradient_y}" width="3.7" height="38" fill="{value}"/>'
             )
         parts.append(
-            _svg_text(320, y + 188, "Surface ladder: bg_0 → bg_4 · selection", 18, "#BDAE98")
+            _svg_text(
+                320, y + 188, "Backgrounds: bg_0 → bg_5 · Foregrounds: fg_0 → fg_2", 18, "#BDAE98"
+            )
         )
-        surface_roles = [*background_roles, "selection"]
+        surface_roles = [*background_roles, *foreground_roles]
         surface_width = 900 / len(surface_roles)
         for index, role in enumerate(surface_roles):
             surface_x = 320 + index * surface_width
@@ -282,7 +285,7 @@ def _overview_svg(manifest: dict) -> str:
                     y + 226,
                     role.replace("background", "bg"),
                     13,
-                    family["surfaces"]["foreground"],
+                    _label_color(family["surfaces"][role]),
                 )
             )
     parts.append("</svg>")
@@ -336,7 +339,7 @@ Generated imports are provided for Alacritty, iTerm2, and Windows Terminal. Each
 uses the family’s primary background and foreground. Alternative surfaces live in
 the JSON manifest, generated CSS, and Python `surfaces()` API; substitute them when a
 different canvas is needed. Terminal formats themselves expose only their native primary
-background and selection roles.
+background and selection roles; generated themes map those to `bg_0` and `bg_5`.
 
 ## Install
 
@@ -370,9 +373,9 @@ commanded daytime accents across those slots. Under the target transforms they f
 6, 6, 2, or 1 tightly grouped nighttime identities. Bold should come from typography,
 not a second high-chroma bank.
 
-`foreground` is the body-text role. `foreground_soft` is intended for larger
-supporting text or graphics, and `foreground_muted` for nonessential metadata or
-decoration. The latter two are not universal body-text colors; inspect each
+`fg_0` is the body-text role. `fg_1` is intended for larger supporting text or graphics,
+and `fg_2` for nonessential metadata or decoration. The latter two are not universal
+body-text colors; inspect each
 pairing under `metrics.shifted_text_contrast` in the JSON manifest.
 
 ## Legacy filenames

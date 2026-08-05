@@ -19,9 +19,9 @@ use the attenuated dimensions to improve daytime spacing. Moderate chroma keeps 
 accents expressive within a controlled saturation range.
 
 Dark-mode surfaces are genuinely near-black rather than merely warm dark gray. Every
-family includes a five-step reusable background ladder plus a distinct selection state.
+family includes six ordered background roles and three foreground roles.
 Commanded relative luminance is capped from `0.003` for `bg_0` through
-`0.020` for `bg_4` and `0.021` for selection, increasing modeled small-text
+`0.021` for `bg_5`, increasing modeled small-text
 contrast before display-specific losses.
 
 ## Choose a palette
@@ -79,14 +79,16 @@ Every family exposes the same ordered roles in JSON, CSS, and the Python `surfac
 | `bg_2` | ordinary panel or card |
 | `bg_3` | nested panel, active control, or hover state |
 | `bg_4` | floating panel, menu, or popover |
-| `selection` | selected row, range, or focused region |
+| `bg_5` | selected row, range, or focused region |
+| `fg_0` | primary text and essential labels |
+| `fg_1` | supporting text and graphics |
+| `fg_2` | muted, nonessential metadata or decoration |
 
-The five background roles form a monotonic elevation ladder. Selection is deliberately
-separate: it remains distinguishable from every ladder step rather than acting as a sixth
-generic panel color. `bg_0` is always the canvas: dark families become lighter toward
-`bg_4`, while the light family becomes darker toward `bg_4` to preserve the same visual
-hierarchy. Older `--rs-background*` CSS variables remain as generated compatibility aliases;
-JSON and the Python API use only the numbered roles.
+The six background roles form a monotonic ladder. `bg_0` is always the canvas and `bg_5`
+is the strongest background state: dark families become lighter toward `bg_5`, while the
+light family becomes darker toward `bg_5`. CSS also exposes the old-style
+`--rs-background*`, `--rs-selection`, and `--rs-foreground*` names as generated migration
+aliases; JSON and the Python API use only the numbered roles.
 
 ### Terminal themes
 
@@ -151,7 +153,7 @@ family:
 
 ```css
 [data-redshift-palette] {
-  color: var(--rs-foreground);
+  color: var(--rs-fg-0);
   background: var(--rs-bg-0);
 }
 
@@ -168,7 +170,7 @@ family:
 }
 
 .selected {
-  background: var(--rs-selection);
+  background: var(--rs-bg-5);
 }
 
 .series-a {
@@ -276,22 +278,21 @@ formula.
 | 1200K Dark | 3 | 21.61 | 6.95 | 0.0990 / 0.1100 | 0.1616 | 5.17:1 |
 
 Dark-surface measurements use WCAG's sRGB relative-luminance calculation on the exact
-serialized Hex values. The contrast range covers transformed primary text on all five
-background roles plus selection.
+serialized Hex values. The contrast range covers transformed `fg_0` on all six background
+roles.
 
-| Dark family | `bg_0` | Commanded luminance, `bg_0` → `bg_4` | Selection luminance | Transformed primary-text contrast range |
-|---|---:|---:|---:|---:|
-| 3400K Dark | `#090807` | 0.00247 → 0.01893 | 0.02019 | 6.83–8.52:1 |
-| 2000K Dark | `#070504` | 0.00162 → 0.01490 | 0.01852 | 5.68–6.77:1 |
-| 1200K Dark | `#060302` | 0.00108 → 0.01286 | 0.01571 | 5.32–6.08:1 |
+| Dark family | `bg_0` | Commanded luminance, `bg_0` → `bg_5` | Transformed `fg_0` contrast range |
+|---|---:|---:|---:|
+| 3400K Dark | `#090807` | 0.00247 → 0.02019 | 6.83–8.52:1 |
+| 2000K Dark | `#070504` | 0.00162 → 0.01852 | 5.68–6.77:1 |
+| 1200K Dark | `#060302` | 0.00108 → 0.01571 | 5.32–6.08:1 |
 
 These are digital signal measurements, not physical display luminance. Actual black
 level still depends on panel technology, brightness, calibration, ambient light, and the
 display's behavior near black.
 
-The build also checks primary text against every declared background and selection
-surface, verifies selection visibility, parses every terminal format, and reproduces
-all generated artifacts from source.
+The build also checks `fg_0` against every declared background, verifies endpoint visibility,
+parses every terminal format, and reproduces all generated artifacts from source.
 
 ## Verification
 
@@ -311,21 +312,23 @@ The release gates enforce:
 - categorical minimum-distance floors in both unshifted and transformed states;
 - terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 2`, `3 / 1`;
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
-- at least 4.5:1 primary-text contrast on every background and selection;
+- transformed contrast floors of `4.5:1`, `3.5:1`, and `2.4:1` for `fg_0`, `fg_1`, and
+  `fg_2` respectively on every background; `fg_1` is supporting content and `fg_2` is
+  nonessential metadata or decoration, not body text;
 - dark-mode commanded relative-luminance caps of `0.003`, `0.005`, `0.009`, `0.013`,
-  `0.020`, and `0.021` across the five-step ladder and selection;
-- at least `2.3 ΔEOK` between adjacent transformed dark-surface ladder steps and at
-  least `1.8 ΔEOK` between selection and every ladder step;
+  `0.020`, and `0.021` across the six-step ladder;
+- at least `1.8 ΔEOK` between adjacent transformed dark-surface ladder steps;
 - transformed primary-text floors of `6.8:1`, `5.65:1`, and `5.3:1` across every
   surface in the 3400 K, 2000 K, and 1200 K dark families;
-- at least `6.0 ΔEOK` between each transformed base background and its selection;
+- at least `6.0 ΔEOK` across each transformed background ladder from `bg_0` to `bg_5`;
 - 256 unique float samples per sequential map, with monotonic lightness in both display
   states and nearly even transformed steps; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
 
 Version 0.3 retains the temperature-based palette IDs while replacing the dark surface
-ladders with near-black values, adding two elevation levels, and exposing surfaces through
-the Python API. Existing users can consult the [migration guide](MIGRATION.md) for changed
+ladders with near-black values, expanding to six backgrounds and three foregrounds, and
+exposing surfaces through the Python API. Existing users can consult the
+[migration guide](MIGRATION.md) for changed
 surfaces, legacy aliases, and removed deep-light themes.
 
 ## Sources and design lineage

@@ -80,7 +80,7 @@ DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE = {
     "bg_2": 0.009,
     "bg_3": 0.013,
     "bg_4": 0.020,
-    "selection": 0.021,
+    "bg_5": 0.021,
 }
 
 DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST = {
@@ -89,8 +89,13 @@ DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST = {
     "1200k-dark": 5.3,
 }
 
-DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK = 2.3
-DARK_MINIMUM_SELECTION_TO_SURFACE_DELTA_E_OK = 1.8
+MINIMUM_SHIFTED_FOREGROUND_CONTRAST = {
+    "fg_0": 4.5,
+    "fg_1": 3.5,
+    "fg_2": 2.4,
+}
+
+DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK = 1.8
 
 BACKGROUND_SURFACE_ROLES = (
     "bg_0",
@@ -98,14 +103,19 @@ BACKGROUND_SURFACE_ROLES = (
     "bg_2",
     "bg_3",
     "bg_4",
+    "bg_5",
 )
 
-LEGACY_BACKGROUND_ROLE_ALIASES = {
+LEGACY_SURFACE_ROLE_ALIASES = {
     "background": "bg_0",
     "background_alt": "bg_1",
     "background_high": "bg_2",
     "background_higher": "bg_3",
     "background_highest": "bg_4",
+    "selection": "bg_5",
+    "foreground": "fg_0",
+    "foreground_soft": "fg_1",
+    "foreground_muted": "fg_2",
 }
 
 
@@ -121,10 +131,10 @@ FAMILIES = (
             "bg_2": "#181612",
             "bg_3": "#201D19",
             "bg_4": "#29251F",
-            "foreground": "#DDD0B2",
-            "foreground_soft": "#BDAE93",
-            "foreground_muted": "#928374",
-            "selection": "#32241B",
+            "bg_5": "#32241B",
+            "fg_0": "#DDD0B2",
+            "fg_1": "#BDAE93",
+            "fg_2": "#928374",
         },
         # Six moderate-chroma hues are composed for both unshifted daytime use and
         # the transformed view. Thin lines also receive dash and marker cues.
@@ -147,10 +157,10 @@ FAMILIES = (
             "bg_2": "#E9DCB9",
             "bg_3": "#DFCFAA",
             "bg_4": "#D4C29C",
-            "foreground": "#342F2C",
-            "foreground_soft": "#504945",
-            "foreground_muted": "#665C54",
-            "selection": "#C9B796",
+            "bg_5": "#C9B796",
+            "fg_0": "#342F2C",
+            "fg_1": "#504945",
+            "fg_2": "#665C54",
         },
         categorical_colors=("#158F7A", "#322865", "#AE5D63", "#6E2626", "#33531D", "#676DB1"),
         daylight_minimum_delta_e_ok=15.0,
@@ -171,10 +181,10 @@ FAMILIES = (
             "bg_2": "#15110E",
             "bg_3": "#1E1814",
             "bg_4": "#271F1B",
-            "foreground": "#E9D3AD",
-            "foreground_soft": "#C8B38F",
-            "foreground_muted": "#9F8B70",
-            "selection": "#30221B",
+            "bg_5": "#30221B",
+            "fg_0": "#E9D3AD",
+            "fg_1": "#C8B38F",
+            "fg_2": "#9F8B70",
         },
         # Blue contributes little after this transform, so its commanded range
         # improves daytime identity while the transformed composition stays warm.
@@ -197,10 +207,10 @@ FAMILIES = (
             "bg_2": "#130E0B",
             "bg_3": "#1C1511",
             "bg_4": "#251C17",
-            "foreground": "#FFE5BE",
-            "foreground_soft": "#CBB58F",
-            "foreground_muted": "#A28B70",
-            "selection": "#2E1E17",
+            "bg_5": "#2E1E17",
+            "fg_0": "#FFE5BE",
+            "fg_1": "#CBB58F",
+            "fg_2": "#A28B70",
         },
         # Blue is absent after this transform. Its commanded values can therefore
         # separate the daytime gold, lavender, and olive without changing night.

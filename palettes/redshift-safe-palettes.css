@@ -8,15 +8,19 @@
   --rs-bg-2: #181612;
   --rs-bg-3: #201D19;
   --rs-bg-4: #29251F;
-  --rs-foreground: #DDD0B2;
-  --rs-foreground-soft: #BDAE93;
-  --rs-foreground-muted: #928374;
-  --rs-selection: #32241B;
+  --rs-bg-5: #32241B;
+  --rs-fg-0: #DDD0B2;
+  --rs-fg-1: #BDAE93;
+  --rs-fg-2: #928374;
   --rs-background: #090807; /* legacy alias */
   --rs-background-alt: #100E0C; /* legacy alias */
   --rs-background-high: #181612; /* legacy alias */
   --rs-background-higher: #201D19; /* legacy alias */
   --rs-background-highest: #29251F; /* legacy alias */
+  --rs-selection: #32241B; /* legacy alias */
+  --rs-foreground: #DDD0B2; /* legacy alias */
+  --rs-foreground-soft: #BDAE93; /* legacy alias */
+  --rs-foreground-muted: #928374; /* legacy alias */
   --rs-category-one: #6E96D5;
   --rs-category-two: #DDAA69;
   --rs-category-three: #2E8A7E;
@@ -33,15 +37,19 @@
   --rs-bg-2: #E9DCB9;
   --rs-bg-3: #DFCFAA;
   --rs-bg-4: #D4C29C;
-  --rs-foreground: #342F2C;
-  --rs-foreground-soft: #504945;
-  --rs-foreground-muted: #665C54;
-  --rs-selection: #C9B796;
+  --rs-bg-5: #C9B796;
+  --rs-fg-0: #342F2C;
+  --rs-fg-1: #504945;
+  --rs-fg-2: #665C54;
   --rs-background: #FFF7D6; /* legacy alias */
   --rs-background-alt: #F4EAC7; /* legacy alias */
   --rs-background-high: #E9DCB9; /* legacy alias */
   --rs-background-higher: #DFCFAA; /* legacy alias */
   --rs-background-highest: #D4C29C; /* legacy alias */
+  --rs-selection: #C9B796; /* legacy alias */
+  --rs-foreground: #342F2C; /* legacy alias */
+  --rs-foreground-soft: #504945; /* legacy alias */
+  --rs-foreground-muted: #665C54; /* legacy alias */
   --rs-category-one: #158F7A;
   --rs-category-two: #322865;
   --rs-category-three: #AE5D63;
@@ -58,15 +66,19 @@
   --rs-bg-2: #15110E;
   --rs-bg-3: #1E1814;
   --rs-bg-4: #271F1B;
-  --rs-foreground: #E9D3AD;
-  --rs-foreground-soft: #C8B38F;
-  --rs-foreground-muted: #9F8B70;
-  --rs-selection: #30221B;
+  --rs-bg-5: #30221B;
+  --rs-fg-0: #E9D3AD;
+  --rs-fg-1: #C8B38F;
+  --rs-fg-2: #9F8B70;
   --rs-background: #070504; /* legacy alias */
   --rs-background-alt: #0D0A09; /* legacy alias */
   --rs-background-high: #15110E; /* legacy alias */
   --rs-background-higher: #1E1814; /* legacy alias */
   --rs-background-highest: #271F1B; /* legacy alias */
+  --rs-selection: #30221B; /* legacy alias */
+  --rs-foreground: #E9D3AD; /* legacy alias */
+  --rs-foreground-soft: #C8B38F; /* legacy alias */
+  --rs-foreground-muted: #9F8B70; /* legacy alias */
   --rs-category-one: #DCC482;
   --rs-category-two: #A57C29;
   --rs-category-three: #8497E0;
@@ -81,15 +93,19 @@
   --rs-bg-2: #130E0B;
   --rs-bg-3: #1C1511;
   --rs-bg-4: #251C17;
-  --rs-foreground: #FFE5BE;
-  --rs-foreground-soft: #CBB58F;
-  --rs-foreground-muted: #A28B70;
-  --rs-selection: #2E1E17;
+  --rs-bg-5: #2E1E17;
+  --rs-fg-0: #FFE5BE;
+  --rs-fg-1: #CBB58F;
+  --rs-fg-2: #A28B70;
   --rs-background: #060302; /* legacy alias */
   --rs-background-alt: #0C0806; /* legacy alias */
   --rs-background-high: #130E0B; /* legacy alias */
   --rs-background-higher: #1C1511; /* legacy alias */
   --rs-background-highest: #251C17; /* legacy alias */
+  --rs-selection: #2E1E17; /* legacy alias */
+  --rs-foreground: #FFE5BE; /* legacy alias */
+  --rs-foreground-soft: #CBB58F; /* legacy alias */
+  --rs-foreground-muted: #A28B70; /* legacy alias */
   --rs-category-one: #E0C48E;
   --rs-category-two: #B08ED7;
   --rs-category-three: #8F8A31;

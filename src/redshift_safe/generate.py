@@ -20,11 +20,11 @@ from .color import (
 from .definitions import (
     BACKGROUND_SURFACE_ROLES,
     DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK,
-    DARK_MINIMUM_SELECTION_TO_SURFACE_DELTA_E_OK,
     DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST,
     DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE,
     FAMILIES,
-    LEGACY_BACKGROUND_ROLE_ALIASES,
+    LEGACY_SURFACE_ROLE_ALIASES,
+    MINIMUM_SHIFTED_FOREGROUND_CONTRAST,
     FamilyDefinition,
 )
 
@@ -60,18 +60,16 @@ def _terminal_colors(family: FamilyDefinition) -> list[str]:
 
     surfaces = family.surfaces
     first_neutral = (
-        hex_to_srgb(surfaces["bg_2"])
-        if family.mode == "dark"
-        else hex_to_srgb(surfaces["foreground"])
+        hex_to_srgb(surfaces["bg_2"]) if family.mode == "dark" else hex_to_srgb(surfaces["fg_0"])
     )
     accents = [hex_to_srgb(value) for value in family.terminal_colors]
     semantic_slots = [accents[index % len(accents)] for index in range(6)]
-    normal = [first_neutral, *semantic_slots, hex_to_srgb(surfaces["foreground"])]
+    normal = [first_neutral, *semantic_slots, hex_to_srgb(surfaces["fg_0"])]
     # Bright black is commonly used for comments and metadata. Keep it readable
     # rather than treating it as a decorative low-contrast gray.
-    bright = [hex_to_srgb(surfaces["foreground"])]
+    bright = [hex_to_srgb(surfaces["fg_0"])]
     bright.extend(semantic_slots)
-    bright.append(hex_to_srgb(surfaces["foreground"]))
+    bright.append(hex_to_srgb(surfaces["fg_0"]))
     return [srgb_to_hex(color) for color in normal + bright]
 
 
@@ -184,9 +182,7 @@ def _metrics(
     transformed_surfaces = {
         key: warm_transform(hex_to_srgb(value), gains) for key, value in family.surfaces.items()
     }
-    normal_surfaces = {
-        key: hex_to_srgb(family.surfaces[key]) for key in (*BACKGROUND_SURFACE_ROLES, "selection")
-    }
+    normal_surfaces = {key: hex_to_srgb(family.surfaces[key]) for key in BACKGROUND_SURFACE_ROLES}
     surface_metrics = {
         "normal_relative_luminance": {
             key: round(float(wcag_luminance(value)), 5) for key, value in normal_surfaces.items()
@@ -197,14 +193,14 @@ def _metrics(
         },
         "shifted_primary_text_contrast": {
             key: round(
-                contrast_ratio(transformed_surfaces["foreground"], transformed_surfaces[key]),
+                contrast_ratio(transformed_surfaces["fg_0"], transformed_surfaces[key]),
                 2,
             )
             for key in normal_surfaces
         },
     }
     text_metrics = {}
-    for foreground in ("foreground", "foreground_soft", "foreground_muted"):
+    for foreground in ("fg_0", "fg_1", "fg_2"):
         for background in BACKGROUND_SURFACE_ROLES:
             text_metrics[f"{foreground}_on_{background}"] = round(
                 contrast_ratio(transformed_surfaces[foreground], transformed_surfaces[background]),
@@ -295,7 +291,7 @@ def generate_manifest() -> dict[str, Any]:
             "lowfire-dark": "2000k-dark",
             "safelight-dark": "1200k-dark",
         },
-        "legacy_surface_role_aliases": LEGACY_BACKGROUND_ROLE_ALIASES,
+        "legacy_surface_role_aliases": LEGACY_SURFACE_ROLE_ALIASES,
         "removed_families": {
             "lowfire-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
             "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
@@ -303,9 +299,7 @@ def generate_manifest() -> dict[str, Any]:
         "quality_targets": {
             "bg_roles_low_to_high": list(BACKGROUND_SURFACE_ROLES),
             "dark_minimum_adjacent_surface_delta_e_ok": (DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK),
-            "dark_minimum_selection_to_surface_delta_e_ok": (
-                DARK_MINIMUM_SELECTION_TO_SURFACE_DELTA_E_OK
-            ),
+            "minimum_shifted_foreground_contrast": MINIMUM_SHIFTED_FOREGROUND_CONTRAST,
             "dark_surface_maximum_commanded_relative_luminance": (
                 DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE
             ),

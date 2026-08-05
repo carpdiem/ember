@@ -70,7 +70,7 @@ def test_removed_deep_light_slugs_fail_with_migration_message(legacy: str) -> No
 def test_legacy_css_and_terminal_exports_remain_available() -> None:
     manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
     css = (ROOT / "palettes/redshift-safe-palettes.css").read_text()
-    for role in ("bg_0", "bg_1", "bg_2", "bg_3", "bg_4", "selection"):
+    for role in ("bg_0", "bg_1", "bg_2", "bg_3", "bg_4", "bg_5", "fg_0", "fg_1", "fg_2"):
         assert f"--rs-{role.replace('_', '-')}:" in css
     for family in manifest["families"].values():
         for legacy_role, canonical_role in manifest["legacy_surface_role_aliases"].items():
@@ -100,6 +100,25 @@ def test_generated_swatch_rectangles_fit_their_canvas() -> None:
             rectangle_height = height if raw_height.endswith("%") else float(raw_height)
             assert x + rectangle_width <= width + 0.01, path
             assert y + rectangle_height <= height + 0.01, path
+
+
+def test_readme_hero_overview_displays_every_background_and_foreground_role() -> None:
+    readme = (ROOT / "README.md").read_text()
+    hero = "![Ember palette overview](docs/swatches/overview.svg)"
+    assert readme.index(hero) < readme.index("Ember provides coordinated color systems")
+
+    manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
+    roles = (*manifest["quality_targets"]["bg_roles_low_to_high"], "fg_0", "fg_1", "fg_2")
+    root = ET.parse(ROOT / "docs/swatches/overview.svg").getroot()
+    namespace = {"svg": "http://www.w3.org/2000/svg"}
+    labels = [node.text for node in root.findall(".//svg:text", namespace)]
+    fills = [node.attrib["fill"] for node in root.findall(".//svg:rect", namespace)]
+
+    for role in roles:
+        assert labels.count(role) == len(SLUGS), role
+    for family in manifest["families"].values():
+        for role in roles:
+            assert family["surfaces"][role] in fills, (family["slug"], role)
 
 
 def test_categorical_encoding_is_stable_for_strings_and_subsets() -> None:

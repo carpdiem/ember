@@ -4,15 +4,17 @@
 
 Version 0.3 replaces the dark-mode surface ladders with near-black warm neutrals for
 low-brightness, small-text work and moves the light canvas correspondingly closer to warm
-white. It also expands each family from three reusable background roles to five plus
-selection. Palette IDs are unchanged, but applications that depended on old Hex values
+white. It also expands each family from three background roles to six and normalizes three
+foreground roles. Palette IDs are unchanged, but applications that depended on old Hex values
 should refresh copied CSS variables or theme overrides.
 
-Canonical background names are now numeric: `bg_0`, `bg_1`, `bg_2`, `bg_3`, and `bg_4`.
-`bg_0` is the base canvas and `bg_4` is the top elevation; luminance rises across dark
-families and falls across the light family. Generated CSS retains `--rs-background`,
-`--rs-background-alt`, `--rs-background-high`, `--rs-background-higher`, and
-`--rs-background-highest` as compatibility aliases. JSON and `surfaces()` return only the
+Canonical background names are now `bg_0` through `bg_5`; foregrounds are `fg_0` through
+`fg_2`. `bg_0` is the base canvas and `bg_5` is the strongest background state; luminance
+rises across dark families and falls across the light family. Generated CSS provides
+`--rs-background`, `--rs-background-alt`, `--rs-background-high`,
+`--rs-background-higher`, and `--rs-background-highest`, plus `--rs-selection` and the three
+`--rs-foreground*` names, as
+migration aliases. JSON and `surfaces()` return only the
 numeric names; the manifest's `legacy_surface_role_aliases` map supports migration.
 
 The JSON schema is version 5. It adds manifest-level surface-role, luminance, separation,
