@@ -74,6 +74,40 @@ PROFILES = {
     ),
 }
 
+DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE = {
+    "bg_0": 0.003,
+    "bg_1": 0.005,
+    "bg_2": 0.009,
+    "bg_3": 0.013,
+    "bg_4": 0.020,
+    "selection": 0.021,
+}
+
+DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST = {
+    "3400k-dark": 6.8,
+    "2000k-dark": 5.65,
+    "1200k-dark": 5.3,
+}
+
+DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK = 2.3
+DARK_MINIMUM_SELECTION_TO_SURFACE_DELTA_E_OK = 1.8
+
+BACKGROUND_SURFACE_ROLES = (
+    "bg_0",
+    "bg_1",
+    "bg_2",
+    "bg_3",
+    "bg_4",
+)
+
+LEGACY_BACKGROUND_ROLE_ALIASES = {
+    "background": "bg_0",
+    "background_alt": "bg_1",
+    "background_high": "bg_2",
+    "background_higher": "bg_3",
+    "background_highest": "bg_4",
+}
+
 
 FAMILIES = (
     FamilyDefinition(
@@ -82,13 +116,15 @@ FAMILIES = (
         mode="dark",
         profile=PROFILES["3400k"],
         surfaces={
-            "background": "#32302F",
-            "background_alt": "#383532",
-            "background_high": "#403B37",
+            "bg_0": "#090807",
+            "bg_1": "#100E0C",
+            "bg_2": "#181612",
+            "bg_3": "#201D19",
+            "bg_4": "#29251F",
             "foreground": "#DDD0B2",
             "foreground_soft": "#BDAE93",
             "foreground_muted": "#928374",
-            "selection": "#4A433D",
+            "selection": "#32241B",
         },
         # Six moderate-chroma hues are composed for both unshifted daytime use and
         # the transformed view. Thin lines also receive dash and marker cues.
@@ -106,9 +142,11 @@ FAMILIES = (
         mode="light",
         profile=PROFILES["3400k"],
         surfaces={
-            "background": "#F2E5BC",
-            "background_alt": "#EDE0B8",
-            "background_high": "#E5D5AD",
+            "bg_0": "#FFF7D6",
+            "bg_1": "#F4EAC7",
+            "bg_2": "#E9DCB9",
+            "bg_3": "#DFCFAA",
+            "bg_4": "#D4C29C",
             "foreground": "#342F2C",
             "foreground_soft": "#504945",
             "foreground_muted": "#665C54",
@@ -128,13 +166,15 @@ FAMILIES = (
         mode="dark",
         profile=PROFILES["2000k"],
         surfaces={
-            "background": "#302722",
-            "background_alt": "#352B25",
-            "background_high": "#3C3029",
+            "bg_0": "#070504",
+            "bg_1": "#0D0A09",
+            "bg_2": "#15110E",
+            "bg_3": "#1E1814",
+            "bg_4": "#271F1B",
             "foreground": "#E9D3AD",
             "foreground_soft": "#C8B38F",
             "foreground_muted": "#9F8B70",
-            "selection": "#48382F",
+            "selection": "#30221B",
         },
         # Blue contributes little after this transform, so its commanded range
         # improves daytime identity while the transformed composition stays warm.
@@ -152,13 +192,15 @@ FAMILIES = (
         mode="dark",
         profile=PROFILES["1200k"],
         surfaces={
-            "background": "#2C211D",
-            "background_alt": "#322520",
-            "background_high": "#3A2B25",
+            "bg_0": "#060302",
+            "bg_1": "#0C0806",
+            "bg_2": "#130E0B",
+            "bg_3": "#1C1511",
+            "bg_4": "#251C17",
             "foreground": "#FFE5BE",
             "foreground_soft": "#CBB58F",
             "foreground_muted": "#A28B70",
-            "selection": "#473128",
+            "selection": "#2E1E17",
         },
         # Blue is absent after this transform. Its commanded values can therefore
         # separate the daytime gold, lavender, and olive without changing night.

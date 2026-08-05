@@ -1,6 +1,6 @@
 {
   "name": "1200K Dark",
-  "black": "#3A2B25",
+  "black": "#130E0B",
   "red": "#EACF6F",
   "green": "#EACFFF",
   "yellow": "#EACFBC",
@@ -16,7 +16,7 @@
   "brightPurple": "#EACFFF",
   "brightCyan": "#EACFBC",
   "brightWhite": "#FFE5BE",
-  "background": "#2C211D",
+  "background": "#060302",
   "foreground": "#FFE5BE",
-  "selectionBackground": "#473128"
+  "selectionBackground": "#2E1E17"
 }

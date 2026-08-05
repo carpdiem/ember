@@ -892,7 +892,7 @@ wheels = [
 
 [[package]]
 name = "redshift-safe-palettes"
-version = "0.2.0"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },

@@ -18,14 +18,20 @@ compression as design room: colors meet nighttime contrast and separation floors
 use the attenuated dimensions to improve daytime spacing. Moderate chroma keeps the
 accents expressive within a controlled saturation range.
 
+Dark-mode surfaces are genuinely near-black rather than merely warm dark gray. Every
+family includes a five-step reusable background ladder plus a distinct selection state.
+Commanded relative luminance is capped from `0.003` for `bg_0` through
+`0.020` for `bg_4` and `0.021` for selection, increasing modeled small-text
+contrast before display-specific losses.
+
 ## Choose a palette
 
 | Palette | Mode | Data categories | Terminal accents, day / night | Intended use |
 |---|---|---:|---:|---|
-| [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 / 6 | moderate warm shift; general terminal and data work |
+| [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 / 6 | near-black general terminal and data work |
 | [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 / 6 | light-surface work under a moderate warm shift |
-| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 4 / 2 | deep Redshift work; reduced semantic color capacity |
-| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 3 / 1 | extreme red-shift stress case; rely on lightness and shape |
+| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 4 / 2 | near-black deep Redshift work; reduced semantic color capacity |
+| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 3 / 1 | near-black extreme stress case; rely on lightness and shape |
 
 The deepest profiles are dark-only. Under the 2000 K and 1200 K gain vectors, a light
 canvas becomes a large orange-red field, while a dark canvas preserves a subdued
@@ -62,6 +68,26 @@ artifacts rather than photographs or display-calibration measurements.
 
 ## Use Ember
 
+### UI surface ladder
+
+Every family exposes the same ordered roles in JSON, CSS, and the Python `surfaces()` API:
+
+| Role | Intended use |
+|---|---|
+| `bg_0` | base application canvas |
+| `bg_1` | low-emphasis adjacent region or sidebar |
+| `bg_2` | ordinary panel or card |
+| `bg_3` | nested panel, active control, or hover state |
+| `bg_4` | floating panel, menu, or popover |
+| `selection` | selected row, range, or focused region |
+
+The five background roles form a monotonic elevation ladder. Selection is deliberately
+separate: it remains distinguishable from every ladder step rather than acting as a sixth
+generic panel color. `bg_0` is always the canvas: dark families become lighter toward
+`bg_4`, while the light family becomes darker toward `bg_4` to preserve the same visual
+hierarchy. Older `--rs-background*` CSS variables remain as generated compatibility aliases;
+JSON and the Python API use only the numbered roles.
+
 ### Terminal themes
 
 Ready-to-import themes are included for:
@@ -85,14 +111,18 @@ python -m pip install "git+https://github.com/carpdiem/ember-redshift-safe-palet
 ```python
 import matplotlib.pyplot as plt
 
-from redshift_safe import categorical, categorical_norm, encode_categories, sequential
+from redshift_safe import categorical, categorical_norm, encode_categories, sequential, surfaces
 
 palette = "2000k-dark"
+ui = surfaces(palette)
 labels = ["control", "alpha", "beta", "gamma"]
 order = ["control", "alpha", "beta", "gamma"]
 category_ids = encode_categories(labels, order, slug=palette)
 
 fig, (points, image) = plt.subplots(1, 2)
+fig.patch.set_facecolor(ui["bg_0"])
+points.set_facecolor(ui["bg_2"])
+image.set_facecolor(ui["bg_3"])
 points.scatter(
     [1, 2, 3, 4],
     [1.2, 2.4, 1.8, 3.1],
@@ -120,9 +150,25 @@ family:
 ```
 
 ```css
-.panel {
+[data-redshift-palette] {
   color: var(--rs-foreground);
-  background: var(--rs-background);
+  background: var(--rs-bg-0);
+}
+
+.panel {
+  background: var(--rs-bg-2);
+}
+
+.panel:hover {
+  background: var(--rs-bg-3);
+}
+
+.popover {
+  background: var(--rs-bg-4);
+}
+
+.selected {
+  background: var(--rs-selection);
 }
 
 .series-a {
@@ -224,10 +270,24 @@ formula.
 
 | Family | Categories | Day min ΔEOK | Transformed min ΔEOK | Mean / max raw chroma | Transformed L range | Min ANSI contrast |
 |---|---:|---:|---:|---:|---:|---:|
-| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 4.51:1 |
-| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 4.50:1 |
-| 2000K Dark | 4 | 13.62 | 6.26 | 0.0941 / 0.1099 | 0.1654 | 4.57:1 |
-| 1200K Dark | 3 | 21.61 | 6.95 | 0.0990 / 0.1100 | 0.1616 | 4.54:1 |
+| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 6.06:1 |
+| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 5.17:1 |
+| 2000K Dark | 4 | 13.62 | 6.26 | 0.0941 / 0.1099 | 0.1654 | 5.53:1 |
+| 1200K Dark | 3 | 21.61 | 6.95 | 0.0990 / 0.1100 | 0.1616 | 5.17:1 |
+
+Dark-surface measurements use WCAG's sRGB relative-luminance calculation on the exact
+serialized Hex values. The contrast range covers transformed primary text on all five
+background roles plus selection.
+
+| Dark family | `bg_0` | Commanded luminance, `bg_0` → `bg_4` | Selection luminance | Transformed primary-text contrast range |
+|---|---:|---:|---:|---:|
+| 3400K Dark | `#090807` | 0.00247 → 0.01893 | 0.02019 | 6.83–8.52:1 |
+| 2000K Dark | `#070504` | 0.00162 → 0.01490 | 0.01852 | 5.68–6.77:1 |
+| 1200K Dark | `#060302` | 0.00108 → 0.01286 | 0.01571 | 5.32–6.08:1 |
+
+These are digital signal measurements, not physical display luminance. Actual black
+level still depends on panel technology, brightness, calibration, ambient light, and the
+display's behavior near black.
 
 The build also checks primary text against every declared background and selection
 surface, verifies selection visibility, parses every terminal format, and reproduces
@@ -252,14 +312,21 @@ The release gates enforce:
 - terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 2`, `3 / 1`;
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
 - at least 4.5:1 primary-text contrast on every background and selection;
-- at least `6.0 ΔEOK` between each transformed background and its large selection
-  surface;
+- dark-mode commanded relative-luminance caps of `0.003`, `0.005`, `0.009`, `0.013`,
+  `0.020`, and `0.021` across the five-step ladder and selection;
+- at least `2.3 ΔEOK` between adjacent transformed dark-surface ladder steps and at
+  least `1.8 ΔEOK` between selection and every ladder step;
+- transformed primary-text floors of `6.8:1`, `5.65:1`, and `5.3:1` across every
+  surface in the 3400 K, 2000 K, and 1200 K dark families;
+- at least `6.0 ΔEOK` between each transformed base background and its selection;
 - 256 unique float samples per sequential map, with monotonic lightness in both display
   states and nearly even transformed steps; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
 
-Version 0.2 uses temperature-based palette IDs. Existing users can consult the
-[migration guide](MIGRATION.md) for legacy aliases and removed deep-light themes.
+Version 0.3 retains the temperature-based palette IDs while replacing the dark surface
+ladders with near-black values, adding two elevation levels, and exposing surfaces through
+the Python API. Existing users can consult the [migration guide](MIGRATION.md) for changed
+surfaces, legacy aliases, and removed deep-light themes.
 
 ## Sources and design lineage
 

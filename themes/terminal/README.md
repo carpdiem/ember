@@ -2,8 +2,9 @@
 
 Generated imports are provided for Alacritty, iTerm2, and Windows Terminal. Each
 uses the family’s primary background and foreground. Alternative surfaces live in
-`palettes/redshift-safe-palettes.json`; substitute them when a different canvas is
-needed.
+the JSON manifest, generated CSS, and Python `surfaces()` API; substitute them when a
+different canvas is needed. Terminal formats themselves expose only their native primary
+background and selection roles.
 
 ## Install
 

@@ -76,11 +76,11 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
         draw.rounded_rectangle(
             (22, y + 10, width - 22, y + row_height - 12),
             radius=16,
-            fill=_rgb(surfaces["background"]),
-            outline=_rgb(surfaces["background_high"]),
+            fill=_rgb(surfaces["bg_0"]),
+            outline=_rgb(surfaces["bg_2"]),
             width=2,
         )
-        draw.rectangle((24, y + 12, width - 24, y + 64), fill=_rgb(surfaces["background_alt"]))
+        draw.rectangle((24, y + 12, width - 24, y + 64), fill=_rgb(surfaces["bg_1"]))
         draw.text(
             (42, y + 22),
             family["name"],
@@ -209,8 +209,8 @@ def _data_samples(manifest: dict, destination: Path) -> None:
         draw.rounded_rectangle(
             (22, y + 10, width - 22, y + row_height - 12),
             radius=16,
-            fill=_rgb(surfaces["background"]),
-            outline=_rgb(surfaces["background_high"]),
+            fill=_rgb(surfaces["bg_0"]),
+            outline=_rgb(surfaces["bg_2"]),
             width=2,
         )
         draw.text(
@@ -274,7 +274,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
             draw.rounded_rectangle(
                 (left, bar_y + bar_h - height, left + each, bar_y + bar_h),
                 radius=3,
-                fill=_blend_rgb(color, surfaces["background"], 0.30),
+                fill=_blend_rgb(color, surfaces["bg_0"], 0.30),
                 outline=_rgb(color),
                 width=2,
             )

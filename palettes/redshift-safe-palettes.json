@@ -1,5 +1,5 @@
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "project": "Ember: Redshift Safe Color Palettes",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
   "legacy_aliases": {
@@ -8,9 +8,40 @@
     "lowfire-dark": "2000k-dark",
     "safelight-dark": "1200k-dark"
   },
+  "legacy_surface_role_aliases": {
+    "background": "bg_0",
+    "background_alt": "bg_1",
+    "background_high": "bg_2",
+    "background_higher": "bg_3",
+    "background_highest": "bg_4"
+  },
   "removed_families": {
     "lowfire-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
     "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier."
+  },
+  "quality_targets": {
+    "bg_roles_low_to_high": [
+      "bg_0",
+      "bg_1",
+      "bg_2",
+      "bg_3",
+      "bg_4"
+    ],
+    "dark_minimum_adjacent_surface_delta_e_ok": 2.3,
+    "dark_minimum_selection_to_surface_delta_e_ok": 1.8,
+    "dark_surface_maximum_commanded_relative_luminance": {
+      "bg_0": 0.003,
+      "bg_1": 0.005,
+      "bg_2": 0.009,
+      "bg_3": 0.013,
+      "bg_4": 0.02,
+      "selection": 0.021
+    },
+    "dark_minimum_shifted_primary_text_contrast": {
+      "3400k-dark": 6.8,
+      "2000k-dark": 5.65,
+      "1200k-dark": 5.3
+    }
   },
   "profiles": {
     "3400k": {
@@ -54,16 +85,18 @@
       "mode": "dark",
       "profile": "3400k",
       "surfaces": {
-        "background": "#32302F",
-        "background_alt": "#383532",
-        "background_high": "#403B37",
+        "bg_0": "#090807",
+        "bg_1": "#100E0C",
+        "bg_2": "#181612",
+        "bg_3": "#201D19",
+        "bg_4": "#29251F",
         "foreground": "#DDD0B2",
         "foreground_soft": "#BDAE93",
         "foreground_muted": "#928374",
-        "selection": "#4A433D"
+        "selection": "#32241B"
       },
       "terminal": {
-        "black": "#403B37",
+        "black": "#181612",
         "red": "#B4C6F7",
         "green": "#CEA866",
         "yellow": "#70DBD8",
@@ -92,7 +125,7 @@
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 9.0,
       "terminal_night_minimum_delta_e_ok_target": 7.0,
-      "terminal_minimum_shifted_foreground_contrast": 4.51,
+      "terminal_minimum_shifted_foreground_contrast": 6.06,
       "categorical": {
         "one": "#6E96D5",
         "two": "#DDAA69",
@@ -1668,16 +1701,48 @@
           "delta_e_ok_cv": 0.0,
           "delta_e_ok_max_to_min": 1.0
         },
+        "surface": {
+          "normal_relative_luminance": {
+            "bg_0": 0.00247,
+            "bg_1": 0.00451,
+            "bg_2": 0.00812,
+            "bg_3": 0.01256,
+            "bg_4": 0.01893,
+            "selection": 0.02019
+          },
+          "shifted_relative_luminance": {
+            "bg_0": 0.00195,
+            "bg_1": 0.00349,
+            "bg_2": 0.00594,
+            "bg_3": 0.0089,
+            "bg_4": 0.01312,
+            "selection": 0.01478
+          },
+          "shifted_primary_text_contrast": {
+            "bg_0": 8.52,
+            "bg_1": 8.28,
+            "bg_2": 7.91,
+            "bg_3": 7.52,
+            "bg_4": 7.01,
+            "selection": 6.83
+          }
+        },
         "shifted_text_contrast": {
-          "foreground_on_background": 6.34,
-          "foreground_on_background_alt": 6.0,
-          "foreground_on_background_high": 5.56,
-          "foreground_soft_on_background": 4.58,
-          "foreground_soft_on_background_alt": 4.33,
-          "foreground_soft_on_background_high": 4.02,
-          "foreground_muted_on_background": 2.86,
-          "foreground_muted_on_background_alt": 2.71,
-          "foreground_muted_on_background_high": 2.51
+          "foreground_on_bg_0": 8.52,
+          "foreground_on_bg_1": 8.28,
+          "foreground_on_bg_2": 7.91,
+          "foreground_on_bg_3": 7.52,
+          "foreground_on_bg_4": 7.01,
+          "foreground_soft_on_bg_0": 6.16,
+          "foreground_soft_on_bg_1": 5.98,
+          "foreground_soft_on_bg_2": 5.72,
+          "foreground_soft_on_bg_3": 5.43,
+          "foreground_soft_on_bg_4": 5.07,
+          "foreground_muted_on_bg_0": 3.85,
+          "foreground_muted_on_bg_1": 3.74,
+          "foreground_muted_on_bg_2": 3.57,
+          "foreground_muted_on_bg_3": 3.39,
+          "foreground_muted_on_bg_4": 3.17
         }
       }
     },
@@ -1687,9 +1752,11 @@
       "mode": "light",
       "profile": "3400k",
       "surfaces": {
-        "background": "#F2E5BC",
-        "background_alt": "#EDE0B8",
-        "background_high": "#E5D5AD",
+        "bg_0": "#FFF7D6",
+        "bg_1": "#F4EAC7",
+        "bg_2": "#E9DCB9",
+        "bg_3": "#DFCFAA",
+        "bg_4": "#D4C29C",
         "foreground": "#342F2C",
         "foreground_soft": "#504945",
         "foreground_muted": "#665C54",
@@ -1725,7 +1792,7 @@
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 14.0,
       "terminal_night_minimum_delta_e_ok_target": 11.0,
-      "terminal_minimum_shifted_foreground_contrast": 4.5,
+      "terminal_minimum_shifted_foreground_contrast": 5.17,
       "categorical": {
         "one": "#158F7A",
         "two": "#322865",
@@ -3301,16 +3368,48 @@
           "delta_e_ok_cv": 0.0,
           "delta_e_ok_max_to_min": 1.0
         },
+        "surface": {
+          "normal_relative_luminance": {
+            "bg_0": 0.92637,
+            "bg_1": 0.82202,
+            "bg_2": 0.72013,
+            "bg_3": 0.63216,
+            "bg_4": 0.54981,
+            "selection": 0.48486
+          },
+          "shifted_relative_luminance": {
+            "bg_0": 0.56238,
+            "bg_1": 0.50211,
+            "bg_2": 0.4433,
+            "bg_3": 0.39269,
+            "bg_4": 0.3443,
+            "selection": 0.30435
+          },
+          "shifted_primary_text_contrast": {
+            "bg_0": 8.77,
+            "bg_1": 7.91,
+            "bg_2": 7.06,
+            "bg_3": 6.34,
+            "bg_4": 5.65,
+            "selection": 5.07
+          }
+        },
         "shifted_text_contrast": {
-          "foreground_on_background": 7.64,
-          "foreground_on_background_alt": 7.31,
-          "foreground_on_background_high": 6.7,
-          "foreground_soft_on_background": 5.63,
-          "foreground_soft_on_background_alt": 5.39,
-          "foreground_soft_on_background_high": 4.93,
-          "foreground_muted_on_background": 4.39,
-          "foreground_muted_on_background_alt": 4.2,
-          "foreground_muted_on_background_high": 3.85
+          "foreground_on_bg_0": 8.77,
+          "foreground_on_bg_1": 7.91,
+          "foreground_on_bg_2": 7.06,
+          "foreground_on_bg_3": 6.34,
+          "foreground_on_bg_4": 5.65,
+          "foreground_soft_on_bg_0": 6.46,
+          "foreground_soft_on_bg_1": 5.83,
+          "foreground_soft_on_bg_2": 5.21,
+          "foreground_soft_on_bg_3": 4.67,
+          "foreground_soft_on_bg_4": 4.16,
+          "foreground_muted_on_bg_0": 5.04,
+          "foreground_muted_on_bg_1": 4.54,
+          "foreground_muted_on_bg_2": 4.06,
+          "foreground_muted_on_bg_3": 3.64,
+          "foreground_muted_on_bg_4": 3.24
         }
       }
     },
@@ -3320,16 +3419,18 @@
       "mode": "dark",
       "profile": "2000k",
       "surfaces": {
-        "background": "#302722",
-        "background_alt": "#352B25",
-        "background_high": "#3C3029",
+        "bg_0": "#070504",
+        "bg_1": "#0D0A09",
+        "bg_2": "#15110E",
+        "bg_3": "#1E1814",
+        "bg_4": "#271F1B",
         "foreground": "#E9D3AD",
         "foreground_soft": "#C8B38F",
         "foreground_muted": "#9F8B70",
-        "selection": "#48382F"
+        "selection": "#30221B"
       },
       "terminal": {
-        "black": "#3C3029",
+        "black": "#15110E",
         "red": "#DCC4D5",
         "green": "#DCC464",
         "yellow": "#D8B3FF",
@@ -3356,7 +3457,7 @@
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 8.0,
       "terminal_night_minimum_delta_e_ok_target": 2.0,
-      "terminal_minimum_shifted_foreground_contrast": 4.57,
+      "terminal_minimum_shifted_foreground_contrast": 5.53,
       "categorical": {
         "one": "#DCC482",
         "two": "#A57C29",
@@ -4930,16 +5031,48 @@
           "delta_e_ok_cv": 0.0,
           "delta_e_ok_max_to_min": 1.0
         },
+        "surface": {
+          "normal_relative_luminance": {
+            "bg_0": 0.00162,
+            "bg_1": 0.00322,
+            "bg_2": 0.00592,
+            "bg_3": 0.0098,
+            "bg_4": 0.0149,
+            "selection": 0.01852
+          },
+          "shifted_relative_luminance": {
+            "bg_0": 0.00105,
+            "bg_1": 0.00205,
+            "bg_2": 0.00363,
+            "bg_3": 0.00569,
+            "bg_4": 0.00833,
+            "selection": 0.01082
+          },
+          "shifted_primary_text_contrast": {
+            "bg_0": 6.77,
+            "bg_1": 6.64,
+            "bg_2": 6.44,
+            "bg_3": 6.2,
+            "bg_4": 5.92,
+            "selection": 5.68
+          }
+        },
         "shifted_text_contrast": {
-          "foreground_on_background": 5.59,
-          "foreground_on_background_alt": 5.41,
-          "foreground_on_background_high": 5.15,
-          "foreground_soft_on_background": 4.19,
-          "foreground_soft_on_background_alt": 4.05,
-          "foreground_soft_on_background_high": 3.86,
-          "foreground_muted_on_background": 2.83,
-          "foreground_muted_on_background_alt": 2.74,
-          "foreground_muted_on_background_high": 2.61
+          "foreground_on_bg_0": 6.77,
+          "foreground_on_bg_1": 6.64,
+          "foreground_on_bg_2": 6.44,
+          "foreground_on_bg_3": 6.2,
+          "foreground_on_bg_4": 5.92,
+          "foreground_soft_on_bg_0": 5.08,
+          "foreground_soft_on_bg_1": 4.98,
+          "foreground_soft_on_bg_2": 4.83,
+          "foreground_soft_on_bg_3": 4.65,
+          "foreground_soft_on_bg_4": 4.44,
+          "foreground_muted_on_bg_0": 3.43,
+          "foreground_muted_on_bg_1": 3.36,
+          "foreground_muted_on_bg_2": 3.26,
+          "foreground_muted_on_bg_3": 3.14,
+          "foreground_muted_on_bg_4": 3.0
         }
       }
     },
@@ -4949,16 +5082,18 @@
       "mode": "dark",
       "profile": "1200k",
       "surfaces": {
-        "background": "#2C211D",
-        "background_alt": "#322520",
-        "background_high": "#3A2B25",
+        "bg_0": "#060302",
+        "bg_1": "#0C0806",
+        "bg_2": "#130E0B",
+        "bg_3": "#1C1511",
+        "bg_4": "#251C17",
         "foreground": "#FFE5BE",
         "foreground_soft": "#CBB58F",
         "foreground_muted": "#A28B70",
-        "selection": "#473128"
+        "selection": "#2E1E17"
       },
       "terminal": {
-        "black": "#3A2B25",
+        "black": "#130E0B",
         "red": "#EACF6F",
         "green": "#EACFFF",
         "yellow": "#EACFBC",
@@ -4984,7 +5119,7 @@
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 9.0,
       "terminal_night_minimum_delta_e_ok_target": null,
-      "terminal_minimum_shifted_foreground_contrast": 4.54,
+      "terminal_minimum_shifted_foreground_contrast": 5.17,
       "categorical": {
         "one": "#E0C48E",
         "two": "#B08ED7",
@@ -6557,16 +6692,48 @@
           "delta_e_ok_cv": 0.0,
           "delta_e_ok_max_to_min": 1.0
         },
+        "surface": {
+          "normal_relative_luminance": {
+            "bg_0": 0.00108,
+            "bg_1": 0.00265,
+            "bg_2": 0.00477,
+            "bg_3": 0.00824,
+            "bg_4": 0.01286,
+            "selection": 0.01571
+          },
+          "shifted_relative_luminance": {
+            "bg_0": 0.00059,
+            "bg_1": 0.00132,
+            "bg_2": 0.00232,
+            "bg_3": 0.00388,
+            "bg_4": 0.00581,
+            "selection": 0.00782
+          },
+          "shifted_primary_text_contrast": {
+            "bg_0": 6.08,
+            "bg_1": 5.99,
+            "bg_2": 5.88,
+            "bg_3": 5.71,
+            "bg_4": 5.51,
+            "selection": 5.32
+          }
+        },
         "shifted_text_contrast": {
-          "foreground_on_background": 5.34,
-          "foreground_on_background_alt": 5.19,
-          "foreground_on_background_high": 4.96,
-          "foreground_soft_on_background": 3.57,
-          "foreground_soft_on_background_alt": 3.46,
-          "foreground_soft_on_background_high": 3.31,
-          "foreground_muted_on_background": 2.5,
-          "foreground_muted_on_background_alt": 2.43,
-          "foreground_muted_on_background_high": 2.33
+          "foreground_on_bg_0": 6.08,
+          "foreground_on_bg_1": 5.99,
+          "foreground_on_bg_2": 5.88,
+          "foreground_on_bg_3": 5.71,
+          "foreground_on_bg_4": 5.51,
+          "foreground_soft_on_bg_0": 4.06,
+          "foreground_soft_on_bg_1": 4.0,
+          "foreground_soft_on_bg_2": 3.92,
+          "foreground_soft_on_bg_3": 3.81,
+          "foreground_soft_on_bg_4": 3.68,
+          "foreground_muted_on_bg_0": 2.85,
+          "foreground_muted_on_bg_1": 2.81,
+          "foreground_muted_on_bg_2": 2.75,
+          "foreground_muted_on_bg_3": 2.67,
+          "foreground_muted_on_bg_4": 2.58
         }
       }
     }

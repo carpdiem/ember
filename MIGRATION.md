@@ -1,4 +1,27 @@
-# Migrating from 0.1 to 0.2
+# Migration
+
+## 0.2 to 0.3
+
+Version 0.3 replaces the dark-mode surface ladders with near-black warm neutrals for
+low-brightness, small-text work and moves the light canvas correspondingly closer to warm
+white. It also expands each family from three reusable background roles to five plus
+selection. Palette IDs are unchanged, but applications that depended on old Hex values
+should refresh copied CSS variables or theme overrides.
+
+Canonical background names are now numeric: `bg_0`, `bg_1`, `bg_2`, `bg_3`, and `bg_4`.
+`bg_0` is the base canvas and `bg_4` is the top elevation; luminance rises across dark
+families and falls across the light family. Generated CSS retains `--rs-background`,
+`--rs-background-alt`, `--rs-background-high`, `--rs-background-higher`, and
+`--rs-background-highest` as compatibility aliases. JSON and `surfaces()` return only the
+numeric names; the manifest's `legacy_surface_role_aliases` map supports migration.
+
+The JSON schema is version 5. It adds manifest-level surface-role, luminance, separation,
+and primary-text-contrast targets plus per-family commanded/transformed measurements under
+`metrics.surface`. The canonical ordering is recorded in `quality_targets.bg_roles_low_to_high`.
+Python consumers can retrieve an independent copy of every named UI color with
+`redshift_safe.surfaces(slug)`.
+
+## 0.1 to 0.2
 
 Ember is the public name of the project. The Python distribution and import package
 remain `redshift-safe-palettes` and `redshift_safe` so an upgrade cannot install a
@@ -18,12 +41,13 @@ surfaces.
 | `safelight-light` | none | removed; use `3400k-light` or a dark deep tier |
 
 The four retained aliases work in the Python/Matplotlib API, CSS selectors, and all
-three generated terminal formats. Alias files contain the 0.2 palette values, not the
-rejected 0.1 colors.
+three generated terminal formats. Alias files are regenerated from the current canonical
+families, so they expose current palette values under legacy IDs, never the rejected 0.1
+colors.
 
-## Manifest changes
+### Manifest changes
 
-The JSON schema is version 4. Family category counts are variable, and the manifest
+Version 0.2 used JSON schema 4. Family category counts became variable, and the manifest
 records `legacy_aliases`, `removed_families`, separate terminal day/night capacities,
 night-group assignments, and bi-state measurements. Code that assumed eight categories
 must instead read `len(family["categorical"])`.
@@ -32,7 +56,7 @@ The terminal metric is now named
 `terminal_minimum_shifted_foreground_contrast`. It covers every foreground-capable
 ANSI slot; only background-like ANSI black is excluded in dark themes.
 
-## Python
+### Python
 
 ```python
 from redshift_safe import categorical, categorical_norm, encode_categories

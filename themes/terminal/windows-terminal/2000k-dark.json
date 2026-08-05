@@ -1,6 +1,6 @@
 {
   "name": "2000K Dark",
-  "black": "#3C3029",
+  "black": "#15110E",
   "red": "#DCC4D5",
   "green": "#DCC464",
   "yellow": "#D8B3FF",
@@ -16,7 +16,7 @@
   "brightPurple": "#DCC4D5",
   "brightCyan": "#DCC464",
   "brightWhite": "#E9D3AD",
-  "background": "#302722",
+  "background": "#070504",
   "foreground": "#E9D3AD",
-  "selectionBackground": "#48382F"
+  "selectionBackground": "#30221B"
 }

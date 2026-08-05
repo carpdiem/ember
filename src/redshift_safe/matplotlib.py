@@ -33,6 +33,12 @@ def categorical(slug: str) -> ListedColormap:
     return ListedColormap(list(family["categorical"].values()), name=f"{slug}-categorical")
 
 
+def surfaces(slug: str) -> dict[str, str]:
+    """Return a copy of the family's named UI surface and foreground colors."""
+
+    return dict(_family(slug)["surfaces"])
+
+
 def encode_categories(
     labels: Iterable[Hashable],
     order: Sequence[Hashable],

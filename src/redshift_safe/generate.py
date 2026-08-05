@@ -15,8 +15,18 @@ from .color import (
     srgb_to_hex,
     srgb_to_oklab,
     warm_transform,
+    wcag_luminance,
 )
-from .definitions import FAMILIES, FamilyDefinition
+from .definitions import (
+    BACKGROUND_SURFACE_ROLES,
+    DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK,
+    DARK_MINIMUM_SELECTION_TO_SURFACE_DELTA_E_OK,
+    DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST,
+    DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE,
+    FAMILIES,
+    LEGACY_BACKGROUND_ROLE_ALIASES,
+    FamilyDefinition,
+)
 
 CATEGORY_NAMES = ("one", "two", "three", "four", "five", "six", "seven", "eight")
 ANSI_NAMES = (
@@ -50,7 +60,7 @@ def _terminal_colors(family: FamilyDefinition) -> list[str]:
 
     surfaces = family.surfaces
     first_neutral = (
-        hex_to_srgb(surfaces["background_high"])
+        hex_to_srgb(surfaces["bg_2"])
         if family.mode == "dark"
         else hex_to_srgb(surfaces["foreground"])
     )
@@ -174,9 +184,28 @@ def _metrics(
     transformed_surfaces = {
         key: warm_transform(hex_to_srgb(value), gains) for key, value in family.surfaces.items()
     }
+    normal_surfaces = {
+        key: hex_to_srgb(family.surfaces[key]) for key in (*BACKGROUND_SURFACE_ROLES, "selection")
+    }
+    surface_metrics = {
+        "normal_relative_luminance": {
+            key: round(float(wcag_luminance(value)), 5) for key, value in normal_surfaces.items()
+        },
+        "shifted_relative_luminance": {
+            key: round(float(wcag_luminance(transformed_surfaces[key])), 5)
+            for key in normal_surfaces
+        },
+        "shifted_primary_text_contrast": {
+            key: round(
+                contrast_ratio(transformed_surfaces["foreground"], transformed_surfaces[key]),
+                2,
+            )
+            for key in normal_surfaces
+        },
+    }
     text_metrics = {}
     for foreground in ("foreground", "foreground_soft", "foreground_muted"):
-        for background in ("background", "background_alt", "background_high"):
+        for background in BACKGROUND_SURFACE_ROLES:
             text_metrics[f"{foreground}_on_{background}"] = round(
                 contrast_ratio(transformed_surfaces[foreground], transformed_surfaces[background]),
                 2,
@@ -186,6 +215,7 @@ def _metrics(
         "categorical": category_metrics,
         "terminal": terminal_metrics,
         "continuous": sequence_metrics,
+        "surface": surface_metrics,
         "shifted_text_contrast": text_metrics,
     }
 
@@ -203,7 +233,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
     sequential = np.round(_sequential_colors(family), 10)
     terminal_values = _terminal_colors(family)
     transformed_background = warm_transform(
-        hex_to_srgb(family.surfaces["background"]), family.profile.gains
+        hex_to_srgb(family.surfaces["bg_0"]), family.profile.gains
     )
     transformed_terminal = [
         warm_transform(hex_to_srgb(value), family.profile.gains) for value in terminal_values
@@ -253,7 +283,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 4,
+        "schema_version": 5,
         "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
@@ -265,9 +295,23 @@ def generate_manifest() -> dict[str, Any]:
             "lowfire-dark": "2000k-dark",
             "safelight-dark": "1200k-dark",
         },
+        "legacy_surface_role_aliases": LEGACY_BACKGROUND_ROLE_ALIASES,
         "removed_families": {
             "lowfire-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
             "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
+        },
+        "quality_targets": {
+            "bg_roles_low_to_high": list(BACKGROUND_SURFACE_ROLES),
+            "dark_minimum_adjacent_surface_delta_e_ok": (DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK),
+            "dark_minimum_selection_to_surface_delta_e_ok": (
+                DARK_MINIMUM_SELECTION_TO_SURFACE_DELTA_E_OK
+            ),
+            "dark_surface_maximum_commanded_relative_luminance": (
+                DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE
+            ),
+            "dark_minimum_shifted_primary_text_contrast": (
+                DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST
+            ),
         },
         "profiles": profiles,
         "families": {family.slug: generate_family(family) for family in FAMILIES},

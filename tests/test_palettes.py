@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from itertools import pairwise
 from pathlib import Path
 
 import numpy as np
@@ -14,6 +15,7 @@ from redshift_safe.color import (
     perceived_lab,
     srgb_to_hex,
     warm_transform,
+    wcag_luminance,
 )
 from redshift_safe.generate import generate_manifest
 
@@ -22,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 4
+    assert manifest["schema_version"] == 5
     assert list(manifest["families"]) == [
         "3400k-dark",
         "3400k-light",
@@ -54,7 +56,23 @@ def test_honest_temperature_families() -> None:
         assert [srgb_to_hex(color) for color in family["continuous_rgb"]] == family[
             "continuous_hex8"
         ]
-        assert len(family["surfaces"]) >= 7
+        assert len(family["surfaces"]) >= 9
+
+
+def test_numbered_background_ladders_have_locked_endpoints() -> None:
+    manifest = generate_manifest()
+    roles = ["bg_0", "bg_1", "bg_2", "bg_3", "bg_4"]
+    assert manifest["quality_targets"]["bg_roles_low_to_high"] == roles
+    expected = {
+        "3400k-dark": ["#090807", "#100E0C", "#181612", "#201D19", "#29251F"],
+        "3400k-light": ["#FFF7D6", "#F4EAC7", "#E9DCB9", "#DFCFAA", "#D4C29C"],
+        "2000k-dark": ["#070504", "#0D0A09", "#15110E", "#1E1814", "#271F1B"],
+        "1200k-dark": ["#060302", "#0C0806", "#130E0B", "#1C1511", "#251C17"],
+    }
+    for slug, values in expected.items():
+        surfaces = manifest["families"][slug]["surfaces"]
+        assert [surfaces[role] for role in roles] == values
+        assert not set(surfaces) & set(manifest["legacy_surface_role_aliases"])
 
 
 def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
@@ -120,10 +138,11 @@ def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shif
 
 def test_primary_text_contrast_survives_profile() -> None:
     manifest = generate_manifest()
+    background_roles = manifest["quality_targets"]["bg_roles_low_to_high"]
     for family in manifest["families"].values():
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
         foreground = warm_transform(hex_to_srgb(family["surfaces"]["foreground"]), gains)
-        for name in ("background", "background_alt", "background_high"):
+        for name in background_roles:
             background = warm_transform(hex_to_srgb(family["surfaces"][name]), gains)
             assert contrast_ratio(foreground, background) >= 4.5, (family["slug"], name)
         selection = warm_transform(hex_to_srgb(family["surfaces"]["selection"]), gains)
@@ -137,13 +156,81 @@ def test_selection_state_remains_visible_after_shift() -> None:
         transformed = perceived_lab(
             np.asarray(
                 [
-                    hex_to_srgb(family["surfaces"]["background"]),
+                    hex_to_srgb(family["surfaces"]["bg_0"]),
                     hex_to_srgb(family["surfaces"]["selection"]),
                 ]
             ),
             gains,
         )
         assert delta_e_ok(transformed[0], transformed[1]) >= 6.0, family["slug"]
+
+
+def test_dark_surfaces_are_near_black_with_strong_primary_text_contrast() -> None:
+    manifest = generate_manifest()
+    targets = manifest["quality_targets"]
+    luminance_caps = targets["dark_surface_maximum_commanded_relative_luminance"]
+    contrast_targets = targets["dark_minimum_shifted_primary_text_contrast"]
+    background_roles = targets["bg_roles_low_to_high"]
+    measured_roles = (*background_roles, "selection")
+    for family in manifest["families"].values():
+        if family["mode"] != "dark":
+            continue
+        gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+        foreground = warm_transform(hex_to_srgb(family["surfaces"]["foreground"]), gains)
+        normal_luminance = []
+        shifted_luminance = []
+        shifted_contrast = []
+        shifted_labs = []
+        for role in measured_roles:
+            commanded = hex_to_srgb(family["surfaces"][role])
+            shifted = warm_transform(commanded, gains)
+            normal_luminance.append(float(wcag_luminance(commanded)))
+            shifted_luminance.append(float(wcag_luminance(shifted)))
+            shifted_contrast.append(contrast_ratio(foreground, shifted))
+            shifted_labs.append(perceived_lab(commanded, gains))
+            assert normal_luminance[-1] <= luminance_caps[role], (family["slug"], role)
+        background_count = len(background_roles)
+        assert np.all(np.diff(normal_luminance[:background_count]) > 0.0), family["slug"]
+        assert np.all(np.diff(shifted_luminance[:background_count]) > 0.0), family["slug"]
+        adjacent_distance = [
+            delta_e_ok(left, right) for left, right in pairwise(shifted_labs[:background_count])
+        ]
+        assert min(adjacent_distance) >= targets["dark_minimum_adjacent_surface_delta_e_ok"]
+        selection_distance = [
+            delta_e_ok(surface, shifted_labs[-1]) for surface in shifted_labs[:background_count]
+        ]
+        assert min(selection_distance) >= targets["dark_minimum_selection_to_surface_delta_e_ok"]
+        assert min(shifted_contrast) >= contrast_targets[family["slug"]], family["slug"]
+        metrics = family["metrics"]["surface"]
+        assert metrics["normal_relative_luminance"] == {
+            role: round(value, 5) for role, value in zip(measured_roles, normal_luminance)
+        }
+        assert metrics["shifted_relative_luminance"] == {
+            role: round(value, 5) for role, value in zip(measured_roles, shifted_luminance)
+        }
+        assert metrics["shifted_primary_text_contrast"] == {
+            role: round(value, 2) for role, value in zip(measured_roles, shifted_contrast)
+        }
+
+
+def test_light_surface_ladder_is_symmetric_and_ordered() -> None:
+    manifest = generate_manifest()
+    family = manifest["families"]["3400k-light"]
+    roles = manifest["quality_targets"]["bg_roles_low_to_high"]
+    gains = manifest["profiles"][family["profile"]]["rgb_gains"]
+    rgb = np.asarray([hex_to_srgb(family["surfaces"][role]) for role in roles])
+    normal_luminance = np.asarray([wcag_luminance(value) for value in rgb])
+    shifted_luminance = np.asarray([wcag_luminance(warm_transform(value, gains)) for value in rgb])
+    shifted_labs = perceived_lab(rgb, gains)
+    assert normal_luminance[0] >= 0.9
+    assert normal_luminance[-1] <= 0.6
+    assert np.all(np.diff(normal_luminance) < 0.0)
+    assert np.all(np.diff(shifted_luminance) < 0.0)
+    assert min(delta_e_ok(left, right) for left, right in pairwise(shifted_labs)) >= 2.3
+    selection_lab = perceived_lab(
+        np.asarray([hex_to_srgb(family["surfaces"]["selection"])]), gains
+    )[0]
+    assert min(delta_e_ok(selection_lab, value) for value in shifted_labs) >= 1.8
 
 
 def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
@@ -188,7 +275,7 @@ def test_terminal_foregrounds_remain_visible_after_shift() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
-        background = warm_transform(hex_to_srgb(family["surfaces"]["background"]), gains)
+        background = warm_transform(hex_to_srgb(family["surfaces"]["bg_0"]), gains)
         transformed = {
             name: warm_transform(hex_to_srgb(value), gains)
             for name, value in family["terminal"].items()
@@ -242,3 +329,14 @@ def test_readme_bi_state_metrics_match_manifest() -> None:
             f"{family['terminal_minimum_shifted_foreground_contrast']:.2f}:1 |"
         )
         assert expected in text, family["slug"]
+        if family["mode"] == "dark":
+            surface = family["metrics"]["surface"]
+            luminance = surface["normal_relative_luminance"]
+            contrast = surface["shifted_primary_text_contrast"]
+            surface_row = (
+                f"| {family['name']} | `{family['surfaces']['bg_0']}` | "
+                f"{luminance['bg_0']:.5f} → {luminance['bg_4']:.5f} | "
+                f"{luminance['selection']:.5f} | "
+                f"{min(contrast.values()):.2f}–{max(contrast.values()):.2f}:1 |"
+            )
+            assert surface_row in text, family["slug"]

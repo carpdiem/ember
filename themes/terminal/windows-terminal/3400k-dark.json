@@ -1,6 +1,6 @@
 {
   "name": "3400K Dark",
-  "black": "#403B37",
+  "black": "#181612",
   "red": "#B4C6F7",
   "green": "#CEA866",
   "yellow": "#70DBD8",
@@ -16,7 +16,7 @@
   "brightPurple": "#F5AD9A",
   "brightCyan": "#D895C2",
   "brightWhite": "#DDD0B2",
-  "background": "#32302F",
+  "background": "#090807",
   "foreground": "#DDD0B2",
-  "selectionBackground": "#4A433D"
+  "selectionBackground": "#32241B"
 }

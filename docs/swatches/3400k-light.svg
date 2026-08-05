@@ -2,27 +2,33 @@
 <rect width="100%" height="100%" rx="18" fill="#151310"/>
 <text x="28" y="38" fill="#E9E1D4" font-size="24" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">3400K Light</text>
 <text x="28" y="62" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">approximately 3400 K warm-white stress profile · commanded sRGB</text>
-<rect x="28" y="88" width="142" height="52" rx="6" fill="#F2E5BC" stroke="#665D50"/>
-<text x="36" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg</text>
-<text x="36" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#F2E5BC</text>
-<rect x="186" y="88" width="142" height="52" rx="6" fill="#EDE0B8" stroke="#665D50"/>
-<text x="194" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_alt</text>
-<text x="194" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#EDE0B8</text>
-<rect x="344" y="88" width="142" height="52" rx="6" fill="#E5D5AD" stroke="#665D50"/>
-<text x="352" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_high</text>
-<text x="352" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#E5D5AD</text>
-<rect x="502" y="88" width="142" height="52" rx="6" fill="#342F2C" stroke="#665D50"/>
-<text x="510" y="109" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg</text>
-<text x="510" y="129" fill="#FFF0D8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#342F2C</text>
-<rect x="660" y="88" width="142" height="52" rx="6" fill="#504945" stroke="#665D50"/>
-<text x="668" y="109" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_soft</text>
-<text x="668" y="129" fill="#FFF0D8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#504945</text>
-<rect x="818" y="88" width="142" height="52" rx="6" fill="#665C54" stroke="#665D50"/>
-<text x="826" y="109" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_muted</text>
-<text x="826" y="129" fill="#FFF0D8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#665C54</text>
-<rect x="976" y="88" width="142" height="52" rx="6" fill="#C9B796" stroke="#665D50"/>
-<text x="984" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">selection</text>
-<text x="984" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#C9B796</text>
+<rect x="28.00" y="88" width="116.89" height="52" rx="6" fill="#FFF7D6" stroke="#665D50"/>
+<text x="36" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
+<text x="36" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#FFF7D6</text>
+<rect x="152.89" y="88" width="116.89" height="52" rx="6" fill="#F4EAC7" stroke="#665D50"/>
+<text x="160.88888888888889" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
+<text x="160.88888888888889" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#F4EAC7</text>
+<rect x="277.78" y="88" width="116.89" height="52" rx="6" fill="#E9DCB9" stroke="#665D50"/>
+<text x="285.77777777777777" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
+<text x="285.77777777777777" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#E9DCB9</text>
+<rect x="402.67" y="88" width="116.89" height="52" rx="6" fill="#DFCFAA" stroke="#665D50"/>
+<text x="410.66666666666663" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
+<text x="410.66666666666663" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#DFCFAA</text>
+<rect x="527.56" y="88" width="116.89" height="52" rx="6" fill="#D4C29C" stroke="#665D50"/>
+<text x="535.5555555555555" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
+<text x="535.5555555555555" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#D4C29C</text>
+<rect x="652.44" y="88" width="116.89" height="52" rx="6" fill="#342F2C" stroke="#665D50"/>
+<text x="660.4444444444445" y="109" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg</text>
+<text x="660.4444444444445" y="129" fill="#FFF0D8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#342F2C</text>
+<rect x="777.33" y="88" width="116.89" height="52" rx="6" fill="#504945" stroke="#665D50"/>
+<text x="785.3333333333334" y="109" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_soft</text>
+<text x="785.3333333333334" y="129" fill="#FFF0D8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#504945</text>
+<rect x="902.22" y="88" width="116.89" height="52" rx="6" fill="#665C54" stroke="#665D50"/>
+<text x="910.2222222222223" y="109" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_muted</text>
+<text x="910.2222222222223" y="129" fill="#FFF0D8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#665C54</text>
+<rect x="1027.11" y="88" width="116.89" height="52" rx="6" fill="#C9B796" stroke="#665D50"/>
+<text x="1035.111111111111" y="109" fill="#14110E" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">selection</text>
+<text x="1035.111111111111" y="129" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#C9B796</text>
 <text x="28" y="174" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">ANSI 0–15</text>
 <rect x="28" y="187" width="68" height="44" fill="#342F2C"/>
 <rect x="96" y="187" width="68" height="44" fill="#0E7361"/>
