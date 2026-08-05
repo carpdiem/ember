@@ -81,7 +81,7 @@ Every family exposes the same ordered roles in JSON, CSS, and the Python `surfac
 | `bg_4` | floating panel, menu, or popover |
 | `bg_5` | selected row, range, or focused region |
 | `fg_0` | primary text and essential labels |
-| `fg_1` | supporting text and graphics |
+| `fg_1` | larger supporting text or graphics; not normal-size body text |
 | `fg_2` | muted, nonessential metadata or decoration |
 
 The six background roles form a monotonic ladder. `bg_0` is always the canvas and `bg_5`
@@ -313,8 +313,8 @@ The release gates enforce:
 - terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 2`, `3 / 1`;
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
 - transformed contrast floors of `4.5:1`, `3.5:1`, and `2.4:1` for `fg_0`, `fg_1`, and
-  `fg_2` respectively on every background; `fg_1` is supporting content and `fg_2` is
-  nonessential metadata or decoration, not body text;
+  `fg_2` respectively on every background; `fg_1` is limited to larger supporting text or
+  graphics, and `fg_2` to nonessential metadata or decoration—not body text;
 - dark-mode commanded relative-luminance caps of `0.003`, `0.005`, `0.009`, `0.013`,
   `0.020`, and `0.021` across the six-step ladder;
 - at least `1.8 ΔEOK` between adjacent transformed dark-surface ladder steps;
