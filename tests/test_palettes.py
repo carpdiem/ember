@@ -102,9 +102,9 @@ def test_deep_accent_selections_have_locked_two_stage_values() -> None:
     for slug, values in expected.items():
         family = manifest["families"][slug]
         assert list(family["categorical"].values()) == values["categorical"]
-        assert family["categorical_transformed_targets"] == values[
-            "categorical_transformed_targets"
-        ]
+        assert (
+            family["categorical_transformed_targets"] == values["categorical_transformed_targets"]
+        )
         count = family["terminal_daylight_color_count"]
         assert [family["terminal"][name] for name in semantic_names[:count]] == values["terminal"]
         assert family["terminal_transformed_targets"] == values["terminal_transformed_targets"]
@@ -117,9 +117,7 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
         categories = np.asarray([hex_to_srgb(color) for color in family["categorical"].values()])
         shifted = perceived_lab(categories, profile["rgb_gains"])
         transformed_targets = perceived_lab(
-            np.asarray(
-                [hex_to_srgb(color) for color in family["categorical_transformed_targets"]]
-            ),
+            np.asarray([hex_to_srgb(color) for color in family["categorical_transformed_targets"]]),
             (1.0, 1.0, 1.0),
         )
         normal = perceived_lab(categories, (1.0, 1.0, 1.0))
