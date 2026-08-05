@@ -24,7 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 5
+    assert manifest["schema_version"] == 6
     assert list(manifest["families"]) == [
         "3400k-dark",
         "3400k-light",
@@ -45,7 +45,7 @@ def test_honest_temperature_families() -> None:
     ]
     assert [
         family["terminal_semantic_color_count"] for family in manifest["families"].values()
-    ] == [6, 6, 2, 1]
+    ] == [6, 6, 4, 3]
     assert [
         family["terminal_daylight_color_count"] for family in manifest["families"].values()
     ] == [6, 6, 4, 3]
@@ -82,18 +82,53 @@ def test_numbered_surface_roles_have_locked_values() -> None:
         assert not set(surfaces) & set(manifest["legacy_surface_role_aliases"])
 
 
+def test_deep_accent_selections_have_locked_two_stage_values() -> None:
+    manifest = generate_manifest()
+    expected = {
+        "2000k-dark": {
+            "categorical": ["#E6C682", "#A07928", "#749DE1", "#CB8991"],
+            "categorical_transformed_targets": ["#E66C0B", "#A04203", "#745514", "#CB4A0D"],
+            "terminal": ["#B9CBDC", "#D9D68A", "#F1ADE2", "#D3A58D"],
+            "terminal_transformed_targets": ["#B96E13", "#D9740C", "#F15E14", "#D35A0C"],
+        },
+        "1200k-dark": {
+            "categorical": ["#E0C47A", "#B7A7F3", "#8F8A33"],
+            "categorical_transformed_targets": ["#E03D00", "#B73400", "#8F2B00"],
+            "terminal": ["#D5D27A", "#EACFFF", "#FFCFB5"],
+            "terminal_transformed_targets": ["#D54100", "#EA4000", "#FF4000"],
+        },
+    }
+    semantic_names = ("red", "green", "yellow", "blue")
+    for slug, values in expected.items():
+        family = manifest["families"][slug]
+        assert list(family["categorical"].values()) == values["categorical"]
+        assert family["categorical_transformed_targets"] == values[
+            "categorical_transformed_targets"
+        ]
+        count = family["terminal_daylight_color_count"]
+        assert [family["terminal"][name] for name in semantic_names[:count]] == values["terminal"]
+        assert family["terminal_transformed_targets"] == values["terminal_transformed_targets"]
+
+
 def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
         profile = manifest["profiles"][family["profile"]]
         categories = np.asarray([hex_to_srgb(color) for color in family["categorical"].values()])
         shifted = perceived_lab(categories, profile["rgb_gains"])
+        transformed_targets = perceived_lab(
+            np.asarray(
+                [hex_to_srgb(color) for color in family["categorical_transformed_targets"]]
+            ),
+            (1.0, 1.0, 1.0),
+        )
         normal = perceived_lab(categories, (1.0, 1.0, 1.0))
         shifted_min = float(pairwise_distances(shifted).min())
         normal_min = float(pairwise_distances(normal).min())
         lightness_range = float(np.ptp(shifted[:, 0]))
         normal_chroma_max = float(np.linalg.norm(normal[:, 1:], axis=1).max())
         normal_chroma_mean = float(np.linalg.norm(normal[:, 1:], axis=1).mean())
+        target_error = float(np.linalg.norm(shifted - transformed_targets, axis=1).max() * 100.0)
         metrics = family["metrics"]["categorical"]
         assert shifted_min >= profile["categorical_minimum_delta_e_ok_target"], family["slug"]
         assert normal_chroma_max <= 0.111, family["slug"]
@@ -104,6 +139,8 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
         assert metrics["shifted_lightness_range"] == round(lightness_range, 4)
         assert metrics["normal_chroma_max"] == round(normal_chroma_max, 4)
         assert metrics["normal_chroma_mean"] == round(normal_chroma_mean, 4)
+        assert target_error <= 0.15, family["slug"]
+        assert metrics["transformed_target_max_delta_e_ok"] == round(target_error, 2)
 
 
 def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shift() -> None:
@@ -259,6 +296,10 @@ def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
         )
         normal = perceived_lab(colors, (1.0, 1.0, 1.0))
         shifted = perceived_lab(colors, manifest["profiles"][family["profile"]]["rgb_gains"])
+        transformed_targets = perceived_lab(
+            np.asarray([hex_to_srgb(color) for color in family["terminal_transformed_targets"]]),
+            (1.0, 1.0, 1.0),
+        )
         groups = np.asarray(family["terminal_night_groups"])
         group_ids = sorted(set(groups))
         group_members = [shifted[groups == group_id] for group_id in group_ids]
@@ -269,6 +310,7 @@ def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
         group_centers = np.asarray([members.mean(axis=0) for members in group_members])
         day_min = float(pairwise_distances(normal).min())
         metrics = family["metrics"]["terminal"]
+        target_error = float(np.linalg.norm(shifted - transformed_targets, axis=1).max() * 100.0)
 
         assert len(groups) == count
         assert len(group_ids) == family["terminal_semantic_color_count"]
@@ -277,6 +319,8 @@ def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
         assert np.linalg.norm(normal[:, 1:], axis=1).max() <= 0.121
         assert metrics["normal_min_delta_e_ok"] == round(day_min, 2)
         assert metrics["shifted_group_max_delta_e_ok"] == round(max(group_spreads), 2)
+        assert target_error <= 0.15, family["slug"]
+        assert metrics["transformed_target_max_delta_e_ok"] == round(target_error, 2)
         night_target = family["terminal_night_minimum_delta_e_ok_target"]
         if night_target is None:
             assert len(group_centers) == 1

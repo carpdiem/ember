@@ -30,17 +30,17 @@ contrast before display-specific losses.
 |---|---|---:|---:|---|
 | [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 / 6 | near-black general terminal and data work |
 | [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 / 6 | light-surface work under a moderate warm shift |
-| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 4 / 2 | near-black deep Redshift work; reduced semantic color capacity |
-| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 3 / 1 | near-black extreme stress case; rely on lightness and shape |
+| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 4 / 4 | near-black deep Redshift work; reduced semantic color capacity |
+| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 3 / 3 | near-black extreme stress case; rely on lightness and shape |
 
 The deepest profiles are dark-only. Under the 2000 K and 1200 K gain vectors, a light
 canvas becomes a large orange-red field, while a dark canvas preserves a subdued
 working surface.
 
 Terminal formats require sixteen ANSI slots. Ember repeats the available commanded
-accents to fill those banks. At 2000 K and 1200 K, four and three useful daytime
-identities collapse into two and one tightly grouped nighttime identities rather than
-pretending that every ANSI name remains a separate visible color.
+accents to fill those banks. At 2000 K and 1200 K, the four and three available accents
+retain separate transformed identities through deliberate lightness and warm-chroma
+structure. Repeated ANSI names still do not create additional semantic colors.
 
 ## See the palettes in use
 
@@ -210,11 +210,18 @@ attenuated. Colors that are far apart in ordinary sRGB can therefore converge af
 the filter.
 
 This creates a bi-state design problem. At 1200 K, many commanded blue values produce
-the same transformed color. At 2000 K, blue differences survive only weakly. Ember first
-requires each category set to clear its transformed separation floor, then uses those
-compressed channel dimensions to increase unshifted daytime separation. The 3400 K
-families have less free room, so their colors are composed to improve the minimum Oklab
-distance in both states together.
+the same transformed color. At 2000 K, blue differences survive only weakly. Accent
+selection is therefore lexicographic rather than a weighted compromise:
+
+1. Choose the desired transformed identities first, including their lightness/chroma
+   geometry, contrast, and minimum Oklab separation.
+2. Treat those outcomes as hard targets. Among commanded colors that reproduce them,
+   choose the most coherent moderate-chroma daytime set with strong unshifted separation.
+
+The manifest publishes both the commanded colors and their authored transformed targets;
+release checks require each target to be reproduced within `0.15 ΔEOK`. At 1200 K, the
+removed blue channel provides exact second-stage freedom. At 2000 K, its weak residual is
+kept inside the target-fidelity tolerance.
 
 These are software signal models, not calibrated physical color temperatures. Actual
 output also depends on the display, operating system, calibration, brightness, and
@@ -238,17 +245,17 @@ on the screen.
 
 ### Optimize semantic color for day and night
 
-Categorical palettes use six colors at 3400 K, four at 2000 K, and three at 1200 K.
-Terminal accents contract faster because small monospaced glyphs need stronger
-foreground contrast than large chart marks. The ANSI exports therefore separate
-daytime color count from transformed semantic count: `6 / 6`, `6 / 6`, `4 / 2`, and
-`3 / 1` across the four families.
+Categorical palettes use six colors at 3400 K, four at 2000 K, and three at 1200 K. The
+terminal palettes preserve those same transformed capacities while maintaining the higher
+contrast required by small monospaced glyphs: `6 / 6`, `6 / 6`, `4 / 4`, and `3 / 3`
+across the four families.
 
-The category colors are authored as moderate-chroma compositions, then serialized and
-measured in unshifted and transformed Oklab. Each family has independent minimum-distance
-floors for daytime and nighttime use. Because lightness can imply order, categorical
-charts should also carry identity through labels, position, texture, marker, or line
-style.
+The 2000 K terminal targets form a transformed 2×2 lightness/chroma grid. The 1200 K
+categorical targets are equally spaced along a warm trajectory, while its terminal targets
+use three readable warm-lightness tiers. Only after those nighttime structures are fixed do
+the commanded colors resolve into restrained daytime sets. Because lightness can imply
+order, categorical charts should still carry identity through labels, position, texture,
+marker, or line style.
 
 ![Redundant line encoding under deep red](docs/diagrams/redundant-encoding.svg)
 
@@ -274,8 +281,8 @@ formula.
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 6.06:1 |
 | 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 5.17:1 |
-| 2000K Dark | 4 | 13.62 | 6.26 | 0.0941 / 0.1099 | 0.1654 | 5.53:1 |
-| 1200K Dark | 3 | 21.61 | 6.95 | 0.0990 / 0.1100 | 0.1616 | 5.17:1 |
+| 2000K Dark | 4 | 14.84 | 9.01 | 0.0982 / 0.1104 | 0.1952 | 5.12:1 |
+| 1200K Dark | 3 | 21.00 | 8.65 | 0.1050 / 0.1082 | 0.1616 | 4.53:1 |
 
 Dark-surface measurements use WCAG's sRGB relative-luminance calculation on the exact
 serialized Hex values. The contrast range covers transformed `fg_0` on all six background
@@ -310,7 +317,9 @@ The release gates enforce:
 - categorical commanded mean Oklab chroma between `0.09` and `0.105`, with no color
   above `0.111`;
 - categorical minimum-distance floors in both unshifted and transformed states;
-- terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 2`, `3 / 1`;
+- terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 4`, `3 / 3`;
+- no more than `0.15 ΔEOK` between each authored transformed accent target and the
+  transformed serialized color that reproduces it;
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
 - transformed contrast floors of `4.5:1`, `3.5:1`, and `2.4:1` for `fg_0`, `fg_1`, and
   `fg_2` respectively on every background; `fg_1` is limited to larger supporting text or

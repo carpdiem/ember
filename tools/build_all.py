@@ -370,7 +370,7 @@ root `schemes` array, then set a profile’s `colorScheme` to the object’s exa
 
 The file formats still require all 16 ANSI slots. Ember repeats 6, 6, 4, or 3
 commanded daytime accents across those slots. Under the target transforms they form
-6, 6, 2, or 1 tightly grouped nighttime identities. Bold should come from typography,
+6, 6, 4, or 3 distinct nighttime identities. Bold should come from typography,
 not a second high-chroma bank.
 
 `fg_0` is the body-text role. `fg_1` is intended for larger supporting text or graphics,

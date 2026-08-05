@@ -1,5 +1,5 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "project": "Ember: Redshift Safe Color Palettes",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
   "legacy_aliases": {
@@ -24,6 +24,10 @@
     "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier."
   },
   "quality_targets": {
+    "accent_selection_priority": [
+      "match authored transformed perceptual outcomes",
+      "optimize commanded daytime aesthetics without weakening transformed outcomes"
+    ],
     "bg_roles_low_to_high": [
       "bg_0",
       "bg_1",
@@ -72,7 +76,7 @@
         0.54360078,
         0.08679949
       ],
-      "categorical_minimum_delta_e_ok_target": 4.0,
+      "categorical_minimum_delta_e_ok_target": 8.5,
       "description": "The pinned Redshift 2000 K gamma-ramp signal transform with identity input ramps, unit brightness, and unit per-channel gamma."
     },
     "1200k": {
@@ -83,7 +87,7 @@
         0.30942099,
         0.0
       ],
-      "categorical_minimum_delta_e_ok_target": 4.0,
+      "categorical_minimum_delta_e_ok_target": 8.5,
       "description": "The pinned Redshift 1200 K signal-LUT transform: blue is removed and green is heavily attenuated. This is a severe visibility stress test, not a claim of physical astronomy safety."
     }
   },
@@ -132,6 +136,14 @@
         4,
         5
       ],
+      "terminal_transformed_targets": [
+        "#B49383",
+        "#CE7C36",
+        "#70A272",
+        "#9A8D56",
+        "#F58052",
+        "#D86E67"
+      ],
       "terminal_daylight_minimum_delta_e_ok_target": 9.0,
       "terminal_night_minimum_delta_e_ok_target": 7.0,
       "terminal_minimum_shifted_foreground_contrast": 6.06,
@@ -143,6 +155,14 @@
         "five": "#945D48",
         "six": "#C3779A"
       },
+      "categorical_transformed_targets": [
+        "#6E6F71",
+        "#DD7E38",
+        "#2E6643",
+        "#678D4F",
+        "#944526",
+        "#C35852"
+      ],
       "daylight_minimum_delta_e_ok_target": 14.0,
       "continuous_rgb": [
         [
@@ -1691,12 +1711,14 @@
           "shifted_lightness_mean": 0.5611,
           "shifted_lightness_range": 0.2227,
           "normal_chroma_max": 0.1045,
-          "normal_chroma_mean": 0.0969
+          "normal_chroma_mean": 0.0969,
+          "transformed_target_max_delta_e_ok": 0.12
         },
         "terminal": {
           "normal_min_delta_e_ok": 9.09,
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": 7.32
+          "shifted_group_center_min_delta_e_ok": 7.32,
+          "transformed_target_max_delta_e_ok": 0.13
         },
         "continuous": {
           "normal_lightness_range": 0.5864,
@@ -1802,6 +1824,14 @@
         4,
         5
       ],
+      "terminal_transformed_targets": [
+        "#0E5533",
+        "#201827",
+        "#832C2A",
+        "#571507",
+        "#0F3308",
+        "#3B3948"
+      ],
       "terminal_daylight_minimum_delta_e_ok_target": 14.0,
       "terminal_night_minimum_delta_e_ok_target": 11.0,
       "terminal_minimum_shifted_foreground_contrast": 5.17,
@@ -1813,6 +1843,14 @@
         "five": "#33531D",
         "six": "#676DB1"
       },
+      "categorical_transformed_targets": [
+        "#156A41",
+        "#321E36",
+        "#AE4534",
+        "#6E1C14",
+        "#333D0F",
+        "#67515E"
+      ],
       "daylight_minimum_delta_e_ok_target": 15.0,
       "continuous_rgb": [
         [
@@ -3361,12 +3399,14 @@
           "shifted_lightness_mean": 0.4046,
           "shifted_lightness_range": 0.2584,
           "normal_chroma_max": 0.1053,
-          "normal_chroma_mean": 0.1016
+          "normal_chroma_mean": 0.1016,
+          "transformed_target_max_delta_e_ok": 0.13
         },
         "terminal": {
           "normal_min_delta_e_ok": 14.75,
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": 11.69
+          "shifted_group_center_min_delta_e_ok": 11.69,
+          "transformed_target_max_delta_e_ok": 0.14
         },
         "continuous": {
           "normal_lightness_range": 0.6678,
@@ -3446,40 +3486,52 @@
       },
       "terminal": {
         "black": "#15110E",
-        "red": "#DCC4D5",
-        "green": "#DCC464",
-        "yellow": "#D8B3FF",
-        "blue": "#D8B396",
-        "magenta": "#DCC4D5",
-        "cyan": "#DCC464",
+        "red": "#B9CBDC",
+        "green": "#D9D68A",
+        "yellow": "#F1ADE2",
+        "blue": "#D3A58D",
+        "magenta": "#B9CBDC",
+        "cyan": "#D9D68A",
         "white": "#E9D3AD",
         "bright_black": "#E9D3AD",
-        "bright_red": "#DCC4D5",
-        "bright_green": "#DCC464",
-        "bright_yellow": "#D8B3FF",
-        "bright_blue": "#D8B396",
-        "bright_magenta": "#DCC4D5",
-        "bright_cyan": "#DCC464",
+        "bright_red": "#B9CBDC",
+        "bright_green": "#D9D68A",
+        "bright_yellow": "#F1ADE2",
+        "bright_blue": "#D3A58D",
+        "bright_magenta": "#B9CBDC",
+        "bright_cyan": "#D9D68A",
         "bright_white": "#E9D3AD"
       },
       "terminal_daylight_color_count": 4,
-      "terminal_semantic_color_count": 2,
+      "terminal_semantic_color_count": 4,
       "terminal_night_groups": [
         0,
-        0,
         1,
-        1
+        2,
+        3
       ],
-      "terminal_daylight_minimum_delta_e_ok_target": 8.0,
-      "terminal_night_minimum_delta_e_ok_target": 2.0,
-      "terminal_minimum_shifted_foreground_contrast": 5.53,
+      "terminal_transformed_targets": [
+        "#B96E13",
+        "#D9740C",
+        "#F15E14",
+        "#D35A0C"
+      ],
+      "terminal_daylight_minimum_delta_e_ok_target": 10.0,
+      "terminal_night_minimum_delta_e_ok_target": 5.8,
+      "terminal_minimum_shifted_foreground_contrast": 5.12,
       "categorical": {
-        "one": "#DCC482",
-        "two": "#A57C29",
-        "three": "#8497E0",
-        "four": "#C28B93"
+        "one": "#E6C682",
+        "two": "#A07928",
+        "three": "#749DE1",
+        "four": "#CB8991"
       },
-      "daylight_minimum_delta_e_ok_target": 13.0,
+      "categorical_transformed_targets": [
+        "#E66C0B",
+        "#A04203",
+        "#745514",
+        "#CB4A0D"
+      ],
+      "daylight_minimum_delta_e_ok_target": 14.0,
       "continuous_rgb": [
         [
           0.0901960813,
@@ -5022,17 +5074,19 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 13.62,
-          "shifted_min_delta_e_ok": 6.26,
-          "shifted_lightness_mean": 0.5526,
-          "shifted_lightness_range": 0.1654,
-          "normal_chroma_max": 0.1099,
-          "normal_chroma_mean": 0.0941
+          "normal_min_delta_e_ok": 14.84,
+          "shifted_min_delta_e_ok": 9.01,
+          "shifted_lightness_mean": 0.5538,
+          "shifted_lightness_range": 0.1952,
+          "normal_chroma_max": 0.1104,
+          "normal_chroma_mean": 0.0982,
+          "transformed_target_max_delta_e_ok": 0.11
         },
         "terminal": {
-          "normal_min_delta_e_ok": 8.39,
-          "shifted_group_max_delta_e_ok": 0.32,
-          "shifted_group_center_min_delta_e_ok": 2.24
+          "normal_min_delta_e_ok": 10.79,
+          "shifted_group_max_delta_e_ok": 0.0,
+          "shifted_group_center_min_delta_e_ok": 5.9,
+          "transformed_target_max_delta_e_ok": 0.08
         },
         "continuous": {
           "normal_lightness_range": 0.7109,
@@ -5112,37 +5166,47 @@
       },
       "terminal": {
         "black": "#130E0B",
-        "red": "#EACF6F",
+        "red": "#D5D27A",
         "green": "#EACFFF",
-        "yellow": "#EACFBC",
-        "blue": "#EACF6F",
+        "yellow": "#FFCFB5",
+        "blue": "#D5D27A",
         "magenta": "#EACFFF",
-        "cyan": "#EACFBC",
+        "cyan": "#FFCFB5",
         "white": "#FFE5BE",
         "bright_black": "#FFE5BE",
-        "bright_red": "#EACF6F",
+        "bright_red": "#D5D27A",
         "bright_green": "#EACFFF",
-        "bright_yellow": "#EACFBC",
-        "bright_blue": "#EACF6F",
+        "bright_yellow": "#FFCFB5",
+        "bright_blue": "#D5D27A",
         "bright_magenta": "#EACFFF",
-        "bright_cyan": "#EACFBC",
+        "bright_cyan": "#FFCFB5",
         "bright_white": "#FFE5BE"
       },
       "terminal_daylight_color_count": 3,
-      "terminal_semantic_color_count": 1,
+      "terminal_semantic_color_count": 3,
       "terminal_night_groups": [
         0,
-        0,
-        0
+        1,
+        2
       ],
-      "terminal_daylight_minimum_delta_e_ok_target": 9.0,
-      "terminal_night_minimum_delta_e_ok_target": null,
-      "terminal_minimum_shifted_foreground_contrast": 5.17,
+      "terminal_transformed_targets": [
+        "#D54100",
+        "#EA4000",
+        "#FF4000"
+      ],
+      "terminal_daylight_minimum_delta_e_ok_target": 10.0,
+      "terminal_night_minimum_delta_e_ok_target": 4.0,
+      "terminal_minimum_shifted_foreground_contrast": 4.53,
       "categorical": {
-        "one": "#E0C48E",
-        "two": "#B08ED7",
-        "three": "#8F8A31"
+        "one": "#E0C47A",
+        "two": "#B7A7F3",
+        "three": "#8F8A33"
       },
+      "categorical_transformed_targets": [
+        "#E03D00",
+        "#B73400",
+        "#8F2B00"
+      ],
       "daylight_minimum_delta_e_ok_target": 20.0,
       "continuous_rgb": [
         [
@@ -6686,17 +6750,19 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 21.61,
-          "shifted_min_delta_e_ok": 6.95,
-          "shifted_lightness_mean": 0.5124,
+          "normal_min_delta_e_ok": 21.0,
+          "shifted_min_delta_e_ok": 8.65,
+          "shifted_lightness_mean": 0.5191,
           "shifted_lightness_range": 0.1616,
-          "normal_chroma_max": 0.11,
-          "normal_chroma_mean": 0.099
+          "normal_chroma_max": 0.1082,
+          "normal_chroma_mean": 0.105,
+          "transformed_target_max_delta_e_ok": 0.05
         },
         "terminal": {
-          "normal_min_delta_e_ok": 9.24,
+          "normal_min_delta_e_ok": 10.2,
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": null
+          "shifted_group_center_min_delta_e_ok": 4.09,
+          "transformed_target_max_delta_e_ok": 0.01
         },
         "continuous": {
           "normal_lightness_range": 0.7731,

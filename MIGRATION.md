@@ -17,11 +17,18 @@ rises across dark families and falls across the light family. Generated CSS prov
 migration aliases. JSON and `surfaces()` return only the
 numeric names; the manifest's `legacy_surface_role_aliases` map supports migration.
 
-The JSON schema is version 5. It adds manifest-level surface-role, luminance, separation,
-and primary-text-contrast targets plus per-family commanded/transformed measurements under
-`metrics.surface`. The canonical ordering is recorded in `quality_targets.bg_roles_low_to_high`.
-Python consumers can retrieve an independent copy of every named UI color with
-`redshift_safe.surfaces(slug)`.
+The JSON schema is version 6. It adds manifest-level surface-role, luminance, separation,
+primary-text-contrast, and accent-selection targets plus per-family commanded/transformed
+measurements. The canonical surface ordering is recorded in
+`quality_targets.bg_roles_low_to_high`. Python consumers can retrieve an independent copy
+of every named UI color with `redshift_safe.surfaces(slug)`.
+
+Accent selection is now explicitly transformed-first and commanded-second. Each family
+publishes `categorical_transformed_targets` and `terminal_transformed_targets`; metrics report
+the maximum reproduction error. The redesigned deep terminal sets retain four distinct
+nighttime identities at 2000 K and three at 1200 K instead of the previous two and one.
+Consumers that surfaced `terminal_semantic_color_count` should refresh that value rather
+than assuming the 0.2 capacity.
 
 ## 0.1 to 0.2
 

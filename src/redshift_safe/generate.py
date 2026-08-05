@@ -124,6 +124,9 @@ def _metrics(
     gains = family.profile.gains
     warm_categories = perceived_lab(categories, gains)
     normal_categories = srgb_to_oklab(categories)
+    categorical_targets = srgb_to_oklab(
+        np.asarray([hex_to_srgb(value) for value in family.categorical_transformed_targets])
+    )
     category_metrics: dict[str, Any] = {
         "normal_min_delta_e_ok": round(float(pairwise_distances(normal_categories).min()), 2),
         "shifted_min_delta_e_ok": round(float(pairwise_distances(warm_categories).min()), 2),
@@ -135,10 +138,17 @@ def _metrics(
         "normal_chroma_mean": round(
             float(np.linalg.norm(normal_categories[:, 1:], axis=1).mean()), 4
         ),
+        "transformed_target_max_delta_e_ok": round(
+            float(np.linalg.norm(warm_categories - categorical_targets, axis=1).max() * 100.0),
+            2,
+        ),
     }
     terminal_colors = np.asarray([hex_to_srgb(value) for value in family.terminal_colors])
     normal_terminal = srgb_to_oklab(terminal_colors)
     shifted_terminal = perceived_lab(terminal_colors, gains)
+    terminal_targets = srgb_to_oklab(
+        np.asarray([hex_to_srgb(value) for value in family.terminal_transformed_targets])
+    )
     group_ids = sorted(set(family.terminal_night_groups))
     group_members = [
         shifted_terminal[np.asarray(family.terminal_night_groups) == group_id]
@@ -156,6 +166,10 @@ def _metrics(
             round(float(pairwise_distances(group_centers).min()), 2)
             if len(group_centers) > 1
             else None
+        ),
+        "transformed_target_max_delta_e_ok": round(
+            float(np.linalg.norm(shifted_terminal - terminal_targets, axis=1).max() * 100.0),
+            2,
         ),
     }
     shifted_sequence = perceived_lab(sequential, gains)
@@ -251,6 +265,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "terminal_daylight_color_count": len(family.terminal_colors),
         "terminal_semantic_color_count": family.terminal_color_count,
         "terminal_night_groups": list(family.terminal_night_groups),
+        "terminal_transformed_targets": list(family.terminal_transformed_targets),
         "terminal_daylight_minimum_delta_e_ok_target": (
             family.terminal_daylight_minimum_delta_e_ok
         ),
@@ -260,6 +275,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
             2,
         ),
         "categorical": dict(zip(CATEGORY_NAMES, category_hex)),
+        "categorical_transformed_targets": list(family.categorical_transformed_targets),
         "daylight_minimum_delta_e_ok_target": family.daylight_minimum_delta_e_ok,
         "continuous_rgb": sequential.tolist(),
         "continuous_hex8": [srgb_to_hex(color) for color in sequential],
@@ -279,7 +295,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 5,
+        "schema_version": 6,
         "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
@@ -297,6 +313,10 @@ def generate_manifest() -> dict[str, Any]:
             "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
         },
         "quality_targets": {
+            "accent_selection_priority": [
+                "match authored transformed perceptual outcomes",
+                "optimize commanded daytime aesthetics without weakening transformed outcomes",
+            ],
             "bg_roles_low_to_high": list(BACKGROUND_SURFACE_ROLES),
             "dark_minimum_adjacent_surface_delta_e_ok": (DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK),
             "minimum_shifted_foreground_contrast": MINIMUM_SHIFTED_FOREGROUND_CONTRAST,

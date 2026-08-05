@@ -574,10 +574,10 @@
 <text x="30" y="626" fill="#E9E1D4" font-size="28" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">2000K Dark</text>
 <text x="30" y="656" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Redshift 2000 K pinned signal-LUT</text>
 <text x="320" y="604" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
-<rect x="320" y="614" width="93" height="60" rx="7" fill="#DCC482"/>
-<rect x="420" y="614" width="93" height="60" rx="7" fill="#A57C29"/>
-<rect x="520" y="614" width="93" height="60" rx="7" fill="#8497E0"/>
-<rect x="620" y="614" width="93" height="60" rx="7" fill="#C28B93"/>
+<rect x="320" y="614" width="93" height="60" rx="7" fill="#E6C682"/>
+<rect x="420" y="614" width="93" height="60" rx="7" fill="#A07928"/>
+<rect x="520" y="614" width="93" height="60" rx="7" fill="#749DE1"/>
+<rect x="620" y="614" width="93" height="60" rx="7" fill="#CB8991"/>
 <text x="320" y="700" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Sequential: low → high</text>
 <rect x="320.00" y="712" width="3.7" height="38" fill="#17110F"/>
 <rect x="323.52" y="712" width="3.7" height="38" fill="#181210"/>
@@ -857,9 +857,9 @@
 <text x="30" y="876" fill="#E9E1D4" font-size="28" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">1200K Dark</text>
 <text x="30" y="906" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Redshift 1200 K pinned LUT</text>
 <text x="320" y="854" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
-<rect x="320" y="864" width="93" height="60" rx="7" fill="#E0C48E"/>
-<rect x="420" y="864" width="93" height="60" rx="7" fill="#B08ED7"/>
-<rect x="520" y="864" width="93" height="60" rx="7" fill="#8F8A31"/>
+<rect x="320" y="864" width="93" height="60" rx="7" fill="#E0C47A"/>
+<rect x="420" y="864" width="93" height="60" rx="7" fill="#B7A7F3"/>
+<rect x="520" y="864" width="93" height="60" rx="7" fill="#8F8A33"/>
 <text x="320" y="950" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Sequential: low → high</text>
 <rect x="320.00" y="962" width="3.7" height="38" fill="#100C0B"/>
 <rect x="323.52" y="962" width="3.7" height="38" fill="#110C0B"/>
