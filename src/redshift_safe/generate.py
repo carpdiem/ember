@@ -56,14 +56,14 @@ def _categorical_colors(family: FamilyDefinition) -> np.ndarray:
 
 
 def _terminal_colors(family: FamilyDefinition) -> list[str]:
-    """Return authored day accents that collapse into the configured night groups."""
+    """Expand authored semantic accents into the six ANSI color roles."""
 
     surfaces = family.surfaces
     first_neutral = (
         hex_to_srgb(surfaces["bg_2"]) if family.mode == "dark" else hex_to_srgb(surfaces["fg_0"])
     )
     accents = [hex_to_srgb(value) for value in family.terminal_colors]
-    semantic_slots = [accents[index % len(accents)] for index in range(6)]
+    semantic_slots = [accents[index] for index in family.terminal_ansi_indices]
     normal = [first_neutral, *semantic_slots, hex_to_srgb(surfaces["fg_0"])]
     # Bright black is commonly used for comments and metadata. Keep it readable
     # rather than treating it as a decorative low-contrast gray.
@@ -264,6 +264,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "terminal": dict(zip(ANSI_NAMES, terminal_values)),
         "terminal_daylight_color_count": len(family.terminal_colors),
         "terminal_semantic_color_count": family.terminal_color_count,
+        "terminal_ansi_indices": list(family.terminal_ansi_indices),
         "terminal_night_groups": list(family.terminal_night_groups),
         "terminal_transformed_targets": list(family.terminal_transformed_targets),
         "terminal_daylight_minimum_delta_e_ok_target": (

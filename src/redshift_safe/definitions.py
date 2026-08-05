@@ -27,6 +27,7 @@ class FamilyDefinition:
     daylight_minimum_delta_e_ok: float
     terminal_colors: tuple[str, ...]
     terminal_transformed_targets: tuple[str, ...]
+    terminal_ansi_indices: tuple[int, ...]
     terminal_night_groups: tuple[int, ...]
     terminal_daylight_minimum_delta_e_ok: float
     terminal_night_minimum_delta_e_ok: float | None
@@ -159,6 +160,7 @@ FAMILIES = (
             "#F58052",
             "#D86E67",
         ),
+        terminal_ansi_indices=(0, 1, 2, 3, 4, 5),
         terminal_night_groups=(0, 1, 2, 3, 4, 5),
         terminal_daylight_minimum_delta_e_ok=9.0,
         terminal_night_minimum_delta_e_ok=7.0,
@@ -199,6 +201,7 @@ FAMILIES = (
             "#0F3308",
             "#3B3948",
         ),
+        terminal_ansi_indices=(0, 1, 2, 3, 4, 5),
         terminal_night_groups=(0, 1, 2, 3, 4, 5),
         terminal_daylight_minimum_delta_e_ok=14.0,
         terminal_night_minimum_delta_e_ok=11.0,
@@ -221,16 +224,17 @@ FAMILIES = (
             "fg_2": "#9F8B70",
         },
         # Stage 1 selects four warm transformed identities with >= 8.5 dEOK
-        # categorical spacing and a terminal 2x2 lightness/chroma grid. Stage 2
+        # categorical spacing and four role-preserving terminal identities. Stage 2
         # uses weakly surviving blue to recover a restrained daytime hue set.
         categorical_colors=("#E6C682", "#A07928", "#749DE1", "#CB8991"),
         categorical_transformed_targets=("#E66C0B", "#A04203", "#745514", "#CB4A0D"),
         daylight_minimum_delta_e_ok=14.0,
-        terminal_colors=("#B9CBDC", "#D9D68A", "#F1ADE2", "#D3A58D"),
-        terminal_transformed_targets=("#B96E13", "#D9740C", "#F15E14", "#D35A0C"),
+        terminal_colors=("#EE8B98", "#A4EBA5", "#FECE75", "#C9C7F2"),
+        terminal_transformed_targets=("#EE4C0D", "#A4800E", "#FE700A", "#C96C15"),
+        terminal_ansi_indices=(0, 1, 2, 3, 0, 1),
         terminal_night_groups=(0, 1, 2, 3),
-        terminal_daylight_minimum_delta_e_ok=10.0,
-        terminal_night_minimum_delta_e_ok=5.8,
+        terminal_daylight_minimum_delta_e_ok=12.5,
+        terminal_night_minimum_delta_e_ok=7.5,
         sequential_anchors=("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
     ),
     FamilyDefinition(
@@ -255,10 +259,11 @@ FAMILIES = (
         categorical_colors=("#E0C47A", "#B7A7F3", "#8F8A33"),
         categorical_transformed_targets=("#E03D00", "#B73400", "#8F2B00"),
         daylight_minimum_delta_e_ok=20.0,
-        terminal_colors=("#D5D27A", "#EACFFF", "#FFCFB5"),
-        terminal_transformed_targets=("#D54100", "#EA4000", "#FF4000"),
+        terminal_colors=("#F494B4", "#E2F495", "#FFE4C6"),
+        terminal_transformed_targets=("#F42E00", "#E24B00", "#FF4700"),
+        terminal_ansi_indices=(0, 1, 2, 2, 0, 1),
         terminal_night_groups=(0, 1, 2),
-        terminal_daylight_minimum_delta_e_ok=10.0,
+        terminal_daylight_minimum_delta_e_ok=9.4,
         terminal_night_minimum_delta_e_ok=4.0,
         sequential_anchors=("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
     ),

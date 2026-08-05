@@ -40,7 +40,9 @@ working surface.
 Terminal formats require sixteen ANSI slots. Ember repeats the available commanded
 accents to fill those banks. At 2000 K and 1200 K, the four and three available accents
 retain separate transformed identities through deliberate lightness and warm-chroma
-structure. Repeated ANSI names still do not create additional semantic colors.
+structure. The reduced banks preserve recognizable red, green, yellow, and blue roles by
+day; explicit aliases map magenta to red and cyan to green, plus blue to yellow at 1200 K.
+Repeated ANSI names still do not create additional semantic colors.
 
 ## See the palettes in use
 
@@ -250,12 +252,13 @@ terminal palettes preserve those same transformed capacities while maintaining t
 contrast required by small monospaced glyphs: `6 / 6`, `6 / 6`, `4 / 4`, and `3 / 3`
 across the four families.
 
-The 2000 K terminal targets form a transformed 2×2 lightness/chroma grid. The 1200 K
-categorical targets are equally spaced along a warm trajectory, while its terminal targets
-use three readable warm-lightness tiers. Only after those nighttime structures are fixed do
-the commanded colors resolve into restrained daytime sets. Because lightness can imply
-order, categorical charts should still carry identity through labels, position, texture,
-marker, or line style.
+The 2000 K terminal targets preserve four widely separated warm identities while their
+commanded colors retain conventional red, green, yellow, and blue meaning. The 1200 K
+categorical targets are equally spaced along a warm trajectory; its three terminal targets
+remain distinct after red, green, and yellow collapse into red-orange variants. Only after
+those nighttime structures are fixed do the commanded colors resolve into coherent daytime
+sets. Because lightness can imply order, categorical charts should still carry identity
+through labels, position, texture, marker, or line style.
 
 ![Redundant line encoding under deep red](docs/diagrams/redundant-encoding.svg)
 
@@ -281,8 +284,8 @@ formula.
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 6.06:1 |
 | 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 5.17:1 |
-| 2000K Dark | 4 | 14.84 | 9.01 | 0.0982 / 0.1104 | 0.1952 | 5.12:1 |
-| 1200K Dark | 3 | 21.00 | 8.65 | 0.1050 / 0.1082 | 0.1616 | 4.53:1 |
+| 2000K Dark | 4 | 14.84 | 9.01 | 0.0982 / 0.1104 | 0.1952 | 5.53:1 |
+| 1200K Dark | 3 | 21.00 | 8.65 | 0.1050 / 0.1082 | 0.1616 | 5.17:1 |
 
 Dark-surface measurements use WCAG's sRGB relative-luminance calculation on the exact
 serialized Hex values. The contrast range covers transformed `fg_0` on all six background

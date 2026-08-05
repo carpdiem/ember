@@ -373,6 +373,10 @@ commanded daytime accents across those slots. Under the target transforms they f
 6, 6, 4, or 3 distinct nighttime identities. Bold should come from typography,
 not a second high-chroma bank.
 
+Reduced banks preserve recognizable ANSI roles by day. At 1200 K, magenta aliases red,
+cyan aliases green, and blue aliases yellow instead of using a modulo cycle that would
+assign those names to misleading hues.
+
 `fg_0` is the body-text role. `fg_1` is intended for larger supporting text or graphics,
 and `fg_2` for nonessential metadata or decoration. The latter two are not universal
 body-text colors; inspect each

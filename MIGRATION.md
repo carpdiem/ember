@@ -27,6 +27,9 @@ Accent selection is now explicitly transformed-first and commanded-second. Each 
 publishes `categorical_transformed_targets` and `terminal_transformed_targets`; metrics report
 the maximum reproduction error. The redesigned deep terminal sets retain four distinct
 nighttime identities at 2000 K and three at 1200 K instead of the previous two and one.
+`terminal_ansi_indices` records how each authored accent expands into the six ANSI semantic
+roles; the 1200 K mapping aliases magenta to red, cyan to green, and blue to yellow rather
+than cycling colors into misleading roles.
 Consumers that surfaced `terminal_semantic_color_count` should refresh that value rather
 than assuming the 0.2 capacity.
 

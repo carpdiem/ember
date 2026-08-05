@@ -88,17 +88,19 @@ def test_deep_accent_selections_have_locked_two_stage_values() -> None:
         "2000k-dark": {
             "categorical": ["#E6C682", "#A07928", "#749DE1", "#CB8991"],
             "categorical_transformed_targets": ["#E66C0B", "#A04203", "#745514", "#CB4A0D"],
-            "terminal": ["#B9CBDC", "#D9D68A", "#F1ADE2", "#D3A58D"],
-            "terminal_transformed_targets": ["#B96E13", "#D9740C", "#F15E14", "#D35A0C"],
+            "terminal": ["#EE8B98", "#A4EBA5", "#FECE75", "#C9C7F2"],
+            "terminal_transformed_targets": ["#EE4C0D", "#A4800E", "#FE700A", "#C96C15"],
+            "terminal_ansi_indices": [0, 1, 2, 3, 0, 1],
         },
         "1200k-dark": {
             "categorical": ["#E0C47A", "#B7A7F3", "#8F8A33"],
             "categorical_transformed_targets": ["#E03D00", "#B73400", "#8F2B00"],
-            "terminal": ["#D5D27A", "#EACFFF", "#FFCFB5"],
-            "terminal_transformed_targets": ["#D54100", "#EA4000", "#FF4000"],
+            "terminal": ["#F494B4", "#E2F495", "#FFE4C6"],
+            "terminal_transformed_targets": ["#F42E00", "#E24B00", "#FF4700"],
+            "terminal_ansi_indices": [0, 1, 2, 2, 0, 1],
         },
     }
-    semantic_names = ("red", "green", "yellow", "blue")
+    semantic_names = ("red", "green", "yellow", "blue", "magenta", "cyan")
     for slug, values in expected.items():
         family = manifest["families"][slug]
         assert list(family["categorical"].values()) == values["categorical"]
@@ -108,6 +110,10 @@ def test_deep_accent_selections_have_locked_two_stage_values() -> None:
         count = family["terminal_daylight_color_count"]
         assert [family["terminal"][name] for name in semantic_names[:count]] == values["terminal"]
         assert family["terminal_transformed_targets"] == values["terminal_transformed_targets"]
+        assert family["terminal_ansi_indices"] == values["terminal_ansi_indices"]
+        assert [family["terminal"][name] for name in semantic_names] == [
+            values["terminal"][index] for index in values["terminal_ansi_indices"]
+        ]
 
 
 def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
