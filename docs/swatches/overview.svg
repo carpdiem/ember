@@ -10,6 +10,19 @@
 <rect x="620" y="114" width="93" height="60" rx="7" fill="#67BE95"/>
 <rect x="720" y="114" width="93" height="60" rx="7" fill="#945D48"/>
 <rect x="820" y="114" width="93" height="60" rx="7" fill="#C3779A"/>
+<text x="940" y="104" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Terminal ANSI accents</text>
+<rect x="940.00" y="114" width="43.00" height="60" rx="7" fill="#B4C6F7"/>
+<text x="956" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R</text>
+<rect x="990.00" y="114" width="43.00" height="60" rx="7" fill="#CEA866"/>
+<text x="1006" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">G</text>
+<rect x="1040.00" y="114" width="43.00" height="60" rx="7" fill="#70DBD8"/>
+<text x="1056" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Y</text>
+<rect x="1090.00" y="114" width="43.00" height="60" rx="7" fill="#9ABEA2"/>
+<text x="1106" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">B</text>
+<rect x="1140.00" y="114" width="43.00" height="60" rx="7" fill="#F5AD9A"/>
+<text x="1156" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">M</text>
+<rect x="1190.00" y="114" width="43.00" height="60" rx="7" fill="#D895C2"/>
+<text x="1206" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">C</text>
 <text x="320" y="200" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Sequential: low → high</text>
 <rect x="320.00" y="212" width="3.7" height="38" fill="#282527"/>
 <rect x="323.52" y="212" width="3.7" height="38" fill="#292528"/>
@@ -295,6 +308,19 @@
 <rect x="620" y="364" width="93" height="60" rx="7" fill="#6E2626"/>
 <rect x="720" y="364" width="93" height="60" rx="7" fill="#33531D"/>
 <rect x="820" y="364" width="93" height="60" rx="7" fill="#676DB1"/>
+<text x="940" y="354" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Terminal ANSI accents</text>
+<rect x="940.00" y="364" width="43.00" height="60" rx="7" fill="#0E7361"/>
+<text x="956" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R</text>
+<rect x="990.00" y="364" width="43.00" height="60" rx="7" fill="#20214A"/>
+<text x="1006" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">G</text>
+<rect x="1040.00" y="364" width="43.00" height="60" rx="7" fill="#833C50"/>
+<text x="1056" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Y</text>
+<rect x="1090.00" y="364" width="43.00" height="60" rx="7" fill="#571C0D"/>
+<text x="1106" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">B</text>
+<rect x="1140.00" y="364" width="43.00" height="60" rx="7" fill="#0F4510"/>
+<text x="1156" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">M</text>
+<rect x="1190.00" y="364" width="43.00" height="60" rx="7" fill="#3B4D87"/>
+<text x="1206" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">C</text>
 <text x="320" y="450" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Sequential: low → high</text>
 <rect x="320.00" y="462" width="3.7" height="38" fill="#F2E5BC"/>
 <rect x="323.52" y="462" width="3.7" height="38" fill="#F1E4BB"/>
@@ -578,6 +604,19 @@
 <rect x="420" y="614" width="93" height="60" rx="7" fill="#A07928"/>
 <rect x="520" y="614" width="93" height="60" rx="7" fill="#749DE1"/>
 <rect x="620" y="614" width="93" height="60" rx="7" fill="#CB8991"/>
+<text x="940" y="604" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Terminal ANSI accents</text>
+<rect x="940.00" y="614" width="43.00" height="60" rx="7" fill="#EE8B98"/>
+<text x="956" y="652" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R</text>
+<rect x="990.00" y="614" width="43.00" height="60" rx="7" fill="#A4EBA5"/>
+<text x="1006" y="652" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">G</text>
+<rect x="1040.00" y="614" width="43.00" height="60" rx="7" fill="#FECE75"/>
+<text x="1056" y="652" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Y</text>
+<rect x="1090.00" y="614" width="43.00" height="60" rx="7" fill="#C9C7F2"/>
+<text x="1106" y="652" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">B</text>
+<rect x="1140.00" y="614" width="43.00" height="60" rx="7" fill="#EE8B98"/>
+<text x="1156" y="652" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">M</text>
+<rect x="1190.00" y="614" width="43.00" height="60" rx="7" fill="#A4EBA5"/>
+<text x="1206" y="652" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">C</text>
 <text x="320" y="700" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Sequential: low → high</text>
 <rect x="320.00" y="712" width="3.7" height="38" fill="#17110F"/>
 <rect x="323.52" y="712" width="3.7" height="38" fill="#181210"/>
@@ -860,6 +899,19 @@
 <rect x="320" y="864" width="93" height="60" rx="7" fill="#E0C47A"/>
 <rect x="420" y="864" width="93" height="60" rx="7" fill="#B7A7F3"/>
 <rect x="520" y="864" width="93" height="60" rx="7" fill="#8F8A33"/>
+<text x="940" y="854" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Terminal ANSI accents</text>
+<rect x="940.00" y="864" width="43.00" height="60" rx="7" fill="#F494B4"/>
+<text x="956" y="902" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R</text>
+<rect x="990.00" y="864" width="43.00" height="60" rx="7" fill="#E2F495"/>
+<text x="1006" y="902" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">G</text>
+<rect x="1040.00" y="864" width="43.00" height="60" rx="7" fill="#FFE4C6"/>
+<text x="1056" y="902" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Y</text>
+<rect x="1090.00" y="864" width="43.00" height="60" rx="7" fill="#FFE4C6"/>
+<text x="1106" y="902" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">B</text>
+<rect x="1140.00" y="864" width="43.00" height="60" rx="7" fill="#F494B4"/>
+<text x="1156" y="902" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">M</text>
+<rect x="1190.00" y="864" width="43.00" height="60" rx="7" fill="#E2F495"/>
+<text x="1206" y="902" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">C</text>
 <text x="320" y="950" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Sequential: low → high</text>
 <rect x="320.00" y="962" width="3.7" height="38" fill="#100C0B"/>
 <rect x="323.52" y="962" width="3.7" height="38" fill="#110C0B"/>

@@ -260,6 +260,33 @@ def _overview_svg(manifest: dict) -> str:
                 f'height="60" rx="7" fill="{value}"/>'
             )
             x += swatch_width
+        terminal_roles = (
+            ("red", "R"),
+            ("green", "G"),
+            ("yellow", "Y"),
+            ("blue", "B"),
+            ("magenta", "M"),
+            ("cyan", "C"),
+        )
+        terminal_x = 940
+        terminal_width = 300 / len(terminal_roles)
+        parts.append(_svg_text(terminal_x, y + 20, "Terminal ANSI accents", 18, "#BDAE98"))
+        for index, (role, label) in enumerate(terminal_roles):
+            value = family["terminal"][role]
+            swatch_x = terminal_x + index * terminal_width
+            parts.append(
+                f'<rect x="{swatch_x:.2f}" y="{y + 30}" width="{terminal_width - 7:.2f}" '
+                f'height="60" rx="7" fill="{value}"/>'
+            )
+            parts.append(
+                _svg_text(
+                    round(swatch_x + 16),
+                    y + 68,
+                    label,
+                    15,
+                    _label_color(value),
+                )
+            )
         x, gradient_y = 320, y + 128
         parts.append(_svg_text(x, y + 116, "Sequential: low → high", 18, "#BDAE98"))
         for index, value in enumerate(family["continuous_hex8"]):

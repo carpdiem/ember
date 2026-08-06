@@ -102,7 +102,7 @@ def test_generated_swatch_rectangles_fit_their_canvas() -> None:
             assert y + rectangle_height <= height + 0.01, path
 
 
-def test_readme_hero_overview_displays_every_background_and_foreground_role() -> None:
+def test_readme_hero_overview_displays_every_palette_role() -> None:
     readme = (ROOT / "README.md").read_text()
     hero = "![Ember palette overview](docs/swatches/overview.svg)"
     assert readme.index(hero) < readme.index("Ember provides coordinated color systems")
@@ -119,6 +119,9 @@ def test_readme_hero_overview_displays_every_background_and_foreground_role() ->
     for family in manifest["families"].values():
         for role in roles:
             assert family["surfaces"][role] in fills, (family["slug"], role)
+        for role in ("red", "green", "yellow", "blue", "magenta", "cyan"):
+            assert family["terminal"][role] in fills, (family["slug"], role)
+    assert labels.count("Terminal ANSI accents") == len(SLUGS)
 
 
 def test_categorical_encoding_is_stable_for_strings_and_subsets() -> None:
