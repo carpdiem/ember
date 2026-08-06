@@ -14,6 +14,7 @@ from redshift_safe.color import (
     pairwise_distances,
     perceived_lab,
     srgb_to_hex,
+    srgb_to_oklab,
     warm_transform,
     wcag_luminance,
 )
@@ -114,6 +115,35 @@ def test_deep_accent_selections_have_locked_two_stage_values() -> None:
         assert [family["terminal"][name] for name in semantic_names] == [
             values["terminal"][index] for index in values["terminal_ansi_indices"]
         ]
+
+
+def test_terminal_ansi_roles_have_semantic_commanded_hues() -> None:
+    manifest = generate_manifest()
+    semantic_names = ("red", "green", "yellow", "blue", "magenta", "cyan")
+    expected = {
+        "3400k-dark": ["#F5AD9A", "#9ABEA2", "#CEA866", "#B4C6F7", "#D895C2", "#70DBD8"],
+        "3400k-light": ["#470D05", "#174213", "#745C08", "#162252", "#643563", "#00766E"],
+        "2000k-dark": ["#EE8B98", "#A4EBA5", "#FECE75", "#C9C7F2", "#EE8B98", "#A4EBA5"],
+        "1200k-dark": ["#F494B4", "#E2F495", "#FFE4C6", "#FFE4C6", "#F494B4", "#E2F495"],
+    }
+    hue_centers = {
+        "red": 20.0,
+        "green": 140.0,
+        "yellow": 82.0,
+        "blue": 275.0,
+        "magenta": 335.0,
+        "cyan": 185.0,
+    }
+
+    for slug, values in expected.items():
+        family = manifest["families"][slug]
+        assert [family["terminal"][name] for name in semantic_names] == values
+        authored_count = family["terminal_daylight_color_count"]
+        for role in semantic_names[:authored_count]:
+            lab = srgb_to_oklab(hex_to_srgb(family["terminal"][role]))
+            hue = float(np.degrees(np.arctan2(lab[2], lab[1])) % 360.0)
+            hue_error = abs((hue - hue_centers[role] + 180.0) % 360.0 - 180.0)
+            assert hue_error <= 30.0, (slug, role, hue)
 
 
 def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
