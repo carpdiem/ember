@@ -424,15 +424,17 @@ def sample_analysis_markdown(manifest: dict, destination: Path) -> str:
         "",
         "## Palette-level bi-state gates",
         "",
-        "| Family | Categories | Day min ΔEOK | Shifted min ΔEOK | Mean / max raw chroma | Min shifted terminal contrast |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| Family | Categories | Day min ΔEOK | Day min hue gap | Shifted min ΔEOK | Min shifted category / bg contrast | Mean / max raw chroma | Min shifted terminal contrast |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for family in manifest["families"].values():
         categorical = family["metrics"]["categorical"]
         lines.append(
             f"| {family['name']} | {len(family['categorical'])} | "
             f"{categorical['normal_min_delta_e_ok']:.2f} | "
+            f"{categorical['normal_minimum_hue_gap_degrees']:.2f}° | "
             f"{categorical['shifted_min_delta_e_ok']:.2f} | "
+            f"{categorical['minimum_shifted_background_contrast']:.2f}:1 | "
             f"{categorical['normal_chroma_mean']:.4f} / {categorical['normal_chroma_max']:.4f} | "
             f"{family['terminal_minimum_shifted_foreground_contrast']:.2f}:1 |"
         )
@@ -440,7 +442,9 @@ def sample_analysis_markdown(manifest: dict, destination: Path) -> str:
         [
             "",
             "Release gates: categorical commanded mean chroma 0.09–0.105 and maximum",
-            "chroma ≤ 0.111; family-specific daytime and transformed separation floors;",
+            "chroma ≤ 0.111; family-specific daytime, hue-gap, transformed-separation, and",
+            "graphical category/background contrast floors; cross-state hue consistency is",
+            "intentionally not required;",
             "authored transformed accent targets reproduced within 0.15 ΔEOK; transformed",
             "terminal foreground-capable ANSI slots ≥ 4.5:1; category and accent counts",
             "must never increase as the target temperature falls.",

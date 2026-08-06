@@ -252,13 +252,14 @@ terminal palettes preserve those same transformed capacities while maintaining t
 contrast required by small monospaced glyphs: `6 / 6`, `6 / 6`, `4 / 4`, and `3 / 3`
 across the four families.
 
-The 2000 K terminal targets preserve four widely separated warm identities while their
-commanded colors retain conventional red, green, yellow, and blue meaning. The 1200 K
-categorical targets are equally spaced along a warm trajectory; its three terminal targets
-remain distinct after red, green, and yellow collapse into red-orange variants. Only after
-those nighttime structures are fixed do the commanded colors resolve into coherent daytime
-sets. Because lightness can imply order, categorical charts should still carry identity
-through labels, position, texture, marker, or line style.
+The terminal targets preserve conventional ANSI meaning by day and distinct warm identities
+after transformation. Categorical identity follows a looser and more useful contract: every
+slot must remain distinguishable in both states, but its hue does not need to look consistent
+between them. The 2000 K set uses weakly surviving blue for muted sky, rose, brick, and sage
+daytime identities; the 1200 K set uses blue's exact null direction for rose, sky, and apricot.
+The generated manifest records that cross-state hue consistency is not required. Because
+lightness can imply order, categorical charts should still carry identity through labels,
+position, texture, marker, or line style.
 
 ![Redundant line encoding under deep red](docs/diagrams/redundant-encoding.svg)
 
@@ -284,8 +285,16 @@ formula.
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 6.06:1 |
 | 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 4.76:1 |
-| 2000K Dark | 4 | 14.84 | 9.01 | 0.0982 / 0.1104 | 0.1952 | 5.53:1 |
-| 1200K Dark | 3 | 21.00 | 8.65 | 0.1050 / 0.1082 | 0.1616 | 5.17:1 |
+| 2000K Dark | 4 | 16.50 | 12.59 | 0.0903 / 0.0907 | 0.1317 | 5.53:1 |
+| 1200K Dark | 3 | 20.03 | 10.05 | 0.1016 / 0.1086 | 0.1428 | 5.17:1 |
+
+Deep-profile daytime hue breadth and transformed category/background contrast are separate
+release gates. Contrast here is for graphical category marks, not small text.
+
+| Deep family | Day minimum hue gap | Target | Transformed category / `bg_0` | Target |
+|---|---:|---:|---:|---:|
+| 2000K Dark | 27.75° | ≥ 20° | 3.01:1 | ≥ 3:1 |
+| 1200K Dark | 54.05° | ≥ 45° | 3.01:1 | ≥ 3:1 |
 
 Dark-surface measurements use WCAG's sRGB relative-luminance calculation on the exact
 serialized Hex values. The contrast range covers transformed `fg_0` on all six background

@@ -600,10 +600,10 @@
 <text x="30" y="626" fill="#E9E1D4" font-size="28" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">2000K Dark</text>
 <text x="30" y="656" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Redshift 2000 K pinned signal-LUT</text>
 <text x="320" y="604" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
-<rect x="320" y="614" width="93" height="60" rx="7" fill="#E6C682"/>
-<rect x="420" y="614" width="93" height="60" rx="7" fill="#A07928"/>
-<rect x="520" y="614" width="93" height="60" rx="7" fill="#749DE1"/>
-<rect x="620" y="614" width="93" height="60" rx="7" fill="#CB8991"/>
+<rect x="320" y="614" width="93" height="60" rx="7" fill="#66B1D4"/>
+<rect x="420" y="614" width="93" height="60" rx="7" fill="#DB93A7"/>
+<rect x="520" y="614" width="93" height="60" rx="7" fill="#A46056"/>
+<rect x="620" y="614" width="93" height="60" rx="7" fill="#A3DBA9"/>
 <text x="940" y="604" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Terminal ANSI accents</text>
 <rect x="940.00" y="614" width="43.00" height="60" rx="7" fill="#EE8B98"/>
 <text x="956" y="652" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R</text>
@@ -896,9 +896,9 @@
 <text x="30" y="876" fill="#E9E1D4" font-size="28" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">1200K Dark</text>
 <text x="30" y="906" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Redshift 1200 K pinned LUT</text>
 <text x="320" y="854" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
-<rect x="320" y="864" width="93" height="60" rx="7" fill="#E0C47A"/>
-<rect x="420" y="864" width="93" height="60" rx="7" fill="#B7A7F3"/>
-<rect x="520" y="864" width="93" height="60" rx="7" fill="#8F8A33"/>
+<rect x="320" y="864" width="93" height="60" rx="7" fill="#C26D76"/>
+<rect x="420" y="864" width="93" height="60" rx="7" fill="#92DBFF"/>
+<rect x="520" y="864" width="93" height="60" rx="7" fill="#EFB371"/>
 <text x="940" y="854" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Terminal ANSI accents</text>
 <rect x="940.00" y="864" width="43.00" height="60" rx="7" fill="#F494B4"/>
 <text x="956" y="902" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R</text>

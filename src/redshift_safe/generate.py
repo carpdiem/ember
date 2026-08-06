@@ -55,6 +55,19 @@ def _categorical_colors(family: FamilyDefinition) -> np.ndarray:
     return np.asarray([hex_to_srgb(value) for value in family.categorical_colors])
 
 
+def _minimum_hue_gap_degrees(colors: np.ndarray) -> float:
+    """Return the minimum circular Oklab hue gap among chromatic colors."""
+
+    chromatic = colors[np.linalg.norm(colors[:, 1:], axis=1) >= 0.02]
+    hues = np.degrees(np.arctan2(chromatic[:, 2], chromatic[:, 1])) % 360.0
+    gaps = [
+        abs((hues[left] - hues[right] + 180.0) % 360.0 - 180.0)
+        for left in range(len(hues))
+        for right in range(left + 1, len(hues))
+    ]
+    return float(min(gaps))
+
+
 def _terminal_colors(family: FamilyDefinition) -> list[str]:
     """Expand authored semantic accents into the six ANSI color roles."""
 
@@ -124,12 +137,21 @@ def _metrics(
     gains = family.profile.gains
     warm_categories = perceived_lab(categories, gains)
     normal_categories = srgb_to_oklab(categories)
+    transformed_background = warm_transform(hex_to_srgb(family.surfaces["bg_0"]), gains)
     categorical_targets = srgb_to_oklab(
         np.asarray([hex_to_srgb(value) for value in family.categorical_transformed_targets])
     )
     category_metrics: dict[str, Any] = {
         "normal_min_delta_e_ok": round(float(pairwise_distances(normal_categories).min()), 2),
+        "normal_minimum_hue_gap_degrees": round(_minimum_hue_gap_degrees(normal_categories), 2),
         "shifted_min_delta_e_ok": round(float(pairwise_distances(warm_categories).min()), 2),
+        "minimum_shifted_background_contrast": round(
+            min(
+                contrast_ratio(warm_transform(color, gains), transformed_background)
+                for color in categories
+            ),
+            2,
+        ),
         "shifted_lightness_mean": round(float(warm_categories[:, 0].mean()), 4),
         "shifted_lightness_range": round(float(np.ptp(warm_categories[:, 0])), 4),
         "normal_chroma_max": round(
@@ -278,6 +300,10 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "categorical": dict(zip(CATEGORY_NAMES, category_hex)),
         "categorical_transformed_targets": list(family.categorical_transformed_targets),
         "daylight_minimum_delta_e_ok_target": family.daylight_minimum_delta_e_ok,
+        "daylight_minimum_hue_gap_degrees_target": (family.daylight_minimum_hue_gap_degrees),
+        "categorical_shifted_background_contrast_minimum_target": (
+            family.categorical_shifted_background_contrast_minimum
+        ),
         "continuous_rgb": sequential.tolist(),
         "continuous_hex8": [srgb_to_hex(color) for color in sequential],
         "metrics": _metrics(family, categories, sequential),
@@ -296,7 +322,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 6,
+        "schema_version": 7,
         "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
@@ -318,6 +344,7 @@ def generate_manifest() -> dict[str, Any]:
                 "match authored transformed perceptual outcomes",
                 "optimize commanded daytime aesthetics without weakening transformed outcomes",
             ],
+            "cross_state_hue_consistency_required": False,
             "bg_roles_low_to_high": list(BACKGROUND_SURFACE_ROLES),
             "dark_minimum_adjacent_surface_delta_e_ok": (DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK),
             "minimum_shifted_foreground_contrast": MINIMUM_SHIFTED_FOREGROUND_CONTRAST,

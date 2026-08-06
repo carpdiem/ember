@@ -25,6 +25,8 @@ class FamilyDefinition:
     categorical_colors: tuple[str, ...]
     categorical_transformed_targets: tuple[str, ...]
     daylight_minimum_delta_e_ok: float
+    daylight_minimum_hue_gap_degrees: float | None
+    categorical_shifted_background_contrast_minimum: float | None
     terminal_colors: tuple[str, ...]
     terminal_transformed_targets: tuple[str, ...]
     terminal_ansi_indices: tuple[int, ...]
@@ -151,6 +153,8 @@ FAMILIES = (
             "#C35852",
         ),
         daylight_minimum_delta_e_ok=14.0,
+        daylight_minimum_hue_gap_degrees=None,
+        categorical_shifted_background_contrast_minimum=None,
         terminal_colors=("#F5AD9A", "#9ABEA2", "#CEA866", "#B4C6F7", "#D895C2", "#70DBD8"),
         terminal_transformed_targets=(
             "#F58052",
@@ -192,6 +196,8 @@ FAMILIES = (
             "#67515E",
         ),
         daylight_minimum_delta_e_ok=15.0,
+        daylight_minimum_hue_gap_degrees=None,
+        categorical_shifted_background_contrast_minimum=None,
         terminal_colors=("#470D05", "#174213", "#745C08", "#162252", "#643563", "#00766E"),
         terminal_transformed_targets=(
             "#470A03",
@@ -223,12 +229,14 @@ FAMILIES = (
             "fg_1": "#C8B38F",
             "fg_2": "#9F8B70",
         },
-        # Stage 1 selects four warm transformed identities with >= 8.5 dEOK
-        # categorical spacing and four role-preserving terminal identities. Stage 2
-        # uses weakly surviving blue to recover a restrained daytime hue set.
-        categorical_colors=("#E6C682", "#A07928", "#749DE1", "#CB8991"),
-        categorical_transformed_targets=("#E66C0B", "#A04203", "#745514", "#CB4A0D"),
+        # The four transformed identities remain distinct and clear 3:1 against bg_0.
+        # Their daytime preimages deliberately use unrelated hue families: weak blue is
+        # optimization freedom, not a cross-state appearance-preservation constraint.
+        categorical_colors=("#66B1D4", "#DB93A7", "#A46056", "#A3DBA9"),
+        categorical_transformed_targets=("#666012", "#DB500F", "#A43407", "#A3770F"),
         daylight_minimum_delta_e_ok=14.0,
+        daylight_minimum_hue_gap_degrees=20.0,
+        categorical_shifted_background_contrast_minimum=3.0,
         terminal_colors=("#EE8B98", "#A4EBA5", "#FECE75", "#C9C7F2"),
         terminal_transformed_targets=("#EE4C0D", "#A4800E", "#FE700A", "#C96C15"),
         terminal_ansi_indices=(0, 1, 2, 3, 0, 1),
@@ -253,12 +261,14 @@ FAMILIES = (
             "fg_1": "#CBB58F",
             "fg_2": "#A28B70",
         },
-        # Stage 1 selects three equally spaced transformed warm identities. Stage 2
-        # uses the fully removed blue channel to produce gold, lavender, and olive
-        # by day without altering those nighttime outcomes.
-        categorical_colors=("#E0C47A", "#B7A7F3", "#8F8A33"),
-        categorical_transformed_targets=("#E03D00", "#B73400", "#8F2B00"),
+        # Three warm transformed identities clear 3:1 against bg_0. Their daytime
+        # preimages use blue's exact null direction for a mature rose/sky/apricot triad;
+        # category identity is stable, but cross-state hue appearance is intentionally not.
+        categorical_colors=("#C26D76", "#92DBFF", "#EFB371"),
+        categorical_transformed_targets=("#C22200", "#924400", "#EF3700"),
         daylight_minimum_delta_e_ok=20.0,
+        daylight_minimum_hue_gap_degrees=45.0,
+        categorical_shifted_background_contrast_minimum=3.0,
         terminal_colors=("#F494B4", "#E2F495", "#FFE4C6"),
         terminal_transformed_targets=("#F42E00", "#E24B00", "#FF4700"),
         terminal_ansi_indices=(0, 1, 2, 2, 0, 1),

@@ -47,12 +47,12 @@
 <rect x="980" y="187" width="68" height="44" fill="#E2F495"/>
 <rect x="1048" y="187" width="68" height="44" fill="#FFE5BE"/>
 <text x="28" y="264" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical 1–3</text>
-<rect x="28" y="278" width="162" height="58" rx="5" fill="#E0C47A"/>
-<text x="42" y="314" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#E0C47A</text>
-<rect x="198" y="278" width="162" height="58" rx="5" fill="#B7A7F3"/>
-<text x="212" y="314" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#B7A7F3</text>
-<rect x="368" y="278" width="162" height="58" rx="5" fill="#8F8A33"/>
-<text x="382" y="314" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#8F8A33</text>
+<rect x="28" y="278" width="162" height="58" rx="5" fill="#C26D76"/>
+<text x="42" y="314" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#C26D76</text>
+<rect x="198" y="278" width="162" height="58" rx="5" fill="#92DBFF"/>
+<text x="212" y="314" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#92DBFF</text>
+<rect x="368" y="278" width="162" height="58" rx="5" fill="#EFB371"/>
+<text x="382" y="314" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#EFB371</text>
 <text x="28" y="370" fill="#B9AC98" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Sequential (low → high)</text>
 <rect x="28.00" y="384" width="4.5" height="24" fill="#100C0B"/>
 <rect x="32.32" y="384" width="4.5" height="24" fill="#110C0B"/>

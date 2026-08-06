@@ -25,7 +25,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 6
+    assert manifest["schema_version"] == 7
+    assert manifest["quality_targets"]["cross_state_hue_consistency_required"] is False
     assert list(manifest["families"]) == [
         "3400k-dark",
         "3400k-light",
@@ -87,15 +88,15 @@ def test_deep_accent_selections_have_locked_two_stage_values() -> None:
     manifest = generate_manifest()
     expected = {
         "2000k-dark": {
-            "categorical": ["#E6C682", "#A07928", "#749DE1", "#CB8991"],
-            "categorical_transformed_targets": ["#E66C0B", "#A04203", "#745514", "#CB4A0D"],
+            "categorical": ["#66B1D4", "#DB93A7", "#A46056", "#A3DBA9"],
+            "categorical_transformed_targets": ["#666012", "#DB500F", "#A43407", "#A3770F"],
             "terminal": ["#EE8B98", "#A4EBA5", "#FECE75", "#C9C7F2"],
             "terminal_transformed_targets": ["#EE4C0D", "#A4800E", "#FE700A", "#C96C15"],
             "terminal_ansi_indices": [0, 1, 2, 3, 0, 1],
         },
         "1200k-dark": {
-            "categorical": ["#E0C47A", "#B7A7F3", "#8F8A33"],
-            "categorical_transformed_targets": ["#E03D00", "#B73400", "#8F2B00"],
+            "categorical": ["#C26D76", "#92DBFF", "#EFB371"],
+            "categorical_transformed_targets": ["#C22200", "#924400", "#EF3700"],
             "terminal": ["#F494B4", "#E2F495", "#FFE4C6"],
             "terminal_transformed_targets": ["#F42E00", "#E24B00", "#FF4700"],
             "terminal_ansi_indices": [0, 1, 2, 2, 0, 1],
@@ -162,14 +163,37 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
         lightness_range = float(np.ptp(shifted[:, 0]))
         normal_chroma_max = float(np.linalg.norm(normal[:, 1:], axis=1).max())
         normal_chroma_mean = float(np.linalg.norm(normal[:, 1:], axis=1).mean())
+        normal_hues = np.degrees(np.arctan2(normal[:, 2], normal[:, 1])) % 360.0
+        normal_hue_gap = min(
+            abs((normal_hues[left] - normal_hues[right] + 180.0) % 360.0 - 180.0)
+            for left in range(len(normal_hues))
+            for right in range(left + 1, len(normal_hues))
+        )
+        transformed_background = warm_transform(
+            hex_to_srgb(family["surfaces"]["bg_0"]), profile["rgb_gains"]
+        )
+        shifted_background_contrast = min(
+            contrast_ratio(warm_transform(color, profile["rgb_gains"]), transformed_background)
+            for color in categories
+        )
         target_error = float(np.linalg.norm(shifted - transformed_targets, axis=1).max() * 100.0)
         metrics = family["metrics"]["categorical"]
         assert shifted_min >= profile["categorical_minimum_delta_e_ok_target"], family["slug"]
         assert normal_chroma_max <= 0.111, family["slug"]
         assert 0.09 <= normal_chroma_mean <= 0.105, family["slug"]
         assert normal_min >= family["daylight_minimum_delta_e_ok_target"], family["slug"]
+        hue_gap_target = family["daylight_minimum_hue_gap_degrees_target"]
+        if hue_gap_target is not None:
+            assert normal_hue_gap >= hue_gap_target, family["slug"]
+        contrast_target = family["categorical_shifted_background_contrast_minimum_target"]
+        if contrast_target is not None:
+            assert shifted_background_contrast >= contrast_target, family["slug"]
         assert metrics["shifted_min_delta_e_ok"] == round(shifted_min, 2)
         assert metrics["normal_min_delta_e_ok"] == round(normal_min, 2)
+        assert metrics["normal_minimum_hue_gap_degrees"] == round(normal_hue_gap, 2)
+        assert metrics["minimum_shifted_background_contrast"] == round(
+            shifted_background_contrast, 2
+        )
         assert metrics["shifted_lightness_range"] == round(lightness_range, 4)
         assert metrics["normal_chroma_max"] == round(normal_chroma_max, 4)
         assert metrics["normal_chroma_mean"] == round(normal_chroma_mean, 4)
