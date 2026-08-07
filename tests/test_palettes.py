@@ -25,8 +25,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 7
+    assert manifest["schema_version"] == 8
     assert manifest["quality_targets"]["cross_state_hue_consistency_required"] is False
+    assert manifest["quality_targets"]["terminal_distinguishability_reference_role"] == "fg_0"
     assert list(manifest["families"]) == [
         "3400k-dark",
         "3400k-light",
@@ -90,15 +91,15 @@ def test_deep_accent_selections_have_locked_two_stage_values() -> None:
         "2000k-dark": {
             "categorical": ["#66B1D4", "#DB93A7", "#A46056", "#A3DBA9"],
             "categorical_transformed_targets": ["#666012", "#DB500F", "#A43407", "#A3770F"],
-            "terminal": ["#EE8B98", "#A4EBA5", "#FECE75", "#C9C7F2"],
-            "terminal_transformed_targets": ["#EE4C0D", "#A4800E", "#FE700A", "#C96C15"],
+            "terminal": ["#E9878F", "#72E5BE", "#C0A251", "#A0D3FF"],
+            "terminal_transformed_targets": ["#E9490C", "#727C0F", "#C05807", "#A07317"],
             "terminal_ansi_indices": [0, 1, 2, 3, 0, 1],
         },
         "1200k-dark": {
             "categorical": ["#C26D76", "#92DBFF", "#EFB371"],
             "categorical_transformed_targets": ["#C22200", "#924400", "#EF3700"],
-            "terminal": ["#F494B4", "#E2F495", "#FFE4C6"],
-            "terminal_transformed_targets": ["#F42E00", "#E24B00", "#FF4700"],
+            "terminal": ["#F0A09A", "#C9FFB6", "#DABD74"],
+            "terminal_transformed_targets": ["#F03201", "#C94F00", "#DA3A00"],
             "terminal_ansi_indices": [0, 1, 2, 2, 0, 1],
         },
     }
@@ -124,8 +125,8 @@ def test_terminal_ansi_roles_have_semantic_commanded_hues() -> None:
     expected = {
         "3400k-dark": ["#F5AD9A", "#9ABEA2", "#CEA866", "#B4C6F7", "#D895C2", "#70DBD8"],
         "3400k-light": ["#470D05", "#174213", "#745C08", "#162252", "#643563", "#00766E"],
-        "2000k-dark": ["#EE8B98", "#A4EBA5", "#FECE75", "#C9C7F2", "#EE8B98", "#A4EBA5"],
-        "1200k-dark": ["#F494B4", "#E2F495", "#FFE4C6", "#FFE4C6", "#F494B4", "#E2F495"],
+        "2000k-dark": ["#E9878F", "#72E5BE", "#C0A251", "#A0D3FF", "#E9878F", "#72E5BE"],
+        "1200k-dark": ["#F0A09A", "#C9FFB6", "#DABD74", "#DABD74", "#F0A09A", "#C9FFB6"],
     }
     hue_centers = {
         "red": 20.0,
@@ -368,6 +369,20 @@ def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
         group_centers = np.asarray([members.mean(axis=0) for members in group_members])
         day_min = float(pairwise_distances(normal).min())
         metrics = family["metrics"]["terminal"]
+        normal_distance_to_foregrounds = {}
+        shifted_distance_to_foregrounds = {}
+        for role in ("fg_0", "fg_1", "fg_2"):
+            foreground = hex_to_srgb(family["surfaces"][role])
+            normal_foreground = perceived_lab(np.asarray([foreground]), (1.0, 1.0, 1.0))[0]
+            shifted_foreground = perceived_lab(
+                np.asarray([foreground]), manifest["profiles"][family["profile"]]["rgb_gains"]
+            )[0]
+            normal_distance_to_foregrounds[role] = float(
+                np.linalg.norm(normal - normal_foreground, axis=1).min() * 100.0
+            )
+            shifted_distance_to_foregrounds[role] = float(
+                np.linalg.norm(shifted - shifted_foreground, axis=1).min() * 100.0
+            )
         target_error = float(np.linalg.norm(shifted - transformed_targets, axis=1).max() * 100.0)
 
         assert len(groups) == count
@@ -376,6 +391,18 @@ def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
         assert max(group_spreads) <= 1.5
         assert np.linalg.norm(normal[:, 1:], axis=1).max() <= 0.121
         assert metrics["normal_min_delta_e_ok"] == round(day_min, 2)
+        assert metrics["normal_min_delta_e_ok_to_foregrounds"] == {
+            role: round(distance, 2) for role, distance in normal_distance_to_foregrounds.items()
+        }
+        assert metrics["shifted_min_delta_e_ok_to_foregrounds"] == {
+            role: round(distance, 2) for role, distance in shifted_distance_to_foregrounds.items()
+        }
+        day_fg_0_target = family["terminal_daylight_minimum_fg_0_delta_e_ok_target"]
+        if day_fg_0_target is not None:
+            assert normal_distance_to_foregrounds["fg_0"] >= day_fg_0_target
+        night_fg_0_target = family["terminal_night_minimum_fg_0_delta_e_ok_target"]
+        if night_fg_0_target is not None:
+            assert shifted_distance_to_foregrounds["fg_0"] >= night_fg_0_target
         assert metrics["shifted_group_max_delta_e_ok"] == round(max(group_spreads), 2)
         assert target_error <= 0.15, family["slug"]
         assert metrics["transformed_target_max_delta_e_ok"] == round(target_error, 2)
@@ -447,6 +474,15 @@ def test_readme_bi_state_metrics_match_manifest() -> None:
             f"{family['terminal_minimum_shifted_foreground_contrast']:.2f}:1 |"
         )
         assert expected in text, family["slug"]
+        if family["terminal_daylight_minimum_fg_0_delta_e_ok_target"] is not None:
+            terminal = family["metrics"]["terminal"]
+            terminal_row = (
+                f"| {family['name']} | {terminal['normal_min_delta_e_ok']:.2f} | "
+                f"{terminal['normal_min_delta_e_ok_to_foregrounds']['fg_0']:.2f} | "
+                f"{terminal['shifted_group_center_min_delta_e_ok']:.2f} | "
+                f"{terminal['shifted_min_delta_e_ok_to_foregrounds']['fg_0']:.2f} |"
+            )
+            assert terminal_row in text, family["slug"]
         if family["mode"] == "dark":
             surface = family["metrics"]["surface"]
             luminance = surface["normal_relative_luminance"]

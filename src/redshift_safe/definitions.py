@@ -33,6 +33,8 @@ class FamilyDefinition:
     terminal_night_groups: tuple[int, ...]
     terminal_daylight_minimum_delta_e_ok: float
     terminal_night_minimum_delta_e_ok: float | None
+    terminal_daylight_minimum_fg_0_delta_e_ok: float | None
+    terminal_night_minimum_fg_0_delta_e_ok: float | None
     sequential_anchors: tuple[str, ...]
 
     @property
@@ -168,6 +170,8 @@ FAMILIES = (
         terminal_night_groups=(0, 1, 2, 3, 4, 5),
         terminal_daylight_minimum_delta_e_ok=9.0,
         terminal_night_minimum_delta_e_ok=7.0,
+        terminal_daylight_minimum_fg_0_delta_e_ok=None,
+        terminal_night_minimum_fg_0_delta_e_ok=None,
         sequential_anchors=("#282527", "#51404F", "#7F5E69", "#A17C6C", "#C49D70", "#E2CDA1"),
     ),
     FamilyDefinition(
@@ -211,6 +215,8 @@ FAMILIES = (
         terminal_night_groups=(0, 1, 2, 3, 4, 5),
         terminal_daylight_minimum_delta_e_ok=14.0,
         terminal_night_minimum_delta_e_ok=11.0,
+        terminal_daylight_minimum_fg_0_delta_e_ok=None,
+        terminal_night_minimum_fg_0_delta_e_ok=None,
         sequential_anchors=("#F2E5BC", "#D7BF8D", "#B08061", "#80515A", "#533844", "#252126"),
     ),
     FamilyDefinition(
@@ -237,12 +243,14 @@ FAMILIES = (
         daylight_minimum_delta_e_ok=14.0,
         daylight_minimum_hue_gap_degrees=20.0,
         categorical_shifted_background_contrast_minimum=3.0,
-        terminal_colors=("#EE8B98", "#A4EBA5", "#FECE75", "#C9C7F2"),
-        terminal_transformed_targets=("#EE4C0D", "#A4800E", "#FE700A", "#C96C15"),
+        terminal_colors=("#E9878F", "#72E5BE", "#C0A251", "#A0D3FF"),
+        terminal_transformed_targets=("#E9490C", "#727C0F", "#C05807", "#A07317"),
         terminal_ansi_indices=(0, 1, 2, 3, 0, 1),
         terminal_night_groups=(0, 1, 2, 3),
         terminal_daylight_minimum_delta_e_ok=12.5,
         terminal_night_minimum_delta_e_ok=7.5,
+        terminal_daylight_minimum_fg_0_delta_e_ok=12.5,
+        terminal_night_minimum_fg_0_delta_e_ok=7.5,
         sequential_anchors=("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
     ),
     FamilyDefinition(
@@ -269,12 +277,14 @@ FAMILIES = (
         daylight_minimum_delta_e_ok=20.0,
         daylight_minimum_hue_gap_degrees=45.0,
         categorical_shifted_background_contrast_minimum=3.0,
-        terminal_colors=("#F494B4", "#E2F495", "#FFE4C6"),
-        terminal_transformed_targets=("#F42E00", "#E24B00", "#FF4700"),
+        terminal_colors=("#F0A09A", "#C9FFB6", "#DABD74"),
+        terminal_transformed_targets=("#F03201", "#C94F00", "#DA3A00"),
         terminal_ansi_indices=(0, 1, 2, 2, 0, 1),
         terminal_night_groups=(0, 1, 2),
         terminal_daylight_minimum_delta_e_ok=9.4,
         terminal_night_minimum_delta_e_ok=4.0,
+        terminal_daylight_minimum_fg_0_delta_e_ok=9.4,
+        terminal_night_minimum_fg_0_delta_e_ok=4.0,
         sequential_anchors=("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
     ),
 )

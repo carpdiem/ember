@@ -1,5 +1,5 @@
 {
-  "schema_version": 7,
+  "schema_version": 8,
   "project": "Ember: Redshift Safe Color Palettes",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
   "legacy_aliases": {
@@ -29,6 +29,7 @@
       "optimize commanded daytime aesthetics without weakening transformed outcomes"
     ],
     "cross_state_hue_consistency_required": false,
+    "terminal_distinguishability_reference_role": "fg_0",
     "bg_roles_low_to_high": [
       "bg_0",
       "bg_1",
@@ -155,6 +156,8 @@
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 9.0,
       "terminal_night_minimum_delta_e_ok_target": 7.0,
+      "terminal_daylight_minimum_fg_0_delta_e_ok_target": null,
+      "terminal_night_minimum_fg_0_delta_e_ok_target": null,
       "terminal_minimum_shifted_foreground_contrast": 6.06,
       "categorical": {
         "one": "#6E96D5",
@@ -1729,8 +1732,18 @@
         },
         "terminal": {
           "normal_min_delta_e_ok": 9.09,
+          "normal_min_delta_e_ok_to_foregrounds": {
+            "fg_0": 8.67,
+            "fg_1": 5.46,
+            "fg_2": 14.87
+          },
           "shifted_group_max_delta_e_ok": 0.0,
           "shifted_group_center_min_delta_e_ok": 7.32,
+          "shifted_min_delta_e_ok_to_foregrounds": {
+            "fg_0": 6.58,
+            "fg_1": 3.29,
+            "fg_2": 11.72
+          },
           "transformed_target_max_delta_e_ok": 0.13
         },
         "continuous": {
@@ -1855,6 +1868,8 @@
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 14.0,
       "terminal_night_minimum_delta_e_ok_target": 11.0,
+      "terminal_daylight_minimum_fg_0_delta_e_ok_target": null,
+      "terminal_night_minimum_fg_0_delta_e_ok_target": null,
       "terminal_minimum_shifted_foreground_contrast": 4.76,
       "categorical": {
         "one": "#158F7A",
@@ -3429,8 +3444,18 @@
         },
         "terminal": {
           "normal_min_delta_e_ok": 14.02,
+          "normal_min_delta_e_ok_to_foregrounds": {
+            "fg_0": 9.25,
+            "fg_1": 9.37,
+            "fg_2": 8.1
+          },
           "shifted_group_max_delta_e_ok": 0.0,
           "shifted_group_center_min_delta_e_ok": 11.07,
+          "shifted_min_delta_e_ok_to_foregrounds": {
+            "fg_0": 6.47,
+            "fg_1": 6.54,
+            "fg_2": 4.11
+          },
           "transformed_target_max_delta_e_ok": 0.1
         },
         "continuous": {
@@ -3511,20 +3536,20 @@
       },
       "terminal": {
         "black": "#15110E",
-        "red": "#EE8B98",
-        "green": "#A4EBA5",
-        "yellow": "#FECE75",
-        "blue": "#C9C7F2",
-        "magenta": "#EE8B98",
-        "cyan": "#A4EBA5",
+        "red": "#E9878F",
+        "green": "#72E5BE",
+        "yellow": "#C0A251",
+        "blue": "#A0D3FF",
+        "magenta": "#E9878F",
+        "cyan": "#72E5BE",
         "white": "#E9D3AD",
         "bright_black": "#E9D3AD",
-        "bright_red": "#EE8B98",
-        "bright_green": "#A4EBA5",
-        "bright_yellow": "#FECE75",
-        "bright_blue": "#C9C7F2",
-        "bright_magenta": "#EE8B98",
-        "bright_cyan": "#A4EBA5",
+        "bright_red": "#E9878F",
+        "bright_green": "#72E5BE",
+        "bright_yellow": "#C0A251",
+        "bright_blue": "#A0D3FF",
+        "bright_magenta": "#E9878F",
+        "bright_cyan": "#72E5BE",
         "bright_white": "#E9D3AD"
       },
       "terminal_daylight_color_count": 4,
@@ -3544,14 +3569,16 @@
         3
       ],
       "terminal_transformed_targets": [
-        "#EE4C0D",
-        "#A4800E",
-        "#FE700A",
-        "#C96C15"
+        "#E9490C",
+        "#727C0F",
+        "#C05807",
+        "#A07317"
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 12.5,
       "terminal_night_minimum_delta_e_ok_target": 7.5,
-      "terminal_minimum_shifted_foreground_contrast": 5.53,
+      "terminal_daylight_minimum_fg_0_delta_e_ok_target": 12.5,
+      "terminal_night_minimum_fg_0_delta_e_ok_target": 7.5,
+      "terminal_minimum_shifted_foreground_contrast": 4.54,
       "categorical": {
         "one": "#66B1D4",
         "two": "#DB93A7",
@@ -5120,10 +5147,20 @@
           "transformed_target_max_delta_e_ok": 0.06
         },
         "terminal": {
-          "normal_min_delta_e_ok": 12.54,
+          "normal_min_delta_e_ok": 12.79,
+          "normal_min_delta_e_ok_to_foregrounds": {
+            "fg_0": 13.39,
+            "fg_1": 7.51,
+            "fg_2": 9.82
+          },
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": 7.76,
-          "transformed_target_max_delta_e_ok": 0.07
+          "shifted_group_center_min_delta_e_ok": 7.83,
+          "shifted_min_delta_e_ok_to_foregrounds": {
+            "fg_0": 7.79,
+            "fg_1": 2.69,
+            "fg_2": 7.35
+          },
+          "transformed_target_max_delta_e_ok": 0.14
         },
         "continuous": {
           "normal_lightness_range": 0.7109,
@@ -5203,20 +5240,20 @@
       },
       "terminal": {
         "black": "#130E0B",
-        "red": "#F494B4",
-        "green": "#E2F495",
-        "yellow": "#FFE4C6",
-        "blue": "#FFE4C6",
-        "magenta": "#F494B4",
-        "cyan": "#E2F495",
+        "red": "#F0A09A",
+        "green": "#C9FFB6",
+        "yellow": "#DABD74",
+        "blue": "#DABD74",
+        "magenta": "#F0A09A",
+        "cyan": "#C9FFB6",
         "white": "#FFE5BE",
         "bright_black": "#FFE5BE",
-        "bright_red": "#F494B4",
-        "bright_green": "#E2F495",
-        "bright_yellow": "#FFE4C6",
-        "bright_blue": "#FFE4C6",
-        "bright_magenta": "#F494B4",
-        "bright_cyan": "#E2F495",
+        "bright_red": "#F0A09A",
+        "bright_green": "#C9FFB6",
+        "bright_yellow": "#DABD74",
+        "bright_blue": "#DABD74",
+        "bright_magenta": "#F0A09A",
+        "bright_cyan": "#C9FFB6",
         "bright_white": "#FFE5BE"
       },
       "terminal_daylight_color_count": 3,
@@ -5235,13 +5272,15 @@
         2
       ],
       "terminal_transformed_targets": [
-        "#F42E00",
-        "#E24B00",
-        "#FF4700"
+        "#F03201",
+        "#C94F00",
+        "#DA3A00"
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 9.4,
       "terminal_night_minimum_delta_e_ok_target": 4.0,
-      "terminal_minimum_shifted_foreground_contrast": 5.17,
+      "terminal_daylight_minimum_fg_0_delta_e_ok_target": 9.4,
+      "terminal_night_minimum_fg_0_delta_e_ok_target": 4.0,
+      "terminal_minimum_shifted_foreground_contrast": 4.54,
       "categorical": {
         "one": "#C26D76",
         "two": "#92DBFF",
@@ -6808,10 +6847,20 @@
           "transformed_target_max_delta_e_ok": 0.05
         },
         "terminal": {
-          "normal_min_delta_e_ok": 9.46,
+          "normal_min_delta_e_ok": 10.63,
+          "normal_min_delta_e_ok_to_foregrounds": {
+            "fg_0": 9.63,
+            "fg_1": 4.9,
+            "fg_2": 15.12
+          },
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": 4.1,
-          "transformed_target_max_delta_e_ok": 0.08
+          "shifted_group_center_min_delta_e_ok": 4.19,
+          "shifted_min_delta_e_ok_to_foregrounds": {
+            "fg_0": 4.46,
+            "fg_1": 3.1,
+            "fg_2": 11.14
+          },
+          "transformed_target_max_delta_e_ok": 0.07
         },
         "continuous": {
           "normal_lightness_range": 0.7731,

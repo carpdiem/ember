@@ -253,13 +253,19 @@ contrast required by small monospaced glyphs: `6 / 6`, `6 / 6`, `4 / 4`, and `3 
 across the four families.
 
 The terminal targets preserve conventional ANSI meaning by day and distinct warm identities
-after transformation. Categorical identity follows a looser and more useful contract: every
-slot must remain distinguishable in both states, but its hue does not need to look consistent
-between them. The 2000 K set uses weakly surviving blue for muted sky, rose, brick, and sage
-daytime identities; the 1200 K set uses blue's exact null direction for rose, sky, and apricot.
-The generated manifest records that cross-state hue consistency is not required. Because
-lightness can imply order, categorical charts should still carry identity through labels,
-position, texture, marker, or line style.
+after transformation. Deep terminal banks also treat `fg_0`—the source for ANSI white,
+bright-white, and primary uncolored text—as another simultaneous text identity. Their existing
+day and transformed separation floors apply to every accent-to-`fg_0` comparison. Distances to
+`fg_1` and `fg_2` are published as diagnostics; those softer roles are not additional syntax
+identities without redundant cues.
+
+Categorical identity follows a looser and more useful contract: every slot must remain
+distinguishable in both states, but its hue does not need to look consistent between them. The
+2000 K set uses weakly surviving blue for muted sky, rose, brick, and sage daytime identities;
+the 1200 K set uses blue's exact null direction for rose, sky, and apricot. The generated
+manifest records that cross-state hue consistency is not required. Because lightness can imply
+order, categorical charts should still carry identity through labels, position, texture,
+marker, or line style.
 
 ![Redundant line encoding under deep red](docs/diagrams/redundant-encoding.svg)
 
@@ -285,8 +291,8 @@ formula.
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 6.06:1 |
 | 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 4.76:1 |
-| 2000K Dark | 4 | 16.50 | 12.59 | 0.0903 / 0.0907 | 0.1317 | 5.53:1 |
-| 1200K Dark | 3 | 20.03 | 10.05 | 0.1016 / 0.1086 | 0.1428 | 5.17:1 |
+| 2000K Dark | 4 | 16.50 | 12.59 | 0.0903 / 0.0907 | 0.1317 | 4.54:1 |
+| 1200K Dark | 3 | 20.03 | 10.05 | 0.1016 / 0.1086 | 0.1428 | 4.54:1 |
 
 Deep-profile daytime hue breadth and transformed category/background contrast are separate
 release gates. Contrast here is for graphical category marks, not small text.
@@ -295,6 +301,14 @@ release gates. Contrast here is for graphical category marks, not small text.
 |---|---:|---:|---:|---:|
 | 2000K Dark | 27.75° | ≥ 20° | 3.01:1 | ≥ 3:1 |
 | 1200K Dark | 54.05° | ≥ 45° | 3.01:1 | ≥ 3:1 |
+
+Deep terminal-bank separation includes primary foreground text as well as accent-to-accent
+comparisons:
+
+| Deep family | Day accent min | Day accent → `fg_0` min | Transformed accent min | Transformed accent → `fg_0` min |
+|---|---:|---:|---:|---:|
+| 2000K Dark | 12.79 | 13.39 | 7.83 | 7.79 |
+| 1200K Dark | 10.63 | 9.63 | 4.19 | 4.46 |
 
 Dark-surface measurements use WCAG's sRGB relative-luminance calculation on the exact
 serialized Hex values. The contrast range covers transformed `fg_0` on all six background

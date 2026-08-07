@@ -171,6 +171,20 @@ def _metrics(
     terminal_targets = srgb_to_oklab(
         np.asarray([hex_to_srgb(value) for value in family.terminal_transformed_targets])
     )
+    terminal_normal_distance_to_foregrounds = {}
+    terminal_shifted_distance_to_foregrounds = {}
+    for role in ("fg_0", "fg_1", "fg_2"):
+        foreground = hex_to_srgb(family.surfaces[role])
+        normal_foreground = srgb_to_oklab(foreground)
+        shifted_foreground = perceived_lab(np.asarray([foreground]), gains)[0]
+        terminal_normal_distance_to_foregrounds[role] = round(
+            float(np.linalg.norm(normal_terminal - normal_foreground, axis=1).min() * 100.0),
+            2,
+        )
+        terminal_shifted_distance_to_foregrounds[role] = round(
+            float(np.linalg.norm(shifted_terminal - shifted_foreground, axis=1).min() * 100.0),
+            2,
+        )
     group_ids = sorted(set(family.terminal_night_groups))
     group_members = [
         shifted_terminal[np.asarray(family.terminal_night_groups) == group_id]
@@ -183,12 +197,14 @@ def _metrics(
     group_centers = np.asarray([members.mean(axis=0) for members in group_members])
     terminal_metrics = {
         "normal_min_delta_e_ok": round(float(pairwise_distances(normal_terminal).min()), 2),
+        "normal_min_delta_e_ok_to_foregrounds": terminal_normal_distance_to_foregrounds,
         "shifted_group_max_delta_e_ok": round(max(group_spreads), 2),
         "shifted_group_center_min_delta_e_ok": (
             round(float(pairwise_distances(group_centers).min()), 2)
             if len(group_centers) > 1
             else None
         ),
+        "shifted_min_delta_e_ok_to_foregrounds": terminal_shifted_distance_to_foregrounds,
         "transformed_target_max_delta_e_ok": round(
             float(np.linalg.norm(shifted_terminal - terminal_targets, axis=1).max() * 100.0),
             2,
@@ -293,6 +309,12 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
             family.terminal_daylight_minimum_delta_e_ok
         ),
         "terminal_night_minimum_delta_e_ok_target": (family.terminal_night_minimum_delta_e_ok),
+        "terminal_daylight_minimum_fg_0_delta_e_ok_target": (
+            family.terminal_daylight_minimum_fg_0_delta_e_ok
+        ),
+        "terminal_night_minimum_fg_0_delta_e_ok_target": (
+            family.terminal_night_minimum_fg_0_delta_e_ok
+        ),
         "terminal_minimum_shifted_foreground_contrast": round(
             min(contrast_ratio(value, transformed_background) for value in small_text_terminal),
             2,
@@ -322,7 +344,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 7,
+        "schema_version": 8,
         "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
@@ -345,6 +367,7 @@ def generate_manifest() -> dict[str, Any]:
                 "optimize commanded daytime aesthetics without weakening transformed outcomes",
             ],
             "cross_state_hue_consistency_required": False,
+            "terminal_distinguishability_reference_role": "fg_0",
             "bg_roles_low_to_high": list(BACKGROUND_SURFACE_ROLES),
             "dark_minimum_adjacent_surface_delta_e_ok": (DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK),
             "minimum_shifted_foreground_contrast": MINIMUM_SHIFTED_FOREGROUND_CONTRAST,
