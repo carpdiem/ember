@@ -35,6 +35,23 @@ class FamilyDefinition:
     terminal_night_minimum_delta_e_ok: float | None
     terminal_daylight_minimum_fg_0_delta_e_ok: float | None
     terminal_night_minimum_fg_0_delta_e_ok: float | None
+    terminal_daylight_minimum_fg_1_delta_e_ok: float | None
+    terminal_night_minimum_fg_1_delta_e_ok: float | None
+    terminal_daylight_minimum_fg_2_delta_e_ok: float | None
+    terminal_night_minimum_fg_2_delta_e_ok: float | None
+    foreground_daylight_minimum_adjacent_delta_e_ok: float | None
+    foreground_daylight_maximum_adjacent_delta_e_ok: float | None
+    foreground_night_minimum_adjacent_delta_e_ok: float | None
+    foreground_night_maximum_adjacent_delta_e_ok: float | None
+    foreground_minimum_lightness_gap_ratio: float | None
+    foreground_daylight_minimum_lightness_share: float | None
+    foreground_night_minimum_lightness_share: float | None
+    foreground_maximum_hue_span_degrees: float | None
+    foreground_night_maximum_hue_span_degrees: float | None
+    foreground_maximum_chroma: float | None
+    foreground_daylight_minimum_chroma_vector_cosine: float | None
+    foreground_night_minimum_chroma_vector_cosine: float | None
+    foreground_chroma_order_tolerance: float | None
     sequential_anchors: tuple[str, ...]
 
     @property
@@ -172,6 +189,23 @@ FAMILIES = (
         terminal_night_minimum_delta_e_ok=7.0,
         terminal_daylight_minimum_fg_0_delta_e_ok=None,
         terminal_night_minimum_fg_0_delta_e_ok=None,
+        terminal_daylight_minimum_fg_1_delta_e_ok=None,
+        terminal_night_minimum_fg_1_delta_e_ok=None,
+        terminal_daylight_minimum_fg_2_delta_e_ok=None,
+        terminal_night_minimum_fg_2_delta_e_ok=None,
+        foreground_daylight_minimum_adjacent_delta_e_ok=None,
+        foreground_daylight_maximum_adjacent_delta_e_ok=None,
+        foreground_night_minimum_adjacent_delta_e_ok=None,
+        foreground_night_maximum_adjacent_delta_e_ok=None,
+        foreground_minimum_lightness_gap_ratio=None,
+        foreground_daylight_minimum_lightness_share=None,
+        foreground_night_minimum_lightness_share=None,
+        foreground_maximum_hue_span_degrees=None,
+        foreground_night_maximum_hue_span_degrees=None,
+        foreground_maximum_chroma=None,
+        foreground_daylight_minimum_chroma_vector_cosine=None,
+        foreground_night_minimum_chroma_vector_cosine=None,
+        foreground_chroma_order_tolerance=None,
         sequential_anchors=("#282527", "#51404F", "#7F5E69", "#A17C6C", "#C49D70", "#E2CDA1"),
     ),
     FamilyDefinition(
@@ -217,6 +251,23 @@ FAMILIES = (
         terminal_night_minimum_delta_e_ok=11.0,
         terminal_daylight_minimum_fg_0_delta_e_ok=None,
         terminal_night_minimum_fg_0_delta_e_ok=None,
+        terminal_daylight_minimum_fg_1_delta_e_ok=None,
+        terminal_night_minimum_fg_1_delta_e_ok=None,
+        terminal_daylight_minimum_fg_2_delta_e_ok=None,
+        terminal_night_minimum_fg_2_delta_e_ok=None,
+        foreground_daylight_minimum_adjacent_delta_e_ok=None,
+        foreground_daylight_maximum_adjacent_delta_e_ok=None,
+        foreground_night_minimum_adjacent_delta_e_ok=None,
+        foreground_night_maximum_adjacent_delta_e_ok=None,
+        foreground_minimum_lightness_gap_ratio=None,
+        foreground_daylight_minimum_lightness_share=None,
+        foreground_night_minimum_lightness_share=None,
+        foreground_maximum_hue_span_degrees=None,
+        foreground_night_maximum_hue_span_degrees=None,
+        foreground_maximum_chroma=None,
+        foreground_daylight_minimum_chroma_vector_cosine=None,
+        foreground_night_minimum_chroma_vector_cosine=None,
+        foreground_chroma_order_tolerance=None,
         sequential_anchors=("#F2E5BC", "#D7BF8D", "#B08061", "#80515A", "#533844", "#252126"),
     ),
     FamilyDefinition(
@@ -231,9 +282,9 @@ FAMILIES = (
             "bg_3": "#1E1814",
             "bg_4": "#271F1B",
             "bg_5": "#30221B",
-            "fg_0": "#E9D3AD",
-            "fg_1": "#C8B38F",
-            "fg_2": "#9F8B70",
+            "fg_0": "#EED5AE",
+            "fg_1": "#D3BB99",
+            "fg_2": "#AA9D8B",
         },
         # The four transformed identities remain distinct and clear 3:1 against bg_0.
         # Their daytime preimages deliberately use unrelated hue families: weak blue is
@@ -243,14 +294,31 @@ FAMILIES = (
         daylight_minimum_delta_e_ok=14.0,
         daylight_minimum_hue_gap_degrees=20.0,
         categorical_shifted_background_contrast_minimum=3.0,
-        terminal_colors=("#E9878F", "#72E5BE", "#C0A251", "#A0D3FF"),
-        terminal_transformed_targets=("#E9490C", "#727C0F", "#C05807", "#A07317"),
+        terminal_colors=("#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB"),
+        terminal_transformed_targets=("#EC4C0E", "#747C10", "#C35507", "#A77216"),
         terminal_ansi_indices=(0, 1, 2, 3, 0, 1),
         terminal_night_groups=(0, 1, 2, 3),
         terminal_daylight_minimum_delta_e_ok=12.5,
         terminal_night_minimum_delta_e_ok=7.5,
         terminal_daylight_minimum_fg_0_delta_e_ok=12.5,
         terminal_night_minimum_fg_0_delta_e_ok=7.5,
+        terminal_daylight_minimum_fg_1_delta_e_ok=7.5,
+        terminal_night_minimum_fg_1_delta_e_ok=5.0,
+        terminal_daylight_minimum_fg_2_delta_e_ok=6.0,
+        terminal_night_minimum_fg_2_delta_e_ok=4.0,
+        foreground_daylight_minimum_adjacent_delta_e_ok=8.0,
+        foreground_daylight_maximum_adjacent_delta_e_ok=16.0,
+        foreground_night_minimum_adjacent_delta_e_ok=6.0,
+        foreground_night_maximum_adjacent_delta_e_ok=12.0,
+        foreground_minimum_lightness_gap_ratio=0.70,
+        foreground_daylight_minimum_lightness_share=0.92,
+        foreground_night_minimum_lightness_share=0.92,
+        foreground_maximum_hue_span_degrees=12.0,
+        foreground_night_maximum_hue_span_degrees=3.0,
+        foreground_maximum_chroma=0.065,
+        foreground_daylight_minimum_chroma_vector_cosine=0.95,
+        foreground_night_minimum_chroma_vector_cosine=0.98,
+        foreground_chroma_order_tolerance=0.003,
         sequential_anchors=("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
     ),
     FamilyDefinition(
@@ -265,9 +333,9 @@ FAMILIES = (
             "bg_3": "#1C1511",
             "bg_4": "#251C17",
             "bg_5": "#2E1E17",
-            "fg_0": "#FFE5BE",
-            "fg_1": "#CBB58F",
-            "fg_2": "#A28B70",
+            "fg_0": "#FFE5BD",
+            "fg_1": "#CBAF89",
+            "fg_2": "#A18C73",
         },
         # Three warm transformed identities clear 3:1 against bg_0. Their daytime
         # preimages use blue's exact null direction for a mature rose/sky/apricot triad;
@@ -277,14 +345,31 @@ FAMILIES = (
         daylight_minimum_delta_e_ok=20.0,
         daylight_minimum_hue_gap_degrees=45.0,
         categorical_shifted_background_contrast_minimum=3.0,
-        terminal_colors=("#F0A09A", "#C9FFB6", "#DABD74"),
-        terminal_transformed_targets=("#F03201", "#C94F00", "#DA3A00"),
+        terminal_colors=("#F29298", "#C9FFB4", "#DDCD81"),
+        terminal_transformed_targets=("#F22D00", "#C94F00", "#DD3F00"),
         terminal_ansi_indices=(0, 1, 2, 2, 0, 1),
         terminal_night_groups=(0, 1, 2),
         terminal_daylight_minimum_delta_e_ok=9.4,
         terminal_night_minimum_delta_e_ok=4.0,
         terminal_daylight_minimum_fg_0_delta_e_ok=9.4,
         terminal_night_minimum_fg_0_delta_e_ok=4.0,
+        terminal_daylight_minimum_fg_1_delta_e_ok=6.0,
+        terminal_night_minimum_fg_1_delta_e_ok=4.0,
+        terminal_daylight_minimum_fg_2_delta_e_ok=5.0,
+        terminal_night_minimum_fg_2_delta_e_ok=3.5,
+        foreground_daylight_minimum_adjacent_delta_e_ok=11.0,
+        foreground_daylight_maximum_adjacent_delta_e_ok=17.5,
+        foreground_night_minimum_adjacent_delta_e_ok=9.0,
+        foreground_night_maximum_adjacent_delta_e_ok=12.0,
+        foreground_minimum_lightness_gap_ratio=0.70,
+        foreground_daylight_minimum_lightness_share=0.92,
+        foreground_night_minimum_lightness_share=0.92,
+        foreground_maximum_hue_span_degrees=12.0,
+        foreground_night_maximum_hue_span_degrees=3.0,
+        foreground_maximum_chroma=0.065,
+        foreground_daylight_minimum_chroma_vector_cosine=0.95,
+        foreground_night_minimum_chroma_vector_cosine=0.98,
+        foreground_chroma_order_tolerance=0.003,
         sequential_anchors=("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
     ),
 )

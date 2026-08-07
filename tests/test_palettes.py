@@ -25,9 +25,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 8
+    assert manifest["schema_version"] == 9
     assert manifest["quality_targets"]["cross_state_hue_consistency_required"] is False
     assert manifest["quality_targets"]["terminal_distinguishability_reference_role"] == "fg_0"
+    assert manifest["quality_targets"]["terminal_distinguishability_reference_roles"] == [
+        "fg_0",
+        "fg_1",
+        "fg_2",
+    ]
     assert list(manifest["families"]) == [
         "3400k-dark",
         "3400k-light",
@@ -75,8 +80,8 @@ def test_numbered_surface_roles_have_locked_values() -> None:
     expected_foregrounds = {
         "3400k-dark": ["#DDD0B2", "#BDAE93", "#928374"],
         "3400k-light": ["#342F2C", "#504945", "#665C54"],
-        "2000k-dark": ["#E9D3AD", "#C8B38F", "#9F8B70"],
-        "1200k-dark": ["#FFE5BE", "#CBB58F", "#A28B70"],
+        "2000k-dark": ["#EED5AE", "#D3BB99", "#AA9D8B"],
+        "1200k-dark": ["#FFE5BD", "#CBAF89", "#A18C73"],
     }
     for slug, values in expected.items():
         surfaces = manifest["families"][slug]["surfaces"]
@@ -91,15 +96,15 @@ def test_deep_accent_selections_have_locked_two_stage_values() -> None:
         "2000k-dark": {
             "categorical": ["#66B1D4", "#DB93A7", "#A46056", "#A3DBA9"],
             "categorical_transformed_targets": ["#666012", "#DB500F", "#A43407", "#A3770F"],
-            "terminal": ["#E9878F", "#72E5BE", "#C0A251", "#A0D3FF"],
-            "terminal_transformed_targets": ["#E9490C", "#727C0F", "#C05807", "#A07317"],
+            "terminal": ["#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB"],
+            "terminal_transformed_targets": ["#EC4C0E", "#747C10", "#C35507", "#A77216"],
             "terminal_ansi_indices": [0, 1, 2, 3, 0, 1],
         },
         "1200k-dark": {
             "categorical": ["#C26D76", "#92DBFF", "#EFB371"],
             "categorical_transformed_targets": ["#C22200", "#924400", "#EF3700"],
-            "terminal": ["#F0A09A", "#C9FFB6", "#DABD74"],
-            "terminal_transformed_targets": ["#F03201", "#C94F00", "#DA3A00"],
+            "terminal": ["#F29298", "#C9FFB4", "#DDCD81"],
+            "terminal_transformed_targets": ["#F22D00", "#C94F00", "#DD3F00"],
             "terminal_ansi_indices": [0, 1, 2, 2, 0, 1],
         },
     }
@@ -125,8 +130,8 @@ def test_terminal_ansi_roles_have_semantic_commanded_hues() -> None:
     expected = {
         "3400k-dark": ["#F5AD9A", "#9ABEA2", "#CEA866", "#B4C6F7", "#D895C2", "#70DBD8"],
         "3400k-light": ["#470D05", "#174213", "#745C08", "#162252", "#643563", "#00766E"],
-        "2000k-dark": ["#E9878F", "#72E5BE", "#C0A251", "#A0D3FF", "#E9878F", "#72E5BE"],
-        "1200k-dark": ["#F0A09A", "#C9FFB6", "#DABD74", "#DABD74", "#F0A09A", "#C9FFB6"],
+        "2000k-dark": ["#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB", "#EC8B96", "#74E5C0"],
+        "1200k-dark": ["#F29298", "#C9FFB4", "#DDCD81", "#DDCD81", "#F29298", "#C9FFB4"],
     }
     hue_centers = {
         "red": 20.0,
@@ -272,6 +277,101 @@ def test_numbered_foregrounds_meet_role_specific_contrast_floors() -> None:
             assert min(measured) >= target, (family["slug"], foreground)
 
 
+def test_deep_foreground_ladders_remain_connected_in_both_states() -> None:
+    manifest = generate_manifest()
+    roles = ("fg_0", "fg_1", "fg_2")
+    for family in manifest["families"].values():
+        day_target = family["foreground_daylight_minimum_adjacent_delta_e_ok_target"]
+        if day_target is None:
+            continue
+        colors = np.asarray([hex_to_srgb(family["surfaces"][role]) for role in roles])
+        normal = perceived_lab(colors, (1.0, 1.0, 1.0))
+        shifted = perceived_lab(colors, manifest["profiles"][family["profile"]]["rgb_gains"])
+        normal_vectors = np.diff(normal, axis=0)
+        shifted_vectors = np.diff(shifted, axis=0)
+        normal_distances = np.linalg.norm(normal_vectors, axis=1)
+        shifted_distances = np.linalg.norm(shifted_vectors, axis=1)
+        normal_adjacent = normal_distances * 100.0
+        shifted_adjacent = shifted_distances * 100.0
+        normal_gaps = -np.diff(normal[:, 0])
+        shifted_gaps = -np.diff(shifted[:, 0])
+        normal_gap_ratio = float(normal_gaps.min() / normal_gaps.max())
+        shifted_gap_ratio = float(shifted_gaps.min() / shifted_gaps.max())
+        normal_shares = np.abs(normal_vectors[:, 0]) / normal_distances
+        shifted_shares = np.abs(shifted_vectors[:, 0]) / shifted_distances
+        normal_chroma = np.linalg.norm(normal[:, 1:], axis=1)
+        shifted_chroma = np.linalg.norm(shifted[:, 1:], axis=1)
+
+        def hue_span(colors: np.ndarray) -> float:
+            hues = np.sort(np.degrees(np.arctan2(colors[:, 2], colors[:, 1])) % 360.0)
+            gaps = np.diff(np.concatenate((hues, hues[:1] + 360.0)))
+            return float(360.0 - gaps.max())
+
+        normal_hue_span = hue_span(normal)
+        shifted_hue_span = hue_span(shifted)
+
+        def minimum_chroma_vector_cosine(colors: np.ndarray) -> float:
+            chroma = colors[:, 1:]
+            unit = chroma / np.linalg.norm(chroma, axis=1, keepdims=True)
+            similarities = unit @ unit.T
+            return float(similarities[np.triu_indices(len(colors), k=1)].min())
+
+        normal_cosine = minimum_chroma_vector_cosine(normal)
+        shifted_cosine = minimum_chroma_vector_cosine(shifted)
+        metrics = family["metrics"]["foreground_ladder"]
+
+        assert np.all(np.diff(normal[:, 0]) < 0.0), family["slug"]
+        assert np.all(np.diff(shifted[:, 0]) < 0.0), family["slug"]
+        assert normal_adjacent.min() >= day_target
+        assert (
+            normal_adjacent.max()
+            <= family["foreground_daylight_maximum_adjacent_delta_e_ok_target"]
+        )
+        assert (
+            shifted_adjacent.min() >= family["foreground_night_minimum_adjacent_delta_e_ok_target"]
+        )
+        assert (
+            shifted_adjacent.max() <= family["foreground_night_maximum_adjacent_delta_e_ok_target"]
+        )
+        gap_ratio_target = family["foreground_minimum_lightness_gap_ratio_target"]
+        assert normal_gap_ratio >= gap_ratio_target
+        assert shifted_gap_ratio >= gap_ratio_target
+        assert normal_shares.min() >= family["foreground_daylight_minimum_lightness_share_target"]
+        assert shifted_shares.min() >= family["foreground_night_minimum_lightness_share_target"]
+        assert normal_hue_span <= family["foreground_maximum_hue_span_degrees_target"]
+        assert shifted_hue_span <= family["foreground_night_maximum_hue_span_degrees_target"]
+        assert normal_chroma.max() <= family["foreground_maximum_chroma_target"]
+        assert normal_cosine >= family["foreground_daylight_minimum_chroma_vector_cosine_target"]
+        assert shifted_cosine >= family["foreground_night_minimum_chroma_vector_cosine_target"]
+        tolerance = family["foreground_chroma_order_tolerance"]
+        assert np.diff(normal_chroma).max() <= tolerance
+        assert np.diff(shifted_chroma).max() <= tolerance
+        assert metrics["normal_adjacent_delta_e_ok"] == [
+            round(value, 2) for value in normal_adjacent
+        ]
+        assert metrics["shifted_adjacent_delta_e_ok"] == [
+            round(value, 2) for value in shifted_adjacent
+        ]
+        assert metrics["normal_adjacent_lightness_share"] == [
+            round(float(value), 4) for value in normal_shares
+        ]
+        assert metrics["shifted_adjacent_lightness_share"] == [
+            round(float(value), 4) for value in shifted_shares
+        ]
+        assert metrics["normal_lightness_gap_ratio"] == round(normal_gap_ratio, 4)
+        assert metrics["shifted_lightness_gap_ratio"] == round(shifted_gap_ratio, 4)
+        assert metrics["normal_hue_span_degrees"] == round(normal_hue_span, 2)
+        assert metrics["shifted_hue_span_degrees"] == round(shifted_hue_span, 2)
+        assert metrics["normal_chroma"] == {
+            role: round(float(normal_chroma[index]), 4) for index, role in enumerate(roles)
+        }
+        assert metrics["shifted_chroma"] == {
+            role: round(float(shifted_chroma[index]), 4) for index, role in enumerate(roles)
+        }
+        assert metrics["normal_minimum_chroma_vector_cosine"] == round(normal_cosine, 4)
+        assert metrics["shifted_minimum_chroma_vector_cosine"] == round(shifted_cosine, 4)
+
+
 def test_bg_5_remains_visible_from_the_base_after_shift() -> None:
     manifest = generate_manifest()
     for family in manifest["families"].values():
@@ -403,6 +503,13 @@ def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
         night_fg_0_target = family["terminal_night_minimum_fg_0_delta_e_ok_target"]
         if night_fg_0_target is not None:
             assert shifted_distance_to_foregrounds["fg_0"] >= night_fg_0_target
+        for role in ("fg_1", "fg_2"):
+            day_target = family[f"terminal_daylight_minimum_{role}_delta_e_ok_target"]
+            if day_target is not None:
+                assert normal_distance_to_foregrounds[role] >= day_target
+            night_target = family[f"terminal_night_minimum_{role}_delta_e_ok_target"]
+            if night_target is not None:
+                assert shifted_distance_to_foregrounds[role] >= night_target
         assert metrics["shifted_group_max_delta_e_ok"] == round(max(group_spreads), 2)
         assert target_error <= 0.15, family["slug"]
         assert metrics["transformed_target_max_delta_e_ok"] == round(target_error, 2)
@@ -479,8 +586,12 @@ def test_readme_bi_state_metrics_match_manifest() -> None:
             terminal_row = (
                 f"| {family['name']} | {terminal['normal_min_delta_e_ok']:.2f} | "
                 f"{terminal['normal_min_delta_e_ok_to_foregrounds']['fg_0']:.2f} | "
+                f"{terminal['normal_min_delta_e_ok_to_foregrounds']['fg_1']:.2f} | "
+                f"{terminal['normal_min_delta_e_ok_to_foregrounds']['fg_2']:.2f} | "
                 f"{terminal['shifted_group_center_min_delta_e_ok']:.2f} | "
-                f"{terminal['shifted_min_delta_e_ok_to_foregrounds']['fg_0']:.2f} |"
+                f"{terminal['shifted_min_delta_e_ok_to_foregrounds']['fg_0']:.2f} | "
+                f"{terminal['shifted_min_delta_e_ok_to_foregrounds']['fg_1']:.2f} | "
+                f"{terminal['shifted_min_delta_e_ok_to_foregrounds']['fg_2']:.2f} |"
             )
             assert terminal_row in text, family["slug"]
         if family["mode"] == "dark":

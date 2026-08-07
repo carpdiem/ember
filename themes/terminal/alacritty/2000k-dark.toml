@@ -2,28 +2,28 @@
 # Family: 2000K Dark
 [colors.primary]
 background = "#070504"
-foreground = "#E9D3AD"
+foreground = "#EED5AE"
 
 [colors.selection]
 background = "#30221B"
-text = "#E9D3AD"
+text = "#EED5AE"
 
 [colors.normal]
 black = "#15110E"
-red = "#E9878F"
-green = "#72E5BE"
-yellow = "#C0A251"
-blue = "#A0D3FF"
-magenta = "#E9878F"
-cyan = "#72E5BE"
-white = "#E9D3AD"
+red = "#EC8B96"
+green = "#74E5C0"
+yellow = "#C39C49"
+blue = "#A7D1FB"
+magenta = "#EC8B96"
+cyan = "#74E5C0"
+white = "#EED5AE"
 
 [colors.bright]
-black = "#E9D3AD"
-red = "#E9878F"
-green = "#72E5BE"
-yellow = "#C0A251"
-blue = "#A0D3FF"
-magenta = "#E9878F"
-cyan = "#72E5BE"
-white = "#E9D3AD"
+black = "#EED5AE"
+red = "#EC8B96"
+green = "#74E5C0"
+yellow = "#C39C49"
+blue = "#A7D1FB"
+magenta = "#EC8B96"
+cyan = "#74E5C0"
+white = "#EED5AE"

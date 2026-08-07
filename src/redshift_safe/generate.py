@@ -68,6 +68,26 @@ def _minimum_hue_gap_degrees(colors: np.ndarray) -> float:
     return float(min(gaps))
 
 
+def _hue_span_degrees(colors: np.ndarray) -> float:
+    """Return the smallest circular hue arc containing the chromatic colors."""
+
+    chromatic = colors[np.linalg.norm(colors[:, 1:], axis=1) >= 0.02]
+    if len(chromatic) < 2:
+        return 0.0
+    hues = np.sort(np.degrees(np.arctan2(chromatic[:, 2], chromatic[:, 1])) % 360.0)
+    gaps = np.diff(np.concatenate((hues, hues[:1] + 360.0)))
+    return float(360.0 - gaps.max())
+
+
+def _minimum_chroma_vector_cosine(colors: np.ndarray) -> float:
+    """Return the least aligned pair of Oklab chroma vectors."""
+
+    chroma = colors[:, 1:]
+    unit = chroma / np.linalg.norm(chroma, axis=1, keepdims=True)
+    similarities = unit @ unit.T
+    return float(similarities[np.triu_indices(len(colors), k=1)].min())
+
+
 def _terminal_colors(family: FamilyDefinition) -> list[str]:
     """Expand authored semantic accents into the six ANSI color roles."""
 
@@ -171,18 +191,81 @@ def _metrics(
     terminal_targets = srgb_to_oklab(
         np.asarray([hex_to_srgb(value) for value in family.terminal_transformed_targets])
     )
+    foreground_roles = ("fg_0", "fg_1", "fg_2")
+    foreground_colors = np.asarray(
+        [hex_to_srgb(family.surfaces[role]) for role in foreground_roles]
+    )
+    normal_foregrounds = srgb_to_oklab(foreground_colors)
+    shifted_foregrounds = perceived_lab(foreground_colors, gains)
+    normal_foreground_vectors = np.diff(normal_foregrounds, axis=0)
+    shifted_foreground_vectors = np.diff(shifted_foregrounds, axis=0)
+    normal_foreground_adjacent = np.linalg.norm(normal_foreground_vectors, axis=1)
+    shifted_foreground_adjacent = np.linalg.norm(shifted_foreground_vectors, axis=1)
+    normal_foreground_lightness_gaps = -np.diff(normal_foregrounds[:, 0])
+    shifted_foreground_lightness_gaps = -np.diff(shifted_foregrounds[:, 0])
+    foreground_metrics = {
+        "normal_adjacent_delta_e_ok": [
+            round(float(distance * 100.0), 2) for distance in normal_foreground_adjacent
+        ],
+        "shifted_adjacent_delta_e_ok": [
+            round(float(distance * 100.0), 2) for distance in shifted_foreground_adjacent
+        ],
+        "normal_adjacent_lightness_share": [
+            round(float(abs(vector[0]) / distance), 4)
+            for vector, distance in zip(
+                normal_foreground_vectors, normal_foreground_adjacent, strict=True
+            )
+        ],
+        "shifted_adjacent_lightness_share": [
+            round(float(abs(vector[0]) / distance), 4)
+            for vector, distance in zip(
+                shifted_foreground_vectors, shifted_foreground_adjacent, strict=True
+            )
+        ],
+        "normal_lightness_gap_ratio": round(
+            float(normal_foreground_lightness_gaps.min() / normal_foreground_lightness_gaps.max()),
+            4,
+        ),
+        "shifted_lightness_gap_ratio": round(
+            float(
+                shifted_foreground_lightness_gaps.min() / shifted_foreground_lightness_gaps.max()
+            ),
+            4,
+        ),
+        "normal_lightness": {
+            role: round(float(normal_foregrounds[index, 0]), 4)
+            for index, role in enumerate(foreground_roles)
+        },
+        "normal_chroma": {
+            role: round(float(np.linalg.norm(normal_foregrounds[index, 1:])), 4)
+            for index, role in enumerate(foreground_roles)
+        },
+        "shifted_chroma": {
+            role: round(float(np.linalg.norm(shifted_foregrounds[index, 1:])), 4)
+            for index, role in enumerate(foreground_roles)
+        },
+        "normal_hue_span_degrees": round(_hue_span_degrees(normal_foregrounds), 2),
+        "shifted_hue_span_degrees": round(_hue_span_degrees(shifted_foregrounds), 2),
+        "normal_minimum_chroma_vector_cosine": round(
+            _minimum_chroma_vector_cosine(normal_foregrounds), 4
+        ),
+        "shifted_minimum_chroma_vector_cosine": round(
+            _minimum_chroma_vector_cosine(shifted_foregrounds), 4
+        ),
+    }
     terminal_normal_distance_to_foregrounds = {}
     terminal_shifted_distance_to_foregrounds = {}
-    for role in ("fg_0", "fg_1", "fg_2"):
-        foreground = hex_to_srgb(family.surfaces[role])
-        normal_foreground = srgb_to_oklab(foreground)
-        shifted_foreground = perceived_lab(np.asarray([foreground]), gains)[0]
+    for index, role in enumerate(foreground_roles):
         terminal_normal_distance_to_foregrounds[role] = round(
-            float(np.linalg.norm(normal_terminal - normal_foreground, axis=1).min() * 100.0),
+            float(
+                np.linalg.norm(normal_terminal - normal_foregrounds[index], axis=1).min() * 100.0
+            ),
             2,
         )
         terminal_shifted_distance_to_foregrounds[role] = round(
-            float(np.linalg.norm(shifted_terminal - shifted_foreground, axis=1).min() * 100.0),
+            float(
+                np.linalg.norm(shifted_terminal - shifted_foregrounds[index], axis=1).min() * 100.0
+            ),
             2,
         )
     group_ids = sorted(set(family.terminal_night_groups))
@@ -262,6 +345,7 @@ def _metrics(
     return {
         "categorical": category_metrics,
         "terminal": terminal_metrics,
+        "foreground_ladder": foreground_metrics,
         "continuous": sequence_metrics,
         "surface": surface_metrics,
         "shifted_text_contrast": text_metrics,
@@ -315,6 +399,51 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "terminal_night_minimum_fg_0_delta_e_ok_target": (
             family.terminal_night_minimum_fg_0_delta_e_ok
         ),
+        "terminal_daylight_minimum_fg_1_delta_e_ok_target": (
+            family.terminal_daylight_minimum_fg_1_delta_e_ok
+        ),
+        "terminal_night_minimum_fg_1_delta_e_ok_target": (
+            family.terminal_night_minimum_fg_1_delta_e_ok
+        ),
+        "terminal_daylight_minimum_fg_2_delta_e_ok_target": (
+            family.terminal_daylight_minimum_fg_2_delta_e_ok
+        ),
+        "terminal_night_minimum_fg_2_delta_e_ok_target": (
+            family.terminal_night_minimum_fg_2_delta_e_ok
+        ),
+        "foreground_daylight_minimum_adjacent_delta_e_ok_target": (
+            family.foreground_daylight_minimum_adjacent_delta_e_ok
+        ),
+        "foreground_daylight_maximum_adjacent_delta_e_ok_target": (
+            family.foreground_daylight_maximum_adjacent_delta_e_ok
+        ),
+        "foreground_night_minimum_adjacent_delta_e_ok_target": (
+            family.foreground_night_minimum_adjacent_delta_e_ok
+        ),
+        "foreground_night_maximum_adjacent_delta_e_ok_target": (
+            family.foreground_night_maximum_adjacent_delta_e_ok
+        ),
+        "foreground_minimum_lightness_gap_ratio_target": (
+            family.foreground_minimum_lightness_gap_ratio
+        ),
+        "foreground_daylight_minimum_lightness_share_target": (
+            family.foreground_daylight_minimum_lightness_share
+        ),
+        "foreground_night_minimum_lightness_share_target": (
+            family.foreground_night_minimum_lightness_share
+        ),
+        "foreground_maximum_hue_span_degrees_target": (family.foreground_maximum_hue_span_degrees),
+        "foreground_night_maximum_hue_span_degrees_target": (
+            family.foreground_night_maximum_hue_span_degrees
+        ),
+        "foreground_maximum_chroma_target": family.foreground_maximum_chroma,
+        "foreground_daylight_minimum_chroma_vector_cosine_target": (
+            family.foreground_daylight_minimum_chroma_vector_cosine
+        ),
+        "foreground_night_minimum_chroma_vector_cosine_target": (
+            family.foreground_night_minimum_chroma_vector_cosine
+        ),
+        "foreground_chroma_order_tolerance": family.foreground_chroma_order_tolerance,
         "terminal_minimum_shifted_foreground_contrast": round(
             min(contrast_ratio(value, transformed_background) for value in small_text_terminal),
             2,
@@ -344,7 +473,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 8,
+        "schema_version": 9,
         "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
@@ -368,6 +497,13 @@ def generate_manifest() -> dict[str, Any]:
             ],
             "cross_state_hue_consistency_required": False,
             "terminal_distinguishability_reference_role": "fg_0",
+            "terminal_distinguishability_reference_roles": ["fg_0", "fg_1", "fg_2"],
+            "joint_terminal_optimization_priority": [
+                "primary foreground reading quality",
+                "connected foreground hierarchy",
+                "accent separation from every foreground role",
+                "accent pairwise separation and ANSI semantics",
+            ],
             "bg_roles_low_to_high": list(BACKGROUND_SURFACE_ROLES),
             "dark_minimum_adjacent_surface_delta_e_ok": (DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK),
             "minimum_shifted_foreground_contrast": MINIMUM_SHIFTED_FOREGROUND_CONTRAST,

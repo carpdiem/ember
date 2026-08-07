@@ -253,11 +253,15 @@ contrast required by small monospaced glyphs: `6 / 6`, `6 / 6`, `4 / 4`, and `3 
 across the four families.
 
 The terminal targets preserve conventional ANSI meaning by day and distinct warm identities
-after transformation. Deep terminal banks also treat `fg_0`—the source for ANSI white,
-bright-white, and primary uncolored text—as another simultaneous text identity. Their existing
-day and transformed separation floors apply to every accent-to-`fg_0` comparison. Distances to
-`fg_1` and `fg_2` are published as diagnostics; those softer roles are not additional syntax
-identities without redundant cues.
+after transformation. Deep terminal banks jointly optimize the accents with `fg_0`, `fg_1`, and
+`fg_2` rather than treating the neutral ladder as fixed infrastructure. `fg_0`—the source for
+ANSI white, bright-white, and primary uncolored text—keeps the strongest separation floors and
+highest design priority. The softer roles have lower but explicit accent-separation gates.
+
+The three foregrounds remain one connected warm-neutral ladder: lightness decreases
+monotonically, commanded hue stays within a narrow arc, chroma remains bounded, and adjacent
+roles clear profile-specific day and transformed distance floors. This prevents an optimizer
+from solving accent collisions by turning ordinary text into three unrelated colors.
 
 Categorical identity follows a looser and more useful contract: every slot must remain
 distinguishable in both states, but its hue does not need to look consistent between them. The
@@ -291,8 +295,8 @@ formula.
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 6.06:1 |
 | 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 4.76:1 |
-| 2000K Dark | 4 | 16.50 | 12.59 | 0.0903 / 0.0907 | 0.1317 | 4.54:1 |
-| 1200K Dark | 3 | 20.03 | 10.05 | 0.1016 / 0.1086 | 0.1428 | 4.54:1 |
+| 2000K Dark | 4 | 16.50 | 12.59 | 0.0903 / 0.0907 | 0.1317 | 4.52:1 |
+| 1200K Dark | 3 | 20.03 | 10.05 | 0.1016 / 0.1086 | 0.1428 | 4.55:1 |
 
 Deep-profile daytime hue breadth and transformed category/background contrast are separate
 release gates. Contrast here is for graphical category marks, not small text.
@@ -302,13 +306,20 @@ release gates. Contrast here is for graphical category marks, not small text.
 | 2000K Dark | 27.75° | ≥ 20° | 3.01:1 | ≥ 3:1 |
 | 1200K Dark | 54.05° | ≥ 45° | 3.01:1 | ≥ 3:1 |
 
-Deep terminal-bank separation includes primary foreground text as well as accent-to-accent
-comparisons:
+Deep terminal-bank separation includes the complete foreground ladder as well as
+accent-to-accent comparisons:
 
-| Deep family | Day accent min | Day accent → `fg_0` min | Transformed accent min | Transformed accent → `fg_0` min |
-|---|---:|---:|---:|---:|
-| 2000K Dark | 12.79 | 13.39 | 7.83 | 7.79 |
-| 1200K Dark | 10.63 | 9.63 | 4.19 | 4.46 |
+| Deep family | Day accent min | Day → `fg_0` | Day → `fg_1` | Day → `fg_2` | Transformed accent min | Transformed → `fg_0` | Transformed → `fg_1` | Transformed → `fg_2` |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 2000K Dark | 12.62 | 13.73 | 10.86 | 8.25 | 7.75 | 7.64 | 5.03 | 4.75 |
+| 1200K Dark | 12.35 | 9.69 | 8.96 | 14.68 | 4.13 | 4.49 | 4.13 | 11.29 |
+
+Foreground coherence is independently gated rather than assumed:
+
+| Deep family | `fg_0 / fg_1 / fg_2` | Day adjacent steps | Transformed adjacent steps | Day / transformed gap ratio | Day / transformed hue span | Max day chroma |
+|---|---|---:|---:|---:|---:|---:|
+| 2000K Dark | `#EED5AE / #D3BB99 / #AA9D8B` | 8.04 / 10.44 | 6.20 / 9.04 | 0.7886 / 0.7008 | 2.74° / 2.51° | 0.0584 |
+| 1200K Dark | `#FFE5BD / #CBAF89 / #A18C73` | 16.43 / 11.79 | 11.07 / 9.16 | 0.7099 / 0.8177 | 6.73° / 0.71° | 0.0607 |
 
 Dark-surface measurements use WCAG's sRGB relative-luminance calculation on the exact
 serialized Hex values. The contrast range covers transformed `fg_0` on all six background
@@ -317,7 +328,7 @@ roles.
 | Dark family | `bg_0` | Commanded luminance, `bg_0` → `bg_5` | Transformed `fg_0` contrast range |
 |---|---:|---:|---:|
 | 3400K Dark | `#090807` | 0.00247 → 0.02019 | 6.83–8.52:1 |
-| 2000K Dark | `#070504` | 0.00162 → 0.01852 | 5.68–6.77:1 |
+| 2000K Dark | `#070504` | 0.00162 → 0.01852 | 5.86–6.98:1 |
 | 1200K Dark | `#060302` | 0.00108 → 0.01571 | 5.32–6.08:1 |
 
 These are digital signal measurements, not physical display luminance. Actual black
@@ -350,6 +361,11 @@ The release gates enforce:
 - transformed contrast floors of `4.5:1`, `3.5:1`, and `2.4:1` for `fg_0`, `fg_1`, and
   `fg_2` respectively on every background; `fg_1` is limited to larger supporting text or
   graphics, and `fg_2` to nonessential metadata or decoration—not body text;
+- profile-specific accent-distance floors against each foreground role in commanded and
+  transformed states, so an accent cannot hide a collision in the supporting or muted tier;
+- connected deep foreground ladders with bounded adjacent distances, balanced adjacent
+  lightness gaps, lightness-dominant steps, aligned chroma vectors, monotonic chroma within a
+  quantization tolerance, and narrow commanded/transformed hue spans;
 - dark-mode commanded relative-luminance caps of `0.003`, `0.005`, `0.009`, `0.013`,
   `0.020`, and `0.021` across the six-step ladder;
 - at least `1.8 ΔEOK` between adjacent transformed dark-surface ladder steps;

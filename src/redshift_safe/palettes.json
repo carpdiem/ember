@@ -1,5 +1,5 @@
 {
-  "schema_version": 8,
+  "schema_version": 9,
   "project": "Ember: Redshift Safe Color Palettes",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
   "legacy_aliases": {
@@ -30,6 +30,17 @@
     ],
     "cross_state_hue_consistency_required": false,
     "terminal_distinguishability_reference_role": "fg_0",
+    "terminal_distinguishability_reference_roles": [
+      "fg_0",
+      "fg_1",
+      "fg_2"
+    ],
+    "joint_terminal_optimization_priority": [
+      "primary foreground reading quality",
+      "connected foreground hierarchy",
+      "accent separation from every foreground role",
+      "accent pairwise separation and ANSI semantics"
+    ],
     "bg_roles_low_to_high": [
       "bg_0",
       "bg_1",
@@ -158,6 +169,23 @@
       "terminal_night_minimum_delta_e_ok_target": 7.0,
       "terminal_daylight_minimum_fg_0_delta_e_ok_target": null,
       "terminal_night_minimum_fg_0_delta_e_ok_target": null,
+      "terminal_daylight_minimum_fg_1_delta_e_ok_target": null,
+      "terminal_night_minimum_fg_1_delta_e_ok_target": null,
+      "terminal_daylight_minimum_fg_2_delta_e_ok_target": null,
+      "terminal_night_minimum_fg_2_delta_e_ok_target": null,
+      "foreground_daylight_minimum_adjacent_delta_e_ok_target": null,
+      "foreground_daylight_maximum_adjacent_delta_e_ok_target": null,
+      "foreground_night_minimum_adjacent_delta_e_ok_target": null,
+      "foreground_night_maximum_adjacent_delta_e_ok_target": null,
+      "foreground_minimum_lightness_gap_ratio_target": null,
+      "foreground_daylight_minimum_lightness_share_target": null,
+      "foreground_night_minimum_lightness_share_target": null,
+      "foreground_maximum_hue_span_degrees_target": null,
+      "foreground_night_maximum_hue_span_degrees_target": null,
+      "foreground_maximum_chroma_target": null,
+      "foreground_daylight_minimum_chroma_vector_cosine_target": null,
+      "foreground_night_minimum_chroma_vector_cosine_target": null,
+      "foreground_chroma_order_tolerance": null,
       "terminal_minimum_shifted_foreground_contrast": 6.06,
       "categorical": {
         "one": "#6E96D5",
@@ -1746,6 +1774,45 @@
           },
           "transformed_target_max_delta_e_ok": 0.13
         },
+        "foreground_ladder": {
+          "normal_adjacent_delta_e_ok": [
+            10.41,
+            13.8
+          ],
+          "shifted_adjacent_delta_e_ok": [
+            8.7,
+            11.76
+          ],
+          "normal_adjacent_lightness_share": [
+            0.9992,
+            0.9938
+          ],
+          "shifted_adjacent_lightness_share": [
+            0.9922,
+            0.9853
+          ],
+          "normal_lightness_gap_ratio": 0.7582,
+          "shifted_lightness_gap_ratio": 0.7448,
+          "normal_lightness": {
+            "fg_0": 0.8604,
+            "fg_1": 0.7564,
+            "fg_2": 0.6192
+          },
+          "normal_chroma": {
+            "fg_0": 0.0426,
+            "fg_1": 0.041,
+            "fg_2": 0.0286
+          },
+          "shifted_chroma": {
+            "fg_0": 0.1108,
+            "fg_1": 0.1003,
+            "fg_2": 0.0812
+          },
+          "normal_hue_span_degrees": 20.11,
+          "shifted_hue_span_degrees": 5.51,
+          "normal_minimum_chroma_vector_cosine": 0.939,
+          "shifted_minimum_chroma_vector_cosine": 0.9954
+        },
         "continuous": {
           "normal_lightness_range": 0.5864,
           "normal_minimum_signed_lightness_step": 0.002169,
@@ -1870,6 +1937,23 @@
       "terminal_night_minimum_delta_e_ok_target": 11.0,
       "terminal_daylight_minimum_fg_0_delta_e_ok_target": null,
       "terminal_night_minimum_fg_0_delta_e_ok_target": null,
+      "terminal_daylight_minimum_fg_1_delta_e_ok_target": null,
+      "terminal_night_minimum_fg_1_delta_e_ok_target": null,
+      "terminal_daylight_minimum_fg_2_delta_e_ok_target": null,
+      "terminal_night_minimum_fg_2_delta_e_ok_target": null,
+      "foreground_daylight_minimum_adjacent_delta_e_ok_target": null,
+      "foreground_daylight_maximum_adjacent_delta_e_ok_target": null,
+      "foreground_night_minimum_adjacent_delta_e_ok_target": null,
+      "foreground_night_maximum_adjacent_delta_e_ok_target": null,
+      "foreground_minimum_lightness_gap_ratio_target": null,
+      "foreground_daylight_minimum_lightness_share_target": null,
+      "foreground_night_minimum_lightness_share_target": null,
+      "foreground_maximum_hue_span_degrees_target": null,
+      "foreground_night_maximum_hue_span_degrees_target": null,
+      "foreground_maximum_chroma_target": null,
+      "foreground_daylight_minimum_chroma_vector_cosine_target": null,
+      "foreground_night_minimum_chroma_vector_cosine_target": null,
+      "foreground_chroma_order_tolerance": null,
       "terminal_minimum_shifted_foreground_contrast": 4.76,
       "categorical": {
         "one": "#158F7A",
@@ -3458,6 +3542,45 @@
           },
           "transformed_target_max_delta_e_ok": 0.1
         },
+        "foreground_ladder": {
+          "normal_adjacent_delta_e_ok": [
+            10.16,
+            7.12
+          ],
+          "shifted_adjacent_delta_e_ok": [
+            8.65,
+            6.22
+          ],
+          "normal_adjacent_lightness_share": [
+            0.9997,
+            0.9952
+          ],
+          "shifted_adjacent_lightness_share": [
+            0.9875,
+            0.9799
+          ],
+          "normal_lightness_gap_ratio": 1.433,
+          "shifted_lightness_gap_ratio": 1.4015,
+          "normal_lightness": {
+            "fg_0": 0.3094,
+            "fg_1": 0.411,
+            "fg_2": 0.4818
+          },
+          "normal_chroma": {
+            "fg_0": 0.009,
+            "fg_1": 0.0115,
+            "fg_2": 0.0181
+          },
+          "shifted_chroma": {
+            "fg_0": 0.0332,
+            "fg_1": 0.0468,
+            "fg_2": 0.0592
+          },
+          "normal_hue_span_degrees": 0.0,
+          "shifted_hue_span_degrees": 0.64,
+          "normal_minimum_chroma_vector_cosine": 0.9872,
+          "shifted_minimum_chroma_vector_cosine": 0.9999
+        },
         "continuous": {
           "normal_lightness_range": 0.6678,
           "normal_minimum_signed_lightness_step": 0.002355,
@@ -3530,27 +3653,27 @@
         "bg_3": "#1E1814",
         "bg_4": "#271F1B",
         "bg_5": "#30221B",
-        "fg_0": "#E9D3AD",
-        "fg_1": "#C8B38F",
-        "fg_2": "#9F8B70"
+        "fg_0": "#EED5AE",
+        "fg_1": "#D3BB99",
+        "fg_2": "#AA9D8B"
       },
       "terminal": {
         "black": "#15110E",
-        "red": "#E9878F",
-        "green": "#72E5BE",
-        "yellow": "#C0A251",
-        "blue": "#A0D3FF",
-        "magenta": "#E9878F",
-        "cyan": "#72E5BE",
-        "white": "#E9D3AD",
-        "bright_black": "#E9D3AD",
-        "bright_red": "#E9878F",
-        "bright_green": "#72E5BE",
-        "bright_yellow": "#C0A251",
-        "bright_blue": "#A0D3FF",
-        "bright_magenta": "#E9878F",
-        "bright_cyan": "#72E5BE",
-        "bright_white": "#E9D3AD"
+        "red": "#EC8B96",
+        "green": "#74E5C0",
+        "yellow": "#C39C49",
+        "blue": "#A7D1FB",
+        "magenta": "#EC8B96",
+        "cyan": "#74E5C0",
+        "white": "#EED5AE",
+        "bright_black": "#EED5AE",
+        "bright_red": "#EC8B96",
+        "bright_green": "#74E5C0",
+        "bright_yellow": "#C39C49",
+        "bright_blue": "#A7D1FB",
+        "bright_magenta": "#EC8B96",
+        "bright_cyan": "#74E5C0",
+        "bright_white": "#EED5AE"
       },
       "terminal_daylight_color_count": 4,
       "terminal_semantic_color_count": 4,
@@ -3569,16 +3692,33 @@
         3
       ],
       "terminal_transformed_targets": [
-        "#E9490C",
-        "#727C0F",
-        "#C05807",
-        "#A07317"
+        "#EC4C0E",
+        "#747C10",
+        "#C35507",
+        "#A77216"
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 12.5,
       "terminal_night_minimum_delta_e_ok_target": 7.5,
       "terminal_daylight_minimum_fg_0_delta_e_ok_target": 12.5,
       "terminal_night_minimum_fg_0_delta_e_ok_target": 7.5,
-      "terminal_minimum_shifted_foreground_contrast": 4.54,
+      "terminal_daylight_minimum_fg_1_delta_e_ok_target": 7.5,
+      "terminal_night_minimum_fg_1_delta_e_ok_target": 5.0,
+      "terminal_daylight_minimum_fg_2_delta_e_ok_target": 6.0,
+      "terminal_night_minimum_fg_2_delta_e_ok_target": 4.0,
+      "foreground_daylight_minimum_adjacent_delta_e_ok_target": 8.0,
+      "foreground_daylight_maximum_adjacent_delta_e_ok_target": 16.0,
+      "foreground_night_minimum_adjacent_delta_e_ok_target": 6.0,
+      "foreground_night_maximum_adjacent_delta_e_ok_target": 12.0,
+      "foreground_minimum_lightness_gap_ratio_target": 0.7,
+      "foreground_daylight_minimum_lightness_share_target": 0.92,
+      "foreground_night_minimum_lightness_share_target": 0.92,
+      "foreground_maximum_hue_span_degrees_target": 12.0,
+      "foreground_night_maximum_hue_span_degrees_target": 3.0,
+      "foreground_maximum_chroma_target": 0.065,
+      "foreground_daylight_minimum_chroma_vector_cosine_target": 0.95,
+      "foreground_night_minimum_chroma_vector_cosine_target": 0.98,
+      "foreground_chroma_order_tolerance": 0.003,
+      "terminal_minimum_shifted_foreground_contrast": 4.52,
       "categorical": {
         "one": "#66B1D4",
         "two": "#DB93A7",
@@ -5147,20 +5287,59 @@
           "transformed_target_max_delta_e_ok": 0.06
         },
         "terminal": {
-          "normal_min_delta_e_ok": 12.79,
+          "normal_min_delta_e_ok": 12.62,
           "normal_min_delta_e_ok_to_foregrounds": {
-            "fg_0": 13.39,
-            "fg_1": 7.51,
-            "fg_2": 9.82
+            "fg_0": 13.73,
+            "fg_1": 10.86,
+            "fg_2": 8.25
           },
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": 7.83,
+          "shifted_group_center_min_delta_e_ok": 7.75,
           "shifted_min_delta_e_ok_to_foregrounds": {
-            "fg_0": 7.79,
-            "fg_1": 2.69,
-            "fg_2": 7.35
+            "fg_0": 7.64,
+            "fg_1": 5.03,
+            "fg_2": 4.75
           },
-          "transformed_target_max_delta_e_ok": 0.14
+          "transformed_target_max_delta_e_ok": 0.13
+        },
+        "foreground_ladder": {
+          "normal_adjacent_delta_e_ok": [
+            8.04,
+            10.44
+          ],
+          "shifted_adjacent_delta_e_ok": [
+            6.2,
+            9.04
+          ],
+          "normal_adjacent_lightness_share": [
+            0.9977,
+            0.9739
+          ],
+          "shifted_adjacent_lightness_share": [
+            0.9689,
+            0.9485
+          ],
+          "normal_lightness_gap_ratio": 0.7886,
+          "shifted_lightness_gap_ratio": 0.7008,
+          "normal_lightness": {
+            "fg_0": 0.884,
+            "fg_1": 0.8039,
+            "fg_2": 0.7022
+          },
+          "normal_chroma": {
+            "fg_0": 0.0584,
+            "fg_1": 0.0534,
+            "fg_2": 0.0297
+          },
+          "shifted_chroma": {
+            "fg_0": 0.1769,
+            "fg_1": 0.1615,
+            "fg_2": 0.1336
+          },
+          "normal_hue_span_degrees": 2.74,
+          "shifted_hue_span_degrees": 2.51,
+          "normal_minimum_chroma_vector_cosine": 0.9989,
+          "shifted_minimum_chroma_vector_cosine": 0.999
         },
         "continuous": {
           "normal_lightness_range": 0.7109,
@@ -5192,33 +5371,33 @@
             "bg_5": 0.01082
           },
           "shifted_primary_text_contrast": {
-            "bg_0": 6.77,
-            "bg_1": 6.64,
-            "bg_2": 6.44,
-            "bg_3": 6.2,
-            "bg_4": 5.92,
-            "bg_5": 5.68
+            "bg_0": 6.98,
+            "bg_1": 6.85,
+            "bg_2": 6.65,
+            "bg_3": 6.4,
+            "bg_4": 6.11,
+            "bg_5": 5.86
           }
         },
         "shifted_text_contrast": {
-          "fg_0_on_bg_0": 6.77,
-          "fg_0_on_bg_1": 6.64,
-          "fg_0_on_bg_2": 6.44,
-          "fg_0_on_bg_3": 6.2,
-          "fg_0_on_bg_4": 5.92,
-          "fg_0_on_bg_5": 5.68,
-          "fg_1_on_bg_0": 5.08,
-          "fg_1_on_bg_1": 4.98,
-          "fg_1_on_bg_2": 4.83,
-          "fg_1_on_bg_3": 4.65,
-          "fg_1_on_bg_4": 4.44,
-          "fg_1_on_bg_5": 4.26,
-          "fg_2_on_bg_0": 3.43,
-          "fg_2_on_bg_1": 3.36,
-          "fg_2_on_bg_2": 3.26,
-          "fg_2_on_bg_3": 3.14,
-          "fg_2_on_bg_4": 3.0,
-          "fg_2_on_bg_5": 2.88
+          "fg_0_on_bg_0": 6.98,
+          "fg_0_on_bg_1": 6.85,
+          "fg_0_on_bg_2": 6.65,
+          "fg_0_on_bg_3": 6.4,
+          "fg_0_on_bg_4": 6.11,
+          "fg_0_on_bg_5": 5.86,
+          "fg_1_on_bg_0": 5.55,
+          "fg_1_on_bg_1": 5.44,
+          "fg_1_on_bg_2": 5.28,
+          "fg_1_on_bg_3": 5.08,
+          "fg_1_on_bg_4": 4.85,
+          "fg_1_on_bg_5": 4.66,
+          "fg_2_on_bg_0": 3.94,
+          "fg_2_on_bg_1": 3.87,
+          "fg_2_on_bg_2": 3.75,
+          "fg_2_on_bg_3": 3.61,
+          "fg_2_on_bg_4": 3.45,
+          "fg_2_on_bg_5": 3.31
         }
       }
     },
@@ -5234,27 +5413,27 @@
         "bg_3": "#1C1511",
         "bg_4": "#251C17",
         "bg_5": "#2E1E17",
-        "fg_0": "#FFE5BE",
-        "fg_1": "#CBB58F",
-        "fg_2": "#A28B70"
+        "fg_0": "#FFE5BD",
+        "fg_1": "#CBAF89",
+        "fg_2": "#A18C73"
       },
       "terminal": {
         "black": "#130E0B",
-        "red": "#F0A09A",
-        "green": "#C9FFB6",
-        "yellow": "#DABD74",
-        "blue": "#DABD74",
-        "magenta": "#F0A09A",
-        "cyan": "#C9FFB6",
-        "white": "#FFE5BE",
-        "bright_black": "#FFE5BE",
-        "bright_red": "#F0A09A",
-        "bright_green": "#C9FFB6",
-        "bright_yellow": "#DABD74",
-        "bright_blue": "#DABD74",
-        "bright_magenta": "#F0A09A",
-        "bright_cyan": "#C9FFB6",
-        "bright_white": "#FFE5BE"
+        "red": "#F29298",
+        "green": "#C9FFB4",
+        "yellow": "#DDCD81",
+        "blue": "#DDCD81",
+        "magenta": "#F29298",
+        "cyan": "#C9FFB4",
+        "white": "#FFE5BD",
+        "bright_black": "#FFE5BD",
+        "bright_red": "#F29298",
+        "bright_green": "#C9FFB4",
+        "bright_yellow": "#DDCD81",
+        "bright_blue": "#DDCD81",
+        "bright_magenta": "#F29298",
+        "bright_cyan": "#C9FFB4",
+        "bright_white": "#FFE5BD"
       },
       "terminal_daylight_color_count": 3,
       "terminal_semantic_color_count": 3,
@@ -5272,15 +5451,32 @@
         2
       ],
       "terminal_transformed_targets": [
-        "#F03201",
+        "#F22D00",
         "#C94F00",
-        "#DA3A00"
+        "#DD3F00"
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 9.4,
       "terminal_night_minimum_delta_e_ok_target": 4.0,
       "terminal_daylight_minimum_fg_0_delta_e_ok_target": 9.4,
       "terminal_night_minimum_fg_0_delta_e_ok_target": 4.0,
-      "terminal_minimum_shifted_foreground_contrast": 4.54,
+      "terminal_daylight_minimum_fg_1_delta_e_ok_target": 6.0,
+      "terminal_night_minimum_fg_1_delta_e_ok_target": 4.0,
+      "terminal_daylight_minimum_fg_2_delta_e_ok_target": 5.0,
+      "terminal_night_minimum_fg_2_delta_e_ok_target": 3.5,
+      "foreground_daylight_minimum_adjacent_delta_e_ok_target": 11.0,
+      "foreground_daylight_maximum_adjacent_delta_e_ok_target": 17.5,
+      "foreground_night_minimum_adjacent_delta_e_ok_target": 9.0,
+      "foreground_night_maximum_adjacent_delta_e_ok_target": 12.0,
+      "foreground_minimum_lightness_gap_ratio_target": 0.7,
+      "foreground_daylight_minimum_lightness_share_target": 0.92,
+      "foreground_night_minimum_lightness_share_target": 0.92,
+      "foreground_maximum_hue_span_degrees_target": 12.0,
+      "foreground_night_maximum_hue_span_degrees_target": 3.0,
+      "foreground_maximum_chroma_target": 0.065,
+      "foreground_daylight_minimum_chroma_vector_cosine_target": 0.95,
+      "foreground_night_minimum_chroma_vector_cosine_target": 0.98,
+      "foreground_chroma_order_tolerance": 0.003,
+      "terminal_minimum_shifted_foreground_contrast": 4.55,
       "categorical": {
         "one": "#C26D76",
         "two": "#92DBFF",
@@ -6847,20 +7043,59 @@
           "transformed_target_max_delta_e_ok": 0.05
         },
         "terminal": {
-          "normal_min_delta_e_ok": 10.63,
+          "normal_min_delta_e_ok": 12.35,
           "normal_min_delta_e_ok_to_foregrounds": {
-            "fg_0": 9.63,
-            "fg_1": 4.9,
-            "fg_2": 15.12
+            "fg_0": 9.69,
+            "fg_1": 8.96,
+            "fg_2": 14.68
           },
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": 4.19,
+          "shifted_group_center_min_delta_e_ok": 4.13,
           "shifted_min_delta_e_ok_to_foregrounds": {
-            "fg_0": 4.46,
-            "fg_1": 3.1,
-            "fg_2": 11.14
+            "fg_0": 4.49,
+            "fg_1": 4.13,
+            "fg_2": 11.29
           },
-          "transformed_target_max_delta_e_ok": 0.07
+          "transformed_target_max_delta_e_ok": 0.06
+        },
+        "foreground_ladder": {
+          "normal_adjacent_delta_e_ok": [
+            16.43,
+            11.79
+          ],
+          "shifted_adjacent_delta_e_ok": [
+            11.07,
+            9.16
+          ],
+          "normal_adjacent_lightness_share": [
+            0.9997,
+            0.9892
+          ],
+          "shifted_adjacent_lightness_share": [
+            0.9464,
+            0.9356
+          ],
+          "normal_lightness_gap_ratio": 0.7099,
+          "shifted_lightness_gap_ratio": 0.8177,
+          "normal_lightness": {
+            "fg_0": 0.9332,
+            "fg_1": 0.769,
+            "fg_2": 0.6524
+          },
+          "normal_chroma": {
+            "fg_0": 0.0593,
+            "fg_1": 0.0607,
+            "fg_2": 0.0437
+          },
+          "shifted_chroma": {
+            "fg_0": 0.228,
+            "fg_1": 0.1923,
+            "fg_2": 0.16
+          },
+          "normal_hue_span_degrees": 6.73,
+          "shifted_hue_span_degrees": 0.71,
+          "normal_minimum_chroma_vector_cosine": 0.9931,
+          "shifted_minimum_chroma_vector_cosine": 0.9999
         },
         "continuous": {
           "normal_lightness_range": 0.7731,
@@ -6907,18 +7142,18 @@
           "fg_0_on_bg_3": 5.71,
           "fg_0_on_bg_4": 5.51,
           "fg_0_on_bg_5": 5.32,
-          "fg_1_on_bg_0": 4.06,
-          "fg_1_on_bg_1": 4.0,
-          "fg_1_on_bg_2": 3.92,
-          "fg_1_on_bg_3": 3.81,
-          "fg_1_on_bg_4": 3.68,
-          "fg_1_on_bg_5": 3.55,
-          "fg_2_on_bg_0": 2.85,
-          "fg_2_on_bg_1": 2.81,
-          "fg_2_on_bg_2": 2.75,
-          "fg_2_on_bg_3": 2.67,
-          "fg_2_on_bg_4": 2.58,
-          "fg_2_on_bg_5": 2.49
+          "fg_1_on_bg_0": 4.02,
+          "fg_1_on_bg_1": 3.97,
+          "fg_1_on_bg_2": 3.89,
+          "fg_1_on_bg_3": 3.78,
+          "fg_1_on_bg_4": 3.65,
+          "fg_1_on_bg_5": 3.52,
+          "fg_2_on_bg_0": 2.83,
+          "fg_2_on_bg_1": 2.79,
+          "fg_2_on_bg_2": 2.74,
+          "fg_2_on_bg_3": 2.66,
+          "fg_2_on_bg_4": 2.57,
+          "fg_2_on_bg_5": 2.48
         }
       }
     }

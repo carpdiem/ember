@@ -17,7 +17,7 @@ rises across dark families and falls across the light family. Generated CSS prov
 migration aliases. JSON and `surfaces()` return only the
 numeric names; the manifest's `legacy_surface_role_aliases` map supports migration.
 
-The JSON schema is version 8. It adds manifest-level surface-role, luminance, separation,
+The JSON schema is version 9. It adds manifest-level surface-role, luminance, separation,
 primary-text-contrast, and accent-selection targets plus per-family commanded/transformed
 measurements. The canonical surface ordering is recorded in
 `quality_targets.bg_roles_low_to_high`. Python consumers can retrieve an independent copy
@@ -32,6 +32,14 @@ Schema 8 adds terminal-accent distances to `fg_0`, `fg_1`, and `fg_2`, with hard
 transformed `fg_0` gates for the 2000 K and 1200 K banks. The deep terminal Hex values changed
 because the previous 1200 K yellow was effectively identical to primary foreground text after
 transformation.
+
+Schema 9 makes the previously diagnostic `fg_1` and `fg_2` comparisons into explicit deep-bank
+release gates and jointly redesigns all three foreground roles with the terminal accents. It adds
+per-role accent-separation targets plus foreground-ladder targets and metrics for bounded adjacent
+day/transformed distance, balanced lightness gaps, lightness-dominant steps, commanded and
+transformed hue span, chroma-vector alignment, near-monotonic chroma, and monotonic lightness. The
+2000 K and 1200 K foreground and terminal Hex values therefore changed again. Consumers should
+refresh copied theme values; the role names and ANSI alias structure are unchanged.
 
 Accent selection is now explicitly transformed-first and commanded-second. Each family
 publishes `categorical_transformed_targets` and `terminal_transformed_targets`; metrics report

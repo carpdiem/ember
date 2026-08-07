@@ -2,28 +2,28 @@
 # Family: 1200K Dark
 [colors.primary]
 background = "#060302"
-foreground = "#FFE5BE"
+foreground = "#FFE5BD"
 
 [colors.selection]
 background = "#2E1E17"
-text = "#FFE5BE"
+text = "#FFE5BD"
 
 [colors.normal]
 black = "#130E0B"
-red = "#F0A09A"
-green = "#C9FFB6"
-yellow = "#DABD74"
-blue = "#DABD74"
-magenta = "#F0A09A"
-cyan = "#C9FFB6"
-white = "#FFE5BE"
+red = "#F29298"
+green = "#C9FFB4"
+yellow = "#DDCD81"
+blue = "#DDCD81"
+magenta = "#F29298"
+cyan = "#C9FFB4"
+white = "#FFE5BD"
 
 [colors.bright]
-black = "#FFE5BE"
-red = "#F0A09A"
-green = "#C9FFB6"
-yellow = "#DABD74"
-blue = "#DABD74"
-magenta = "#F0A09A"
-cyan = "#C9FFB6"
-white = "#FFE5BE"
+black = "#FFE5BD"
+red = "#F29298"
+green = "#C9FFB4"
+yellow = "#DDCD81"
+blue = "#DDCD81"
+magenta = "#F29298"
+cyan = "#C9FFB4"
+white = "#FFE5BD"

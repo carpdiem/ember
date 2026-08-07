@@ -105,7 +105,7 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
             [
                 (
                     "    # Measure what survives the display transform",
-                    surfaces["fg_0"],
+                    surfaces["fg_1"],
                 ),
             ],
             [
@@ -124,7 +124,7 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
                 ("$ ", terminal["green"]),
                 ("pytest -q", surfaces["fg_0"]),
                 ("     tests passed", terminal["green"]),
-                (" · generated example", surfaces["fg_0"]),
+                (" · generated example", surfaces["fg_2"]),
             ],
         ]
         for line_number, segments in enumerate(lines, start=1):
@@ -424,8 +424,8 @@ def sample_analysis_markdown(manifest: dict, destination: Path) -> str:
         "",
         "## Palette-level bi-state gates",
         "",
-        "| Family | Categories | Day min ΔEOK | Day min hue gap | Shifted min ΔEOK | Min shifted category / bg contrast | Mean / max raw chroma | Terminal day / shifted min to fg_0 | Min shifted terminal contrast |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Family | Categories | Day min ΔEOK | Day min hue gap | Shifted min ΔEOK | Min shifted category / bg contrast | Mean / max raw chroma | Terminal day / shifted min to fg_0 | Terminal day / shifted min to fg_1 | Terminal day / shifted min to fg_2 | FG ladder day / shifted adjacent min | Min shifted terminal contrast |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for family in manifest["families"].values():
         categorical = family["metrics"]["categorical"]
@@ -438,6 +438,12 @@ def sample_analysis_markdown(manifest: dict, destination: Path) -> str:
             f"{categorical['normal_chroma_mean']:.4f} / {categorical['normal_chroma_max']:.4f} | "
             f"{family['metrics']['terminal']['normal_min_delta_e_ok_to_foregrounds']['fg_0']:.2f} / "
             f"{family['metrics']['terminal']['shifted_min_delta_e_ok_to_foregrounds']['fg_0']:.2f} | "
+            f"{family['metrics']['terminal']['normal_min_delta_e_ok_to_foregrounds']['fg_1']:.2f} / "
+            f"{family['metrics']['terminal']['shifted_min_delta_e_ok_to_foregrounds']['fg_1']:.2f} | "
+            f"{family['metrics']['terminal']['normal_min_delta_e_ok_to_foregrounds']['fg_2']:.2f} / "
+            f"{family['metrics']['terminal']['shifted_min_delta_e_ok_to_foregrounds']['fg_2']:.2f} | "
+            f"{min(family['metrics']['foreground_ladder']['normal_adjacent_delta_e_ok']):.2f} / "
+            f"{min(family['metrics']['foreground_ladder']['shifted_adjacent_delta_e_ok']):.2f} | "
             f"{family['terminal_minimum_shifted_foreground_contrast']:.2f}:1 |"
         )
     lines.extend(
@@ -449,7 +455,10 @@ def sample_analysis_markdown(manifest: dict, destination: Path) -> str:
             "intentionally not required;",
             "authored transformed accent targets reproduced within 0.15 ΔEOK; transformed",
             "terminal foreground-capable ANSI slots ≥ 4.5:1; deep terminal accents also clear",
-            "their day and transformed separation floors against fg_0; category and accent counts",
+            "their day and transformed separation floors against every foreground role, while",
+            "the foreground ladder preserves bounded adjacent distances, balanced lightness gaps,",
+            "lightness-dominant steps, aligned chroma direction, and bounded hue/chroma; category",
+            "and accent counts",
             "must never increase as the target temperature falls.",
             "",
             "## Screenshot-level diagnostics",
