@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import plistlib
+import runpy
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -105,14 +106,16 @@ def test_generated_swatch_rectangles_fit_their_canvas() -> None:
 
 def test_readme_visual_story_leads_before_setup() -> None:
     readme = (ROOT / "README.md").read_text()
+    overview = "docs/swatches/overview.svg"
     hero = "docs/swatches/command-vs-simulated.png"
     mechanism = "docs/diagrams/channel-collapse.svg"
     terminal = "docs/samples/terminal-story.png"
     data = "docs/samples/data-story.png"
     setup = "## Make Ember work"
-    assert readme.index(hero) < readme.index(mechanism) < readme.index(terminal)
+    assert readme.index(overview) < readme.index(hero) < readme.index(mechanism)
+    assert readme.index(mechanism) < readme.index(terminal)
     assert readme.index(terminal) < readme.index(data) < readme.index(setup)
-    assert readme.index("docs/swatches/overview.svg") > readme.index(setup)
+    assert "<details>" not in readme[: readme.index(setup)]
 
     for relative_path in (hero, terminal, data):
         with Image.open(ROOT / relative_path) as image:
@@ -122,23 +125,46 @@ def test_readme_visual_story_leads_before_setup() -> None:
 
 def test_commanded_inventory_displays_every_palette_role() -> None:
     readme = (ROOT / "README.md").read_text()
-    assert "![Complete commanded palette inventory](docs/swatches/overview.svg)" in readme
+    overview_path = "docs/swatches/overview.svg"
+    assert "![Every authored color in the four Ember palettes" in readme
+    assert readme.index(overview_path) < readme.index("## Make Ember work")
 
     manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
     roles = (*manifest["quality_targets"]["bg_roles_low_to_high"], "fg_0", "fg_1", "fg_2")
-    root = ET.parse(ROOT / "docs/swatches/overview.svg").getroot()
+    root = ET.parse(ROOT / overview_path).getroot()
     namespace = {"svg": "http://www.w3.org/2000/svg"}
     labels = [node.text for node in root.findall(".//svg:text", namespace)]
     fills = [node.attrib["fill"] for node in root.findall(".//svg:rect", namespace)]
+    assert float(root.attrib["width"]) == 760
 
     for role in roles:
         assert labels.count(role) == len(SLUGS), role
     for family in manifest["families"].values():
         for role in roles:
             assert family["surfaces"][role] in fills, (family["slug"], role)
+        for value in family["categorical"].values():
+            assert value in fills, (family["slug"], "categorical", value)
+        for value in family["continuous_hex8"]:
+            assert value in fills, (family["slug"], "sequential", value)
         for role in ("red", "green", "yellow", "blue", "magenta", "cyan"):
             assert family["terminal"][role] in fills, (family["slug"], role)
-    assert labels.count("Terminal ANSI accents") == len(SLUGS)
+    assert labels.count("TERMINAL ANSI ACCENTS") == len(SLUGS)
+    assert labels.count("M=R") == 2
+    assert labels.count("C=G") == 2
+    assert labels.count("B=Y") == 1
+
+
+def test_story_figures_cover_all_families() -> None:
+    story_module = runpy.run_path(ROOT / "tools/render_story.py")
+    assert story_module["STORY_SLUGS"] == SLUGS
+
+    expected_heights = {
+        "docs/samples/terminal-story.png": 112 + 384 * len(SLUGS) + 62,
+        "docs/samples/data-story.png": 112 + 450 * len(SLUGS) + 62,
+    }
+    for relative_path, expected_height in expected_heights.items():
+        with Image.open(ROOT / relative_path) as image:
+            assert image.size == (760, expected_height)
 
 
 def test_categorical_encoding_is_stable_for_strings_and_subsets() -> None:

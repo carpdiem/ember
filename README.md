@@ -6,23 +6,41 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
-Ember is a coordinated color system for people who use Redshift, Night Light, or another
-strong warm filter. It ships importable terminal themes, chart and heatmap palettes, and UI
-color roles designed for both filter-off and modeled filter-on states. Ember does not apply
-the filter; keep using the one you already have.
+Ember is a coordinated color system for people who run Redshift, Night Light, or
+another strong warm-screen filter. It ships importable terminal themes, chart and
+heatmap palettes, and UI surface roles authored for two states of the same screen:
+the colors applications request (filter off) and the modeled colors a warm filter
+leaves behind (filter on). Ember does not apply the filter; keep using the one you
+already have.
 
-![Colors requested by applications compared with the modeled colors left by each warm filter](docs/swatches/command-vs-simulated.png)
+## The four palettes
 
-Row by row, the filter deepens. Ember supports fewer color identities rather than pretending
-that collapsed colors are still different.
+![Every authored color in the four Ember palettes — 3400K Dark, 3400K Light, 2000K Dark, and 1200K Dark: six background surfaces, three foreground text roles, the categorical colors, all six terminal ANSI accent roles with their honest aliases, and the 256-step sequential map for each family](docs/swatches/overview.svg)
 
-![RGB channel survival at 3400 K, 2000 K, and 1200 K](docs/diagrams/channel-collapse.svg)
+These are the exact commanded sRGB values shipped in every export: Alacritty,
+iTerm2, Windows Terminal, Matplotlib, CSS, JSON, and Python.
 
-A warm filter is not a transparent amber overlay: it multiplies red, green, and blue by
-different amounts. At Ember's 1200 K model, blue is multiplied by zero, so colors that differ
-only in blue become the same pixel.
+## What a warm filter does to them
 
-### Choose the closest profile
+![Categorical colors and sequential maps of 3400K Dark, 3400K Light, 2000K Dark, and 1200K Dark, each shown as requested and after that family's modeled warm transform](docs/swatches/command-vs-simulated.png)
+
+![RGB channel survival under the 3400 K, 2000 K, and 1200 K warm-filter models](docs/diagrams/channel-collapse.svg)
+
+A warm filter is not a tinted overlay: it multiplies red, green, and blue by
+different amounts. At Ember's 1200 K model, blue is multiplied by zero, so colors
+that differ only in blue become the same pixel. That is why the deeper palettes
+above author fewer identities instead of pretending aliased colors are still
+different.
+
+## In a terminal
+
+![The same code and selection in 3400K Dark, 3400K Light, 2000K Dark, and 1200K Dark, each rendered filter-off and with the modeled filter-on output](docs/samples/terminal-story.png)
+
+## In charts and heatmaps
+
+![The same heatmap, bar chart, and labeled line series in 3400K Dark, 3400K Light, 2000K Dark, and 1200K Dark, each rendered filter-off and with the modeled filter-on output](docs/samples/data-story.png)
+
+## Choose a profile
 
 | Palette | Use it when | Distinct categories |
 |---|---|---:|
@@ -31,21 +49,15 @@ only in blue become the same pixel.
 | [`2000k-dark`](docs/swatches/2000k-dark.svg) | you run Redshift near 2000 K | 4 |
 | [`1200k-dark`](docs/swatches/1200k-dark.svg) | you want an extreme 1200 K stress profile | 3 |
 
-Start with `3400k-dark` unless you deliberately run a deeper filter. The 2000 K and
-1200 K profiles are dark-only because a filtered light canvas becomes a large orange-red
-field.
+Start with `3400k-dark` unless you deliberately run a deeper filter. The 2000 K
+and 1200 K profiles are dark-only because a filtered light canvas becomes a large
+orange-red field.
 
-### In a terminal
-
-![Terminal code before and after moderate and extreme warm transforms](docs/samples/terminal-story.png)
-
-### In charts and heatmaps
-
-![Charts and heatmaps before and after moderate and extreme warm transforms](docs/samples/data-story.png)
-
-Turn off any active color-temperature filter before inspecting the modeled filter-on rows,
-or you apply the transform twice. These are deterministic signal simulations, not photographs
-or display-calibration measurements.
+The filter-on rows above are deterministic signal simulations — commanded sRGB
+multiplied by each profile's published gains. They are not photographs, calibrated
+physical color temperatures, or predictions of every display pipeline. Turn off any
+active warm filter before judging them, or your screen applies the transform a
+second time.
 
 ## Make Ember work
 
@@ -190,32 +202,6 @@ CSS exposes eleven representative 8-bit gradient stops. The
 [JSON manifest](palettes/redshift-safe-palettes.json) and Python package preserve all
 256 canonical float samples, along with surfaces, categorical colors, ANSI slots, gain
 profiles, and measured results.
-
-## Inspect every generated profile
-
-<details>
-<summary><strong>Open the complete commanded-color inventory</strong></summary>
-
-![Complete commanded palette inventory](docs/swatches/overview.svg)
-
-</details>
-
-<details>
-<summary><strong>Open the full four-profile terminal and data sheets</strong></summary>
-
-### Terminal text
-
-![Commanded terminal specimen](docs/samples/terminal-commanded.png)
-
-![Transformed terminal specimen](docs/samples/terminal-simulated.png)
-
-### Heatmaps, bars, and overlapping series
-
-![Commanded data-visualization specimen](docs/samples/data-commanded.png)
-
-![Transformed data-visualization specimen](docs/samples/data-simulated.png)
-
-</details>
 
 ## What is the science behind it?
 

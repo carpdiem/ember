@@ -404,7 +404,7 @@ def channel_collapse_svg() -> str:
   <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
     <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#352A26"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
     <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#2A3128"/><rect x="34" y="42" width="198" height="28" rx="7" fill="#736D49"/>
-    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#252A32"/><rect x="34" y="84" width="2" height="28" fill="#4B5260"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#252A32"/><rect x="34" y="84" width="0" height="28" fill="#4B5260"/>
   </g>
 </g>
 </g></svg>"""

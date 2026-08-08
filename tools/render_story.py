@@ -24,6 +24,7 @@ PANEL = "#211E1A"
 PRIMARY = "#F2E3C8"
 SECONDARY = "#BFAF98"
 RULE = "#3B342C"
+STORY_SLUGS = ("3400k-dark", "3400k-light", "2000k-dark", "1200k-dark")
 
 
 def _rgb(value: str) -> tuple[int, int, int]:
@@ -187,7 +188,7 @@ def _draw_terminal_pane(
 
 def _render_terminal_story(manifest: dict, path: Path) -> None:
     width, header, section_height, footer = 760, 112, 384, 62
-    slugs = ("3400k-dark", "1200k-dark")
+    slugs = STORY_SLUGS
     height = header + section_height * len(slugs) + footer
     image = Image.new("RGB", (width, height), CANVAS)
     draw = ImageDraw.Draw(image)
@@ -202,10 +203,14 @@ def _render_terminal_story(manifest: dict, path: Path) -> None:
 
     callouts = {
         "3400k-dark": "6 accents remain distinct; text and selection keep their hierarchy.",
+        "3400k-light": "The light canvas warms; 6 dark accents and the text ladder stay legible.",
+        "2000k-dark": "Blue barely survives. 4 accents; magenta and cyan alias to red and green.",
         "1200k-dark": "Blue is gone. Ember uses 3 honest accents; text and labels carry the rest.",
     }
     profile_labels = {
         "3400k-dark": "MODERATE FILTER / 6 ACCENTS",
+        "3400k-light": "MODERATE FILTER / LIGHT / 6 ACCENTS",
+        "2000k-dark": "DEEP FILTER / 4 ACCENTS",
         "1200k-dark": "EXTREME FILTER / 3 ACCENTS",
     }
 
@@ -365,7 +370,7 @@ def _draw_data_pane(
 
 def _render_data_story(manifest: dict, path: Path) -> None:
     width, header, section_height, footer = 760, 112, 450, 62
-    slugs = ("3400k-dark", "1200k-dark")
+    slugs = STORY_SLUGS
     height = header + section_height * len(slugs) + footer
     image = Image.new("RGB", (width, height), CANVAS)
     draw = ImageDraw.Draw(image)
@@ -380,10 +385,14 @@ def _render_data_story(manifest: dict, path: Path) -> None:
 
     callouts = {
         "3400k-dark": "6 categories remain distinct; the heatmap still reads low to high.",
+        "3400k-light": "Same discipline on a light canvas; 6 categories and the ramp survive.",
+        "2000k-dark": "4 categories survive the deep shift; the ramp stays monotonic.",
         "1200k-dark": "3 categories survive; labels, markers, and patterns carry the rest.",
     }
     profile_labels = {
         "3400k-dark": "MODERATE FILTER / 6 CATEGORIES",
+        "3400k-light": "MODERATE FILTER / LIGHT / 6 CATEGORIES",
+        "2000k-dark": "DEEP FILTER / 4 CATEGORIES",
         "1200k-dark": "EXTREME FILTER / 3 CATEGORIES",
     }
 
