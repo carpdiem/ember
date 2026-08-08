@@ -1,8 +1,9 @@
 {
-  "schema_version": 12,
+  "schema_version": 13,
   "project": "Ember",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
   "quality_targets": {
+    "gain_sensitivity_fraction": 0.05,
     "accent_selection_priority": [
       "match authored transformed perceptual outcomes",
       "optimize commanded daytime aesthetics without weakening transformed outcomes"
@@ -62,6 +63,28 @@
         0.74,
         0.53
       ],
+      "gain_sensitivity_rgb_gains": [
+        [
+          1.0,
+          0.703,
+          0.5035
+        ],
+        [
+          1.0,
+          0.703,
+          0.5565000000000001
+        ],
+        [
+          1.0,
+          0.777,
+          0.5035
+        ],
+        [
+          1.0,
+          0.777,
+          0.5565000000000001
+        ]
+      ],
       "categorical_minimum_delta_e_ok_target": 11.0,
       "description": "A documented surrogate for the undocumented, display-dependent warmest macOS Night Shift setting. This is the least destructive profile in the set."
     },
@@ -73,6 +96,28 @@
         0.54360078,
         0.08679949
       ],
+      "gain_sensitivity_rgb_gains": [
+        [
+          1.0,
+          0.516420741,
+          0.0824595155
+        ],
+        [
+          1.0,
+          0.516420741,
+          0.09113946450000002
+        ],
+        [
+          1.0,
+          0.570780819,
+          0.0824595155
+        ],
+        [
+          1.0,
+          0.570780819,
+          0.09113946450000002
+        ]
+      ],
       "categorical_minimum_delta_e_ok_target": 8.5,
       "description": "The pinned Redshift 2000 K gamma-ramp signal transform with identity input ramps, unit brightness, and unit per-channel gamma."
     },
@@ -83,6 +128,28 @@
         1.0,
         0.30942099,
         0.0
+      ],
+      "gain_sensitivity_rgb_gains": [
+        [
+          1.0,
+          0.2939499405,
+          0.0
+        ],
+        [
+          1.0,
+          0.2939499405,
+          0.0
+        ],
+        [
+          1.0,
+          0.3248920395,
+          0.0
+        ],
+        [
+          1.0,
+          0.3248920395,
+          0.0
+        ]
       ],
       "categorical_minimum_delta_e_ok_target": 8.5,
       "description": "The pinned Redshift 1200 K signal-LUT transform: blue is removed and green is heavily attenuated. This is a severe visibility stress test, not a claim of physical astronomy safety."
@@ -1867,6 +1934,18 @@
           "fg_2_on_bg_3": 3.38,
           "fg_2_on_bg_4": 3.16,
           "fg_2_on_bg_5": 3.08
+        },
+        "gain_sensitivity": {
+          "categorical_minimum_delta_e_ok": 10.88,
+          "categorical_minimum_foreground_delta_e_ok": 5.42,
+          "categorical_minimum_background_contrast": 2.82,
+          "terminal_minimum_group_center_delta_e_ok": 6.69,
+          "terminal_minimum_foreground_delta_e_ok": 4.86,
+          "terminal_minimum_background_contrast": 4.93,
+          "surface_minimum_primary_text_contrast": 6.5,
+          "continuous_maximum_delta_e_ok_cv": 0.0107,
+          "continuous_maximum_delta_e_ok_max_to_min": 1.032,
+          "continuous_minimum_signed_lightness_step": 0.001894
         }
       }
     },
@@ -3648,6 +3727,18 @@
           "fg_2_on_bg_3": 3.64,
           "fg_2_on_bg_4": 3.24,
           "fg_2_on_bg_5": 2.92
+        },
+        "gain_sensitivity": {
+          "categorical_minimum_delta_e_ok": 11.61,
+          "categorical_minimum_foreground_delta_e_ok": 5.13,
+          "categorical_minimum_background_contrast": 2.92,
+          "terminal_minimum_group_center_delta_e_ok": 10.69,
+          "terminal_minimum_foreground_delta_e_ok": 6.17,
+          "terminal_minimum_background_contrast": 4.45,
+          "surface_minimum_primary_text_contrast": 4.88,
+          "continuous_maximum_delta_e_ok_cv": 0.0137,
+          "continuous_maximum_delta_e_ok_max_to_min": 1.039,
+          "continuous_minimum_signed_lightness_step": 0.002121
         }
       }
     },
@@ -5421,6 +5512,18 @@
           "fg_2_on_bg_3": 3.61,
           "fg_2_on_bg_4": 3.45,
           "fg_2_on_bg_5": 3.31
+        },
+        "gain_sensitivity": {
+          "categorical_minimum_delta_e_ok": 12.25,
+          "categorical_minimum_foreground_delta_e_ok": 3.99,
+          "categorical_minimum_background_contrast": 2.97,
+          "terminal_minimum_group_center_delta_e_ok": 7.42,
+          "terminal_minimum_foreground_delta_e_ok": 4.71,
+          "terminal_minimum_background_contrast": 4.27,
+          "surface_minimum_primary_text_contrast": 5.68,
+          "continuous_maximum_delta_e_ok_cv": 0.0084,
+          "continuous_maximum_delta_e_ok_max_to_min": 1.027,
+          "continuous_minimum_signed_lightness_step": 0.002046
         }
       }
     },
@@ -7190,6 +7293,18 @@
           "fg_2_on_bg_3": 2.66,
           "fg_2_on_bg_4": 2.57,
           "fg_2_on_bg_5": 2.48
+        },
+        "gain_sensitivity": {
+          "categorical_minimum_delta_e_ok": 9.91,
+          "categorical_minimum_foreground_delta_e_ok": 3.32,
+          "categorical_minimum_background_contrast": 2.93,
+          "terminal_minimum_group_center_delta_e_ok": 4.08,
+          "terminal_minimum_foreground_delta_e_ok": 3.76,
+          "terminal_minimum_background_contrast": 4.44,
+          "surface_minimum_primary_text_contrast": 5.25,
+          "continuous_maximum_delta_e_ok_cv": 0.0027,
+          "continuous_maximum_delta_e_ok_max_to_min": 1.008,
+          "continuous_minimum_signed_lightness_step": 0.002042
         }
       }
     }

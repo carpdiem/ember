@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 12
+    assert manifest["schema_version"] == 13
     assert manifest["project"] == "Ember"
     assert "legacy_aliases" not in manifest
     assert "legacy_surface_role_aliases" not in manifest
@@ -278,6 +278,121 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
         }
         assert target_error <= 0.15, family["slug"]
         assert metrics["transformed_target_max_delta_e_ok"] == round(target_error, 2)
+
+
+def test_gain_sensitivity_metrics_recompute_from_exact_serialized_values() -> None:
+    manifest = generate_manifest()
+    fraction = manifest["quality_targets"]["gain_sensitivity_fraction"]
+    assert fraction == 0.05
+
+    for family in manifest["families"].values():
+        profile = manifest["profiles"][family["profile"]]
+        red, green, blue = profile["rgb_gains"]
+        corners = profile["gain_sensitivity_rgb_gains"]
+        expected_corners = [
+            [red, green * green_scale, blue * blue_scale if blue else 0.0]
+            for green_scale in (1.0 - fraction, 1.0 + fraction)
+            for blue_scale in (1.0 - fraction, 1.0 + fraction)
+        ]
+        assert np.allclose(corners, expected_corners)
+
+        categories = np.asarray([hex_to_srgb(color) for color in family["categorical"].values()])
+        terminal_names = ("red", "green", "yellow", "blue", "magenta", "cyan")[
+            : family["terminal_daylight_color_count"]
+        ]
+        terminal = np.asarray([hex_to_srgb(family["terminal"][name]) for name in terminal_names])
+        foregrounds = np.asarray(
+            [hex_to_srgb(family["surfaces"][role]) for role in ("fg_0", "fg_1", "fg_2")]
+        )
+        backgrounds = np.asarray(
+            [
+                hex_to_srgb(family["surfaces"][role])
+                for role in ("bg_0", "bg_1", "bg_2", "bg_3", "bg_4", "bg_5")
+            ]
+        )
+        sequence = np.asarray(family["continuous_rgb"], dtype=float)
+        group_ids = np.asarray(family["terminal_night_groups"])
+        values = []
+        for gains in corners:
+            categorical_lab = perceived_lab(categories, gains)
+            terminal_lab = perceived_lab(terminal, gains)
+            foreground_lab = perceived_lab(foregrounds, gains)
+            transformed_background = warm_transform(backgrounds[0], gains)
+            group_centers = np.asarray(
+                [terminal_lab[group_ids == group].mean(axis=0) for group in sorted(set(group_ids))]
+            )
+            transformed_sequence = perceived_lab(sequence, gains)
+            sequence_steps = np.linalg.norm(np.diff(transformed_sequence, axis=0), axis=1) * 100.0
+            direction = 1.0 if transformed_sequence[-1, 0] >= transformed_sequence[0, 0] else -1.0
+            values.append(
+                {
+                    "categorical_pair": float(pairwise_distances(categorical_lab).min()),
+                    "categorical_foreground": float(
+                        np.linalg.norm(
+                            categorical_lab[:, None] - foreground_lab[None, :], axis=2
+                        ).min()
+                        * 100.0
+                    ),
+                    "categorical_background_contrast": min(
+                        contrast_ratio(warm_transform(color, gains), transformed_background)
+                        for color in categories
+                    ),
+                    "terminal_pair": float(pairwise_distances(group_centers).min()),
+                    "terminal_foreground": float(
+                        np.linalg.norm(
+                            terminal_lab[:, None] - foreground_lab[None, :], axis=2
+                        ).min()
+                        * 100.0
+                    ),
+                    "terminal_background_contrast": min(
+                        contrast_ratio(warm_transform(color, gains), transformed_background)
+                        for color in terminal
+                    ),
+                    "surface_primary_text_contrast": min(
+                        contrast_ratio(
+                            warm_transform(foregrounds[0], gains), warm_transform(background, gains)
+                        )
+                        for background in backgrounds
+                    ),
+                    "continuous_cv": float(sequence_steps.std() / sequence_steps.mean()),
+                    "continuous_max_to_min": float(sequence_steps.max() / sequence_steps.min()),
+                    "continuous_minimum_signed_lightness_step": float(
+                        (np.diff(transformed_sequence[:, 0]) * direction).min()
+                    ),
+                }
+            )
+
+        metrics = family["metrics"]["gain_sensitivity"]
+        assert metrics["categorical_minimum_delta_e_ok"] == round(
+            min(value["categorical_pair"] for value in values), 2
+        )
+        assert metrics["categorical_minimum_foreground_delta_e_ok"] == round(
+            min(value["categorical_foreground"] for value in values), 2
+        )
+        assert metrics["categorical_minimum_background_contrast"] == round(
+            min(value["categorical_background_contrast"] for value in values), 2
+        )
+        assert metrics["terminal_minimum_group_center_delta_e_ok"] == round(
+            min(value["terminal_pair"] for value in values), 2
+        )
+        assert metrics["terminal_minimum_foreground_delta_e_ok"] == round(
+            min(value["terminal_foreground"] for value in values), 2
+        )
+        assert metrics["terminal_minimum_background_contrast"] == round(
+            min(value["terminal_background_contrast"] for value in values), 2
+        )
+        assert metrics["surface_minimum_primary_text_contrast"] == round(
+            min(value["surface_primary_text_contrast"] for value in values), 2
+        )
+        assert metrics["continuous_maximum_delta_e_ok_cv"] == round(
+            max(value["continuous_cv"] for value in values), 4
+        )
+        assert metrics["continuous_maximum_delta_e_ok_max_to_min"] == round(
+            max(value["continuous_max_to_min"] for value in values), 3
+        )
+        assert metrics["continuous_minimum_signed_lightness_step"] == round(
+            min(value["continuous_minimum_signed_lightness_step"] for value in values), 6
+        )
 
 
 def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shift() -> None:

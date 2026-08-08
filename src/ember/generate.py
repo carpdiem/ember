@@ -23,6 +23,7 @@ from .definitions import (
     DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST,
     DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE,
     FAMILIES,
+    GAIN_SENSITIVITY_FRACTION,
     LIGHT_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK,
     LIGHT_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST,
     LIGHT_MINIMUM_SURFACE_SPAN_DELTA_E_OK,
@@ -106,6 +107,112 @@ def _terminal_colors(family: FamilyDefinition) -> list[str]:
     bright.extend(semantic_slots)
     bright.append(hex_to_srgb(surfaces["fg_0"]))
     return [srgb_to_hex(color) for color in normal + bright]
+
+
+def _gain_sensitivity_vectors(
+    gains: tuple[float, float, float],
+) -> list[tuple[float, float, float]]:
+    """Return the four exact G/B corners in the documented sensitivity box."""
+
+    red, green, blue = gains
+    scales = (1.0 - GAIN_SENSITIVITY_FRACTION, 1.0 + GAIN_SENSITIVITY_FRACTION)
+    return [
+        (red, green * green_scale, blue * blue_scale if blue else 0.0)
+        for green_scale in scales
+        for blue_scale in scales
+    ]
+
+
+def _gain_sensitivity_metrics(
+    family: FamilyDefinition,
+    categories: np.ndarray,
+    terminal_colors: np.ndarray,
+    foreground_colors: np.ndarray,
+    sequential: np.ndarray,
+) -> dict[str, Any]:
+    """Measure worst behavior across a transparent ±5% G/B gain box."""
+
+    backgrounds = np.asarray(
+        [hex_to_srgb(family.surfaces[role]) for role in BACKGROUND_SURFACE_ROLES]
+    )
+    terminal_groups = np.asarray(family.terminal_night_groups)
+    rows = []
+    for gains in _gain_sensitivity_vectors(family.profile.gains):
+        categorical_lab = perceived_lab(categories, gains)
+        terminal_lab = perceived_lab(terminal_colors, gains)
+        foreground_lab = perceived_lab(foreground_colors, gains)
+        transformed_background = warm_transform(backgrounds[0], gains)
+        group_centers = np.asarray(
+            [
+                terminal_lab[terminal_groups == group].mean(axis=0)
+                for group in sorted(set(terminal_groups))
+            ]
+        )
+        transformed_sequence = perceived_lab(sequential, gains)
+        sequence_steps = np.linalg.norm(np.diff(transformed_sequence, axis=0), axis=1) * 100.0
+        direction = 1.0 if transformed_sequence[-1, 0] >= transformed_sequence[0, 0] else -1.0
+        rows.append(
+            {
+                "categorical_pair": float(pairwise_distances(categorical_lab).min()),
+                "categorical_foreground": float(
+                    np.linalg.norm(categorical_lab[:, None] - foreground_lab[None, :], axis=2).min()
+                    * 100.0
+                ),
+                "categorical_background_contrast": min(
+                    contrast_ratio(warm_transform(color, gains), transformed_background)
+                    for color in categories
+                ),
+                "terminal_pair": float(pairwise_distances(group_centers).min()),
+                "terminal_foreground": float(
+                    np.linalg.norm(terminal_lab[:, None] - foreground_lab[None, :], axis=2).min()
+                    * 100.0
+                ),
+                "terminal_background_contrast": min(
+                    contrast_ratio(warm_transform(color, gains), transformed_background)
+                    for color in terminal_colors
+                ),
+                "surface_primary_text_contrast": min(
+                    contrast_ratio(
+                        warm_transform(foreground_colors[0], gains),
+                        warm_transform(background, gains),
+                    )
+                    for background in backgrounds
+                ),
+                "continuous_cv": float(sequence_steps.std() / sequence_steps.mean()),
+                "continuous_max_to_min": float(sequence_steps.max() / sequence_steps.min()),
+                "continuous_minimum_signed_lightness_step": float(
+                    (np.diff(transformed_sequence[:, 0]) * direction).min()
+                ),
+            }
+        )
+    return {
+        "categorical_minimum_delta_e_ok": round(min(row["categorical_pair"] for row in rows), 2),
+        "categorical_minimum_foreground_delta_e_ok": round(
+            min(row["categorical_foreground"] for row in rows), 2
+        ),
+        "categorical_minimum_background_contrast": round(
+            min(row["categorical_background_contrast"] for row in rows), 2
+        ),
+        "terminal_minimum_group_center_delta_e_ok": round(
+            min(row["terminal_pair"] for row in rows), 2
+        ),
+        "terminal_minimum_foreground_delta_e_ok": round(
+            min(row["terminal_foreground"] for row in rows), 2
+        ),
+        "terminal_minimum_background_contrast": round(
+            min(row["terminal_background_contrast"] for row in rows), 2
+        ),
+        "surface_minimum_primary_text_contrast": round(
+            min(row["surface_primary_text_contrast"] for row in rows), 2
+        ),
+        "continuous_maximum_delta_e_ok_cv": round(max(row["continuous_cv"] for row in rows), 4),
+        "continuous_maximum_delta_e_ok_max_to_min": round(
+            max(row["continuous_max_to_min"] for row in rows), 3
+        ),
+        "continuous_minimum_signed_lightness_step": round(
+            min(row["continuous_minimum_signed_lightness_step"] for row in rows), 6
+        ),
+    }
 
 
 def _smooth_polyline(points: np.ndarray, iterations: int = 3) -> np.ndarray:
@@ -371,6 +478,13 @@ def _metrics(
         "continuous": sequence_metrics,
         "surface": surface_metrics,
         "shifted_text_contrast": text_metrics,
+        "gain_sensitivity": _gain_sensitivity_metrics(
+            family,
+            categories,
+            terminal_colors,
+            foreground_colors,
+            sequential,
+        ),
     }
 
 
@@ -496,19 +610,23 @@ def generate_manifest() -> dict[str, Any]:
             "name": profile.name,
             "target": profile.target,
             "rgb_gains": list(profile.gains),
+            "gain_sensitivity_rgb_gains": [
+                list(gains) for gains in _gain_sensitivity_vectors(profile.gains)
+            ],
             "categorical_minimum_delta_e_ok_target": profile.categorical_threshold,
             "description": profile.description,
         }
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 12,
+        "schema_version": 13,
         "project": "Ember",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
             "spectral measurements. Metrics are explicitly labeled as commanded or transformed."
         ),
         "quality_targets": {
+            "gain_sensitivity_fraction": GAIN_SENSITIVITY_FRACTION,
             "accent_selection_priority": [
                 "match authored transformed perceptual outcomes",
                 "optimize commanded daytime aesthetics without weakening transformed outcomes",
