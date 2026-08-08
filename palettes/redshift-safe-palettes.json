@@ -1,5 +1,5 @@
 {
-  "schema_version": 9,
+  "schema_version": 10,
   "project": "Ember: Redshift Safe Color Palettes",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
   "legacy_aliases": {
@@ -67,7 +67,12 @@
       "3400k-dark": 6.8,
       "2000k-dark": 5.65,
       "1200k-dark": 5.3
-    }
+    },
+    "light_minimum_shifted_primary_text_contrast": {
+      "3400k-light": 5.0
+    },
+    "light_minimum_adjacent_surface_delta_e_ok": 2.8,
+    "light_minimum_surface_span_delta_e_ok": 15.0
   },
   "profiles": {
     "3400k": {
@@ -78,7 +83,7 @@
         0.74,
         0.53
       ],
-      "categorical_minimum_delta_e_ok_target": 6.0,
+      "categorical_minimum_delta_e_ok_target": 11.0,
       "description": "A documented surrogate for the undocumented, display-dependent warmest macOS Night Shift setting. This is the least destructive profile in the set."
     },
     "2000k": {
@@ -119,21 +124,21 @@
         "bg_5": "#32241B",
         "fg_0": "#DDD0B2",
         "fg_1": "#BDAE93",
-        "fg_2": "#928374"
+        "fg_2": "#908472"
       },
       "terminal": {
         "black": "#181612",
         "red": "#F5AD9A",
-        "green": "#9ABEA2",
-        "yellow": "#CEA866",
+        "green": "#7EB798",
+        "yellow": "#CA9246",
         "blue": "#B4C6F7",
         "magenta": "#D895C2",
         "cyan": "#70DBD8",
         "white": "#DDD0B2",
         "bright_black": "#DDD0B2",
         "bright_red": "#F5AD9A",
-        "bright_green": "#9ABEA2",
-        "bright_yellow": "#CEA866",
+        "bright_green": "#7EB798",
+        "bright_yellow": "#CA9246",
         "bright_blue": "#B4C6F7",
         "bright_magenta": "#D895C2",
         "bright_cyan": "#70DBD8",
@@ -159,38 +164,39 @@
       ],
       "terminal_transformed_targets": [
         "#F58052",
-        "#9A8D56",
-        "#CE7C36",
+        "#7E8750",
+        "#CA6C25",
         "#B49383",
         "#D86E67",
         "#70A272"
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 9.0,
       "terminal_night_minimum_delta_e_ok_target": 7.0,
-      "terminal_daylight_minimum_fg_0_delta_e_ok_target": null,
-      "terminal_night_minimum_fg_0_delta_e_ok_target": null,
-      "terminal_daylight_minimum_fg_1_delta_e_ok_target": null,
-      "terminal_night_minimum_fg_1_delta_e_ok_target": null,
-      "terminal_daylight_minimum_fg_2_delta_e_ok_target": null,
-      "terminal_night_minimum_fg_2_delta_e_ok_target": null,
-      "foreground_daylight_minimum_adjacent_delta_e_ok_target": null,
-      "foreground_daylight_maximum_adjacent_delta_e_ok_target": null,
-      "foreground_night_minimum_adjacent_delta_e_ok_target": null,
-      "foreground_night_maximum_adjacent_delta_e_ok_target": null,
-      "foreground_minimum_lightness_gap_ratio_target": null,
-      "foreground_daylight_minimum_lightness_share_target": null,
-      "foreground_night_minimum_lightness_share_target": null,
-      "foreground_maximum_hue_span_degrees_target": null,
-      "foreground_night_maximum_hue_span_degrees_target": null,
-      "foreground_maximum_chroma_target": null,
-      "foreground_daylight_minimum_chroma_vector_cosine_target": null,
-      "foreground_night_minimum_chroma_vector_cosine_target": null,
-      "foreground_chroma_order_tolerance": null,
-      "terminal_minimum_shifted_foreground_contrast": 6.06,
+      "terminal_daylight_minimum_fg_0_delta_e_ok_target": 8.5,
+      "terminal_night_minimum_fg_0_delta_e_ok_target": 6.5,
+      "terminal_daylight_minimum_fg_1_delta_e_ok_target": 8.0,
+      "terminal_night_minimum_fg_1_delta_e_ok_target": 5.0,
+      "terminal_daylight_minimum_fg_2_delta_e_ok_target": 10.0,
+      "terminal_night_minimum_fg_2_delta_e_ok_target": 9.0,
+      "foreground_daylight_minimum_adjacent_delta_e_ok_target": 10.0,
+      "foreground_daylight_maximum_adjacent_delta_e_ok_target": 14.0,
+      "foreground_night_minimum_adjacent_delta_e_ok_target": 8.5,
+      "foreground_night_maximum_adjacent_delta_e_ok_target": 12.0,
+      "foreground_minimum_lightness_gap_ratio_target": 0.72,
+      "foreground_daylight_minimum_lightness_share_target": 0.98,
+      "foreground_night_minimum_lightness_share_target": 0.98,
+      "foreground_maximum_hue_span_degrees_target": 10.0,
+      "foreground_night_maximum_hue_span_degrees_target": 3.0,
+      "foreground_maximum_chroma_target": 0.045,
+      "foreground_daylight_minimum_chroma_vector_cosine_target": 0.98,
+      "foreground_night_minimum_chroma_vector_cosine_target": 0.998,
+      "foreground_chroma_direction": "decreasing",
+      "foreground_chroma_order_tolerance": 0.003,
+      "terminal_minimum_shifted_foreground_contrast": 5.29,
       "categorical": {
         "one": "#6E96D5",
         "two": "#DDAA69",
-        "three": "#2E8A7E",
+        "three": "#2E8B7E",
         "four": "#67BE95",
         "five": "#945D48",
         "six": "#C3779A"
@@ -198,14 +204,14 @@
       "categorical_transformed_targets": [
         "#6E6F71",
         "#DD7E38",
-        "#2E6643",
+        "#2E6743",
         "#678D4F",
         "#944526",
         "#C35852"
       ],
-      "daylight_minimum_delta_e_ok_target": 14.0,
-      "daylight_minimum_hue_gap_degrees_target": null,
-      "categorical_shifted_background_contrast_minimum_target": null,
+      "daylight_minimum_delta_e_ok_target": 15.0,
+      "daylight_minimum_hue_gap_degrees_target": 20.0,
+      "categorical_shifted_background_contrast_minimum_target": 3.0,
       "continuous_rgb": [
         [
           0.1568627504,
@@ -1749,69 +1755,69 @@
       "metrics": {
         "categorical": {
           "normal_min_delta_e_ok": 15.0,
-          "normal_minimum_hue_gap_degrees": 21.08,
+          "normal_minimum_hue_gap_degrees": 20.23,
           "shifted_min_delta_e_ok": 11.45,
-          "minimum_shifted_background_contrast": 2.99,
-          "shifted_lightness_mean": 0.5611,
-          "shifted_lightness_range": 0.2227,
+          "minimum_shifted_background_contrast": 3.01,
+          "shifted_lightness_mean": 0.5614,
+          "shifted_lightness_range": 0.2206,
           "normal_chroma_max": 0.1045,
-          "normal_chroma_mean": 0.0969,
+          "normal_chroma_mean": 0.0971,
           "transformed_target_max_delta_e_ok": 0.12
         },
         "terminal": {
-          "normal_min_delta_e_ok": 9.09,
+          "normal_min_delta_e_ok": 10.76,
           "normal_min_delta_e_ok_to_foregrounds": {
             "fg_0": 8.67,
-            "fg_1": 5.46,
-            "fg_2": 14.87
+            "fg_1": 8.13,
+            "fg_2": 11.72
           },
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": 7.32,
+          "shifted_group_center_min_delta_e_ok": 7.31,
           "shifted_min_delta_e_ok_to_foregrounds": {
             "fg_0": 6.58,
-            "fg_1": 3.29,
-            "fg_2": 11.72
+            "fg_1": 5.16,
+            "fg_2": 10.18
           },
           "transformed_target_max_delta_e_ok": 0.13
         },
         "foreground_ladder": {
           "normal_adjacent_delta_e_ok": [
             10.41,
-            13.8
+            13.79
           ],
           "shifted_adjacent_delta_e_ok": [
             8.7,
-            11.76
+            11.88
           ],
           "normal_adjacent_lightness_share": [
             0.9992,
-            0.9938
+            0.9966
           ],
           "shifted_adjacent_lightness_share": [
             0.9922,
-            0.9853
+            0.9848
           ],
-          "normal_lightness_gap_ratio": 0.7582,
-          "shifted_lightness_gap_ratio": 0.7448,
+          "normal_lightness_gap_ratio": 0.7568,
+          "shifted_lightness_gap_ratio": 0.7372,
           "normal_lightness": {
             "fg_0": 0.8604,
             "fg_1": 0.7564,
-            "fg_2": 0.6192
+            "fg_2": 0.619
           },
           "normal_chroma": {
             "fg_0": 0.0426,
             "fg_1": 0.041,
-            "fg_2": 0.0286
+            "fg_2": 0.03
           },
           "shifted_chroma": {
             "fg_0": 0.1108,
             "fg_1": 0.1003,
-            "fg_2": 0.0812
+            "fg_2": 0.0798
           },
-          "normal_hue_span_degrees": 20.11,
-          "shifted_hue_span_degrees": 5.51,
-          "normal_minimum_chroma_vector_cosine": 0.939,
-          "shifted_minimum_chroma_vector_cosine": 0.9954
+          "normal_hue_span_degrees": 9.32,
+          "shifted_hue_span_degrees": 2.63,
+          "normal_minimum_chroma_vector_cosine": 0.9868,
+          "shifted_minimum_chroma_vector_cosine": 0.9989
         },
         "continuous": {
           "normal_lightness_range": 0.5864,
@@ -1864,12 +1870,12 @@
           "fg_1_on_bg_3": 5.43,
           "fg_1_on_bg_4": 5.07,
           "fg_1_on_bg_5": 4.94,
-          "fg_2_on_bg_0": 3.85,
-          "fg_2_on_bg_1": 3.74,
-          "fg_2_on_bg_2": 3.57,
-          "fg_2_on_bg_3": 3.39,
-          "fg_2_on_bg_4": 3.17,
-          "fg_2_on_bg_5": 3.09
+          "fg_2_on_bg_0": 3.84,
+          "fg_2_on_bg_1": 3.73,
+          "fg_2_on_bg_2": 3.56,
+          "fg_2_on_bg_3": 3.38,
+          "fg_2_on_bg_4": 3.16,
+          "fg_2_on_bg_5": 3.08
         }
       }
     },
@@ -1886,14 +1892,14 @@
         "bg_4": "#D4C29C",
         "bg_5": "#C9B796",
         "fg_0": "#342F2C",
-        "fg_1": "#504945",
+        "fg_1": "#4D4540",
         "fg_2": "#665C54"
       },
       "terminal": {
         "black": "#342F2C",
         "red": "#470D05",
         "green": "#174213",
-        "yellow": "#745C08",
+        "yellow": "#894C03",
         "blue": "#162252",
         "magenta": "#643563",
         "cyan": "#00766E",
@@ -1901,7 +1907,7 @@
         "bright_black": "#342F2C",
         "bright_red": "#470D05",
         "bright_green": "#174213",
-        "bright_yellow": "#745C08",
+        "bright_yellow": "#894C03",
         "bright_blue": "#162252",
         "bright_magenta": "#643563",
         "bright_cyan": "#00766E",
@@ -1928,52 +1934,53 @@
       "terminal_transformed_targets": [
         "#470A03",
         "#17310A",
-        "#744404",
+        "#893801",
         "#16192B",
         "#642734",
         "#01573A"
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 14.0,
       "terminal_night_minimum_delta_e_ok_target": 11.0,
-      "terminal_daylight_minimum_fg_0_delta_e_ok_target": null,
-      "terminal_night_minimum_fg_0_delta_e_ok_target": null,
-      "terminal_daylight_minimum_fg_1_delta_e_ok_target": null,
-      "terminal_night_minimum_fg_1_delta_e_ok_target": null,
-      "terminal_daylight_minimum_fg_2_delta_e_ok_target": null,
-      "terminal_night_minimum_fg_2_delta_e_ok_target": null,
-      "foreground_daylight_minimum_adjacent_delta_e_ok_target": null,
-      "foreground_daylight_maximum_adjacent_delta_e_ok_target": null,
-      "foreground_night_minimum_adjacent_delta_e_ok_target": null,
-      "foreground_night_maximum_adjacent_delta_e_ok_target": null,
-      "foreground_minimum_lightness_gap_ratio_target": null,
-      "foreground_daylight_minimum_lightness_share_target": null,
-      "foreground_night_minimum_lightness_share_target": null,
-      "foreground_maximum_hue_span_degrees_target": null,
-      "foreground_night_maximum_hue_span_degrees_target": null,
-      "foreground_maximum_chroma_target": null,
-      "foreground_daylight_minimum_chroma_vector_cosine_target": null,
-      "foreground_night_minimum_chroma_vector_cosine_target": null,
-      "foreground_chroma_order_tolerance": null,
-      "terminal_minimum_shifted_foreground_contrast": 4.76,
+      "terminal_daylight_minimum_fg_0_delta_e_ok_target": 9.0,
+      "terminal_night_minimum_fg_0_delta_e_ok_target": 6.0,
+      "terminal_daylight_minimum_fg_1_delta_e_ok_target": 9.0,
+      "terminal_night_minimum_fg_1_delta_e_ok_target": 6.0,
+      "terminal_daylight_minimum_fg_2_delta_e_ok_target": 9.0,
+      "terminal_night_minimum_fg_2_delta_e_ok_target": 7.0,
+      "foreground_daylight_minimum_adjacent_delta_e_ok_target": 8.3,
+      "foreground_daylight_maximum_adjacent_delta_e_ok_target": 9.0,
+      "foreground_night_minimum_adjacent_delta_e_ok_target": 7.0,
+      "foreground_night_maximum_adjacent_delta_e_ok_target": 8.0,
+      "foreground_minimum_lightness_gap_ratio_target": 0.95,
+      "foreground_daylight_minimum_lightness_share_target": 0.98,
+      "foreground_night_minimum_lightness_share_target": 0.98,
+      "foreground_maximum_hue_span_degrees_target": 8.0,
+      "foreground_night_maximum_hue_span_degrees_target": 2.0,
+      "foreground_maximum_chroma_target": 0.02,
+      "foreground_daylight_minimum_chroma_vector_cosine_target": 0.98,
+      "foreground_night_minimum_chroma_vector_cosine_target": 0.999,
+      "foreground_chroma_direction": "increasing",
+      "foreground_chroma_order_tolerance": 0.003,
+      "terminal_minimum_shifted_foreground_contrast": 4.65,
       "categorical": {
-        "one": "#158F7A",
-        "two": "#322865",
-        "three": "#AE5D63",
-        "four": "#6E2626",
-        "five": "#33531D",
-        "six": "#676DB1"
+        "one": "#2C9A84",
+        "two": "#321853",
+        "three": "#B36875",
+        "four": "#5B2A07",
+        "five": "#2A632D",
+        "six": "#556BAA"
       },
       "categorical_transformed_targets": [
-        "#156A41",
-        "#321E36",
-        "#AE4534",
-        "#6E1C14",
-        "#333D0F",
-        "#67515E"
+        "#2C7246",
+        "#32122C",
+        "#B34D3E",
+        "#5B1F04",
+        "#2A4918",
+        "#554F5A"
       ],
-      "daylight_minimum_delta_e_ok_target": 15.0,
-      "daylight_minimum_hue_gap_degrees_target": null,
-      "categorical_shifted_background_contrast_minimum_target": null,
+      "daylight_minimum_delta_e_ok_target": 16.0,
+      "daylight_minimum_hue_gap_degrees_target": 30.0,
+      "categorical_shifted_background_contrast_minimum_target": 3.0,
       "continuous_rgb": [
         [
           0.9490196349,
@@ -3516,59 +3523,59 @@
       ],
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 15.91,
-          "normal_minimum_hue_gap_degrees": 7.16,
-          "shifted_min_delta_e_ok": 13.76,
-          "minimum_shifted_background_contrast": 3.31,
-          "shifted_lightness_mean": 0.4046,
-          "shifted_lightness_range": 0.2584,
-          "normal_chroma_max": 0.1053,
-          "normal_chroma_mean": 0.1016,
-          "transformed_target_max_delta_e_ok": 0.13
+          "normal_min_delta_e_ok": 16.73,
+          "normal_minimum_hue_gap_degrees": 31.75,
+          "shifted_min_delta_e_ok": 12.41,
+          "minimum_shifted_background_contrast": 3.03,
+          "shifted_lightness_mean": 0.4038,
+          "shifted_lightness_range": 0.3068,
+          "normal_chroma_max": 0.1037,
+          "normal_chroma_mean": 0.0988,
+          "transformed_target_max_delta_e_ok": 0.09
         },
         "terminal": {
-          "normal_min_delta_e_ok": 14.02,
+          "normal_min_delta_e_ok": 15.64,
           "normal_min_delta_e_ok_to_foregrounds": {
             "fg_0": 9.25,
-            "fg_1": 9.37,
-            "fg_2": 8.1
+            "fg_1": 9.47,
+            "fg_2": 9.22
           },
           "shifted_group_max_delta_e_ok": 0.0,
           "shifted_group_center_min_delta_e_ok": 11.07,
           "shifted_min_delta_e_ok_to_foregrounds": {
             "fg_0": 6.47,
-            "fg_1": 6.54,
-            "fg_2": 4.11
+            "fg_1": 6.7,
+            "fg_2": 7.13
           },
           "transformed_target_max_delta_e_ok": 0.1
         },
         "foreground_ladder": {
           "normal_adjacent_delta_e_ok": [
-            10.16,
-            7.12
+            8.75,
+            8.52
           ],
           "shifted_adjacent_delta_e_ok": [
-            8.65,
-            6.22
+            7.55,
+            7.32
           ],
           "normal_adjacent_lightness_share": [
-            0.9997,
-            0.9952
+            0.9985,
+            0.9984
           ],
           "shifted_adjacent_lightness_share": [
-            0.9875,
-            0.9799
+            0.9835,
+            0.9854
           ],
-          "normal_lightness_gap_ratio": 1.433,
-          "shifted_lightness_gap_ratio": 1.4015,
+          "normal_lightness_gap_ratio": 0.9734,
+          "shifted_lightness_gap_ratio": 0.9707,
           "normal_lightness": {
             "fg_0": 0.3094,
-            "fg_1": 0.411,
+            "fg_1": 0.3968,
             "fg_2": 0.4818
           },
           "normal_chroma": {
             "fg_0": 0.009,
-            "fg_1": 0.0115,
+            "fg_1": 0.0137,
             "fg_2": 0.0181
           },
           "shifted_chroma": {
@@ -3577,9 +3584,9 @@
             "fg_2": 0.0592
           },
           "normal_hue_span_degrees": 0.0,
-          "shifted_hue_span_degrees": 0.64,
-          "normal_minimum_chroma_vector_cosine": 0.9872,
-          "shifted_minimum_chroma_vector_cosine": 0.9999
+          "shifted_hue_span_degrees": 1.12,
+          "normal_minimum_chroma_vector_cosine": 0.9905,
+          "shifted_minimum_chroma_vector_cosine": 0.9998
         },
         "continuous": {
           "normal_lightness_range": 0.6678,
@@ -3626,12 +3633,12 @@
           "fg_0_on_bg_3": 6.34,
           "fg_0_on_bg_4": 5.65,
           "fg_0_on_bg_5": 5.07,
-          "fg_1_on_bg_0": 6.46,
-          "fg_1_on_bg_1": 5.83,
-          "fg_1_on_bg_2": 5.21,
-          "fg_1_on_bg_3": 4.67,
-          "fg_1_on_bg_4": 4.16,
-          "fg_1_on_bg_5": 3.74,
+          "fg_1_on_bg_0": 6.75,
+          "fg_1_on_bg_1": 6.09,
+          "fg_1_on_bg_2": 5.44,
+          "fg_1_on_bg_3": 4.88,
+          "fg_1_on_bg_4": 4.35,
+          "fg_1_on_bg_5": 3.91,
           "fg_2_on_bg_0": 5.04,
           "fg_2_on_bg_1": 4.54,
           "fg_2_on_bg_2": 4.06,
@@ -3717,6 +3724,7 @@
       "foreground_maximum_chroma_target": 0.065,
       "foreground_daylight_minimum_chroma_vector_cosine_target": 0.95,
       "foreground_night_minimum_chroma_vector_cosine_target": 0.98,
+      "foreground_chroma_direction": "decreasing",
       "foreground_chroma_order_tolerance": 0.003,
       "terminal_minimum_shifted_foreground_contrast": 4.52,
       "categorical": {
@@ -5475,6 +5483,7 @@
       "foreground_maximum_chroma_target": 0.065,
       "foreground_daylight_minimum_chroma_vector_cosine_target": 0.95,
       "foreground_night_minimum_chroma_vector_cosine_target": 0.98,
+      "foreground_chroma_direction": "decreasing",
       "foreground_chroma_order_tolerance": 0.003,
       "terminal_minimum_shifted_foreground_contrast": 4.55,
       "categorical": {

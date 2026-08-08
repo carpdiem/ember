@@ -1,76 +1,112 @@
-# Ember: Redshift Safe Color Palettes
+# Ember: Redshift-Safe Color Palettes
 
-**Terminal and data-visualization palettes that stay distinct by day and under strong warm shifts at night.**
+**Terminal, chart, heatmap, and UI palettes that remain usable before and after aggressive warm-screen filtering.**
 
 [![CI](https://github.com/carpdiem/ember-redshift-safe-palettes/actions/workflows/ci.yml/badge.svg)](https://github.com/carpdiem/ember-redshift-safe-palettes/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
+Ember is for people who use Redshift, Night Light, or another strong warm filter and find
+that an ordinary theme turns muddy, glaring, or unreadable at night. It provides one
+coordinated color system for both display states instead of asking you to tolerate a
+daytime palette after its green and blue information has been attenuated.
+
 ![Ember palette overview](docs/swatches/overview.svg)
 
-Ember provides coordinated color systems for terminals, charts, heatmaps, and user
-interfaces that move between an ordinary daytime display and a software-filtered night
-display. Each palette is measured in both states.
+The repository includes importable terminal themes, Matplotlib colormaps, CSS variables,
+a JSON manifest, and generated evidence for every supported profile. There is no runtime
+service: choose a profile, import or load its colors, and keep using your existing filter.
 
-Warm filters do more than tint a screen. They attenuate green and blue by different
-amounts, reducing the number of colors that remain distinct. Ember uses that same channel
-compression as design room: colors meet nighttime contrast and separation floors, then
-use the attenuated dimensions to improve daytime spacing. Moderate chroma keeps the
-accents expressive within a controlled saturation range.
+## What is Ember?
 
-Dark-mode surfaces are genuinely near-black rather than merely warm dark gray. Every
-family includes six ordered background roles and three foreground roles.
-Commanded relative luminance is capped from `0.003` for `bg_0` through
-`0.021` for `bg_5`, increasing modeled small-text
-contrast before display-specific losses.
+Each family contains:
 
-## Choose a palette
+- a complete terminal theme for Alacritty, iTerm2, and Windows Terminal;
+- six ordered UI backgrounds and three text roles;
+- a categorical palette for distinct series or states; and
+- an Oklab-stepped 256-sample sequential map for heatmaps and scalar data.
 
-| Palette | Mode | Data categories | Terminal accents, day / night | Intended use |
-|---|---|---:|---:|---|
-| [`3400k-dark`](docs/swatches/3400k-dark.svg) | dark | 6 | 6 / 6 | near-black general terminal and data work |
-| [`3400k-light`](docs/swatches/3400k-light.svg) | light | 6 | 6 / 6 | light-surface work under a moderate warm shift |
-| [`2000k-dark`](docs/swatches/2000k-dark.svg) | dark | 4 | 4 / 4 | near-black deep Redshift work; reduced semantic color capacity |
-| [`1200k-dark`](docs/swatches/1200k-dark.svg) | dark | 3 | 3 / 3 | near-black extreme stress case; rely on lightness and shape |
+Every color is checked twice: once as the application commands it and once after the
+profile's warm transform. Under Ember's release gates, deeper filters support fewer distinct
+color identities. Ember exposes that reduction instead of inventing extra ANSI names that
+collapse to the same modeled nighttime color.
 
-The deepest profiles are dark-only. Under the 2000 K and 1200 K gain vectors, a light
-canvas becomes a large orange-red field, while a dark canvas preserves a subdued
-working surface.
+### Choose the closest profile
 
-Terminal formats require sixteen ANSI slots. Ember repeats the available commanded
-accents to fill those banks. At 2000 K and 1200 K, the four and three available accents
-retain separate transformed identities through deliberate lightness and warm-chroma
-structure. The reduced banks preserve recognizable red, green, yellow, and blue roles by
-day; explicit aliases map magenta to red and cyan to green, plus blue to yellow at 1200 K.
-Repeated ANSI names still do not create additional semantic colors.
+| Palette | Use it when | Mode | Distinct categories | Terminal accents, day / night |
+|---|---|---|---:|---:|
+| [`3400k-dark`](docs/swatches/3400k-dark.svg) | you want a near-black general-purpose warm theme | dark | 6 | 6 / 6 |
+| [`3400k-light`](docs/swatches/3400k-light.svg) | you use a moderate warm shift on a light surface | light | 6 | 6 / 6 |
+| [`2000k-dark`](docs/swatches/2000k-dark.svg) | you run Redshift near 2000 K | dark | 4 | 4 / 4 |
+| [`1200k-dark`](docs/swatches/1200k-dark.svg) | you want an extreme 1200 K stress profile | dark | 3 | 3 / 3 |
 
-## See the palettes in use
+Start with `3400k-dark` unless you deliberately run a deeper filter. The 2000 K and
+1200 K profiles are dark-only because a filtered light canvas becomes a large orange-red
+field.
 
-The commanded specimens show the sRGB colors an application requests. The simulated
-specimens apply each target gain vector to the corresponding panel.
+## Why should I care?
 
-### Terminal text
+A warm filter is not a transparent amber overlay. It multiplies red, green, and blue by
+different amounts. At Ember's 1200 K model, red survives, green falls to 31%, and blue
+falls to zero. Two colors that differ only in blue therefore become exactly identical.
 
-![Commanded terminal specimen](docs/samples/terminal-commanded.png)
+That creates three common failures in ordinary themes:
 
-![Simulated warm-shift terminal specimen](docs/samples/terminal-simulated.png)
+1. **Semantic colors collapse.** A chart legend or terminal status can lose the distinction
+   it was supposed to communicate.
+2. **Dark-gray surfaces become a brighter rust field.** A tolerable daytime background can
+   turn into the largest and most visually dominant warm object on the screen.
+3. **Pure white and dense accent color become loud.** Tiny glyphs carry high-frequency detail;
+   making all of them the brightest transformed orange competes with the information itself.
 
-### Heatmaps, bars, and overlapping series
+![Wrong palette choices compared with Ember under exact warm transforms](docs/diagrams/failure-modes.svg)
 
-![Commanded data-visualization specimen](docs/samples/data-commanded.png)
+Ember does not claim to restore the full daytime gamut. It does the more useful thing: meet
+explicit contrast and separation floors in the transformed signal, then make the unfiltered
+colors coherent and restrained.
 
-![Simulated warm-shift data-visualization specimen](docs/samples/data-simulated.png)
+## Make Ember work
 
-The line charts combine color with dash pattern, marker shape, and direct labels. These
-structural cues carry identity when hue differences become small or vanish entirely.
+### 1. Get the files
 
-To inspect a simulated image, disable any active color-temperature filter first;
-otherwise the transform is applied twice. The specimens are generated regression
-artifacts rather than photographs or display-calibration measurements.
+For terminal themes, CSS, and the JSON manifest:
 
-## Use Ember
+```bash
+git clone https://github.com/carpdiem/ember-redshift-safe-palettes.git
+cd ember-redshift-safe-palettes
+```
 
-### UI surface ladder
+Python users can skip the clone and install directly from GitHub:
+
+```bash
+python -m pip install "git+https://github.com/carpdiem/ember-redshift-safe-palettes.git"
+```
+
+### 2. Import a terminal theme
+
+- **Alacritty:** copy one file from [`themes/terminal/alacritty/`](themes/terminal/alacritty/)
+  into your config directory, then import it from `alacritty.toml`:
+
+  ```bash
+  mkdir -p ~/.config/alacritty/themes
+  cp themes/terminal/alacritty/2000k-dark.toml ~/.config/alacritty/themes/
+  ```
+
+  ```toml
+  [general]
+  import = ["~/.config/alacritty/themes/2000k-dark.toml"]
+  ```
+
+- **iTerm2:** open **Settings → Profiles → Colors → Color Presets… → Import…** and
+  choose a file from [`themes/terminal/iterm2/`](themes/terminal/iterm2/).
+- **Windows Terminal:** open **Settings → Open JSON file**, copy one object from
+  [`themes/terminal/windows-terminal/`](themes/terminal/windows-terminal/) into the root
+  `schemes` array, then set your profile's `colorScheme` to its exact `name`.
+
+The [terminal guide](themes/terminal/README.md) has the complete import steps and explains
+how reduced ANSI banks behave under the deep profiles.
+
+### 3. Use the UI surface roles
 
 Every family exposes the same ordered roles in JSON, CSS, and the Python `surfaces()` API:
 
@@ -86,31 +122,11 @@ Every family exposes the same ordered roles in JSON, CSS, and the Python `surfac
 | `fg_1` | larger supporting text or graphics; not normal-size body text |
 | `fg_2` | muted, nonessential metadata or decoration |
 
-The six background roles form a monotonic ladder. `bg_0` is always the canvas and `bg_5`
-is the strongest background state: dark families become lighter toward `bg_5`, while the
-light family becomes darker toward `bg_5`. CSS also exposes the old-style
-`--rs-background*`, `--rs-selection`, and `--rs-foreground*` names as generated migration
-aliases; JSON and the Python API use only the numbered roles.
-
-### Terminal themes
-
-Ready-to-import themes are included for:
-
-- [Alacritty](themes/terminal/alacritty/)
-- [iTerm2](themes/terminal/iterm2/)
-- [Windows Terminal](themes/terminal/windows-terminal/)
-
-Choose the file whose temperature and polarity match your display profile. In each
-theme, the normal and bright ANSI banks share the same semantic roles. Deep profiles
-use extra commanded-channel variation to preserve daytime distinctions.
-`bright_black` remains readable because terminals commonly use it for comments,
-timestamps, and metadata.
+The six backgrounds form a monotonic ladder. `bg_0` is always the canvas and `bg_5` is
+the strongest background state: dark families become lighter toward `bg_5`, while the
+light family becomes darker toward `bg_5`.
 
 ### Matplotlib
-
-```bash
-python -m pip install "git+https://github.com/carpdiem/ember-redshift-safe-palettes.git"
-```
 
 ```python
 import matplotlib.pyplot as plt
@@ -146,6 +162,10 @@ float samples, independent of the number of categorical colors.
 
 Load [`redshift-safe-palettes.css`](palettes/redshift-safe-palettes.css), then select a
 family:
+
+```html
+<link rel="stylesheet" href="/path/to/redshift-safe-palettes.css">
+```
 
 ```html
 <section data-redshift-palette="3400k-dark">
@@ -189,103 +209,122 @@ CSS exposes eleven representative 8-bit gradient stops. The
 256 canonical float samples, along with surfaces, categorical colors, ANSI slots, gain
 profiles, and measured results.
 
-## Design and scientific basis
+## Check the expected result
 
-### Model the transformed color space
+The **commanded** specimens show the sRGB colors an application requests. The
+**transformed** specimens apply the selected profile's gain vector to the same pixels.
 
-Ember models a warm display transform as an independent gain on each sRGB channel:
+![Commanded and transformed palette overview](docs/swatches/command-vs-simulated.png)
+
+<details>
+<summary><strong>Open the terminal and data-visualization specimens</strong></summary>
+
+### Terminal text
+
+![Commanded terminal specimen](docs/samples/terminal-commanded.png)
+
+![Transformed terminal specimen](docs/samples/terminal-simulated.png)
+
+### Heatmaps, bars, and overlapping series
+
+![Commanded data-visualization specimen](docs/samples/data-commanded.png)
+
+![Transformed data-visualization specimen](docs/samples/data-simulated.png)
+
+</details>
+
+Disable any active color-temperature filter before inspecting a transformed specimen;
+otherwise you apply the transform twice. These are deterministic signal simulations, not
+photographs or display-calibration measurements.
+
+## What is the science behind it?
+
+### 1. Model the signal that reaches the display
+
+Ember approximates a warm display transform as an independent gain on each sRGB channel:
 
 ```text
 display RGB ≈ commanded RGB × [red gain, green gain, blue gain]
 ```
 
-| Profile | RGB gains | Source |
+| Profile | RGB gains | Basis |
 |---|---:|---|
 | `3400k` | `[1.00, 0.74, 0.53]` | warm-white engineering surrogate |
 | `2000k` | `[1.0000, 0.5436, 0.0868]` | pinned Redshift 2000 K signal LUT |
 | `1200k` | `[1.0000, 0.3094, 0.0000]` | pinned Redshift 1200 K signal LUT |
 
-![RGB channel collapse at 3400 K, 2000 K, and 1200 K](docs/diagrams/channel-collapse.svg)
+![RGB channel survival at 3400 K, 2000 K, and 1200 K](docs/diagrams/channel-collapse.svg)
 
-At 1200 K, the modeled blue channel contributes nothing and green is heavily
-attenuated. Colors that are far apart in ordinary sRGB can therefore converge after
-the filter.
+At 1200 K, blue contributes nothing to the modeled output. At 2000 K, only 9% survives.
+Ordinary sRGB distance is therefore a bad proxy for nighttime distinction: two colors can
+be far apart by day and converge after filtering.
 
-This creates a bi-state design problem. At 1200 K, many commanded blue values produce
-the same transformed color. At 2000 K, blue differences survive only weakly. Accent
-selection is therefore lexicographic rather than a weighted compromise:
+These are software signal models, not calibrated physical color temperatures. A real result
+also depends on the display, operating system, calibration, brightness, and ambient light.
 
-1. Choose the desired transformed identities first, including their lightness/chroma
-   geometry, contrast, and minimum Oklab separation.
-2. Treat those outcomes as hard targets. Among commanded colors that reproduce them,
-   choose the most coherent moderate-chroma daytime set with strong unshifted separation.
+### 2. Solve the constrained state first
 
-The manifest publishes both the commanded colors and their authored transformed targets;
-release checks require each target to be reproduced within `0.15 ΔEOK`. At 1200 K, the
-removed blue channel provides exact second-stage freedom. At 2000 K, its weak residual is
-kept inside the target-fidelity tolerance.
+Ember treats day and night as two views of the same commanded color. It does not average
+their quality into one score, because excellent daytime spacing cannot compensate for a
+nighttime collision.
 
-These are software signal models, not calibrated physical color temperatures. Actual
-output also depends on the display, operating system, calibration, brightness, and
-ambient light.
+1. Set hard transformed targets for contrast, lightness/chroma geometry, and minimum
+   perceptual separation in Oklab.
+2. Among the commanded colors that reproduce those targets, choose a moderate-chroma
+   daytime set with strong unfiltered separation.
 
-### Keep high-frequency detail quiet and readable
+This reverses the usual workflow. At 1200 K, changing only blue cannot disturb the
+transformed color, so Ember can use that otherwise lost channel to improve daytime identity.
+At 2000 K, the same freedom is smaller because a weak blue residual remains. Generated
+release checks keep every serialized accent within `0.15 ΔEOK` of its authored transformed
+target.
 
-Human vision resolves luminance detail more sharply than chromatic detail. Tiny
-saturated glyphs and adjacent opposing hues can look unstable because chromatic
-channels have lower spatial resolution and the eye focuses different wavelengths at
-slightly different planes.
+### 3. Keep frequent pixels neutral and reserve color for meaning
 
-Ember therefore puts most pixels in warm neutral surfaces and reserves color for
-meaning. Body text uses cream rather than pure white on dark themes, while every
-foreground-capable ANSI slot still reaches a 4.5:1 contrast floor after its target
-transform. Softer foreground roles remain available for larger or nonessential text.
+Human vision carries fine spatial detail more strongly through luminance than chromatic
+channels. Dense saturated glyphs and opposing hues are therefore poor places to spend a
+limited nighttime color gamut. The failure example above shows the practical consequence:
+pure white becomes a brighter transformed orange than Ember's cream body text, while a
+daytime dark gray becomes a much larger rust-colored signal than Ember's near-black canvas.
 
-The visual hierarchy draws on Gruvbox's warm-neutral foundation: grays carry the
-interface, and accents remain distinguishable without becoming the brightest objects
-on the screen.
+Ember puts most pixels in warm-neutral surfaces, uses cream rather than pure white for body
+text, and reserves higher chroma for semantic accents. Every foreground-capable terminal
+accent still clears 4.5:1 contrast against the terminal base background (`bg_0`) after its
+target transform. `fg_1` and `fg_2` remain available for larger supporting text and
+nonessential metadata.
 
-### Optimize semantic color for day and night
+### 4. Protect identity with both color and structure
 
-Categorical palettes use six colors at 3400 K, four at 2000 K, and three at 1200 K. The
-terminal palettes preserve those same transformed capacities while maintaining the higher
-contrast required by small monospaced glyphs: `6 / 6`, `6 / 6`, `4 / 4`, and `3 / 3`
-across the four families.
+Under the current release gates, Ember supports six categorical identities at 3400 K, four
+at 2000 K, and three at 1200 K. Deep terminal themes repeat those supported capacities across
+the sixteen ANSI slots; unsupported names alias deliberately instead of pretending to add
+another color identity.
 
-The terminal targets preserve conventional ANSI meaning by day and distinct warm identities
-after transformation. Deep terminal banks jointly optimize the accents with `fg_0`, `fg_1`, and
-`fg_2` rather than treating the neutral ladder as fixed infrastructure. `fg_0`—the source for
-ANSI white, bright-white, and primary uncolored text—keeps the strongest separation floors and
-highest design priority. The softer roles have lower but explicit accent-separation gates.
+An accent may change apparent hue between states; it must remain distinguishable in both.
+Every terminal bank is evaluated with all three foreground roles so an accent cannot pass by
+colliding with ordinary, supporting, or muted text. Every foreground trio must remain one
+ordered warm-neutral ladder rather than three unrelated colors.
 
-The three foregrounds remain one connected warm-neutral ladder: lightness decreases
-monotonically, commanded hue stays within a narrow arc, chroma remains bounded, and adjacent
-roles clear profile-specific day and transformed distance floors. This prevents an optimizer
-from solving accent collisions by turning ordinary text into three unrelated colors.
+Color is still not enough for critical identity. Charts should combine it with direct labels,
+position, dash pattern, marker shape, or texture:
 
-Categorical identity follows a looser and more useful contract: every slot must remain
-distinguishable in both states, but its hue does not need to look consistent between them. The
-2000 K set uses weakly surviving blue for muted sky, rose, brick, and sage daytime identities;
-the 1200 K set uses blue's exact null direction for rose, sky, and apricot. The generated
-manifest records that cross-state hue consistency is not required. Because lightness can imply
-order, categorical charts should still carry identity through labels, position, texture,
-marker, or line style.
+![Color-only series compared with redundant encoding](docs/diagrams/redundant-encoding.svg)
 
-![Redundant line encoding under deep red](docs/diagrams/redundant-encoding.svg)
+### 5. Space continuous maps in the transformed view
 
-### Build continuous maps for the transformed view
+Each sequential map begins with a human-chosen earth-tone path. The generator smooths that
+path in Oklab, measures cumulative distance after the target transform, and resamples it at
+equal transformed-distance intervals.
 
-Each sequential map starts with a human-chosen earth-tone path. The generator smooths
-that path in Oklab, measures cumulative distance after the target transform, and
-resamples it at equal transformed-distance intervals.
+The result is a 256-sample map with strictly monotonic transformed lightness and nearly equal
+modeled transformed Oklab steps. Release checks also require monotonic daytime lightness and
+bounded daytime step variation. CSS exposes eleven convenient 8-bit preview stops; JSON and
+Python carry the complete float samples.
 
-The result is a 256-sample float map with strictly monotonic transformed lightness and
-nearly equal transformed Oklab-distance steps. Release checks also require monotonic
-daytime lightness and bounded daytime step variation. The Hex8 and CSS exports are
-convenient quantized previews; the JSON and Python float arrays carry the numerical
-guarantee.
+<details>
+<summary><strong>Measured properties and exact release gates</strong></summary>
 
-## Measured properties
+### Measured properties
 
 `ΔEOK` below is Euclidean Oklab distance multiplied by 100. It is an engineering
 measure used consistently by the generator and tests, not a standardized CIE ΔE
@@ -293,31 +332,37 @@ formula.
 
 | Family | Categories | Day min ΔEOK | Transformed min ΔEOK | Mean / max raw chroma | Transformed L range | Min ANSI contrast |
 |---|---:|---:|---:|---:|---:|---:|
-| 3400K Dark | 6 | 15.00 | 11.45 | 0.0969 / 0.1045 | 0.2227 | 6.06:1 |
-| 3400K Light | 6 | 15.91 | 13.76 | 0.1016 / 0.1053 | 0.2584 | 4.76:1 |
+| 3400K Dark | 6 | 15.00 | 11.45 | 0.0971 / 0.1045 | 0.2206 | 5.29:1 |
+| 3400K Light | 6 | 16.73 | 12.41 | 0.0988 / 0.1037 | 0.3068 | 4.65:1 |
 | 2000K Dark | 4 | 16.50 | 12.59 | 0.0903 / 0.0907 | 0.1317 | 4.52:1 |
 | 1200K Dark | 3 | 20.03 | 10.05 | 0.1016 / 0.1086 | 0.1428 | 4.55:1 |
 
-Deep-profile daytime hue breadth and transformed category/background contrast are separate
-release gates. Contrast here is for graphical category marks, not small text.
+Daytime hue breadth and transformed category/background contrast are separate release gates.
+Contrast here is for graphical category marks, not small text.
 
-| Deep family | Day minimum hue gap | Target | Transformed category / `bg_0` | Target |
+| Family | Day minimum hue gap | Target | Transformed category / `bg_0` | Target |
 |---|---:|---:|---:|---:|
+| 3400K Dark | 20.23° | ≥ 20° | 3.01:1 | ≥ 3:1 |
+| 3400K Light | 31.75° | ≥ 30° | 3.03:1 | ≥ 3:1 |
 | 2000K Dark | 27.75° | ≥ 20° | 3.01:1 | ≥ 3:1 |
 | 1200K Dark | 54.05° | ≥ 45° | 3.01:1 | ≥ 3:1 |
 
-Deep terminal-bank separation includes the complete foreground ladder as well as
-accent-to-accent comparisons:
+Terminal-bank separation includes the complete foreground ladder as well as accent-to-accent
+comparisons:
 
-| Deep family | Day accent min | Day → `fg_0` | Day → `fg_1` | Day → `fg_2` | Transformed accent min | Transformed → `fg_0` | Transformed → `fg_1` | Transformed → `fg_2` |
+| Family | Day accent min | Day → `fg_0` | Day → `fg_1` | Day → `fg_2` | Transformed accent min | Transformed → `fg_0` | Transformed → `fg_1` | Transformed → `fg_2` |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 3400K Dark | 10.76 | 8.67 | 8.13 | 11.72 | 7.31 | 6.58 | 5.16 | 10.18 |
+| 3400K Light | 15.64 | 9.25 | 9.47 | 9.22 | 11.07 | 6.47 | 6.70 | 7.13 |
 | 2000K Dark | 12.62 | 13.73 | 10.86 | 8.25 | 7.75 | 7.64 | 5.03 | 4.75 |
 | 1200K Dark | 12.35 | 9.69 | 8.96 | 14.68 | 4.13 | 4.49 | 4.13 | 11.29 |
 
 Foreground coherence is independently gated rather than assumed:
 
-| Deep family | `fg_0 / fg_1 / fg_2` | Day adjacent steps | Transformed adjacent steps | Day / transformed gap ratio | Day / transformed hue span | Max day chroma |
+| Family | `fg_0 / fg_1 / fg_2` | Day adjacent steps | Transformed adjacent steps | Day / transformed gap ratio | Day / transformed hue span | Max day chroma |
 |---|---|---:|---:|---:|---:|---:|
+| 3400K Dark | `#DDD0B2 / #BDAE93 / #908472` | 10.41 / 13.79 | 8.70 / 11.88 | 0.7568 / 0.7372 | 9.32° / 2.63° | 0.0426 |
+| 3400K Light | `#342F2C / #4D4540 / #665C54` | 8.75 / 8.52 | 7.55 / 7.32 | 0.9734 / 0.9707 | 0.00° / 1.12° | 0.0181 |
 | 2000K Dark | `#EED5AE / #D3BB99 / #AA9D8B` | 8.04 / 10.44 | 6.20 / 9.04 | 0.7886 / 0.7008 | 2.74° / 2.51° | 0.0584 |
 | 1200K Dark | `#FFE5BD / #CBAF89 / #A18C73` | 16.43 / 11.79 | 11.07 / 9.16 | 0.7099 / 0.8177 | 6.73° / 0.71° | 0.0607 |
 
@@ -338,7 +383,7 @@ display's behavior near black.
 The build also checks `fg_0` against every declared background, verifies endpoint visibility,
 parses every terminal format, and reproduces all generated artifacts from source.
 
-## Verification
+### Reproduce the build
 
 ```bash
 uv sync --extra dev
@@ -357,32 +402,32 @@ The release gates enforce:
 - terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 4`, `3 / 3`;
 - no more than `0.15 ΔEOK` between each authored transformed accent target and the
   transformed serialized color that reproduces it;
-- at least 4.5:1 transformed contrast for foreground-capable ANSI slots;
+- at least 4.5:1 transformed contrast for foreground-capable ANSI slots against the terminal
+  base background (`bg_0`);
 - transformed contrast floors of `4.5:1`, `3.5:1`, and `2.4:1` for `fg_0`, `fg_1`, and
   `fg_2` respectively on every background; `fg_1` is limited to larger supporting text or
   graphics, and `fg_2` to nonessential metadata or decoration—not body text;
 - profile-specific accent-distance floors against each foreground role in commanded and
   transformed states, so an accent cannot hide a collision in the supporting or muted tier;
-- connected deep foreground ladders with bounded adjacent distances, balanced adjacent
-  lightness gaps, lightness-dominant steps, aligned chroma vectors, monotonic chroma within a
+- connected foreground ladders with bounded adjacent distances, balanced adjacent lightness
+  gaps, lightness-dominant steps, aligned chroma vectors, mode-aware chroma direction within a
   quantization tolerance, and narrow commanded/transformed hue spans;
 - dark-mode commanded relative-luminance caps of `0.003`, `0.005`, `0.009`, `0.013`,
   `0.020`, and `0.021` across the six-step ladder;
-- at least `1.8 ΔEOK` between adjacent transformed dark-surface ladder steps;
+- at least `1.8 ΔEOK` between adjacent transformed dark-surface ladder steps and `2.8 ΔEOK`
+  between adjacent transformed light-surface steps;
 - transformed primary-text floors of `6.8:1`, `5.65:1`, and `5.3:1` across every
-  surface in the 3400 K, 2000 K, and 1200 K dark families;
-- at least `6.0 ΔEOK` across each transformed background ladder from `bg_0` to `bg_5`;
+  surface in the 3400 K, 2000 K, and 1200 K dark families, plus `5.0:1` for 3400 K
+  Light;
+- at least `6.0 ΔEOK` across each transformed background ladder from `bg_0` to `bg_5`,
+  tightened to `15.0 ΔEOK` for 3400 K Light;
 - 256 unique float samples per sequential map, with monotonic lightness in both display
   states and nearly even transformed steps; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
 
-Version 0.3 retains the temperature-based palette IDs while replacing the dark surface
-ladders with near-black values, expanding to six backgrounds and three foregrounds, and
-exposing surfaces through the Python API. Existing users can consult the
-[migration guide](MIGRATION.md) for changed
-surfaces, legacy aliases, and removed deep-light themes.
+</details>
 
-## Sources and design lineage
+## References
 
 - Gruvbox, [original project and palette](https://github.com/morhetz/gruvbox): warm
   neutrals, sufficient contrast, and restrained accents for sustained use.

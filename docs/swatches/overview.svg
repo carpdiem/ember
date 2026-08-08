@@ -6,16 +6,16 @@
 <text x="320" y="104" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
 <rect x="320" y="114" width="93" height="60" rx="7" fill="#6E96D5"/>
 <rect x="420" y="114" width="93" height="60" rx="7" fill="#DDAA69"/>
-<rect x="520" y="114" width="93" height="60" rx="7" fill="#2E8A7E"/>
+<rect x="520" y="114" width="93" height="60" rx="7" fill="#2E8B7E"/>
 <rect x="620" y="114" width="93" height="60" rx="7" fill="#67BE95"/>
 <rect x="720" y="114" width="93" height="60" rx="7" fill="#945D48"/>
 <rect x="820" y="114" width="93" height="60" rx="7" fill="#C3779A"/>
 <text x="940" y="104" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Terminal ANSI accents</text>
 <rect x="940.00" y="114" width="43.00" height="60" rx="7" fill="#F5AD9A"/>
 <text x="956" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R</text>
-<rect x="990.00" y="114" width="43.00" height="60" rx="7" fill="#9ABEA2"/>
+<rect x="990.00" y="114" width="43.00" height="60" rx="7" fill="#7EB798"/>
 <text x="1006" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">G</text>
-<rect x="1040.00" y="114" width="43.00" height="60" rx="7" fill="#CEA866"/>
+<rect x="1040.00" y="114" width="43.00" height="60" rx="7" fill="#CA9246"/>
 <text x="1056" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Y</text>
 <rect x="1090.00" y="114" width="43.00" height="60" rx="7" fill="#B4C6F7"/>
 <text x="1106" y="152" fill="#14110E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">B</text>
@@ -297,23 +297,23 @@
 <text x="932" y="310" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_0</text>
 <rect x="1020.00" y="282" width="100.00" height="44" fill="#BDAE93"/>
 <text x="1032" y="310" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_1</text>
-<rect x="1120.00" y="282" width="100.00" height="44" fill="#928374"/>
+<rect x="1120.00" y="282" width="100.00" height="44" fill="#908472"/>
 <text x="1132" y="310" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_2</text>
 <text x="30" y="376" fill="#E9E1D4" font-size="28" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">3400K Light</text>
 <text x="30" y="406" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">~3400 K warm-white surrogate</text>
 <text x="320" y="354" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Categorical colors</text>
-<rect x="320" y="364" width="93" height="60" rx="7" fill="#158F7A"/>
-<rect x="420" y="364" width="93" height="60" rx="7" fill="#322865"/>
-<rect x="520" y="364" width="93" height="60" rx="7" fill="#AE5D63"/>
-<rect x="620" y="364" width="93" height="60" rx="7" fill="#6E2626"/>
-<rect x="720" y="364" width="93" height="60" rx="7" fill="#33531D"/>
-<rect x="820" y="364" width="93" height="60" rx="7" fill="#676DB1"/>
+<rect x="320" y="364" width="93" height="60" rx="7" fill="#2C9A84"/>
+<rect x="420" y="364" width="93" height="60" rx="7" fill="#321853"/>
+<rect x="520" y="364" width="93" height="60" rx="7" fill="#B36875"/>
+<rect x="620" y="364" width="93" height="60" rx="7" fill="#5B2A07"/>
+<rect x="720" y="364" width="93" height="60" rx="7" fill="#2A632D"/>
+<rect x="820" y="364" width="93" height="60" rx="7" fill="#556BAA"/>
 <text x="940" y="354" fill="#BDAE98" font-size="18" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Terminal ANSI accents</text>
 <rect x="940.00" y="364" width="43.00" height="60" rx="7" fill="#470D05"/>
 <text x="956" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">R</text>
 <rect x="990.00" y="364" width="43.00" height="60" rx="7" fill="#174213"/>
 <text x="1006" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">G</text>
-<rect x="1040.00" y="364" width="43.00" height="60" rx="7" fill="#745C08"/>
+<rect x="1040.00" y="364" width="43.00" height="60" rx="7" fill="#894C03"/>
 <text x="1056" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Y</text>
 <rect x="1090.00" y="364" width="43.00" height="60" rx="7" fill="#162252"/>
 <text x="1106" y="402" fill="#FFF0D8" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">B</text>
@@ -593,7 +593,7 @@
 <text x="832" y="560" fill="#14110E" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
 <rect x="920.00" y="532" width="100.00" height="44" fill="#342F2C"/>
 <text x="932" y="560" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_0</text>
-<rect x="1020.00" y="532" width="100.00" height="44" fill="#504945"/>
+<rect x="1020.00" y="532" width="100.00" height="44" fill="#4D4540"/>
 <text x="1032" y="560" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_1</text>
 <rect x="1120.00" y="532" width="100.00" height="44" fill="#665C54"/>
 <text x="1132" y="560" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_2</text>

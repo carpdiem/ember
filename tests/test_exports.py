@@ -105,7 +105,7 @@ def test_generated_swatch_rectangles_fit_their_canvas() -> None:
 def test_readme_hero_overview_displays_every_palette_role() -> None:
     readme = (ROOT / "README.md").read_text()
     hero = "![Ember palette overview](docs/swatches/overview.svg)"
-    assert readme.index(hero) < readme.index("Ember provides coordinated color systems")
+    assert readme.index(hero) < readme.index("## What is Ember?")
 
     manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
     roles = (*manifest["quality_targets"]["bg_roles_low_to_high"], "fg_0", "fg_1", "fg_2")

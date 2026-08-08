@@ -15,7 +15,9 @@ if str(SRC) not in sys.path:
 
 from redshift_safe.color import (  # pyright: ignore[reportMissingImports]
     hex_to_srgb,
+    srgb_to_hex,
     srgb_to_oklab,
+    warm_transform,
     wcag_luminance,
 )
 
@@ -29,6 +31,10 @@ def _blend_rgb(foreground: str, background: str, weight: float) -> tuple[int, in
     background_rgb = hex_to_srgb(background)
     mixed = background_rgb * (1.0 - weight) + foreground_rgb * weight
     return tuple(round(channel * 255) for channel in mixed)
+
+
+def _shift_hex(value: str, gains: list[float]) -> str:
+    return srgb_to_hex(warm_transform(hex_to_srgb(value), gains))
 
 
 def _transform_box(
@@ -366,25 +372,154 @@ def _data_samples(manifest: dict, destination: Path) -> None:
 
 
 def channel_collapse_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="390" viewBox="0 0 1180 390">
-<rect width="1180" height="390" rx="18" fill="#282522"/>
-<text x="38" y="52" fill="#ded0b2" font-size="32" font-family="system-ui">Warm filters compress the available color dimensions</text>
-<text x="38" y="86" fill="#b3a48d" font-size="20" font-family="system-ui">Each rail shows how much commanded red, green, and blue survives the transform.</text>
-<g font-family="ui-monospace, monospace" font-size="21">
-<text x="38" y="158" fill="#d2c2a5">3400 K</text><text x="38" y="238" fill="#d2c2a5">2000 K</text><text x="38" y="318" fill="#d2c2a5">1200 K</text>
-<g transform="translate(150 126)"><rect width="300" height="30" rx="5" fill="#a86658"/><rect x="315" width="222" height="30" rx="5" fill="#859a65"/><rect x="552" width="159" height="30" rx="5" fill="#6e7e91"/><text x="730" y="23" fill="#e0d2b9">R 100% · G 74% · B 53%</text></g>
-<g transform="translate(150 206)"><rect width="300" height="30" rx="5" fill="#a86658"/><rect x="315" width="163" height="30" rx="5" fill="#7c8355"/><rect x="493" width="26" height="30" rx="5" fill="#4f5661"/><text x="540" y="23" fill="#e0d2b9">R 100% · G 54% · B 9%</text></g>
-<g transform="translate(150 286)"><rect width="300" height="30" rx="5" fill="#a86658"/><rect x="315" width="93" height="30" rx="5" fill="#6d6a47"/><rect x="423" width="3" height="30" fill="#4f5661"/><text x="446" y="23" fill="#e0d2b9">R 100% · G 31% · B 0%</text></g>
-</g><text x="150" y="360" fill="#b3a48d" font-size="19" font-family="system-ui">The lost channels create room to improve daytime colors without disturbing the transformed view.</text></svg>"""
+    return """<svg xmlns="http://www.w3.org/2000/svg" width="760" height="760" viewBox="0 0 760 760">
+<rect width="760" height="760" rx="22" fill="#1B1815"/>
+<g font-family="system-ui, sans-serif">
+<text x="36" y="54" fill="#F0DFC0" font-size="32" font-weight="700">A warm filter removes color dimensions</text>
+<text x="36" y="90" fill="#BFAF98" font-size="21">Bar length = fraction of each commanded channel that survives.</text>
+
+<g transform="translate(36 136)">
+  <text x="0" y="0" fill="#E7D3B0" font-size="28" font-weight="700">3400 K</text>
+  <text x="164" y="0" fill="#BFAF98" font-size="21">R 100% · G 74% · B 53%</text>
+  <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#352A26"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#2A3128"/><rect x="34" y="42" width="473" height="28" rx="7" fill="#82A36F"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#252A32"/><rect x="34" y="84" width="339" height="28" rx="7" fill="#6F86A8"/>
+  </g>
+</g>
+
+<g transform="translate(36 354)">
+  <text x="0" y="0" fill="#E7D3B0" font-size="28" font-weight="700">2000 K</text>
+  <text x="164" y="0" fill="#BFAF98" font-size="21">R 100% · G 54% · B 9%</text>
+  <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#352A26"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#2A3128"/><rect x="34" y="42" width="348" height="28" rx="7" fill="#7B8A5A"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#252A32"/><rect x="34" y="84" width="56" height="28" rx="7" fill="#576477"/>
+  </g>
+</g>
+
+<g transform="translate(36 572)">
+  <text x="0" y="0" fill="#E7D3B0" font-size="28" font-weight="700">1200 K</text>
+  <text x="164" y="0" fill="#BFAF98" font-size="21">R 100% · G 31% · B 0%</text>
+  <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#352A26"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#2A3128"/><rect x="34" y="42" width="198" height="28" rx="7" fill="#736D49"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#252A32"/><rect x="34" y="84" width="2" height="28" fill="#4B5260"/>
+  </g>
+</g>
+</g></svg>"""
 
 
 def redundant_encoding_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="390" viewBox="0 0 1180 390">
-<rect width="1180" height="390" rx="18" fill="#2c211d"/><text x="38" y="52" fill="#f2d9b5" font-size="32" font-family="system-ui">At deep red, color supports identity rather than carrying it alone</text>
-<text x="38" y="86" fill="#b8a184" font-size="20" font-family="system-ui">Direct labels, dash patterns, and markers remain distinct when hue collapses.</text>
-<g transform="translate(50 125)" fill="none"><path d="M0 110 C80 15 165 190 270 75 S445 135 520 35" stroke="#e0c49a" stroke-width="6"/><circle cx="520" cy="35" r="9" fill="#e0c49a"/><path d="M0 145 C95 60 175 175 280 115 S440 35 520 100" stroke="#b08e76" stroke-width="6" stroke-dasharray="18 12"/><rect x="511" y="91" width="18" height="18" fill="#b08e76"/><path d="M0 60 C95 150 195 15 290 90 S440 170 520 125" stroke="#8f8a6a" stroke-width="6" stroke-dasharray="4 11"/><path d="M520 114 L509 135 L531 135 Z" fill="#8f8a6a"/></g>
-<g font-family="ui-monospace, monospace" font-size="22"><text x="620" y="170" fill="#e0c49a">A  solid + circle</text><text x="620" y="230" fill="#b08e76">B  dashed + square</text><text x="620" y="290" fill="#8f8a6a">C  dotted + triangle</text></g>
-<text x="620" y="340" fill="#b8a184" font-size="20" font-family="system-ui">Labels sit beside the lines they identify.</text></svg>"""
+    return """<svg xmlns="http://www.w3.org/2000/svg" width="760" height="830" viewBox="0 0 760 830">
+<rect width="760" height="830" rx="22" fill="#1B1512"/>
+<g font-family="system-ui, sans-serif">
+<text x="36" y="54" fill="#F2D9B5" font-size="32" font-weight="700">When hue compresses, color alone is fragile</text>
+<text x="36" y="90" fill="#BFA98C" font-size="21">The same transformed colors are used in both charts.</text>
+
+<g transform="translate(36 126)">
+  <text x="0" y="0" fill="#F0A991" font-size="27" font-weight="700">Wrong: identity lives only in hue</text>
+  <rect x="0" y="24" width="688" height="270" rx="14" fill="#090402" stroke="#53200F" stroke-width="2"/>
+  <path d="M34 210 C120 70 215 250 330 115 S540 180 625 62" fill="none" stroke="#F22D00" stroke-width="7"/>
+  <path d="M34 238 C130 115 235 230 345 165 S535 72 625 145" fill="none" stroke="#C94F00" stroke-width="7"/>
+  <path d="M34 112 C130 220 245 62 355 142 S535 245 625 205" fill="none" stroke="#DD3F00" stroke-width="7"/>
+  <text x="24" y="328" fill="#A9846E" font-size="20">At crossings and small sizes, A/B/C become guesswork.</text>
+</g>
+
+<g transform="translate(36 492)">
+  <text x="0" y="0" fill="#C8E8AC" font-size="27" font-weight="700">Ember: color + pattern + marker + label</text>
+  <rect x="0" y="24" width="688" height="270" rx="14" fill="#090402" stroke="#53200F" stroke-width="2"/>
+  <path d="M34 210 C120 70 215 250 330 115 S540 180 625 62" fill="none" stroke="#F22D00" stroke-width="7"/>
+  <circle cx="625" cy="62" r="10" fill="#F22D00"/><text x="644" y="70" fill="#F57A59" font-size="24" font-weight="700">A</text>
+  <path d="M34 238 C130 115 235 230 345 165 S535 72 625 145" fill="none" stroke="#C94F00" stroke-width="7" stroke-dasharray="20 13"/>
+  <rect x="615" y="135" width="20" height="20" fill="#C94F00"/><text x="644" y="154" fill="#D88942" font-size="24" font-weight="700">B</text>
+  <path d="M34 112 C130 220 245 62 355 142 S535 245 625 205" fill="none" stroke="#DD3F00" stroke-width="7" stroke-dasharray="4 12"/>
+  <path d="M625 193 L613 215 L637 215 Z" fill="#DD3F00"/><text x="644" y="214" fill="#EA865B" font-size="24" font-weight="700">C</text>
+</g>
+</g></svg>"""
+
+
+def failure_modes_svg(manifest: dict) -> str:
+    """Show three common failures using the exact authored transforms and colors."""
+
+    gains_1200 = manifest["profiles"]["1200k"]["rgb_gains"]
+    gains_2000 = manifest["profiles"]["2000k"]["rgb_gains"]
+    family_1200 = manifest["families"]["1200k-dark"]
+    family_2000 = manifest["families"]["2000k-dark"]
+
+    naive_cyan = "#8BC1FF"
+    naive_chartreuse = "#8BC100"
+    collapsed = _shift_hex(naive_cyan, gains_1200)
+    assert collapsed == _shift_hex(naive_chartreuse, gains_1200)
+
+    ordinary_canvas = "#282828"
+    ember_canvas = family_1200["surfaces"]["bg_0"]
+    ordinary_shifted = _shift_hex(ordinary_canvas, gains_1200)
+    ember_shifted = _shift_hex(ember_canvas, gains_1200)
+    ordinary_luminance = wcag_luminance(hex_to_srgb(ordinary_shifted))
+    ember_luminance = wcag_luminance(hex_to_srgb(ember_shifted))
+
+    pure_white = "#FFFFFF"
+    ember_text = family_2000["surfaces"]["fg_0"]
+    pure_white_shifted = _shift_hex(pure_white, gains_2000)
+    ember_text_shifted = _shift_hex(ember_text, gains_2000)
+    background_2000 = _shift_hex(family_2000["surfaces"]["bg_0"], gains_2000)
+    accent_2000 = _shift_hex(family_2000["terminal"]["red"], gains_2000)
+
+    accent_targets = [
+        _shift_hex(family_1200["terminal"][role], gains_1200)
+        for role in ("red", "green", "yellow")
+    ]
+
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="760" height="1250" viewBox="0 0 760 1250">
+<rect width="760" height="1250" rx="22" fill="#171411"/>
+<g font-family="system-ui, sans-serif">
+<text x="36" y="54" fill="#F1DFC0" font-size="32" font-weight="700">Why ordinary palettes fail</text>
+<text x="36" y="91" fill="#F1DFC0" font-size="32" font-weight="700">under aggressive warm shifts</text>
+<text x="36" y="126" fill="#BFAE96" font-size="21">Every transformed swatch below uses Ember's exact signal model.</text>
+
+<g transform="translate(36 172)">
+  <text x="0" y="0" fill="#E7D1AC" font-size="27" font-weight="700">1 · Daytime colors can become identical</text>
+  <text x="0" y="34" fill="#BFAE96" font-size="20">At 1200 K, blue is removed. These commands differ only in blue.</text>
+  <text x="0" y="82" fill="#D98DA1" font-size="20" font-weight="700">Naive commands</text>
+  <rect x="0" y="100" width="214" height="78" rx="10" fill="{naive_cyan}"/><text x="18" y="149" fill="#151310" font-size="21" font-family="ui-monospace, monospace">{naive_cyan}</text>
+  <rect x="232" y="100" width="214" height="78" rx="10" fill="{naive_chartreuse}"/><text x="250" y="149" fill="#151310" font-size="21" font-family="ui-monospace, monospace">{naive_chartreuse}</text>
+  <path d="M472 139 H520" stroke="#BFAE96" stroke-width="4"/><path d="M520 139 l-14 -9 v18 z" fill="#BFAE96"/>
+  <rect x="540" y="100" width="148" height="78" rx="10" fill="{collapsed}"/><text x="554" y="149" fill="#FFF0D8" font-size="20" font-family="ui-monospace, monospace">same</text>
+  <text x="0" y="218" fill="#B8D89F" font-size="20" font-weight="700">Ember target identities</text>
+  <rect x="0" y="236" width="214" height="64" rx="10" fill="{accent_targets[0]}"/>
+  <rect x="232" y="236" width="214" height="64" rx="10" fill="{accent_targets[1]}"/>
+  <rect x="464" y="236" width="214" height="64" rx="10" fill="{accent_targets[2]}"/>
+</g>
+
+<g transform="translate(36 532)">
+  <text x="0" y="0" fill="#E7D1AC" font-size="27" font-weight="700">2 · Ordinary dark gray becomes a rust field</text>
+  <text x="0" y="34" fill="#BFAE96" font-size="20">Large surfaces amplify the filter. Near-black keeps the canvas quiet.</text>
+  <text x="0" y="80" fill="#D98DA1" font-size="20" font-weight="700">Ordinary dark theme</text>
+  <rect x="0" y="98" width="324" height="122" rx="12" fill="{ordinary_shifted}" stroke="#75401E" stroke-width="2"/>
+  <text x="18" y="146" fill="#F3D3B4" font-size="21" font-family="ui-monospace, monospace">{ordinary_canvas} → {ordinary_shifted}</text>
+  <text x="18" y="184" fill="#D9AE8C" font-size="19">modeled luminance {ordinary_luminance:.5f}</text>
+  <text x="360" y="80" fill="#B8D89F" font-size="20" font-weight="700">Ember 1200K canvas</text>
+  <rect x="360" y="98" width="324" height="122" rx="12" fill="{ember_shifted}" stroke="#4C2B1C" stroke-width="2"/>
+  <text x="378" y="146" fill="#F3D3B4" font-size="21" font-family="ui-monospace, monospace">{ember_canvas} → {ember_shifted}</text>
+  <text x="378" y="184" fill="#D9AE8C" font-size="19">modeled luminance {ember_luminance:.5f}</text>
+</g>
+
+<g transform="translate(36 842)">
+  <text x="0" y="0" fill="#E7D1AC" font-size="27" font-weight="700">3 · Pure white becomes the loudest warm signal</text>
+  <text x="0" y="34" fill="#BFAE96" font-size="20">At 2000 K, neutral source text turns orange. Restraint still matters.</text>
+  <text x="0" y="80" fill="#D98DA1" font-size="20" font-weight="700">Pure white everywhere</text>
+  <rect x="0" y="98" width="324" height="196" rx="12" fill="{background_2000}" stroke="#5A260F" stroke-width="2"/>
+  <text x="18" y="143" fill="{pure_white_shifted}" font-size="24" font-family="ui-monospace, monospace">{pure_white} → {pure_white_shifted}</text>
+  <text x="18" y="187" fill="{pure_white_shifted}" font-size="23" font-family="ui-monospace, monospace">Every glyph competes.</text>
+  <text x="18" y="231" fill="{pure_white_shifted}" font-size="23" font-family="ui-monospace, monospace">Nothing is quiet.</text>
+  <text x="360" y="80" fill="#B8D89F" font-size="20" font-weight="700">Ember neutral + sparse color</text>
+  <rect x="360" y="98" width="324" height="196" rx="12" fill="{background_2000}" stroke="#5A260F" stroke-width="2"/>
+  <text x="378" y="143" fill="{ember_text_shifted}" font-size="24" font-family="ui-monospace, monospace">{ember_text} → {ember_text_shifted}</text>
+  <text x="378" y="187" fill="{ember_text_shifted}" font-size="23" font-family="ui-monospace, monospace">Body text stays primary.</text>
+  <text x="378" y="231" fill="{accent_2000}" font-size="23" font-family="ui-monospace, monospace">Color marks meaning.</text>
+</g>
+</g></svg>"""
 
 
 def render_samples(manifest: dict, destination: Path) -> None:

@@ -21,6 +21,7 @@ if str(SRC) not in sys.path:
 from render_gallery import GALLERY_FINGERPRINT_KEY, render_matplotlib_gallery
 from render_samples import (
     channel_collapse_svg,
+    failure_modes_svg,
     redundant_encoding_svg,
     render_samples,
     sample_analysis_markdown,
@@ -42,6 +43,7 @@ BASE_MANAGED_PATHS = (
     "docs/samples/data-commanded.png",
     "docs/samples/data-simulated.png",
     "docs/diagrams/channel-collapse.svg",
+    "docs/diagrams/failure-modes.svg",
     "docs/diagrams/redundant-encoding.svg",
     "docs/sample-analysis.md",
 )
@@ -395,7 +397,7 @@ root `schemes` array, then set a profile’s `colorScheme` to the object’s exa
 
 ## Surface roles
 
-The file formats still require all 16 ANSI slots. Ember repeats 6, 6, 4, or 3
+Terminal formats require all 16 ANSI slots. Ember repeats 6, 6, 4, or 3
 commanded daytime accents across those slots. Under the target transforms they form
 6, 6, 4, or 3 distinct nighttime identities. Bold should come from typography,
 not a second high-chroma bank.
@@ -408,12 +410,6 @@ assign those names to misleading hues.
 and `fg_2` for nonessential metadata or decoration. The latter two are not universal
 body-text colors; inspect each
 pairing under `metrics.shifted_text_contrast` in the JSON manifest.
-
-## Legacy filenames
-
-The 0.1 dark-theme filenames and `ember-light` remain generated aliases. The
-unsafe `lowfire-light` and `safelight-light` themes have no deep-shift light
-replacement. See `MIGRATION.md` at the repository root.
 """
     _write(destination / "themes/terminal/README.md", terminal_readme)
 
@@ -442,6 +438,7 @@ replacement. See `MIGRATION.md` at the repository root.
     render_matplotlib_gallery(manifest, destination / "docs/matplotlib-gallery.png")
     render_samples(manifest, destination / "docs/samples")
     _write(destination / "docs/diagrams/channel-collapse.svg", channel_collapse_svg())
+    _write(destination / "docs/diagrams/failure-modes.svg", failure_modes_svg(manifest))
     _write(
         destination / "docs/diagrams/redundant-encoding.svg",
         redundant_encoding_svg(),

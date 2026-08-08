@@ -24,6 +24,9 @@ from .definitions import (
     DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE,
     FAMILIES,
     LEGACY_SURFACE_ROLE_ALIASES,
+    LIGHT_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK,
+    LIGHT_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST,
+    LIGHT_MINIMUM_SURFACE_SPAN_DELTA_E_OK,
     MINIMUM_SHIFTED_FOREGROUND_CONTRAST,
     FamilyDefinition,
 )
@@ -201,8 +204,8 @@ def _metrics(
     shifted_foreground_vectors = np.diff(shifted_foregrounds, axis=0)
     normal_foreground_adjacent = np.linalg.norm(normal_foreground_vectors, axis=1)
     shifted_foreground_adjacent = np.linalg.norm(shifted_foreground_vectors, axis=1)
-    normal_foreground_lightness_gaps = -np.diff(normal_foregrounds[:, 0])
-    shifted_foreground_lightness_gaps = -np.diff(shifted_foregrounds[:, 0])
+    normal_foreground_lightness_gaps = np.abs(np.diff(normal_foregrounds[:, 0]))
+    shifted_foreground_lightness_gaps = np.abs(np.diff(shifted_foregrounds[:, 0]))
     foreground_metrics = {
         "normal_adjacent_delta_e_ok": [
             round(float(distance * 100.0), 2) for distance in normal_foreground_adjacent
@@ -443,6 +446,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "foreground_night_minimum_chroma_vector_cosine_target": (
             family.foreground_night_minimum_chroma_vector_cosine
         ),
+        "foreground_chroma_direction": family.foreground_chroma_direction,
         "foreground_chroma_order_tolerance": family.foreground_chroma_order_tolerance,
         "terminal_minimum_shifted_foreground_contrast": round(
             min(contrast_ratio(value, transformed_background) for value in small_text_terminal),
@@ -473,7 +477,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 9,
+        "schema_version": 10,
         "project": "Ember: Redshift Safe Color Palettes",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
@@ -513,6 +517,13 @@ def generate_manifest() -> dict[str, Any]:
             "dark_minimum_shifted_primary_text_contrast": (
                 DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST
             ),
+            "light_minimum_shifted_primary_text_contrast": (
+                LIGHT_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST
+            ),
+            "light_minimum_adjacent_surface_delta_e_ok": (
+                LIGHT_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK
+            ),
+            "light_minimum_surface_span_delta_e_ok": LIGHT_MINIMUM_SURFACE_SPAN_DELTA_E_OK,
         },
         "profiles": profiles,
         "families": {family.slug: generate_family(family) for family in FAMILIES},
