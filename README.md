@@ -13,6 +13,22 @@ themes (Alacritty, iTerm2, Windows Terminal), UI surface roles, categorical char
 colors, a 256-sample sequential map, and Matplotlib/CSS/JSON/Python artifacts.
 Ember does not apply the filter; keep using the one you already have.
 
+## Experimental Pareto pass
+
+This branch is an intentionally reviewable experiment against [`main`](https://github.com/carpdiem/ember/tree/main):
+
+- deep categorical colors now clear the complete foreground ladder more cleanly in nominal
+  and ±5% gain-sensitivity states;
+- the manifest publishes worst-case category, terminal, surface-text, and sequential metrics
+  across that documented gain box; and
+- deep sequential maps use a commanded/transformed arc-length blend to reduce daytime step
+  variation while retaining the existing transformed-quality gate.
+
+The categorical changes are metric Pareto improvements. The sequential change is a deliberate
+bi-state minimax trade: commanded spacing improves while transformed spacing becomes less exact.
+See the [full `main` vs experimental report](docs/experiments/pareto-palette-pass.md) or the
+[complete GitHub diff](https://github.com/carpdiem/ember/compare/main...experiment/pareto-palette-pass).
+
 ## The four palettes
 
 ![3400K Dark — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-dark.svg)
@@ -282,11 +298,12 @@ position, dash pattern, marker shape, or texture:
 
 ![Color-only series compared with redundant encoding](docs/diagrams/redundant-encoding.svg)
 
-### 5. Space continuous maps in the transformed view
+### 5. Space continuous maps across both views
 
 Each sequential map begins with a human-chosen earth-tone path. The generator smooths that
-path in Oklab, measures cumulative distance after the target transform, and resamples it at
-equal transformed-distance intervals.
+path in Oklab and resamples it by cumulative perceptual distance. The 3400 K families retain
+equal transformed-distance sampling. The deep experimental families blend normalized commanded
+and transformed arc length: 50/50 at 2000 K and 45/55 at 1200 K.
 
 The result is a 256-sample map with strictly monotonic transformed lightness and nearly equal
 modeled transformed Oklab steps. Release checks also require monotonic daytime lightness and
@@ -316,8 +333,8 @@ Contrast here is for graphical category marks, not small text.
 |---|---:|---:|---:|---:|
 | 3400K Dark | 20.23° | ≥ 20° | 3.01:1 | ≥ 3:1 |
 | 3400K Light | 31.75° | ≥ 30° | 3.03:1 | ≥ 3:1 |
-| 2000K Dark | 27.75° | ≥ 20° | 3.01:1 | ≥ 3:1 |
-| 1200K Dark | 54.05° | ≥ 45° | 3.01:1 | ≥ 3:1 |
+| 2000K Dark | 27.76° | ≥ 20° | 3.05:1 | ≥ 3:1 |
+| 1200K Dark | 65.03° | ≥ 45° | 3.12:1 | ≥ 3:1 |
 
 Terminal-bank separation includes the complete foreground ladder as well as accent-to-accent
 comparisons:
@@ -394,7 +411,10 @@ The release gates enforce:
 - at least `6.0 ΔEOK` across each transformed background ladder from `bg_0` to `bg_5`,
   tightened to `15.0 ΔEOK` for 3400 K Light;
 - 256 unique float samples per sequential map, with monotonic lightness in both display
-  states and nearly even transformed steps; and
+  states, transformed step CV no greater than `0.08`, and the deep commanded CV tightened
+  to `0.06` at 2000 K and `0.095` at 1200 K;
+- exact recomputation of the four ±5% green/blue sensitivity corners and deep categorical
+  corner floors for category spacing, foreground clearance, and background contrast; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
 
 </details>
