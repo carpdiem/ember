@@ -125,6 +125,23 @@ def test_readme_visual_story_leads_before_setup() -> None:
             assert image.height > image.width
 
 
+def test_readme_presents_the_finished_product_without_branch_history() -> None:
+    readme = (ROOT / "README.md").read_text()
+    first_product_heading = readme.index("## The four palettes")
+    setup = readme.index("## Make Ember work")
+    assert first_product_heading < setup
+    for stale_phrase in (
+        "Experimental Pareto pass",
+        "experiment/pareto-palette-pass",
+        "main...experiment",
+        "deep experimental anchors",
+        "bi-state minimax trade",
+    ):
+        assert stale_phrase not in readme
+    assert "four ±5% green/blue gain corners" in readme
+    assert "not extrema over every point" in readme
+
+
 def test_commanded_inventory_displays_every_palette_role() -> None:
     readme = (ROOT / "README.md").read_text()
     manifest = json.loads((ROOT / "palettes/ember.json").read_text())

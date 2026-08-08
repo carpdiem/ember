@@ -13,22 +13,6 @@ themes (Alacritty, iTerm2, Windows Terminal), UI surface roles, categorical char
 colors, a 256-sample sequential map, and Matplotlib/CSS/JSON/Python artifacts.
 Ember does not apply the filter; keep using the one you already have.
 
-## Experimental Pareto pass
-
-This branch is an intentionally reviewable experiment against [`main`](https://github.com/carpdiem/ember/tree/main):
-
-- deep categorical colors now clear the complete foreground ladder more cleanly in nominal
-  and ±5% gain-sensitivity states;
-- the manifest publishes category, terminal, surface-text, and sequential extrema observed at
-  the four corners of that documented gain box; and
-- deep sequential maps use weak/zero-blue freedom in their interior anchors to reduce daytime
-  step variation while preserving transformed-equal-distance sampling.
-
-The categorical and sequential changes are metric Pareto improvements relative to `main`:
-commanded spacing improves while transformed spacing remains effectively exact.
-See the [full `main` vs experimental report](docs/experiments/pareto-palette-pass.md) or the
-[complete GitHub diff](https://github.com/carpdiem/ember/compare/main...experiment/pareto-palette-pass).
-
 ## The four palettes
 
 ![3400K Dark — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-dark.svg)
@@ -248,6 +232,11 @@ be far apart by day and converge after filtering.
 These are software signal models, not calibrated physical color temperatures. A real result
 also depends on the display, operating system, calibration, brightness, and ambient light.
 
+The JSON manifest also reports sensitivity diagnostics at four ±5% green/blue gain corners
+for categorical colors, terminal groups, foreground/surface contrast, and sequential spacing.
+These sampled corners expose nearby model sensitivity; they are not extrema over every point
+inside a continuous gain box and are not display calibration measurements.
+
 ### 2. Solve the constrained state first
 
 Ember treats day and night as two views of the same commanded color. It does not average
@@ -264,6 +253,11 @@ transformed color, so Ember can use that otherwise lost channel to improve dayti
 At 2000 K, the same freedom is smaller because a weak blue residual remains. Generated
 release checks keep every serialized accent within `0.15 ΔEOK` of its authored transformed
 target.
+
+Categorical colors must also clear the complete `fg_0` / `fg_1` / `fg_2` ladder in both
+states, not merely remain distinct from one another. The 2000 K and 1200 K banks repeat their
+category-spacing, foreground-clearance, and background-contrast checks at all four sampled
+gain corners.
 
 ### 3. Keep frequent pixels neutral and reserve color for meaning
 
@@ -302,8 +296,9 @@ position, dash pattern, marker shape, or texture:
 
 Each sequential map begins with a human-chosen earth-tone path. The generator smooths that
 path in Oklab, measures cumulative distance after the target transform, and resamples it at
-equal transformed-distance intervals. The deep experimental anchors use blue-channel freedom
-to improve commanded spacing without giving up that transformed equidistance.
+equal transformed-distance intervals. The 2000 K and 1200 K maps use restrained interior
+blue-channel adjustments to improve commanded spacing without giving up transformed
+equidistance, endpoints, or monotonic lightness.
 
 The result is a 256-sample map with strictly monotonic transformed lightness and nearly equal
 modeled transformed Oklab steps. Release checks also require monotonic daytime lightness and
@@ -388,6 +383,8 @@ The release gates enforce:
 - categorical commanded mean Oklab chroma between `0.09` and `0.105`, with no color
   above `0.111`;
 - categorical minimum-distance floors in both unshifted and transformed states;
+- categorical separation from every foreground role in both states, plus sampled-corner
+  floors for deep-profile category spacing, foreground clearance, and background contrast;
 - terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 4`, `3 / 3`;
 - no more than `0.15 ΔEOK` between each authored transformed accent target and the
   transformed serialized color that reproduces it;
@@ -411,10 +408,10 @@ The release gates enforce:
 - at least `6.0 ΔEOK` across each transformed background ladder from `bg_0` to `bg_5`,
   tightened to `15.0 ΔEOK` for 3400 K Light;
 - 256 unique float samples per sequential map, with monotonic lightness in both display
-  states, transformed step CV no greater than `0.08`, and the deep commanded CV tightened
+  states, transformed step CV no greater than `0.0001`, transformed max:min step ratio no
+  greater than `1.001`, and the deep commanded CV tightened
   to `0.11` at 2000 K and `0.15` at 1200 K;
-- exact recomputation of the four ±5% green/blue sensitivity corners and deep categorical
-  corner floors for category spacing, foreground clearance, and background contrast; and
+- exact recomputation of the four ±5% green/blue sensitivity corners; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.
 
 </details>
