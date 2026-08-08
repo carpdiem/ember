@@ -8,6 +8,11 @@ license = "MIT"
 authors = [{ name = "Michael Woods" }]
 dependencies = ["matplotlib>=3.8", "numpy>=1.26"]
 
+[project.urls]
+Homepage = "https://github.com/carpdiem/ember"
+Repository = "https://github.com/carpdiem/ember"
+Issues = "https://github.com/carpdiem/ember/issues"
+
 [project.optional-dependencies]
 dev = [
   "pillow>=10",

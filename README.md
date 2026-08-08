@@ -2,7 +2,7 @@
 
 **Terminal, chart, heatmap, and UI palettes that remain usable before and after aggressive warm-screen filtering.**
 
-[![CI](https://github.com/carpdiem/ember-redshift-safe-palettes/actions/workflows/ci.yml/badge.svg)](https://github.com/carpdiem/ember-redshift-safe-palettes/actions/workflows/ci.yml)
+[![CI](https://github.com/carpdiem/ember/actions/workflows/ci.yml/badge.svg)](https://github.com/carpdiem/ember/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
@@ -73,14 +73,14 @@ orange-red field.
 For terminal themes, CSS, and the JSON manifest:
 
 ```bash
-git clone https://github.com/carpdiem/ember-redshift-safe-palettes.git
-cd ember-redshift-safe-palettes
+git clone https://github.com/carpdiem/ember.git
+cd ember
 ```
 
 Python users can skip the clone and install directly from GitHub:
 
 ```bash
-python -m pip install "git+https://github.com/carpdiem/ember-redshift-safe-palettes.git"
+python -m pip install "git+https://github.com/carpdiem/ember.git"
 ```
 
 ### 2. Import a terminal theme
