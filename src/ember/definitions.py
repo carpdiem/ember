@@ -27,6 +27,8 @@ class FamilyDefinition:
     daylight_minimum_delta_e_ok: float
     daylight_minimum_hue_gap_degrees: float | None
     categorical_shifted_background_contrast_minimum: float | None
+    categorical_daylight_minimum_foreground_delta_e_ok: float
+    categorical_night_minimum_foreground_delta_e_ok: float
     terminal_colors: tuple[str, ...]
     terminal_transformed_targets: tuple[str, ...]
     terminal_ansi_indices: tuple[int, ...]
@@ -166,6 +168,8 @@ FAMILIES = (
         daylight_minimum_delta_e_ok=15.0,
         daylight_minimum_hue_gap_degrees=20.0,
         categorical_shifted_background_contrast_minimum=3.0,
+        categorical_daylight_minimum_foreground_delta_e_ok=6.0,
+        categorical_night_minimum_foreground_delta_e_ok=5.0,
         terminal_colors=("#F5AD9A", "#7EB798", "#CA9246", "#B4C6F7", "#D895C2", "#70DBD8"),
         terminal_transformed_targets=(
             "#F58052",
@@ -229,6 +233,8 @@ FAMILIES = (
         daylight_minimum_delta_e_ok=16.0,
         daylight_minimum_hue_gap_degrees=30.0,
         categorical_shifted_background_contrast_minimum=3.0,
+        categorical_daylight_minimum_foreground_delta_e_ok=8.0,
+        categorical_night_minimum_foreground_delta_e_ok=5.0,
         terminal_colors=("#470D05", "#174213", "#894C03", "#162252", "#643563", "#00766E"),
         terminal_transformed_targets=(
             "#470A03",
@@ -288,6 +294,8 @@ FAMILIES = (
         daylight_minimum_delta_e_ok=14.0,
         daylight_minimum_hue_gap_degrees=20.0,
         categorical_shifted_background_contrast_minimum=3.0,
+        categorical_daylight_minimum_foreground_delta_e_ok=9.0,
+        categorical_night_minimum_foreground_delta_e_ok=4.0,
         terminal_colors=("#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB"),
         terminal_transformed_targets=("#EC4C0E", "#747C10", "#C35507", "#A77216"),
         terminal_ansi_indices=(0, 1, 2, 3, 0, 1),
@@ -340,6 +348,8 @@ FAMILIES = (
         daylight_minimum_delta_e_ok=20.0,
         daylight_minimum_hue_gap_degrees=45.0,
         categorical_shifted_background_contrast_minimum=3.0,
+        categorical_daylight_minimum_foreground_delta_e_ok=6.0,
+        categorical_night_minimum_foreground_delta_e_ok=3.5,
         terminal_colors=("#F29298", "#C9FFB4", "#DDCD81"),
         terminal_transformed_targets=("#F22D00", "#C94F00", "#DD3F00"),
         terminal_ansi_indices=(0, 1, 2, 2, 0, 1),

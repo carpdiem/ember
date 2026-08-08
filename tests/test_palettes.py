@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 11
+    assert manifest["schema_version"] == 12
     assert manifest["project"] == "Ember"
     assert "legacy_aliases" not in manifest
     assert "legacy_surface_role_aliases" not in manifest
@@ -209,6 +209,20 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
             (1.0, 1.0, 1.0),
         )
         normal = perceived_lab(categories, (1.0, 1.0, 1.0))
+        foreground_roles = ("fg_0", "fg_1", "fg_2")
+        foregrounds = np.asarray(
+            [hex_to_srgb(family["surfaces"][role]) for role in foreground_roles]
+        )
+        normal_foregrounds = perceived_lab(foregrounds, (1.0, 1.0, 1.0))
+        shifted_foregrounds = perceived_lab(foregrounds, profile["rgb_gains"])
+        normal_distances_to_foregrounds = {
+            role: float(np.linalg.norm(normal - normal_foregrounds[index], axis=1).min() * 100.0)
+            for index, role in enumerate(foreground_roles)
+        }
+        shifted_distances_to_foregrounds = {
+            role: float(np.linalg.norm(shifted - shifted_foregrounds[index], axis=1).min() * 100.0)
+            for index, role in enumerate(foreground_roles)
+        }
         shifted_min = float(pairwise_distances(shifted).min())
         normal_min = float(pairwise_distances(normal).min())
         lightness_range = float(np.ptp(shifted[:, 0]))
@@ -239,6 +253,14 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
         contrast_target = family["categorical_shifted_background_contrast_minimum_target"]
         if contrast_target is not None:
             assert shifted_background_contrast >= contrast_target, family["slug"]
+        assert (
+            min(normal_distances_to_foregrounds.values())
+            >= family["categorical_daylight_minimum_foreground_delta_e_ok_target"]
+        ), family["slug"]
+        assert (
+            min(shifted_distances_to_foregrounds.values())
+            >= family["categorical_night_minimum_foreground_delta_e_ok_target"]
+        ), family["slug"]
         assert metrics["shifted_min_delta_e_ok"] == round(shifted_min, 2)
         assert metrics["normal_min_delta_e_ok"] == round(normal_min, 2)
         assert metrics["normal_minimum_hue_gap_degrees"] == round(normal_hue_gap, 2)
@@ -248,6 +270,12 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
         assert metrics["shifted_lightness_range"] == round(lightness_range, 4)
         assert metrics["normal_chroma_max"] == round(normal_chroma_max, 4)
         assert metrics["normal_chroma_mean"] == round(normal_chroma_mean, 4)
+        assert metrics["normal_min_delta_e_ok_to_foregrounds"] == {
+            role: round(value, 2) for role, value in normal_distances_to_foregrounds.items()
+        }
+        assert metrics["shifted_min_delta_e_ok_to_foregrounds"] == {
+            role: round(value, 2) for role, value in shifted_distances_to_foregrounds.items()
+        }
         assert target_error <= 0.15, family["slug"]
         assert metrics["transformed_target_max_delta_e_ok"] == round(target_error, 2)
 

@@ -160,6 +160,30 @@ def _metrics(
     warm_categories = perceived_lab(categories, gains)
     normal_categories = srgb_to_oklab(categories)
     transformed_background = warm_transform(hex_to_srgb(family.surfaces["bg_0"]), gains)
+    foreground_roles = ("fg_0", "fg_1", "fg_2")
+    foreground_colors = np.asarray(
+        [hex_to_srgb(family.surfaces[role]) for role in foreground_roles]
+    )
+    normal_foregrounds = srgb_to_oklab(foreground_colors)
+    shifted_foregrounds = perceived_lab(foreground_colors, gains)
+    categorical_normal_distance_to_foregrounds = {
+        role: round(
+            float(
+                np.linalg.norm(normal_categories - normal_foregrounds[index], axis=1).min() * 100.0
+            ),
+            2,
+        )
+        for index, role in enumerate(foreground_roles)
+    }
+    categorical_shifted_distance_to_foregrounds = {
+        role: round(
+            float(
+                np.linalg.norm(warm_categories - shifted_foregrounds[index], axis=1).min() * 100.0
+            ),
+            2,
+        )
+        for index, role in enumerate(foreground_roles)
+    }
     categorical_targets = srgb_to_oklab(
         np.asarray([hex_to_srgb(value) for value in family.categorical_transformed_targets])
     )
@@ -182,6 +206,8 @@ def _metrics(
         "normal_chroma_mean": round(
             float(np.linalg.norm(normal_categories[:, 1:], axis=1).mean()), 4
         ),
+        "normal_min_delta_e_ok_to_foregrounds": categorical_normal_distance_to_foregrounds,
+        "shifted_min_delta_e_ok_to_foregrounds": categorical_shifted_distance_to_foregrounds,
         "transformed_target_max_delta_e_ok": round(
             float(np.linalg.norm(warm_categories - categorical_targets, axis=1).max() * 100.0),
             2,
@@ -193,12 +219,6 @@ def _metrics(
     terminal_targets = srgb_to_oklab(
         np.asarray([hex_to_srgb(value) for value in family.terminal_transformed_targets])
     )
-    foreground_roles = ("fg_0", "fg_1", "fg_2")
-    foreground_colors = np.asarray(
-        [hex_to_srgb(family.surfaces[role]) for role in foreground_roles]
-    )
-    normal_foregrounds = srgb_to_oklab(foreground_colors)
-    shifted_foregrounds = perceived_lab(foreground_colors, gains)
     normal_foreground_vectors = np.diff(normal_foregrounds, axis=0)
     shifted_foreground_vectors = np.diff(shifted_foregrounds, axis=0)
     normal_foreground_adjacent = np.linalg.norm(normal_foreground_vectors, axis=1)
@@ -458,6 +478,12 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "categorical_shifted_background_contrast_minimum_target": (
             family.categorical_shifted_background_contrast_minimum
         ),
+        "categorical_daylight_minimum_foreground_delta_e_ok_target": (
+            family.categorical_daylight_minimum_foreground_delta_e_ok
+        ),
+        "categorical_night_minimum_foreground_delta_e_ok_target": (
+            family.categorical_night_minimum_foreground_delta_e_ok
+        ),
         "continuous_rgb": sequential.tolist(),
         "continuous_hex8": [srgb_to_hex(color) for color in sequential],
         "metrics": _metrics(family, categories, sequential),
@@ -476,7 +502,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 11,
+        "schema_version": 12,
         "project": "Ember",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
