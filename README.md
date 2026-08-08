@@ -19,8 +19,8 @@ This branch is an intentionally reviewable experiment against [`main`](https://g
 
 - deep categorical colors now clear the complete foreground ladder more cleanly in nominal
   and ±5% gain-sensitivity states;
-- the manifest publishes worst-case category, terminal, surface-text, and sequential metrics
-  across that documented gain box; and
+- the manifest publishes category, terminal, surface-text, and sequential extrema observed at
+  the four corners of that documented gain box; and
 - deep sequential maps use a commanded/transformed arc-length blend to reduce daytime step
   variation while retaining the existing transformed-quality gate.
 

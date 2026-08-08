@@ -130,7 +130,7 @@ def _gain_sensitivity_metrics(
     foreground_colors: np.ndarray,
     sequential: np.ndarray,
 ) -> dict[str, Any]:
-    """Measure worst behavior across a transparent ±5% G/B gain box."""
+    """Measure extrema observed at the four corners of a ±5% G/B gain box."""
 
     backgrounds = np.asarray(
         [hex_to_srgb(family.surfaces[role]) for role in BACKGROUND_SURFACE_ROLES]

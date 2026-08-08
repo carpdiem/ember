@@ -8,10 +8,11 @@
 
 ## Bottom line
 
-This branch tests three related changes against the exact serialized Hex8 output on `main`:
+This branch tests three related changes against generated output on `main`: exact serialized
+Hex8 values for categorical colors and canonical float samples for sequential maps.
 
 1. add categorical-to-foreground separation as a first-class metric and improve the 2000 K / 1200 K categorical banks;
-2. publish worst-case sensitivity metrics over a documented ±5% green/blue gain box and optimize the deep categorical banks against its corners; and
+2. publish sensitivity metrics at the four corners of a documented ±5% green/blue gain box and optimize the deep categorical banks against those corners; and
 3. resample the deep sequential maps against a commanded/transformed arc-length blend instead of transformed arc length alone.
 
 The categorical changes are clean Pareto improvements across every compared nominal and sensitivity-corner metric. The sequential change is deliberately different: it is a **bi-state minimax trade**, not a strict Pareto improvement. Commanded spacing becomes substantially more even while transformed spacing moves from mathematical zero variation to nonzero variation that remains inside the unchanged `0.08` transformed-CV release gate.
@@ -60,9 +61,9 @@ Nominal transformed category/background contrast also improves:
 
 The highest-separation search initially produced `#6AB0D4 #F096A5 #A7624E #A5DCA8` and `#BA6471 #8EF0FF #E9B76C`. They were numerically strong but pushed the 2000 K pink and 1200 K cyan too close to the visual chroma/lightness boundary.
 
-A second search proved that Oklab chroma alone was not a sufficient visual proxy: lower measured chroma could still produce a bright channel-clipped cyan. The selected 2000 K point therefore used an explicit commanded-red ceiling on the pink. The selected 1200 K point is the best feasible compromise found after local Hex8 searches over cyan red/green and rose coordinates.
+A second search demonstrated within the tested candidates that Oklab chroma alone was not a sufficient visual proxy: lower measured chroma could still produce a bright channel-clipped cyan. The selected 2000 K point therefore used an explicit commanded-red ceiling on the pink. The selected 1200 K point is the best result from the bounded local Hex8 searches run for this pass, not a proof of a global optimum.
 
-At 1200 K, reducing commanded cyan green below 240 could not simultaneously preserve `main`'s category spacing, clear 3:1 at every sensitivity corner, and retain at least 4.75 / 4.60 nominal/corner foreground separation. The selected cyan remains bright because blue is the free daytime channel while green is required for filtered luminance and spacing.
+Within the final bounded local search, no candidate with commanded cyan green below 240 simultaneously preserved `main`'s category spacing, cleared 3:1 at every sensitivity corner, and retained at least 4.75 / 4.60 nominal/corner foreground separation. The selected cyan remains bright because blue is the free daytime channel while green is required for filtered luminance and spacing.
 
 ## 2. Gain-sensitivity envelope
 
@@ -85,7 +86,7 @@ This is a local sensitivity diagnostic, **not** a claim that every display or wa
 | 2000K Dark | **12.91** | **5.25** | **3.00:1** | 7.42 | 4.71 | 4.27:1 | 5.68:1 | 0.0662 |
 | 1200K Dark | **9.93** | **4.71** | **3.02:1** | 4.08 | 3.76 | 4.44:1 | 5.25:1 | 0.0767 |
 
-The envelope is diagnostic for the complete system. Only the deep categorical banks and sequential maps changed in this experiment. Terminal banks, foreground ladders, surface ladders, and both 3400 K families remain byte-for-byte unchanged.
+The envelope is diagnostic for the complete system. Only the deep categorical colors and sequential samples changed in this experiment. Terminal colors, foreground/surface colors, and both 3400 K color and sequential payloads remain unchanged. Their generated manifest records are not byte-identical because this branch adds target, arc-weight, and sensitivity fields.
 
 The 3400 K category/background and primary-text rows demonstrate why the envelope is not advertised as a new universal release promise: a ±5% corner can cross a nominal threshold even when the nominal profile is valid. A tiny strict local fix existed for 3400K Light categorical contrast, but no comparably small full-system fix existed for 3400K Dark without coordinated churn. The experiment therefore reports these sensitivities instead of opportunistically changing one established family.
 

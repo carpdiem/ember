@@ -47,7 +47,7 @@
 
 1. Build an offline exact-Hex8 optimizer under `/tmp` using the repository's color functions.
 2. Preserve current category count, background contrast, daylight separation/hue/chroma budgets, transformed separation, and transformed-target reproduction.
-3. Optimize worst category↔foreground distance in both states, then worst-case ±5% G/B gain sensitivity, then minimal perceptual movement.
+3. Optimize worst category↔foreground distance in both states, then the worst observed ±5% G/B corner, then minimal perceptual movement.
 4. Audit finalists in commanded and transformed data/application specimens.
 5. Lock the selected Hex8 values and transformed targets.
 6. Run focused tests and deterministic generation.
@@ -64,9 +64,9 @@
 - Modify: `README.md`
 
 1. Write failing tests for the four G/B corner vectors; red stays fixed and exact zero gains stay zero.
-2. Emit the sensitivity fraction, corner vectors, and worst-case categorical, terminal, foreground, surface-text, and sequential metrics.
+2. Emit the sensitivity fraction, corner vectors, and categorical, terminal, foreground, surface-text, and sequential extrema observed at those corners.
 3. Assert recomputation parity and non-regression against the baseline manifest where the experimental palette changed.
-4. Optimize only roles with a concrete worst-case regression opportunity; do not redesign stable surfaces or terminal banks for symmetry.
+4. Optimize only roles with a concrete corner-sensitivity opportunity; do not redesign stable surfaces or terminal banks for symmetry.
 5. Commit and push the robustness checkpoint.
 
 ### Task 5: Improve deep sequential-map bi-state uniformity
