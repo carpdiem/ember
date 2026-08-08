@@ -95,16 +95,44 @@ def test_accent_selections_have_locked_two_stage_values() -> None:
     expected = {
         "3400k-dark": {
             "categorical": ["#6E96D5", "#DDAA69", "#2E8B7E", "#67BE95", "#945D48", "#C3779A"],
-            "categorical_transformed_targets": ["#6E6F71", "#DD7E38", "#2E6743", "#678D4F", "#944526", "#C35852"],
+            "categorical_transformed_targets": [
+                "#6E6F71",
+                "#DD7E38",
+                "#2E6743",
+                "#678D4F",
+                "#944526",
+                "#C35852",
+            ],
             "terminal": ["#F5AD9A", "#7EB798", "#CA9246", "#B4C6F7", "#D895C2", "#70DBD8"],
-            "terminal_transformed_targets": ["#F58052", "#7E8750", "#CA6C25", "#B49383", "#D86E67", "#70A272"],
+            "terminal_transformed_targets": [
+                "#F58052",
+                "#7E8750",
+                "#CA6C25",
+                "#B49383",
+                "#D86E67",
+                "#70A272",
+            ],
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
         "3400k-light": {
             "categorical": ["#2C9A84", "#321853", "#B36875", "#5B2A07", "#2A632D", "#556BAA"],
-            "categorical_transformed_targets": ["#2C7246", "#32122C", "#B34D3E", "#5B1F04", "#2A4918", "#554F5A"],
+            "categorical_transformed_targets": [
+                "#2C7246",
+                "#32122C",
+                "#B34D3E",
+                "#5B1F04",
+                "#2A4918",
+                "#554F5A",
+            ],
             "terminal": ["#470D05", "#174213", "#894C03", "#162252", "#643563", "#00766E"],
-            "terminal_transformed_targets": ["#470A03", "#17310A", "#893801", "#16192B", "#642734", "#01573A"],
+            "terminal_transformed_targets": [
+                "#470A03",
+                "#17310A",
+                "#893801",
+                "#16192B",
+                "#642734",
+                "#01573A",
+            ],
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
         "2000k-dark": {
@@ -468,15 +496,17 @@ def test_light_surface_ladder_is_symmetric_and_ordered() -> None:
     assert np.all(np.diff(normal_luminance) < 0.0)
     assert np.all(np.diff(shifted_luminance) < 0.0)
     assert min(adjacent_distances) >= targets["light_minimum_adjacent_surface_delta_e_ok"]
-    assert delta_e_ok(shifted_labs[0], shifted_labs[-1]) >= targets[
-        "light_minimum_surface_span_delta_e_ok"
-    ]
+    assert (
+        delta_e_ok(shifted_labs[0], shifted_labs[-1])
+        >= targets["light_minimum_surface_span_delta_e_ok"]
+    )
     minimum_text_contrast = min(
         contrast_ratio(shifted_foreground, background) for background in shifted_backgrounds
     )
-    assert minimum_text_contrast >= targets["light_minimum_shifted_primary_text_contrast"][
-        family["slug"]
-    ]
+    assert (
+        minimum_text_contrast
+        >= targets["light_minimum_shifted_primary_text_contrast"][family["slug"]]
+    )
 
 
 def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:

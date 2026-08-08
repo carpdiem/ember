@@ -467,8 +467,7 @@ def failure_modes_svg(manifest: dict) -> str:
     accent_2000 = _shift_hex(family_2000["terminal"]["red"], gains_2000)
 
     accent_targets = [
-        _shift_hex(family_1200["terminal"][role], gains_1200)
-        for role in ("red", "green", "yellow")
+        _shift_hex(family_1200["terminal"][role], gains_1200) for role in ("red", "green", "yellow")
     ]
 
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="760" height="1250" viewBox="0 0 760 1250">
