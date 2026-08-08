@@ -11,7 +11,7 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -26,8 +26,9 @@ from render_samples import (
     render_samples,
     sample_analysis_markdown,
 )
+from render_story import render_readme_story
 
-from redshift_safe.color import contrast_ratio, hex_to_srgb, warm_transform
+from redshift_safe.color import contrast_ratio, hex_to_srgb
 from redshift_safe.generate import ANSI_NAMES, generate_manifest
 
 BASE_MANAGED_PATHS = (
@@ -40,8 +41,10 @@ BASE_MANAGED_PATHS = (
     "docs/matplotlib-gallery.png",
     "docs/samples/terminal-commanded.png",
     "docs/samples/terminal-simulated.png",
+    "docs/samples/terminal-story.png",
     "docs/samples/data-commanded.png",
     "docs/samples/data-simulated.png",
+    "docs/samples/data-story.png",
     "docs/diagrams/channel-collapse.svg",
     "docs/diagrams/failure-modes.svg",
     "docs/diagrams/redundant-encoding.svg",
@@ -321,41 +324,6 @@ def _overview_svg(manifest: dict) -> str:
     return "\n".join(parts)
 
 
-def _preview_png(manifest: dict, path: Path) -> None:
-    width, row_height = 1500, 176
-    image = Image.new("RGB", (width, row_height * len(manifest["families"]) + 50), "#11100E")
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.load_default(size=18)
-    small = ImageFont.load_default(size=14)
-    for row, family in enumerate(manifest["families"].values()):
-        y = 24 + row * row_height
-        profile = manifest["profiles"][family["profile"]]
-        gains = profile["rgb_gains"]
-        draw.text((20, y), family["name"], font=font, fill="#EEE4D5")
-        draw.text((20, y + 25), "command", font=small, fill="#BCAE9A")
-        draw.text((20, y + 94), "simulated", font=small, fill="#BCAE9A")
-        values = list(family["categorical"].values())
-        for index, value in enumerate(values):
-            rgb = tuple(round(channel * 255) for channel in hex_to_srgb(value))
-            shifted = tuple(
-                round(channel * 255) for channel in warm_transform(hex_to_srgb(value), gains)
-            )
-            x = 150 + index * 112
-            draw.rounded_rectangle((x, y + 18, x + 100, y + 74), 5, fill=rgb)
-            draw.rounded_rectangle((x, y + 88, x + 100, y + 144), 5, fill=shifted)
-        sequence = family["continuous_hex8"]
-        for index, value in enumerate(sequence):
-            rgb = tuple(round(channel * 255) for channel in hex_to_srgb(value))
-            shifted = tuple(
-                round(channel * 255) for channel in warm_transform(hex_to_srgb(value), gains)
-            )
-            x = 1075 + index
-            draw.line((x, y + 18, x, y + 74), fill=rgb)
-            draw.line((x, y + 88, x, y + 144), fill=shifted)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    image.save(path, optimize=True)
-
-
 def build(destination: Path) -> None:
     manifest = generate_manifest()
     encoded = json.dumps(manifest, indent=2) + "\n"
@@ -434,7 +402,7 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
         _write(destination / f"docs/swatches/{legacy}.svg", _family_svg(family, profile))
 
     _write(destination / "docs/swatches/overview.svg", _overview_svg(manifest))
-    _preview_png(manifest, destination / "docs/swatches/command-vs-simulated.png")
+    render_readme_story(manifest, destination / "docs")
     render_matplotlib_gallery(manifest, destination / "docs/matplotlib-gallery.png")
     render_samples(manifest, destination / "docs/samples")
     _write(destination / "docs/diagrams/channel-collapse.svg", channel_collapse_svg())

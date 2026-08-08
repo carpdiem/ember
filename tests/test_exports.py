@@ -8,6 +8,7 @@ from pathlib import Path
 import matplotlib.colors
 import numpy as np
 import pytest
+from PIL import Image
 
 try:
     import tomllib
@@ -102,10 +103,26 @@ def test_generated_swatch_rectangles_fit_their_canvas() -> None:
             assert y + rectangle_height <= height + 0.01, path
 
 
-def test_readme_hero_overview_displays_every_palette_role() -> None:
+def test_readme_visual_story_leads_before_setup() -> None:
     readme = (ROOT / "README.md").read_text()
-    hero = "![Ember palette overview](docs/swatches/overview.svg)"
-    assert readme.index(hero) < readme.index("## What is Ember?")
+    hero = "docs/swatches/command-vs-simulated.png"
+    mechanism = "docs/diagrams/channel-collapse.svg"
+    terminal = "docs/samples/terminal-story.png"
+    data = "docs/samples/data-story.png"
+    setup = "## Make Ember work"
+    assert readme.index(hero) < readme.index(mechanism) < readme.index(terminal)
+    assert readme.index(terminal) < readme.index(data) < readme.index(setup)
+    assert readme.index("docs/swatches/overview.svg") > readme.index(setup)
+
+    for relative_path in (hero, terminal, data):
+        with Image.open(ROOT / relative_path) as image:
+            assert image.width == 760
+            assert image.height > image.width
+
+
+def test_commanded_inventory_displays_every_palette_role() -> None:
+    readme = (ROOT / "README.md").read_text()
+    assert "![Complete commanded palette inventory](docs/swatches/overview.svg)" in readme
 
     manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
     roles = (*manifest["quality_targets"]["bg_roles_low_to_high"], "fg_0", "fg_1", "fg_2")

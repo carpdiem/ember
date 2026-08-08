@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="760" viewBox="0 0 760 760">
 <rect width="760" height="760" rx="22" fill="#1B1815"/>
 <g font-family="system-ui, sans-serif">
-<text x="36" y="54" fill="#F0DFC0" font-size="32" font-weight="700">A warm filter removes color dimensions</text>
-<text x="36" y="90" fill="#BFAF98" font-size="21">Bar length = fraction of each commanded channel that survives.</text>
+<text x="36" y="54" fill="#F0DFC0" font-size="32" font-weight="700">Warm filters squeeze green and blue</text>
+<text x="36" y="90" fill="#BFAF98" font-size="21">Bar length = channel signal left after the modeled transform.</text>
 
 <g transform="translate(36 136)">
   <text x="0" y="0" fill="#E7D3B0" font-size="28" font-weight="700">3400 K</text>

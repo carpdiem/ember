@@ -6,64 +6,46 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
-Ember is for people who use Redshift, Night Light, or another strong warm filter and find
-that an ordinary theme turns muddy, glaring, or unreadable at night. It provides one
-coordinated color system for both display states instead of asking you to tolerate a
-daytime palette after its green and blue information has been attenuated.
+Ember is a coordinated color system for people who use Redshift, Night Light, or another
+strong warm filter. It ships importable terminal themes, chart and heatmap palettes, and UI
+color roles designed for both filter-off and modeled filter-on states. Ember does not apply
+the filter; keep using the one you already have.
 
-![Ember palette overview](docs/swatches/overview.svg)
+![Colors requested by applications compared with the modeled colors left by each warm filter](docs/swatches/command-vs-simulated.png)
 
-The repository includes importable terminal themes, Matplotlib colormaps, CSS variables,
-a JSON manifest, and generated evidence for every supported profile. There is no runtime
-service: choose a profile, import or load its colors, and keep using your existing filter.
+Row by row, the filter deepens. Ember supports fewer color identities rather than pretending
+that collapsed colors are still different.
 
-## What is Ember?
+![RGB channel survival at 3400 K, 2000 K, and 1200 K](docs/diagrams/channel-collapse.svg)
 
-Each family contains:
-
-- a complete terminal theme for Alacritty, iTerm2, and Windows Terminal;
-- six ordered UI backgrounds and three text roles;
-- a categorical palette for distinct series or states; and
-- an Oklab-stepped 256-sample sequential map for heatmaps and scalar data.
-
-Every color is checked twice: once as the application commands it and once after the
-profile's warm transform. Under Ember's release gates, deeper filters support fewer distinct
-color identities. Ember exposes that reduction instead of inventing extra ANSI names that
-collapse to the same modeled nighttime color.
+A warm filter is not a transparent amber overlay: it multiplies red, green, and blue by
+different amounts. At Ember's 1200 K model, blue is multiplied by zero, so colors that differ
+only in blue become the same pixel.
 
 ### Choose the closest profile
 
-| Palette | Use it when | Mode | Distinct categories | Terminal accents, day / night |
-|---|---|---|---:|---:|
-| [`3400k-dark`](docs/swatches/3400k-dark.svg) | you want a near-black general-purpose warm theme | dark | 6 | 6 / 6 |
-| [`3400k-light`](docs/swatches/3400k-light.svg) | you use a moderate warm shift on a light surface | light | 6 | 6 / 6 |
-| [`2000k-dark`](docs/swatches/2000k-dark.svg) | you run Redshift near 2000 K | dark | 4 | 4 / 4 |
-| [`1200k-dark`](docs/swatches/1200k-dark.svg) | you want an extreme 1200 K stress profile | dark | 3 | 3 / 3 |
+| Palette | Use it when | Distinct categories |
+|---|---|---:|
+| [`3400k-dark`](docs/swatches/3400k-dark.svg) | you want a near-black general-purpose warm theme | 6 |
+| [`3400k-light`](docs/swatches/3400k-light.svg) | you use a moderate warm shift on a light surface | 6 |
+| [`2000k-dark`](docs/swatches/2000k-dark.svg) | you run Redshift near 2000 K | 4 |
+| [`1200k-dark`](docs/swatches/1200k-dark.svg) | you want an extreme 1200 K stress profile | 3 |
 
 Start with `3400k-dark` unless you deliberately run a deeper filter. The 2000 K and
 1200 K profiles are dark-only because a filtered light canvas becomes a large orange-red
 field.
 
-## Why should I care?
+### In a terminal
 
-A warm filter is not a transparent amber overlay. It multiplies red, green, and blue by
-different amounts. At Ember's 1200 K model, red survives, green falls to 31%, and blue
-falls to zero. Two colors that differ only in blue therefore become exactly identical.
+![Terminal code before and after moderate and extreme warm transforms](docs/samples/terminal-story.png)
 
-That creates three common failures in ordinary themes:
+### In charts and heatmaps
 
-1. **Semantic colors collapse.** A chart legend or terminal status can lose the distinction
-   it was supposed to communicate.
-2. **Dark-gray surfaces become a brighter rust field.** A tolerable daytime background can
-   turn into the largest and most visually dominant warm object on the screen.
-3. **Pure white and dense accent color become loud.** Tiny glyphs carry high-frequency detail;
-   making all of them the brightest transformed orange competes with the information itself.
+![Charts and heatmaps before and after moderate and extreme warm transforms](docs/samples/data-story.png)
 
-![Wrong palette choices compared with Ember under exact warm transforms](docs/diagrams/failure-modes.svg)
-
-Ember does not claim to restore the full daytime gamut. It does the more useful thing: meet
-explicit contrast and separation floors in the transformed signal, then make the unfiltered
-colors coherent and restrained.
+Turn off any active color-temperature filter before inspecting the modeled filter-on rows,
+or you apply the transform twice. These are deterministic signal simulations, not photographs
+or display-calibration measurements.
 
 ## Make Ember work
 
@@ -209,15 +191,17 @@ CSS exposes eleven representative 8-bit gradient stops. The
 256 canonical float samples, along with surfaces, categorical colors, ANSI slots, gain
 profiles, and measured results.
 
-## Check the expected result
-
-The **commanded** specimens show the sRGB colors an application requests. The
-**transformed** specimens apply the selected profile's gain vector to the same pixels.
-
-![Commanded and transformed palette overview](docs/swatches/command-vs-simulated.png)
+## Inspect every generated profile
 
 <details>
-<summary><strong>Open the terminal and data-visualization specimens</strong></summary>
+<summary><strong>Open the complete commanded-color inventory</strong></summary>
+
+![Complete commanded palette inventory](docs/swatches/overview.svg)
+
+</details>
+
+<details>
+<summary><strong>Open the full four-profile terminal and data sheets</strong></summary>
 
 ### Terminal text
 
@@ -232,10 +216,6 @@ The **commanded** specimens show the sRGB colors an application requests. The
 ![Transformed data-visualization specimen](docs/samples/data-simulated.png)
 
 </details>
-
-Disable any active color-temperature filter before inspecting a transformed specimen;
-otherwise you apply the transform twice. These are deterministic signal simulations, not
-photographs or display-calibration measurements.
 
 ## What is the science behind it?
 
@@ -252,8 +232,6 @@ display RGB ≈ commanded RGB × [red gain, green gain, blue gain]
 | `3400k` | `[1.00, 0.74, 0.53]` | warm-white engineering surrogate |
 | `2000k` | `[1.0000, 0.5436, 0.0868]` | pinned Redshift 2000 K signal LUT |
 | `1200k` | `[1.0000, 0.3094, 0.0000]` | pinned Redshift 1200 K signal LUT |
-
-![RGB channel survival at 3400 K, 2000 K, and 1200 K](docs/diagrams/channel-collapse.svg)
 
 At 1200 K, blue contributes nothing to the modeled output. At 2000 K, only 9% survives.
 Ordinary sRGB distance is therefore a bad proxy for nighttime distinction: two colors can
@@ -283,9 +261,11 @@ target.
 
 Human vision carries fine spatial detail more strongly through luminance than chromatic
 channels. Dense saturated glyphs and opposing hues are therefore poor places to spend a
-limited nighttime color gamut. The failure example above shows the practical consequence:
-pure white becomes a brighter transformed orange than Ember's cream body text, while a
-daytime dark gray becomes a much larger rust-colored signal than Ember's near-black canvas.
+limited nighttime color gamut. The comparison below shows the practical consequence: pure
+white becomes a brighter transformed orange than Ember's cream body text, while a daytime
+dark gray becomes a much larger rust-colored signal than Ember's near-black canvas.
+
+![Wrong palette choices compared with Ember under exact warm transforms](docs/diagrams/failure-modes.svg)
 
 Ember puts most pixels in warm-neutral surfaces, uses cream rather than pure white for body
 text, and reserves higher chroma for semantic accents. Every foreground-capable terminal
