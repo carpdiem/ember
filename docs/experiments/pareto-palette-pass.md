@@ -1,7 +1,9 @@
 # Experimental Pareto palette pass
 
-**Branch:** [`experiment/pareto-palette-pass`](https://github.com/carpdiem/ember/tree/experiment/pareto-palette-pass)  
-**Baseline:** [`main`](https://github.com/carpdiem/ember/tree/main)  
+**Branch:** [`experiment/pareto-palette-pass`](https://github.com/carpdiem/ember/tree/experiment/pareto-palette-pass)
+
+**Baseline:** [`main`](https://github.com/carpdiem/ember/tree/main)
+
 **Full diff:** [`main...experiment/pareto-palette-pass`](https://github.com/carpdiem/ember/compare/main...experiment/pareto-palette-pass)
 
 ## Bottom line
