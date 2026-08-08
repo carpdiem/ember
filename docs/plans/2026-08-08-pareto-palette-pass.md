@@ -79,7 +79,7 @@
 - Regenerate: JSON, swatches, data specimens, gallery
 
 1. Write failing experimental targets for commanded CV/max:min improvement and transformed quality preservation.
-2. Search anchor geometries and a deterministic bi-state arc-length sampling objective.
+2. Search blue-channel anchor geometry first, with bi-state sample allocation as a lower-churn fallback.
 3. Require monotonic lightness in both states and preserve useful endpoint/range behavior.
 4. Prefer the smallest algorithmic change that produces a material improvement in both deep profiles.
 5. Render and inspect heatmaps and overview ramps in both states.

@@ -18,6 +18,7 @@ from ember.color import (
     warm_transform,
     wcag_luminance,
 )
+from ember.definitions import FAMILIES
 from ember.generate import generate_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,11 +26,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 14
+    assert manifest["schema_version"] == 13
     assert manifest["project"] == "Ember"
     assert "legacy_aliases" not in manifest
     assert "legacy_surface_role_aliases" not in manifest
     assert "removed_families" not in manifest
+    assert all(
+        "continuous_transformed_arc_weight" not in family
+        for family in manifest["families"].values()
+    )
     assert manifest["quality_targets"]["cross_state_hue_consistency_required"] is False
     assert manifest["quality_targets"]["terminal_distinguishability_reference_role"] == "fg_0"
     assert manifest["quality_targets"]["terminal_distinguishability_reference_roles"] == [
@@ -91,6 +96,25 @@ def test_numbered_surface_roles_have_locked_values() -> None:
         surfaces = manifest["families"][slug]["surfaces"]
         assert [surfaces[role] for role in roles] == values
         assert [surfaces[role] for role in ("fg_0", "fg_1", "fg_2")] == expected_foregrounds[slug]
+
+
+def test_deep_sequential_anchor_refinement_is_exact_and_blue_only() -> None:
+    main_anchors = {
+        "2000k-dark": ("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
+        "1200k-dark": ("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
+    }
+    expected_anchors = {
+        "2000k-dark": ("#17110F", "#4B343E", "#795066", "#A87582", "#C69A8B", "#F2D9AE"),
+        "1200k-dark": ("#100C0B", "#4B3042", "#754969", "#9F6D86", "#C09794", "#FFE5B8"),
+    }
+    families = {family.slug: family for family in FAMILIES}
+    for slug, expected in expected_anchors.items():
+        actual = families[slug].sequential_anchors
+        baseline = main_anchors[slug]
+        assert actual == expected
+        assert actual[0] == baseline[0]
+        assert actual[-1] == baseline[-1]
+        assert all(current[:5] == previous[:5] for current, previous in zip(actual, baseline))
 
 
 def test_accent_selections_have_locked_two_stage_values() -> None:
@@ -408,23 +432,13 @@ def test_gain_sensitivity_metrics_recompute_from_exact_serialized_values() -> No
 
 def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shift() -> None:
     manifest = generate_manifest()
-    expected_transformed_arc_weights = {
-        "3400k-dark": 1.0,
-        "3400k-light": 1.0,
-        "2000k-dark": 0.50,
-        "1200k-dark": 0.55,
-    }
     commanded_cv_limits = {
         "3400k-dark": 0.18,
         "3400k-light": 0.18,
-        "2000k-dark": 0.06,
-        "1200k-dark": 0.095,
+        "2000k-dark": 0.11,
+        "1200k-dark": 0.15,
     }
     for family in manifest["families"].values():
-        assert (
-            family["continuous_transformed_arc_weight"]
-            == expected_transformed_arc_weights[family["slug"]]
-        )
         sequence = np.asarray(family["continuous_rgb"], dtype=float)
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
         normal = perceived_lab(sequence, (1.0, 1.0, 1.0))
@@ -447,8 +461,8 @@ def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shif
         assert normal_max_to_min <= 1.60, family["slug"]
         assert lightness_steps.min() > 0.0, family["slug"]
         assert np.ptp(shifted[:, 0]) >= 0.50, family["slug"]
-        assert cv <= 0.08, family["slug"]
-        assert max_to_min <= 1.60, family["slug"]
+        assert cv <= 0.0001, family["slug"]
+        assert max_to_min <= 1.001, family["slug"]
         assert metrics["minimum_signed_lightness_step"] == round(float(lightness_steps.min()), 6)
         assert metrics["normal_minimum_signed_lightness_step"] == round(
             float(normal_lightness_steps.min()), 6

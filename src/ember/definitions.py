@@ -55,7 +55,6 @@ class FamilyDefinition:
     foreground_night_minimum_chroma_vector_cosine: float | None
     foreground_chroma_direction: str | None
     foreground_chroma_order_tolerance: float | None
-    sequential_transformed_arc_weight: float
     sequential_anchors: tuple[str, ...]
 
     @property
@@ -206,7 +205,6 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.998,
         foreground_chroma_direction="decreasing",
         foreground_chroma_order_tolerance=0.003,
-        sequential_transformed_arc_weight=1.0,
         sequential_anchors=("#282527", "#51404F", "#7F5E69", "#A17C6C", "#C49D70", "#E2CDA1"),
     ),
     FamilyDefinition(
@@ -272,7 +270,6 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.999,
         foreground_chroma_direction="increasing",
         foreground_chroma_order_tolerance=0.003,
-        sequential_transformed_arc_weight=1.0,
         sequential_anchors=("#F2E5BC", "#D7BF8D", "#B08061", "#80515A", "#533844", "#252126"),
     ),
     FamilyDefinition(
@@ -327,8 +324,7 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.98,
         foreground_chroma_direction="decreasing",
         foreground_chroma_order_tolerance=0.003,
-        sequential_transformed_arc_weight=0.50,
-        sequential_anchors=("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
+        sequential_anchors=("#17110F", "#4B343E", "#795066", "#A87582", "#C69A8B", "#F2D9AE"),
     ),
     FamilyDefinition(
         slug="1200k-dark",
@@ -382,7 +378,6 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.98,
         foreground_chroma_direction="decreasing",
         foreground_chroma_order_tolerance=0.003,
-        sequential_transformed_arc_weight=0.55,
-        sequential_anchors=("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
+        sequential_anchors=("#100C0B", "#4B3042", "#754969", "#9F6D86", "#C09794", "#FFE5B8"),
     ),
 )

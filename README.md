@@ -21,11 +21,11 @@ This branch is an intentionally reviewable experiment against [`main`](https://g
   and ±5% gain-sensitivity states;
 - the manifest publishes category, terminal, surface-text, and sequential extrema observed at
   the four corners of that documented gain box; and
-- deep sequential maps use a commanded/transformed arc-length blend to reduce daytime step
-  variation while retaining the existing transformed-quality gate.
+- deep sequential maps use weak/zero-blue freedom in their interior anchors to reduce daytime
+  step variation while preserving transformed-equal-distance sampling.
 
-The categorical changes are metric Pareto improvements. The sequential change is a deliberate
-bi-state minimax trade: commanded spacing improves while transformed spacing becomes less exact.
+The categorical and sequential changes are metric Pareto improvements relative to `main`:
+commanded spacing improves while transformed spacing remains effectively exact.
 See the [full `main` vs experimental report](docs/experiments/pareto-palette-pass.md) or the
 [complete GitHub diff](https://github.com/carpdiem/ember/compare/main...experiment/pareto-palette-pass).
 
@@ -298,12 +298,12 @@ position, dash pattern, marker shape, or texture:
 
 ![Color-only series compared with redundant encoding](docs/diagrams/redundant-encoding.svg)
 
-### 5. Space continuous maps across both views
+### 5. Space continuous maps in the transformed view
 
 Each sequential map begins with a human-chosen earth-tone path. The generator smooths that
-path in Oklab and resamples it by cumulative perceptual distance. The 3400 K families retain
-equal transformed-distance sampling. The deep experimental families blend normalized commanded
-and transformed arc length: 50/50 at 2000 K and 45/55 at 1200 K.
+path in Oklab, measures cumulative distance after the target transform, and resamples it at
+equal transformed-distance intervals. The deep experimental anchors use blue-channel freedom
+to improve commanded spacing without giving up that transformed equidistance.
 
 The result is a 256-sample map with strictly monotonic transformed lightness and nearly equal
 modeled transformed Oklab steps. Release checks also require monotonic daytime lightness and
@@ -412,7 +412,7 @@ The release gates enforce:
   tightened to `15.0 ΔEOK` for 3400 K Light;
 - 256 unique float samples per sequential map, with monotonic lightness in both display
   states, transformed step CV no greater than `0.08`, and the deep commanded CV tightened
-  to `0.06` at 2000 K and `0.095` at 1200 K;
+  to `0.11` at 2000 K and `0.15` at 1200 K;
 - exact recomputation of the four ±5% green/blue sensitivity corners and deep categorical
   corner floors for category spacing, foreground clearance, and background contrast; and
 - exact regeneration of JSON, CSS, themes, diagrams, specimens, and diagnostics.

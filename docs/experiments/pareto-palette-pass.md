@@ -13,11 +13,11 @@ Hex8 values for categorical colors and canonical float samples for sequential ma
 
 1. add categorical-to-foreground separation as a first-class metric and improve the 2000 K / 1200 K categorical banks;
 2. publish sensitivity metrics at the four corners of a documented ±5% green/blue gain box and optimize the deep categorical banks against those corners; and
-3. resample the deep sequential maps against a commanded/transformed arc-length blend instead of transformed arc length alone.
+3. refine only the deep sequential maps' interior blue anchor bytes while retaining transformed-equal-distance sampling.
 
-The categorical changes are clean Pareto improvements across every compared nominal and sensitivity-corner metric. The sequential change is deliberately different: it is a **bi-state minimax trade**, not a strict Pareto improvement. Commanded spacing becomes substantially more even while transformed spacing moves from mathematical zero variation to nonzero variation that remains inside the unchanged `0.08` transformed-CV release gate.
+The categorical changes are clean Pareto improvements across every compared nominal and sensitivity-corner metric. The sequential anchor changes also improve commanded spacing while preserving effectively exact transformed spacing, monotonicity, endpoints, lightness ranges, and corner sensitivity.
 
-**Recommendation:** the categorical and sensitivity work is strong enough to promote. Treat the blended sequential resampling as an independent product decision after comparing the generated heatmaps and deciding whether balanced two-state spacing is preferable to exact transformed-state spacing.
+**Recommendation:** promote the categorical, sensitivity, and restrained sequential-anchor changes together.
 
 ## Compare visually
 
@@ -83,29 +83,30 @@ This is a local sensitivity diagnostic, **not** a claim that every display or wa
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 10.88 | 5.42 | 2.82:1 | 6.69 | 4.86 | 4.93:1 | 6.50:1 | 0.0107 |
 | 3400K Light | 11.61 | 5.13 | 2.92:1 | 10.69 | 6.17 | 4.45:1 | 4.88:1 | 0.0137 |
-| 2000K Dark | **12.91** | **5.25** | **3.00:1** | 7.42 | 4.71 | 4.27:1 | 5.68:1 | 0.0662 |
-| 1200K Dark | **9.93** | **4.71** | **3.02:1** | 4.08 | 3.76 | 4.44:1 | 5.25:1 | 0.0767 |
+| 2000K Dark | **12.91** | **5.25** | **3.00:1** | 7.42 | 4.71 | 4.27:1 | 5.68:1 | 0.0084 |
+| 1200K Dark | **9.93** | **4.71** | **3.02:1** | 4.08 | 3.76 | 4.44:1 | 5.25:1 | 0.0027 |
 
-The envelope is diagnostic for the complete system. Only the deep categorical colors and sequential samples changed in this experiment. Terminal colors, foreground/surface colors, and both 3400 K color and sequential payloads remain unchanged. Their generated manifest records are not byte-identical because this branch adds target, arc-weight, and sensitivity fields.
+The envelope is diagnostic for the complete system. Only the deep categorical colors and sequential samples changed in this experiment. Terminal colors, foreground/surface colors, and both 3400 K color and sequential payloads remain unchanged. Their generated manifest records are not byte-identical because this branch adds target and sensitivity fields.
 
 The 3400 K category/background and primary-text rows demonstrate why the envelope is not advertised as a new universal release promise: a ±5% corner can cross a nominal threshold even when the nominal profile is valid. A tiny strict local fix existed for 3400K Light categorical contrast, but no comparably small full-system fix existed for 3400K Dark without coordinated churn. The experiment therefore reports these sensitivities instead of opportunistically changing one established family.
 
-## 3. Bi-state sequential resampling
+## 3. Blue-channel sequential anchor refinement
 
-The authored anchors, smoothing, 256-sample count, monotonicity requirements, endpoints, and transformed CV gate are unchanged. Only the arc-length measure used for deep-profile resampling changes:
+The generator still smooths the authored Oklab path and samples it at equal transformed-distance intervals. The experiment changes only four interior blue bytes per deep map; red, green, endpoints, smoothing, sample count, and the transformed sampling objective remain unchanged.
 
-- 3400 K families: 100% transformed arc length, preserving their exact existing samples;
-- 2000K Dark: 50% commanded + 50% transformed normalized arc length;
-- 1200K Dark: 45% commanded + 55% transformed normalized arc length.
+| Family | `main` interior anchors | Experimental interior anchors |
+|---|---|---|
+| 2000K Dark | `#4B3438 #795052 #A8755F #C69A70` | `#4B343E #795066 #A87582 #C69A8B` |
+| 1200K Dark | `#4B302D #754941 #9F6D58 #C09772` | `#4B3042 #754969 #9F6D86 #C09794` |
 
 ### Exact `main` → experimental comparison
 
-| Family | Commanded CV | Transformed CV | Commanded max:min step | Transformed max:min step | Worst-corner transformed CV |
+| Family | Commanded CV | Transformed CV | Commanded max:min step | Transformed max:min step | Four-corner max CV |
 |---|---:|---:|---:|---:|---:|
-| 2000K Dark | 0.1182 → **0.0581** | 0.0000 → 0.0581 | 1.377 → **1.171** | 1.000 → 1.176 | 0.0084 → 0.0662 |
-| 1200K Dark | 0.1663 → **0.0907** | 0.0000 → 0.0742 | 1.509 → **1.254** | 1.000 → 1.203 | 0.0027 → 0.0767 |
+| 2000K Dark | 0.1182 → **0.1049** | 0.0000 → **0.0000** | 1.377 → **1.303** | 1.000 → **1.000** | 0.0084 → **0.0084** |
+| 1200K Dark | 0.1663 → **0.1424** | 0.0000 → **0.0000** | 1.509 → **1.429** | 1.000 → **1.000** | 0.0027 → **0.0027** |
 
-This is the branch's one deliberate tradeoff. The transformed maps remain monotonic, preserve at least the existing 0.50 Oklab lightness range, remain visually smooth in the generated heatmaps, and stay below the unchanged `0.08` transformed CV gate at nominal and sensitivity corners. But exact transformed equidistance is gone.
+The full-strength blue-only search candidates—`#4B3444 #79507A #A875A5 #C69AA6` and `#4B3058 #754991 #9F6DB4 #C097B5`—improved commanded CV further, to 0.0967 and 0.1141. They also produced visibly purple commanded heatmaps that no longer matched Ember's restrained earth-tone identity. The selected anchors are the nearest-even quantized midpoints between `main` and those candidates. They preserve a muted mauve/earth-tone path, improve commanded uniformity, and leave transformed equidistance and sensitivity behavior effectively unchanged.
 
 ## Verification
 
