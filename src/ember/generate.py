@@ -242,8 +242,16 @@ def _sequential_colors(family: FamilyDefinition, count: int = 256) -> np.ndarray
     dense_lab = _interpolate_polyline(anchor_lab)
 
     dense_rgb = np.clip(oklab_to_srgb(dense_lab), 0.0, 1.0)
+    normal_lab = srgb_to_oklab(dense_rgb)
     shifted_lab = perceived_lab(dense_rgb, family.profile.gains)
-    step = np.linalg.norm(np.diff(shifted_lab, axis=0), axis=1)
+    normal_step = np.linalg.norm(np.diff(normal_lab, axis=0), axis=1)
+    shifted_step = np.linalg.norm(np.diff(shifted_lab, axis=0), axis=1)
+    weight = family.sequential_transformed_arc_weight
+    if weight == 1.0:
+        step = shifted_step
+    else:
+        step = (1.0 - weight) * normal_step / normal_step.sum()
+        step += weight * shifted_step / shifted_step.sum()
     distance = np.concatenate(([0.0], np.cumsum(step)))
     targets = np.linspace(0.0, float(distance[-1]), count)
     indices = np.searchsorted(distance, targets, side="left")
@@ -598,6 +606,7 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         "categorical_night_minimum_foreground_delta_e_ok_target": (
             family.categorical_night_minimum_foreground_delta_e_ok
         ),
+        "continuous_transformed_arc_weight": family.sequential_transformed_arc_weight,
         "continuous_rgb": sequential.tolist(),
         "continuous_hex8": [srgb_to_hex(color) for color in sequential],
         "metrics": _metrics(family, categories, sequential),
@@ -619,7 +628,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 13,
+        "schema_version": 14,
         "project": "Ember",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "

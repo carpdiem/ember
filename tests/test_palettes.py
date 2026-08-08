@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 13
+    assert manifest["schema_version"] == 14
     assert manifest["project"] == "Ember"
     assert "legacy_aliases" not in manifest
     assert "legacy_surface_role_aliases" not in manifest
@@ -139,15 +139,15 @@ def test_accent_selections_have_locked_two_stage_values() -> None:
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
         "2000k-dark": {
-            "categorical": ["#66B1D4", "#DB93A7", "#A46056", "#A3DBA9"],
-            "categorical_transformed_targets": ["#666012", "#DB500F", "#A43407", "#A3770F"],
+            "categorical": ["#66B0D4", "#E99096", "#A46449", "#A3DCA9"],
+            "categorical_transformed_targets": ["#666012", "#E94E0D", "#A43606", "#A3780F"],
             "terminal": ["#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB"],
             "terminal_transformed_targets": ["#EC4C0E", "#747C10", "#C35507", "#A77216"],
             "terminal_ansi_indices": [0, 1, 2, 3, 0, 1],
         },
         "1200k-dark": {
-            "categorical": ["#C26D76", "#92DBFF", "#EFB371"],
-            "categorical_transformed_targets": ["#C22200", "#924400", "#EF3700"],
+            "categorical": ["#BB6572", "#8FF0FF", "#E9B76C"],
+            "categorical_transformed_targets": ["#BB1F00", "#8F4A00", "#E93900"],
             "terminal": ["#F29298", "#C9FFB4", "#DDCD81"],
             "terminal_transformed_targets": ["#F22D00", "#C94F00", "#DD3F00"],
             "terminal_ansi_indices": [0, 1, 2, 2, 0, 1],
@@ -393,11 +393,38 @@ def test_gain_sensitivity_metrics_recompute_from_exact_serialized_values() -> No
         assert metrics["continuous_minimum_signed_lightness_step"] == round(
             min(value["continuous_minimum_signed_lightness_step"] for value in values), 6
         )
+        deep_foreground_targets = {"2000k-dark": 5.2, "1200k-dark": 4.7}
+        if family["slug"] in deep_foreground_targets:
+            assert (
+                metrics["categorical_minimum_delta_e_ok"]
+                >= profile["categorical_minimum_delta_e_ok_target"]
+            )
+            assert (
+                metrics["categorical_minimum_foreground_delta_e_ok"]
+                >= (deep_foreground_targets[family["slug"]])
+            )
+            assert metrics["categorical_minimum_background_contrast"] >= 3.0
 
 
 def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shift() -> None:
     manifest = generate_manifest()
+    expected_transformed_arc_weights = {
+        "3400k-dark": 1.0,
+        "3400k-light": 1.0,
+        "2000k-dark": 0.50,
+        "1200k-dark": 0.55,
+    }
+    commanded_cv_limits = {
+        "3400k-dark": 0.18,
+        "3400k-light": 0.18,
+        "2000k-dark": 0.06,
+        "1200k-dark": 0.095,
+    }
     for family in manifest["families"].values():
+        assert (
+            family["continuous_transformed_arc_weight"]
+            == expected_transformed_arc_weights[family["slug"]]
+        )
         sequence = np.asarray(family["continuous_rgb"], dtype=float)
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
         normal = perceived_lab(sequence, (1.0, 1.0, 1.0))
@@ -416,7 +443,7 @@ def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shif
         assert len({tuple(color) for color in sequence}) == 256, family["slug"]
         assert normal_lightness_steps.min() > 0.0, family["slug"]
         assert np.ptp(normal[:, 0]) >= 0.50, family["slug"]
-        assert normal_cv <= 0.18, family["slug"]
+        assert normal_cv <= commanded_cv_limits[family["slug"]], family["slug"]
         assert normal_max_to_min <= 1.60, family["slug"]
         assert lightness_steps.min() > 0.0, family["slug"]
         assert np.ptp(shifted[:, 0]) >= 0.50, family["slug"]

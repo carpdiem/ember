@@ -49,11 +49,11 @@
   --ember-fg-0: #EED5AE;
   --ember-fg-1: #D3BB99;
   --ember-fg-2: #AA9D8B;
-  --ember-category-one: #66B1D4;
-  --ember-category-two: #DB93A7;
-  --ember-category-three: #A46056;
-  --ember-category-four: #A3DBA9;
-  --ember-sequential: linear-gradient(90deg, #17110F 0%, #2B1F1F 10%, #3F2C2E 20%, #553A3D 30%, #6C484A 40%, #845955 50%, #9B6B5C 60%, #B18165 70%, #C89D75 80%, #DDBB90 90%, #F2D9AE 100%);
+  --ember-category-one: #66B0D4;
+  --ember-category-two: #E99096;
+  --ember-category-three: #A46449;
+  --ember-category-four: #A3DCA9;
+  --ember-sequential: linear-gradient(90deg, #17110F 0%, #2C1F1F 10%, #412D30 20%, #583C3F 30%, #714B4D 40%, #8A5D57 50%, #A1705E 60%, #B78767 70%, #CBA279 80%, #DFBE93 90%, #F2D9AE 100%);
 }
 
 [data-ember-palette="1200k-dark"] {
@@ -66,8 +66,8 @@
   --ember-fg-0: #FFE5BD;
   --ember-fg-1: #CBAF89;
   --ember-fg-2: #A18C73;
-  --ember-category-one: #C26D76;
-  --ember-category-two: #92DBFF;
-  --ember-category-three: #EFB371;
-  --ember-sequential: linear-gradient(90deg, #100C0B 0%, #241817 10%, #392523 20%, #4F322F 30%, #67413A 40%, #805247 50%, #986855 60%, #B08366 70%, #CAA37E 80%, #E5C49B 90%, #FFE5B8 100%);
+  --ember-category-one: #BB6572;
+  --ember-category-two: #8FF0FF;
+  --ember-category-three: #E9B76C;
+  --ember-sequential: linear-gradient(90deg, #100C0B 0%, #261918 10%, #3C2724 20%, #543631 30%, #6E463E 40%, #88594C 50%, #A0705A 60%, #B78B6B 70%, #CFA983 80%, #E7C79D 90%, #FFE5B8 100%);
 }

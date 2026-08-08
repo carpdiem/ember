@@ -55,6 +55,7 @@ class FamilyDefinition:
     foreground_night_minimum_chroma_vector_cosine: float | None
     foreground_chroma_direction: str | None
     foreground_chroma_order_tolerance: float | None
+    sequential_transformed_arc_weight: float
     sequential_anchors: tuple[str, ...]
 
     @property
@@ -205,6 +206,7 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.998,
         foreground_chroma_direction="decreasing",
         foreground_chroma_order_tolerance=0.003,
+        sequential_transformed_arc_weight=1.0,
         sequential_anchors=("#282527", "#51404F", "#7F5E69", "#A17C6C", "#C49D70", "#E2CDA1"),
     ),
     FamilyDefinition(
@@ -270,6 +272,7 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.999,
         foreground_chroma_direction="increasing",
         foreground_chroma_order_tolerance=0.003,
+        sequential_transformed_arc_weight=1.0,
         sequential_anchors=("#F2E5BC", "#D7BF8D", "#B08061", "#80515A", "#533844", "#252126"),
     ),
     FamilyDefinition(
@@ -291,13 +294,13 @@ FAMILIES = (
         # The four transformed identities remain distinct and clear 3:1 against bg_0.
         # Their daytime preimages deliberately use unrelated hue families: weak blue is
         # optimization freedom, not a cross-state appearance-preservation constraint.
-        categorical_colors=("#66B1D4", "#DB93A7", "#A46056", "#A3DBA9"),
-        categorical_transformed_targets=("#666012", "#DB500F", "#A43407", "#A3770F"),
+        categorical_colors=("#66B0D4", "#E99096", "#A46449", "#A3DCA9"),
+        categorical_transformed_targets=("#666012", "#E94E0D", "#A43606", "#A3780F"),
         daylight_minimum_delta_e_ok=14.0,
         daylight_minimum_hue_gap_degrees=20.0,
         categorical_shifted_background_contrast_minimum=3.0,
         categorical_daylight_minimum_foreground_delta_e_ok=9.0,
-        categorical_night_minimum_foreground_delta_e_ok=4.0,
+        categorical_night_minimum_foreground_delta_e_ok=5.5,
         terminal_colors=("#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB"),
         terminal_transformed_targets=("#EC4C0E", "#747C10", "#C35507", "#A77216"),
         terminal_ansi_indices=(0, 1, 2, 3, 0, 1),
@@ -324,6 +327,7 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.98,
         foreground_chroma_direction="decreasing",
         foreground_chroma_order_tolerance=0.003,
+        sequential_transformed_arc_weight=0.50,
         sequential_anchors=("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
     ),
     FamilyDefinition(
@@ -345,13 +349,13 @@ FAMILIES = (
         # Three warm transformed identities clear 3:1 against bg_0. Their daytime
         # preimages use blue's exact null direction for a mature rose/sky/apricot triad;
         # category identity is stable, but cross-state hue appearance is intentionally not.
-        categorical_colors=("#C26D76", "#92DBFF", "#EFB371"),
-        categorical_transformed_targets=("#C22200", "#924400", "#EF3700"),
+        categorical_colors=("#BB6572", "#8FF0FF", "#E9B76C"),
+        categorical_transformed_targets=("#BB1F00", "#8F4A00", "#E93900"),
         daylight_minimum_delta_e_ok=20.0,
         daylight_minimum_hue_gap_degrees=45.0,
         categorical_shifted_background_contrast_minimum=3.0,
         categorical_daylight_minimum_foreground_delta_e_ok=6.0,
-        categorical_night_minimum_foreground_delta_e_ok=3.5,
+        categorical_night_minimum_foreground_delta_e_ok=4.8,
         terminal_colors=("#F29298", "#C9FFB4", "#DDCD81"),
         terminal_transformed_targets=("#F22D00", "#C94F00", "#DD3F00"),
         terminal_ansi_indices=(0, 1, 2, 2, 0, 1),
@@ -378,6 +382,7 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.98,
         foreground_chroma_direction="decreasing",
         foreground_chroma_order_tolerance=0.003,
+        sequential_transformed_arc_weight=0.55,
         sequential_anchors=("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
     ),
 )

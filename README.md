@@ -306,8 +306,8 @@ formula.
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 15.00 | 11.45 | 0.0971 / 0.1045 | 0.2206 | 5.29:1 |
 | 3400K Light | 6 | 16.73 | 12.41 | 0.0988 / 0.1037 | 0.3068 | 4.65:1 |
-| 2000K Dark | 4 | 16.50 | 12.59 | 0.0903 / 0.0907 | 0.1317 | 4.52:1 |
-| 1200K Dark | 3 | 20.03 | 10.05 | 0.1016 / 0.1086 | 0.1428 | 4.55:1 |
+| 2000K Dark | 4 | 17.00 | 12.91 | 0.0956 / 0.1082 | 0.1538 | 4.52:1 |
+| 1200K Dark | 3 | 20.72 | 10.25 | 0.1047 / 0.1107 | 0.1268 | 4.55:1 |
 
 Daytime hue breadth and transformed category/background contrast are separate release gates.
 Contrast here is for graphical category marks, not small text.
