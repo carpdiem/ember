@@ -55,7 +55,7 @@
 
 ### Task 4: Add gain-sensitivity envelopes and metrics
 
-**Objective:** Report exact system behavior across a transparent ±5% G/B gain box rather than only at the nominal vector.
+**Objective:** Report exact system behavior at the four corners of a transparent ±5% G/B gain box rather than only at the nominal vector.
 
 **Files:**
 - Modify: `src/ember/definitions.py`
