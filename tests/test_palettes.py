@@ -7,7 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
-from redshift_safe.color import (
+from ember.color import (
     contrast_ratio,
     delta_e_ok,
     hex_to_srgb,
@@ -18,14 +18,18 @@ from redshift_safe.color import (
     warm_transform,
     wcag_luminance,
 )
-from redshift_safe.generate import generate_manifest
+from ember.generate import generate_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 10
+    assert manifest["schema_version"] == 11
+    assert manifest["project"] == "Ember"
+    assert "legacy_aliases" not in manifest
+    assert "legacy_surface_role_aliases" not in manifest
+    assert "removed_families" not in manifest
     assert manifest["quality_targets"]["cross_state_hue_consistency_required"] is False
     assert manifest["quality_targets"]["terminal_distinguishability_reference_role"] == "fg_0"
     assert manifest["quality_targets"]["terminal_distinguishability_reference_roles"] == [
@@ -87,7 +91,6 @@ def test_numbered_surface_roles_have_locked_values() -> None:
         surfaces = manifest["families"][slug]["surfaces"]
         assert [surfaces[role] for role in roles] == values
         assert [surfaces[role] for role in ("fg_0", "fg_1", "fg_2")] == expected_foregrounds[slug]
-        assert not set(surfaces) & set(manifest["legacy_surface_role_aliases"])
 
 
 def test_accent_selections_have_locked_two_stage_values() -> None:
@@ -613,8 +616,8 @@ def test_hex_round_trip_is_stable() -> None:
 
 def test_committed_manifest_matches_generator() -> None:
     expected = generate_manifest()
-    actual = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
-    packaged = json.loads((ROOT / "src/redshift_safe/palettes.json").read_text())
+    actual = json.loads((ROOT / "palettes/ember.json").read_text())
+    packaged = json.loads((ROOT / "src/ember/palettes.json").read_text())
     assert actual == expected
     assert packaged == expected
 

@@ -135,19 +135,6 @@ BACKGROUND_SURFACE_ROLES = (
     "bg_5",
 )
 
-LEGACY_SURFACE_ROLE_ALIASES = {
-    "background": "bg_0",
-    "background_alt": "bg_1",
-    "background_high": "bg_2",
-    "background_higher": "bg_3",
-    "background_highest": "bg_4",
-    "selection": "bg_5",
-    "foreground": "fg_0",
-    "foreground_soft": "fg_1",
-    "foreground_muted": "fg_2",
-}
-
-
 FAMILIES = (
     FamilyDefinition(
         slug="3400k-dark",

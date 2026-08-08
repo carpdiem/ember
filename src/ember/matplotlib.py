@@ -11,20 +11,17 @@ from matplotlib.colors import BoundaryNorm, ListedColormap
 
 
 def _manifest() -> dict:
-    path = files("redshift_safe").joinpath("palettes.json")
+    path = files("ember").joinpath("palettes.json")
     return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _family(slug: str) -> dict:
     manifest = _manifest()
-    if slug in manifest.get("removed_families", {}):
-        raise KeyError(f"{slug}: {manifest['removed_families'][slug]}")
-    resolved = manifest.get("legacy_aliases", {}).get(slug, slug)
     families = manifest["families"]
-    if resolved not in families:
+    if slug not in families:
         choices = ", ".join(sorted(families))
         raise KeyError(f"unknown family {slug!r}; choose one of: {choices}")
-    return families[resolved]
+    return families[slug]
 
 
 def categorical(slug: str) -> ListedColormap:

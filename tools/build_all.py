@@ -28,13 +28,13 @@ from render_samples import (
 )
 from render_story import render_readme_story
 
-from redshift_safe.color import contrast_ratio, hex_to_srgb
-from redshift_safe.generate import ANSI_NAMES, generate_manifest
+from ember.color import contrast_ratio, hex_to_srgb
+from ember.generate import ANSI_NAMES, generate_manifest
 
 BASE_MANAGED_PATHS = (
-    "palettes/redshift-safe-palettes.json",
-    "palettes/redshift-safe-palettes.css",
-    "src/redshift_safe/palettes.json",
+    "palettes/ember.json",
+    "palettes/ember.css",
+    "src/ember/palettes.json",
     "themes/terminal/README.md",
     "docs/swatches/command-vs-simulated.png",
     "docs/matplotlib-gallery.png",
@@ -66,26 +66,15 @@ def _css(manifest: dict) -> str:
         "",
     ]
     for slug, family in manifest["families"].items():
-        selectors = [slug]
-        selectors.extend(
-            legacy
-            for legacy, current in manifest.get("legacy_aliases", {}).items()
-            if current == slug
-        )
-        lines.append(
-            ",\n".join(f'[data-redshift-palette="{selector}"]' for selector in selectors) + " {"
-        )
+        lines.append(f'[data-ember-palette="{slug}"] {{')
         for name, value in family["surfaces"].items():
-            lines.append(f"  --rs-{name.replace('_', '-')}: {value};")
-        for legacy, canonical in manifest.get("legacy_surface_role_aliases", {}).items():
-            value = family["surfaces"][canonical]
-            lines.append(f"  --rs-{legacy.replace('_', '-')}: {value}; /* legacy alias */")
+            lines.append(f"  --ember-{name.replace('_', '-')}: {value};")
         for name, value in family["categorical"].items():
-            lines.append(f"  --rs-category-{name}: {value};")
+            lines.append(f"  --ember-category-{name}: {value};")
         continuous = family["continuous_hex8"]
         stops = [continuous[round(i * 255 / 10)] for i in range(11)]
         gradient = ", ".join(f"{color} {i * 10}%" for i, color in enumerate(stops))
-        lines.append(f"  --rs-sequential: linear-gradient(90deg, {gradient});")
+        lines.append(f"  --ember-sequential: linear-gradient(90deg, {gradient});")
         lines.append("}")
         lines.append("")
     return "\n".join(lines)
@@ -332,9 +321,9 @@ def _family_svg(family: dict, profile: dict) -> str:
 def build(destination: Path) -> None:
     manifest = generate_manifest()
     encoded = json.dumps(manifest, indent=2) + "\n"
-    _write(destination / "palettes/redshift-safe-palettes.json", encoded)
-    _write(destination / "src/redshift_safe/palettes.json", encoded)
-    _write(destination / "palettes/redshift-safe-palettes.css", _css(manifest))
+    _write(destination / "palettes/ember.json", encoded)
+    _write(destination / "src/ember/palettes.json", encoded)
+    _write(destination / "palettes/ember.css", _css(manifest))
     terminal_readme = """# Terminal themes
 
 Generated imports are provided for Alacritty, iTerm2, and Windows Terminal. Each
@@ -395,17 +384,6 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
         profile = manifest["profiles"][family["profile"]]
         _write(destination / f"docs/swatches/{slug}.svg", _family_svg(family, profile))
 
-    for legacy, current in manifest.get("legacy_aliases", {}).items():
-        family = manifest["families"][current]
-        profile = manifest["profiles"][family["profile"]]
-        _write(destination / f"themes/terminal/alacritty/{legacy}.toml", _alacritty(family))
-        _write(
-            destination / f"themes/terminal/windows-terminal/{legacy}.json",
-            _windows_terminal(family),
-        )
-        _write(destination / f"themes/terminal/iterm2/{legacy}.itermcolors", _iterm(family))
-        _write(destination / f"docs/swatches/{legacy}.svg", _family_svg(family, profile))
-
     render_readme_story(manifest, destination / "docs")
     render_matplotlib_gallery(manifest, destination / "docs/matplotlib-gallery.png")
     render_samples(manifest, destination / "docs/samples")
@@ -452,15 +430,7 @@ def check() -> int:
                     Path(f"themes/terminal/windows-terminal/{slug}.json"),
                 )
             )
-        for legacy in manifest.get("legacy_aliases", {}):
-            generated_paths.extend(
-                (
-                    Path(f"docs/swatches/{legacy}.svg"),
-                    Path(f"themes/terminal/alacritty/{legacy}.toml"),
-                    Path(f"themes/terminal/iterm2/{legacy}.itermcolors"),
-                    Path(f"themes/terminal/windows-terminal/{legacy}.json"),
-                )
-            )
+
         for relative in generated_paths:
             expected = temp / relative
             actual = ROOT / relative

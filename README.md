@@ -1,4 +1,4 @@
-# Ember: Redshift-Safe Color Palettes
+# Ember
 
 **Terminal, chart, heatmap, and UI palettes that remain usable before and after aggressive warm-screen filtering.**
 
@@ -80,7 +80,7 @@ cd ember
 Python users can skip the clone and install directly from GitHub:
 
 ```bash
-python -m pip install "git+https://github.com/carpdiem/ember.git"
+python -m pip install "ember-palettes @ git+https://github.com/carpdiem/ember.git"
 ```
 
 ### 2. Import a terminal theme
@@ -132,7 +132,7 @@ light family becomes darker toward `bg_5`.
 ```python
 import matplotlib.pyplot as plt
 
-from redshift_safe import categorical, categorical_norm, encode_categories, sequential, surfaces
+from ember import categorical, categorical_norm, encode_categories, sequential, surfaces
 
 palette = "2000k-dark"
 ui = surfaces(palette)
@@ -161,52 +161,51 @@ float samples, independent of the number of categorical colors.
 
 ### CSS
 
-Load [`redshift-safe-palettes.css`](palettes/redshift-safe-palettes.css), then select a
-family:
+Load [`ember.css`](palettes/ember.css), then select a family:
 
 ```html
-<link rel="stylesheet" href="/path/to/redshift-safe-palettes.css">
+<link rel="stylesheet" href="/path/to/ember.css">
 ```
 
 ```html
-<section data-redshift-palette="3400k-dark">
+<section data-ember-palette="3400k-dark">
   <div class="panel">...</div>
 </section>
 ```
 
 ```css
-[data-redshift-palette] {
-  color: var(--rs-fg-0);
-  background: var(--rs-bg-0);
+[data-ember-palette] {
+  color: var(--ember-fg-0);
+  background: var(--ember-bg-0);
 }
 
 .panel {
-  background: var(--rs-bg-2);
+  background: var(--ember-bg-2);
 }
 
 .panel:hover {
-  background: var(--rs-bg-3);
+  background: var(--ember-bg-3);
 }
 
 .popover {
-  background: var(--rs-bg-4);
+  background: var(--ember-bg-4);
 }
 
 .selected {
-  background: var(--rs-bg-5);
+  background: var(--ember-bg-5);
 }
 
 .series-a {
-  color: var(--rs-category-one);
+  color: var(--ember-category-one);
 }
 
 .heatmap-key {
-  background: var(--rs-sequential);
+  background: var(--ember-sequential);
 }
 ```
 
 CSS exposes eleven representative 8-bit gradient stops. The
-[JSON manifest](palettes/redshift-safe-palettes.json) and Python package preserve all
+[JSON manifest](palettes/ember.json) and Python package preserve all
 256 canonical float samples, along with surfaces, categorical colors, ANSI slots, gain
 profiles, and measured results.
 

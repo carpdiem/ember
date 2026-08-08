@@ -13,7 +13,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from redshift_safe.color import (  # noqa: I001  # pyright: ignore[reportMissingImports]
+from ember.color import (  # noqa: I001  # pyright: ignore[reportMissingImports]
     hex_to_srgb,
     warm_transform,
 )

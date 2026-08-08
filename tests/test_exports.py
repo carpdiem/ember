@@ -16,7 +16,7 @@ try:
 except ModuleNotFoundError:  # Python 3.10
     import tomli as tomllib
 
-from redshift_safe import categorical, categorical_norm, encode_categories, sequential, surfaces
+from ember import categorical, categorical_norm, encode_categories, sequential, surfaces
 
 ROOT = Path(__file__).resolve().parents[1]
 SLUGS = (
@@ -25,16 +25,37 @@ SLUGS = (
     "2000k-dark",
     "1200k-dark",
 )
-LEGACY_ALIASES = {
-    "ember-dark": "3400k-dark",
-    "ember-light": "3400k-light",
-    "lowfire-dark": "2000k-dark",
-    "safelight-dark": "1200k-dark",
-}
+
+
+def test_python_distribution_and_import_namespace_are_ember() -> None:
+    metadata = tomllib.loads((ROOT / "pyproject.toml").read_text())
+    assert metadata["project"]["name"] == "ember-palettes"
+    assert metadata["tool"]["hatch"]["build"]["targets"]["wheel"]["packages"] == ["src/ember"]
+    assert (ROOT / "src/ember/__init__.py").is_file()
+    assert not (ROOT / "src/redshift_safe").exists()
+
+
+def test_obsolete_prelaunch_exports_are_absent() -> None:
+    obsolete_slugs = ("ember-dark", "ember-light", "lowfire-dark", "safelight-dark")
+    obsolete_paths = [
+        "palettes/redshift-safe-palettes.css",
+        "palettes/redshift-safe-palettes.json",
+        *(f"docs/swatches/{slug}.svg" for slug in obsolete_slugs),
+        *(
+            f"themes/terminal/{terminal}/{slug}.{suffix}"
+            for terminal, suffix in (
+                ("alacritty", "toml"),
+                ("iterm2", "itermcolors"),
+                ("windows-terminal", "json"),
+            )
+            for slug in obsolete_slugs
+        ),
+    ]
+    assert not [path for path in obsolete_paths if (ROOT / path).exists()]
 
 
 def test_matplotlib_adapters() -> None:
-    manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
     for slug in SLUGS:
         categorical_map = categorical(slug)
         sequential_map = sequential(slug)
@@ -46,7 +67,7 @@ def test_matplotlib_adapters() -> None:
 
 
 def test_surface_api_returns_an_independent_copy() -> None:
-    manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
     for slug in SLUGS:
         result = surfaces(slug)
         assert result == manifest["families"][slug]["surfaces"]
@@ -54,38 +75,17 @@ def test_surface_api_returns_an_independent_copy() -> None:
         assert surfaces(slug)["bg_0"] != "#FFFFFF"
 
 
-@pytest.mark.parametrize(
-    ("legacy", "current"),
-    list(LEGACY_ALIASES.items()),
-)
-def test_legacy_matplotlib_slugs_resolve(legacy: str, current: str) -> None:
-    assert categorical(legacy).colors == categorical(current).colors
-    assert surfaces(legacy) == surfaces(current)
-
-
-@pytest.mark.parametrize("legacy", ["lowfire-light", "safelight-light"])
-def test_removed_deep_light_slugs_fail_with_migration_message(legacy: str) -> None:
-    with pytest.raises(KeyError, match="No deep-shift light replacement"):
-        categorical(legacy)
-
-
-def test_legacy_css_and_terminal_exports_remain_available() -> None:
-    manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
-    css = (ROOT / "palettes/redshift-safe-palettes.css").read_text()
+def test_ember_css_and_terminal_exports_are_canonical() -> None:
+    css = (ROOT / "palettes/ember.css").read_text()
     for role in ("bg_0", "bg_1", "bg_2", "bg_3", "bg_4", "bg_5", "fg_0", "fg_1", "fg_2"):
-        assert f"--rs-{role.replace('_', '-')}:" in css
-    for family in manifest["families"].values():
-        for legacy_role, canonical_role in manifest["legacy_surface_role_aliases"].items():
-            expected = (
-                f"--rs-{legacy_role.replace('_', '-')}: "
-                f"{family['surfaces'][canonical_role]}; /* legacy alias */"
-            )
-            assert expected in css
-    for legacy in LEGACY_ALIASES:
-        assert f'data-redshift-palette="{legacy}"' in css
-        assert (ROOT / f"themes/terminal/alacritty/{legacy}.toml").is_file()
-        assert (ROOT / f"themes/terminal/iterm2/{legacy}.itermcolors").is_file()
-        assert (ROOT / f"themes/terminal/windows-terminal/{legacy}.json").is_file()
+        assert f"--ember-{role.replace('_', '-')}:" in css
+    for slug in SLUGS:
+        assert f'data-ember-palette="{slug}"' in css
+        assert (ROOT / f"themes/terminal/alacritty/{slug}.toml").is_file()
+        assert (ROOT / f"themes/terminal/iterm2/{slug}.itermcolors").is_file()
+        assert (ROOT / f"themes/terminal/windows-terminal/{slug}.json").is_file()
+    assert "--rs-" not in css
+    assert "data-redshift-palette" not in css
 
 
 def test_generated_swatch_rectangles_fit_their_canvas() -> None:
@@ -127,7 +127,7 @@ def test_readme_visual_story_leads_before_setup() -> None:
 
 def test_commanded_inventory_displays_every_palette_role() -> None:
     readme = (ROOT / "README.md").read_text()
-    manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
     roles = (*manifest["quality_targets"]["bg_roles_low_to_high"], "fg_0", "fg_1", "fg_2")
     namespace = {"svg": "http://www.w3.org/2000/svg"}
     expected_aliases = {

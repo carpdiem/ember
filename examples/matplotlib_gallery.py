@@ -14,6 +14,6 @@ for path in (TOOLS, SRC):
 
 from render_gallery import render_matplotlib_gallery
 
-from redshift_safe.generate import generate_manifest
+from ember.generate import generate_manifest
 
 render_matplotlib_gallery(generate_manifest(), ROOT / "docs/matplotlib-gallery.png")

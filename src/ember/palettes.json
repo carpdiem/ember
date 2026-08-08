@@ -1,28 +1,7 @@
 {
-  "schema_version": 10,
-  "project": "Ember: Redshift Safe Color Palettes",
+  "schema_version": 11,
+  "project": "Ember",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
-  "legacy_aliases": {
-    "ember-dark": "3400k-dark",
-    "ember-light": "3400k-light",
-    "lowfire-dark": "2000k-dark",
-    "safelight-dark": "1200k-dark"
-  },
-  "legacy_surface_role_aliases": {
-    "background": "bg_0",
-    "background_alt": "bg_1",
-    "background_high": "bg_2",
-    "background_higher": "bg_3",
-    "background_highest": "bg_4",
-    "selection": "bg_5",
-    "foreground": "fg_0",
-    "foreground_soft": "fg_1",
-    "foreground_muted": "fg_2"
-  },
-  "removed_families": {
-    "lowfire-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
-    "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier."
-  },
   "quality_targets": {
     "accent_selection_priority": [
       "match authored transformed perceptual outcomes",

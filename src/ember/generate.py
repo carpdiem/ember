@@ -23,7 +23,6 @@ from .definitions import (
     DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST,
     DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE,
     FAMILIES,
-    LEGACY_SURFACE_ROLE_ALIASES,
     LIGHT_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK,
     LIGHT_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST,
     LIGHT_MINIMUM_SURFACE_SPAN_DELTA_E_OK,
@@ -477,23 +476,12 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 10,
-        "project": "Ember: Redshift Safe Color Palettes",
+        "schema_version": 11,
+        "project": "Ember",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
             "spectral measurements. Metrics are explicitly labeled as commanded or transformed."
         ),
-        "legacy_aliases": {
-            "ember-dark": "3400k-dark",
-            "ember-light": "3400k-light",
-            "lowfire-dark": "2000k-dark",
-            "safelight-dark": "1200k-dark",
-        },
-        "legacy_surface_role_aliases": LEGACY_SURFACE_ROLE_ALIASES,
-        "removed_families": {
-            "lowfire-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
-            "safelight-light": "No deep-shift light replacement; use 3400k-light or a dark deep tier.",
-        },
         "quality_targets": {
             "accent_selection_priority": [
                 "match authored transformed perceptual outcomes",

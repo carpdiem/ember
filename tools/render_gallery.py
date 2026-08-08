@@ -19,7 +19,7 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from redshift_safe.generate import generate_manifest
+from ember.generate import generate_manifest
 
 GALLERY_FINGERPRINT_KEY = "Ember-Source-SHA256"
 
