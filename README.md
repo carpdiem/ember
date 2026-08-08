@@ -6,58 +6,65 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
-Ember is a coordinated color system for people who run Redshift, Night Light, or
-another strong warm-screen filter. It ships importable terminal themes, chart and
-heatmap palettes, and UI surface roles authored for two states of the same screen:
-the colors applications request (filter off) and the modeled colors a warm filter
-leaves behind (filter on). Ember does not apply the filter; keep using the one you
-already have.
+Ember is a coordinated color system for engineers who run Redshift, Night Light, or
+another strong warm-screen filter. Each palette is authored in commanded sRGB,
+verified under its profile's modeled per-channel RGB gains, and exported as terminal
+themes (Alacritty, iTerm2, Windows Terminal), UI surface roles, categorical chart
+colors, a 256-sample sequential map, and Matplotlib/CSS/JSON/Python artifacts.
+Ember does not apply the filter; keep using the one you already have.
 
 ## The four palettes
 
-![Every authored color in the four Ember palettes — 3400K Dark, 3400K Light, 2000K Dark, and 1200K Dark: six background surfaces, three foreground text roles, the categorical colors, all six terminal ANSI accent roles with their honest aliases, and the 256-step sequential map for each family](docs/swatches/overview.svg)
+![3400K Dark — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-dark.svg)
 
-These are the exact commanded sRGB values shipped in every export: Alacritty,
-iTerm2, Windows Terminal, Matplotlib, CSS, JSON, and Python.
+![3400K Light — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-light.svg)
 
-## What a warm filter does to them
+![2000K Dark — six background surfaces, three foreground text roles, four categorical colors, four terminal accent identities with magenta=red and cyan=green aliases, and the 256-sample sequential map](docs/swatches/2000k-dark.svg)
 
-![Categorical colors and sequential maps of 3400K Dark, 3400K Light, 2000K Dark, and 1200K Dark, each shown as requested and after that family's modeled warm transform](docs/swatches/command-vs-simulated.png)
+![1200K Dark — six background surfaces, three foreground text roles, three categorical colors, three terminal accent identities with blue=yellow, magenta=red, and cyan=green aliases, and the 256-sample sequential map](docs/swatches/1200k-dark.svg)
+
+These are the exact commanded sRGB values shipped in every export. The deeper the
+target filter, the fewer color identities a family authors; aliased terminal slots
+are labeled as aliases instead of posing as additional colors.
+
+## With and without Redshift
+
+![Categorical colors and sequential maps of all four palettes, each shown as commanded and after that profile's modeled warm transform](docs/swatches/command-vs-simulated.png)
+
+### In a terminal
+
+![The same code and selection in all four palettes, rendered filter-off and with the modeled filter-on output](docs/samples/terminal-story.png)
+
+### In charts and heatmaps
+
+![The same heatmap, bar chart, and labeled line series in all four palettes, rendered filter-off and with the modeled filter-on output](docs/samples/data-story.png)
+
+### Why identities disappear
 
 ![RGB channel survival under the 3400 K, 2000 K, and 1200 K warm-filter models](docs/diagrams/channel-collapse.svg)
 
 A warm filter is not a tinted overlay: it multiplies red, green, and blue by
-different amounts. At Ember's 1200 K model, blue is multiplied by zero, so colors
-that differ only in blue become the same pixel. That is why the deeper palettes
-above author fewer identities instead of pretending aliased colors are still
-different.
+different gains. At Ember's 1200 K model the blue gain is zero, so colors that
+differ only in blue produce identical output. The deeper palettes therefore author
+fewer identities instead of pretending aliased colors remain distinct.
 
-## In a terminal
-
-![The same code and selection in 3400K Dark, 3400K Light, 2000K Dark, and 1200K Dark, each rendered filter-off and with the modeled filter-on output](docs/samples/terminal-story.png)
-
-## In charts and heatmaps
-
-![The same heatmap, bar chart, and labeled line series in 3400K Dark, 3400K Light, 2000K Dark, and 1200K Dark, each rendered filter-off and with the modeled filter-on output](docs/samples/data-story.png)
+Filtered rows are deterministic signal simulations — commanded sRGB multiplied by
+each profile's published gains. They are not photographs, calibrated physical color
+temperatures, or predictions of every display pipeline. Turn off any active warm
+filter before judging them, or your screen applies the transform a second time.
 
 ## Choose a profile
 
 | Palette | Use it when | Distinct categories |
 |---|---|---:|
-| [`3400k-dark`](docs/swatches/3400k-dark.svg) | you want a near-black general-purpose warm theme | 6 |
-| [`3400k-light`](docs/swatches/3400k-light.svg) | you use a moderate warm shift on a light surface | 6 |
-| [`2000k-dark`](docs/swatches/2000k-dark.svg) | you run Redshift near 2000 K | 4 |
-| [`1200k-dark`](docs/swatches/1200k-dark.svg) | you want an extreme 1200 K stress profile | 3 |
+| `3400k-dark` | you want a near-black general-purpose warm theme | 6 |
+| `3400k-light` | you use a moderate warm shift on a light surface | 6 |
+| `2000k-dark` | you run Redshift near 2000 K | 4 |
+| `1200k-dark` | you want an extreme 1200 K stress profile | 3 |
 
 Start with `3400k-dark` unless you deliberately run a deeper filter. The 2000 K
 and 1200 K profiles are dark-only because a filtered light canvas becomes a large
 orange-red field.
-
-The filter-on rows above are deterministic signal simulations — commanded sRGB
-multiplied by each profile's published gains. They are not photographs, calibrated
-physical color temperatures, or predictions of every display pipeline. Turn off any
-active warm filter before judging them, or your screen applies the transform a
-second time.
 
 ## Make Ember work
 

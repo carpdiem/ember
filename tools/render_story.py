@@ -25,6 +25,9 @@ PRIMARY = "#F2E3C8"
 SECONDARY = "#BFAF98"
 RULE = "#3B342C"
 STORY_SLUGS = ("3400k-dark", "3400k-light", "2000k-dark", "1200k-dark")
+PALETTE_STORY_TITLE = "Ember palette appearance: with and without Redshift"
+STATE_COMMANDED = "COMMANDED"
+STATE_FILTERED = "UNDER FILTER"
 
 
 def _rgb(value: str) -> tuple[int, int, int]:
@@ -56,15 +59,15 @@ def _draw_text_segments(
 
 def _render_palette_story(manifest: dict, path: Path) -> None:
     width, header, section_height, footer = 760, 126, 160, 72
-    families = list(manifest["families"].values())
+    families = [manifest["families"][slug] for slug in STORY_SLUGS]
     height = header + section_height * len(families) + footer
     image = Image.new("RGB", (width, height), CANVAS)
     draw = ImageDraw.Draw(image)
 
     draw.text(
         (24, 20),
-        "You ask for these colors. The filter leaves you these.",
-        font=_font(28),
+        PALETTE_STORY_TITLE,
+        font=_font(24),
         fill=PRIMARY,
     )
     draw.text(
@@ -73,8 +76,8 @@ def _render_palette_story(manifest: dict, path: Path) -> None:
         font=_font(17),
         fill=SECONDARY,
     )
-    draw.text((146, 102), "DISTINCT SERIES / STATES", font=_font(14), fill=SECONDARY)
-    draw.text((520, 102), "ORDERED DATA / LOW TO HIGH", font=_font(14), fill=SECONDARY)
+    draw.text((146, 102), "CATEGORICAL", font=_font(14), fill=SECONDARY)
+    draw.text((520, 102), "SEQUENTIAL / LOW TO HIGH", font=_font(14), fill=SECONDARY)
 
     for row, family in enumerate(families):
         y = header + row * section_height
@@ -95,7 +98,7 @@ def _render_palette_story(manifest: dict, path: Path) -> None:
 
         state_rows = ((False, y + 45), (True, y + 105))
         for transformed, state_y in state_rows:
-            state_title = "AFTER FILTER" if transformed else "ASKED FOR"
+            state_title = STATE_FILTERED if transformed else STATE_COMMANDED
             draw.text((24, state_y + 12), state_title, font=_font(15), fill=PRIMARY)
 
             swatch_x, swatch_width, gap = 146, 336, 6
@@ -123,7 +126,7 @@ def _render_palette_story(manifest: dict, path: Path) -> None:
     draw.rounded_rectangle((24, footer_y + 10, width - 24, height - 14), radius=12, fill=PANEL)
     draw.text(
         (42, footer_y + 20),
-        "At 1200 K, blue x 0: colors that differed only in blue become the same pixel.",
+        "At 1200 K the blue gain is 0: colors that differ only in blue become identical output.",
         font=_font(16),
         fill=PRIMARY,
     )

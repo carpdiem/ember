@@ -36,7 +36,6 @@ BASE_MANAGED_PATHS = (
     "palettes/redshift-safe-palettes.css",
     "src/redshift_safe/palettes.json",
     "themes/terminal/README.md",
-    "docs/swatches/overview.svg",
     "docs/swatches/command-vs-simulated.png",
     "docs/matplotlib-gallery.png",
     "docs/samples/terminal-commanded.png",
@@ -168,9 +167,29 @@ def _iterm(family: dict) -> bytes:
     return plistlib.dumps(payload, sort_keys=True)
 
 
-def _svg_text(x: int, y: int, value: str, size: int = 14, fill: str = "#E9E1D4") -> str:
+def _svg_text(
+    x: float,
+    y: float,
+    value: str,
+    size: int = 14,
+    fill: str = "#E9E1D4",
+    *,
+    weight: str | None = None,
+    anchor: str | None = None,
+) -> str:
     escaped = value.replace("&", "&amp;").replace("<", "&lt;")
-    return f'<text x="{x}" y="{y}" fill="{fill}" font-size="{size}" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">{escaped}</text>'
+    attributes = [
+        f'x="{x}"',
+        f'y="{y}"',
+        f'fill="{fill}"',
+        f'font-size="{size}"',
+        'font-family="ui-monospace, SFMono-Regular, Menlo, monospace"',
+    ]
+    if weight is not None:
+        attributes.append(f'font-weight="{weight}"')
+    if anchor is not None:
+        attributes.append(f'text-anchor="{anchor}"')
+    return f"<text {' '.join(attributes)}>{escaped}</text>"
 
 
 def _label_color(background: str) -> str:
@@ -183,76 +202,10 @@ def _label_color(background: str) -> str:
 
 
 def _family_svg(family: dict, profile: dict) -> str:
-    width, height = 1180, 430
-    canvas = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
-        '<rect width="100%" height="100%" rx="18" fill="#151310"/>',
-        _svg_text(28, 38, family["name"], 24),
-        _svg_text(28, 62, f"{profile['target']} · commanded sRGB", 13, "#B9AC98"),
-    ]
-    x, y = 28, 88
-    surface_step = (width - 56) / len(family["surfaces"])
-    for name, value in family["surfaces"].items():
-        canvas.append(
-            f'<rect x="{x:.2f}" y="{y}" width="{surface_step - 8:.2f}" '
-            f'height="52" rx="6" fill="{value}" stroke="#665D50"/>'
-        )
-        label_fill = _label_color(value)
-        canvas.append(
-            _svg_text(
-                x + 8,
-                y + 21,
-                name.replace("background", "bg").replace("foreground", "fg"),
-                11,
-                label_fill,
-            )
-        )
-        canvas.append(_svg_text(x + 8, y + 41, value, 12, label_fill))
-        x += surface_step
-    canvas.append(_svg_text(28, 174, "ANSI 0–15", 13, "#B9AC98"))
-    x, y = 28, 187
-    for value in family["terminal"].values():
-        canvas.append(f'<rect x="{x}" y="{y}" width="68" height="44" fill="{value}"/>')
-        x += 68
-    count = len(family["categorical"])
-    canvas.append(_svg_text(28, 264, f"Categorical 1–{count}", 13, "#B9AC98"))
-    x, y = 28, 278
-    width_per_color = min(170, 1080 // count)
-    for value in family["categorical"].values():
-        canvas.append(
-            f'<rect x="{x}" y="{y}" width="{width_per_color - 8}" '
-            f'height="58" rx="5" fill="{value}"/>'
-        )
-        canvas.append(_svg_text(x + 14, y + 36, value, 13, _label_color(value)))
-        x += width_per_color
-    continuous = family["continuous_hex8"]
-    canvas.append(_svg_text(28, 370, "Sequential (low → high)", 13, "#B9AC98"))
-    x, y = 28, 384
-    for index, value in enumerate(continuous):
-        canvas.append(
-            f'<rect x="{x + index * 4.32:.2f}" y="{y}" width="4.5" height="24" fill="{value}"/>'
-        )
-    canvas.append("</svg>")
-    return "\n".join(canvas)
-
-
-def _overview_svg(manifest: dict) -> str:
-    width, header, row_height, footer = 760, 88, 260, 52
-    height = header + row_height * len(manifest["families"]) + footer
-    parts = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
-        '<rect width="100%" height="100%" rx="18" fill="#12100E"/>',
-        _svg_text(24, 42, "The four Ember palettes", 30),
-        _svg_text(
-            24,
-            70,
-            "Every authored color, as applications request it (filter off).",
-            17,
-            "#BDAE98",
-        ),
-    ]
-    background_roles = manifest["quality_targets"]["bg_roles_low_to_high"]
-    foreground_roles = ["fg_0", "fg_1", "fg_2"]
+    width, height = 760, 632
+    margin, content_width = 32, 696
+    background_roles = tuple(f"bg_{index}" for index in range(6))
+    foreground_roles = tuple(f"fg_{index}" for index in range(3))
     terminal_roles = (
         ("red", "R"),
         ("green", "G"),
@@ -261,90 +214,119 @@ def _overview_svg(manifest: dict) -> str:
         ("magenta", "M"),
         ("cyan", "C"),
     )
-    for row, family in enumerate(manifest["families"].values()):
-        y = header + row * row_height
-        if row:
-            parts.append(f'<line x1="24" y1="{y}" x2="736" y2="{y}" stroke="#3B342C"/>')
-        parts.append(_svg_text(24, y + 30, family["name"], 24))
 
-        indices = family["terminal_ansi_indices"]
-        first_letter_by_index: dict[int, str] = {}
-        terminal_labels = []
-        for (_, letter), index in zip(terminal_roles, indices):
-            first = first_letter_by_index.setdefault(index, letter)
-            terminal_labels.append(letter if first == letter else f"{letter}={first}")
-        alias_text = ", ".join(label for label in terminal_labels if "=" in label)
+    first_letter_by_index: dict[int, str] = {}
+    terminal_labels = []
+    alias_labels = []
+    for (_, letter), index in zip(terminal_roles, family["terminal_ansi_indices"]):
+        first = first_letter_by_index.setdefault(index, letter)
+        label = letter if first == letter else f"{letter}={first}"
+        terminal_labels.append(label)
+        if "=" in label:
+            alias_labels.append(label)
+
+    capacity = (
+        f"{len(family['categorical'])} categories · "
+        f"{family['terminal_semantic_color_count']} terminal accents"
+    )
+    if alias_labels:
         capacity = (
-            f"{len(family['categorical'])} categories / "
-            f"{family['terminal_semantic_color_count']} accents"
-        )
-        if alias_text:
-            capacity += f" ({alias_text})"
-        escaped_capacity = capacity.replace("&", "&amp;").replace("<", "&lt;")
-        parts.append(
-            f'<text x="736" y="{y + 29}" text-anchor="end" fill="#BDAE98" font-size="18" '
-            f'font-family="ui-monospace, SFMono-Regular, Menlo, monospace">{escaped_capacity}</text>'
+            f"{len(family['categorical'])} categories · "
+            f"{family['terminal_semantic_color_count']} accents · {' '.join(alias_labels)}"
         )
 
-        parts.append(
-            _svg_text(24, y + 54, "SURFACES bg_0 to bg_5 / TEXT fg_0 to fg_2", 14, "#BDAE98")
+    canvas = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
+        '<rect width="100%" height="100%" rx="20" fill="#131009"/>',
+        _svg_text(32, 54, family["name"], 34, "#F2E7CE", weight="700"),
+        _svg_text(728, 50, capacity, 20, "#C7B79E", anchor="end"),
+        _svg_text(32, 80, f"{profile['target']} · commanded sRGB", 14, "#9C8F7B"),
+        '<line x1="32" y1="98" x2="728" y2="98" stroke="#2E2820"/>',
+    ]
+
+    canvas.append(_svg_text(32, 130, "SURFACES · bg_0 → bg_5", 15, "#C7B79E"))
+    chip_gap = 10
+    six_chip_width = (content_width - chip_gap * 5) / 6
+    for index, role in enumerate(background_roles):
+        value = family["surfaces"][role]
+        x, y = margin + index * (six_chip_width + chip_gap), 142
+        canvas.append(
+            f'<rect x="{x:.2f}" y="{y}" width="{six_chip_width:.2f}" height="64" '
+            f'rx="8" fill="{value}" stroke="#453C31"/>'
         )
-        surface_roles = [*background_roles, *foreground_roles]
-        surface_gap = 4
-        surface_width = (712 - surface_gap * (len(surface_roles) - 1)) / len(surface_roles)
-        for index, role in enumerate(surface_roles):
-            value = family["surfaces"][role]
-            x = 24 + index * (surface_width + surface_gap)
-            parts.append(
-                f'<rect x="{x:.2f}" y="{y + 62}" width="{surface_width:.2f}" '
-                f'height="38" rx="5" fill="{value}"/>'
-            )
-            parts.append(_svg_text(round(x + 8), y + 87, role, 13, _label_color(value)))
+        label_fill = _label_color(value)
+        canvas.append(_svg_text(x + 10, y + 24, role, 13, label_fill))
+        canvas.append(_svg_text(x + 10, y + 50, value, 11, label_fill))
 
-        categorical = list(family["categorical"].values())
-        parts.append(_svg_text(24, y + 122, "CATEGORIES", 14, "#BDAE98"))
-        categorical_width, categorical_gap = 430, 6
-        each_category = (categorical_width - categorical_gap * (len(categorical) - 1)) / len(
-            categorical
+    canvas.append(_svg_text(32, 240, "TEXT ON bg_0 · fg_0 fg_1 fg_2", 15, "#C7B79E"))
+    bg_0 = family["surfaces"]["bg_0"]
+    canvas.append(
+        f'<rect x="32" y="252" width="696" height="58" rx="8" fill="{bg_0}" stroke="#453C31"/>'
+    )
+    for x, role in zip((52, 284, 516), foreground_roles):
+        value = family["surfaces"][role]
+        canvas.append(_svg_text(x, 288, f"{role} · {value}", 16, value))
+
+    count = len(family["categorical"])
+    canvas.append(_svg_text(32, 348, f"CATEGORICAL · {count} COLORS", 15, "#C7B79E"))
+    category_width = (content_width - chip_gap * (count - 1)) / count
+    for index, value in enumerate(family["categorical"].values()):
+        x, y = margin + index * (category_width + chip_gap), 360
+        canvas.append(
+            f'<rect x="{x:.2f}" y="{y}" width="{category_width:.2f}" height="58" '
+            f'rx="8" fill="{value}" stroke="#453C31"/>'
         )
-        for index, value in enumerate(categorical):
-            x = 24 + index * (each_category + categorical_gap)
-            parts.append(
-                f'<rect x="{x:.2f}" y="{y + 132}" width="{each_category:.2f}" '
-                f'height="42" rx="5" fill="{value}"/>'
+        canvas.append(
+            _svg_text(
+                x + category_width / 2,
+                y + 35,
+                value,
+                12,
+                _label_color(value),
+                anchor="middle",
             )
+        )
 
-        sequential_x, sequential_width = 476, 260
-        parts.append(_svg_text(sequential_x, y + 122, "SEQUENTIAL low to high", 14, "#BDAE98"))
-        for index, value in enumerate(family["continuous_hex8"]):
-            x = sequential_x + index * sequential_width / len(family["continuous_hex8"])
-            parts.append(
-                f'<rect x="{x:.2f}" y="{y + 132}" width="1.15" height="42" fill="{value}"/>'
-            )
-
-        parts.append(_svg_text(24, y + 196, "TERMINAL ANSI ACCENTS", 14, "#BDAE98"))
-        terminal_gap = 6
-        terminal_width = (712 - terminal_gap * (len(terminal_roles) - 1)) / len(terminal_roles)
-        for index, ((role, _letter), label) in enumerate(zip(terminal_roles, terminal_labels)):
-            value = family["terminal"][role]
-            x = 24 + index * (terminal_width + terminal_gap)
-            parts.append(
-                f'<rect x="{x:.2f}" y="{y + 206}" width="{terminal_width:.2f}" '
-                f'height="42" rx="5" fill="{value}"/>'
-            )
-            parts.append(_svg_text(round(x + 12), y + 233, label, 18, _label_color(value)))
-    footer_y = header + row_height * len(manifest["families"])
-    parts.append(
+    identity_count = family["terminal_semantic_color_count"]
+    canvas.append(
         _svg_text(
-            24,
-            footer_y + 32,
-            "Deep filters destroy identities; Ember authors fewer instead of faking more.",
-            16,
-            "#BDAE98",
+            32,
+            456,
+            f"TERMINAL ANSI · {identity_count} IDENTITIES / 16 SLOTS",
+            15,
+            "#C7B79E",
         )
     )
-    parts.append("</svg>")
-    return "\n".join(parts)
+    for index, ((role, _letter), label) in enumerate(zip(terminal_roles, terminal_labels)):
+        value = family["terminal"][role]
+        x, y = margin + index * (six_chip_width + chip_gap), 468
+        dash = ' stroke-dasharray="5 4"' if "=" in label else ""
+        canvas.append(
+            f'<rect x="{x:.2f}" y="{y}" width="{six_chip_width:.2f}" height="58" '
+            f'rx="8" fill="{value}" stroke="#453C31"{dash}/>'
+        )
+        canvas.append(
+            _svg_text(
+                x + six_chip_width / 2,
+                y + 37,
+                label,
+                18 if "=" in label else 22,
+                _label_color(value),
+                weight="700",
+                anchor="middle",
+            )
+        )
+
+    continuous = family["continuous_hex8"]
+    canvas.append(_svg_text(32, 564, "SEQUENTIAL · 256 SAMPLES · LOW → HIGH", 15, "#C7B79E"))
+    for index, value in enumerate(continuous):
+        x = margin + index * content_width / len(continuous)
+        slice_width = min(2.9, 728 - x)
+        canvas.append(
+            f'<rect x="{x:.4f}" y="576" width="{slice_width:.4f}" height="32" fill="{value}"/>'
+        )
+    canvas.append("</svg>")
+    return "\n".join(canvas)
 
 
 def build(destination: Path) -> None:
@@ -424,7 +406,6 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
         _write(destination / f"themes/terminal/iterm2/{legacy}.itermcolors", _iterm(family))
         _write(destination / f"docs/swatches/{legacy}.svg", _family_svg(family, profile))
 
-    _write(destination / "docs/swatches/overview.svg", _overview_svg(manifest))
     render_readme_story(manifest, destination / "docs")
     render_matplotlib_gallery(manifest, destination / "docs/matplotlib-gallery.png")
     render_samples(manifest, destination / "docs/samples")

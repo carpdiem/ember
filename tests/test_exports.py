@@ -106,16 +106,18 @@ def test_generated_swatch_rectangles_fit_their_canvas() -> None:
 
 def test_readme_visual_story_leads_before_setup() -> None:
     readme = (ROOT / "README.md").read_text()
-    overview = "docs/swatches/overview.svg"
+    boards = [f"docs/swatches/{slug}.svg" for slug in SLUGS]
     hero = "docs/swatches/command-vs-simulated.png"
-    mechanism = "docs/diagrams/channel-collapse.svg"
     terminal = "docs/samples/terminal-story.png"
     data = "docs/samples/data-story.png"
-    setup = "## Make Ember work"
-    assert readme.index(overview) < readme.index(hero) < readme.index(mechanism)
-    assert readme.index(mechanism) < readme.index(terminal)
-    assert readme.index(terminal) < readme.index(data) < readme.index(setup)
-    assert "<details>" not in readme[: readme.index(setup)]
+    mechanism = "docs/diagrams/channel-collapse.svg"
+    setup = readme.index("## Make Ember work")
+    positions = [readme.index(path) for path in (*boards, hero, terminal, data, mechanism)]
+    assert positions == sorted(positions)
+    assert positions[-1] < setup
+    assert readme.count(hero) == 1
+    assert all(readme.count(board) == 1 for board in boards)
+    assert "<details>" not in readme[:setup]
 
     for relative_path in (hero, terminal, data):
         with Image.open(ROOT / relative_path) as image:
@@ -125,22 +127,31 @@ def test_readme_visual_story_leads_before_setup() -> None:
 
 def test_commanded_inventory_displays_every_palette_role() -> None:
     readme = (ROOT / "README.md").read_text()
-    overview_path = "docs/swatches/overview.svg"
-    assert "![Every authored color in the four Ember palettes" in readme
-    assert readme.index(overview_path) < readme.index("## Make Ember work")
-
     manifest = json.loads((ROOT / "palettes/redshift-safe-palettes.json").read_text())
     roles = (*manifest["quality_targets"]["bg_roles_low_to_high"], "fg_0", "fg_1", "fg_2")
-    root = ET.parse(ROOT / overview_path).getroot()
     namespace = {"svg": "http://www.w3.org/2000/svg"}
-    labels = [node.text for node in root.findall(".//svg:text", namespace)]
-    fills = [node.attrib["fill"] for node in root.findall(".//svg:rect", namespace)]
-    assert float(root.attrib["width"]) == 760
+    expected_aliases = {
+        "3400k-dark": set(),
+        "3400k-light": set(),
+        "2000k-dark": {"M=R", "C=G"},
+        "1200k-dark": {"B=Y", "M=R", "C=G"},
+    }
 
-    for role in roles:
-        assert labels.count(role) == len(SLUGS), role
-    for family in manifest["families"].values():
+    for slug in SLUGS:
+        board_path = f"docs/swatches/{slug}.svg"
+        assert readme.count(board_path) == 1
+        root = ET.parse(ROOT / board_path).getroot()
+        labels = [node.text or "" for node in root.findall(".//svg:text", namespace)]
+        fills = [
+            node.attrib["fill"]
+            for node in root.findall(".//*[@fill]", namespace)
+            if node.attrib["fill"].startswith("#")
+        ]
+        assert (float(root.attrib["width"]), float(root.attrib["height"])) == (760, 632)
+
+        family = manifest["families"][slug]
         for role in roles:
+            assert any(label.startswith(role) for label in labels), (slug, role)
             assert family["surfaces"][role] in fills, (family["slug"], role)
         for value in family["categorical"].values():
             assert value in fills, (family["slug"], "categorical", value)
@@ -148,14 +159,28 @@ def test_commanded_inventory_displays_every_palette_role() -> None:
             assert value in fills, (family["slug"], "sequential", value)
         for role in ("red", "green", "yellow", "blue", "magenta", "cyan"):
             assert family["terminal"][role] in fills, (family["slug"], role)
-    assert labels.count("TERMINAL ANSI ACCENTS") == len(SLUGS)
-    assert labels.count("M=R") == 2
-    assert labels.count("C=G") == 2
-    assert labels.count("B=Y") == 1
+        aliases = {label for label in labels if "=" in label and len(label) == 3}
+        assert aliases == expected_aliases[slug]
+
+
+def test_dense_overview_is_retired() -> None:
+    assert "overview.svg" not in (ROOT / "README.md").read_text()
+    assert not (ROOT / "docs/swatches/overview.svg").exists()
+    assert "overview" not in (ROOT / "tools/build_all.py").read_text().lower()
+
+
+def test_comparison_title_is_professional() -> None:
+    story_module = runpy.run_path(str(ROOT / "tools/render_story.py"))
+    assert (
+        story_module["PALETTE_STORY_TITLE"] == "Ember palette appearance: with and without Redshift"
+    )
+    assert story_module["STORY_SLUGS"] == SLUGS
+    for path in (ROOT / "tools/render_story.py", ROOT / "README.md"):
+        assert "You ask for these colors" not in path.read_text()
 
 
 def test_story_figures_cover_all_families() -> None:
-    story_module = runpy.run_path(ROOT / "tools/render_story.py")
+    story_module = runpy.run_path(str(ROOT / "tools/render_story.py"))
     assert story_module["STORY_SLUGS"] == SLUGS
 
     expected_heights = {
