@@ -6,9 +6,22 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
-Ember is a coordinated color system for people who run Redshift, Night Light, or
-another strong warm-screen filter. Each palette is authored in commanded sRGB,
-verified under its profile's modeled per-channel RGB gains, and exported as terminal
+Ember was created to solve the problem of traditional color palettes having colors that appear indistinguishable once you turn on redshift. With Ember, the primary goal is distinctive colors under various color temperature filters. Only once that's satisfied do we further tweak the redshift-degenerate color channels to improve visual separation during daytime (aka - with no redshift applied).
+
+Ember comes with 4 color palettes:
+- 3400K Dark
+- 3400K Light
+- 2000K Dark
+- 1200K Dark
+
+The 3400K palettes are good for general use, and approximately optimized for a macbook pro's maximum Nightshift effect.
+
+The 2000K and 1200K palettes are more specialized for true "deep redshift" fans (and astronomers).
+
+> *One interesting consequence is that the 2000K and 1200K extreme redshift palettes have fewer distinct colors than the 3400K palettes. This is because such extreme redshifts dramatically reduce the size of the perceptual color space available to choose colors from! More on this below...*
+
+Each palette is authored in commanded sRGB,
+verified under its corresponding color temperature's modeled per-channel RGB gains, and exported as terminal
 themes (Alacritty, iTerm2, Windows Terminal), UI surface roles, categorical chart
 colors, a 256-sample sequential map, and Matplotlib/CSS/JSON/Python artifacts.
 Ember does not apply the filter; keep using the one you already have.
