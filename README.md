@@ -1,4 +1,4 @@
-# Ember
+# Ember: Nightshift / Redshift safe color palettes
 
 **Terminal, chart, heatmap, and UI palettes that remain usable before and after aggressive warm-screen filtering.**
 
