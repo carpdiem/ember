@@ -6,22 +6,22 @@
 <line x1="32" y1="98" x2="728" y2="98" stroke="#29251F"/>
 <text x="32" y="130" fill="#BDAE93" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">SURFACES · bg_0 → bg_5</text>
 <rect x="32.00" y="142" width="107.67" height="64" rx="8" fill="#090807" stroke="#32241B"/>
-<text x="42.0" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
+<text x="42.0" y="166" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
 <text x="42.0" y="192" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#090807</text>
 <rect x="149.67" y="142" width="107.67" height="64" rx="8" fill="#100E0C" stroke="#32241B"/>
-<text x="159.66666666666669" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
+<text x="159.66666666666669" y="166" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
 <text x="159.66666666666669" y="192" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#100E0C</text>
 <rect x="267.33" y="142" width="107.67" height="64" rx="8" fill="#181612" stroke="#32241B"/>
-<text x="277.33333333333337" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
+<text x="277.33333333333337" y="166" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
 <text x="277.33333333333337" y="192" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#181612</text>
 <rect x="385.00" y="142" width="107.67" height="64" rx="8" fill="#201D19" stroke="#32241B"/>
-<text x="395.0" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
+<text x="395.0" y="166" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
 <text x="395.0" y="192" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#201D19</text>
 <rect x="502.67" y="142" width="107.67" height="64" rx="8" fill="#29251F" stroke="#32241B"/>
-<text x="512.6666666666667" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
+<text x="512.6666666666667" y="166" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
 <text x="512.6666666666667" y="192" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#29251F</text>
 <rect x="620.33" y="142" width="107.67" height="64" rx="8" fill="#32241B" stroke="#32241B"/>
-<text x="630.3333333333334" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
+<text x="630.3333333333334" y="166" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
 <text x="630.3333333333334" y="192" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#32241B</text>
 <text x="32" y="240" fill="#BDAE93" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">TEXT ON bg_0 · fg_0 fg_1 fg_2</text>
 <rect x="32" y="252" width="696" height="58" rx="8" fill="#090807" stroke="#32241B"/>

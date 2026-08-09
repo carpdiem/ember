@@ -168,8 +168,6 @@ def _svg_text(
     *,
     weight: str | None = None,
     anchor: str | None = None,
-    stroke: str | None = None,
-    stroke_width: float = 0.0,
 ) -> str:
     escaped = value.replace("&", "&amp;").replace("<", "&lt;")
     attributes = [
@@ -183,14 +181,6 @@ def _svg_text(
         attributes.append(f'font-weight="{weight}"')
     if anchor is not None:
         attributes.append(f'text-anchor="{anchor}"')
-    if stroke is not None:
-        attributes.extend(
-            (
-                f'stroke="{stroke}"',
-                f'stroke-width="{stroke_width:g}"',
-                'stroke-linejoin="round"',
-            )
-        )
     return f"<text {' '.join(attributes)}>{escaped}</text>"
 
 
@@ -200,39 +190,10 @@ def _label_color(background: str, chrome: dict[str, str]) -> str:
     return max(candidates, key=lambda color: contrast_ratio(background_rgb, hex_to_srgb(color)))
 
 
-def _chip_label_style(
-    family: dict, background: str, chrome: dict[str, str]
-) -> tuple[str, str | None]:
+def _chip_label_color(family: dict, background: str, chrome: dict[str, str]) -> str:
     if family["slug"] == "3400k-light":
-        return chrome["primary"], chrome["canvas"]
-    return _label_color(background, chrome), None
-
-
-def _chip_label_text(
-    x: float,
-    y: float,
-    value: str,
-    size: int,
-    fill: str,
-    *,
-    weight: str | None = None,
-    stroke: str | None = None,
-) -> str:
-    foreground = _svg_text(x, y, value, size, fill, weight=weight, anchor="middle")
-    if stroke is None:
-        return foreground
-    underlay = _svg_text(
-        x,
-        y,
-        value,
-        size,
-        stroke,
-        weight=weight,
-        anchor="middle",
-        stroke=stroke,
-        stroke_width=2,
-    )
-    return f"{underlay}\n{foreground}"
+        return chrome["primary"]
+    return _label_color(background, chrome)
 
 
 def _family_svg(family: dict, profile: dict, chrome: dict[str, str]) -> str:
@@ -289,7 +250,7 @@ def _family_svg(family: dict, profile: dict, chrome: dict[str, str]) -> str:
             f'rx="8" fill="{value}" stroke="{chrome["border"]}"/>'
         )
         label_fill = _label_color(value, chrome)
-        canvas.append(_svg_text(x + 10, y + 24, role, 13, label_fill))
+        canvas.append(_svg_text(x + 10, y + 24, role, 16, label_fill))
         canvas.append(_svg_text(x + 10, y + 50, value, 16, label_fill))
 
     canvas.append(_svg_text(32, 240, "TEXT ON bg_0 · fg_0 fg_1 fg_2", 15, chrome["secondary"]))
@@ -307,20 +268,19 @@ def _family_svg(family: dict, profile: dict, chrome: dict[str, str]) -> str:
     category_width = (content_width - chip_gap * (count - 1)) / count
     for index, value in enumerate(family["categorical"].values()):
         x, y = margin + index * (category_width + chip_gap), 360
-        label_fill, label_stroke = _chip_label_style(family, value, chrome)
+        label_fill = _chip_label_color(family, value, chrome)
         canvas.append(
             f'<rect x="{x:.2f}" y="{y}" width="{category_width:.2f}" height="58" '
             f'rx="8" fill="{value}" stroke="{chrome["border"]}"/>'
         )
         canvas.append(
-            _chip_label_text(
+            _svg_text(
                 x + category_width / 2,
                 y + 35,
                 value,
                 16,
                 label_fill,
-                weight="700" if label_stroke is not None else None,
-                stroke=label_stroke,
+                anchor="middle",
             )
         )
 
@@ -338,20 +298,20 @@ def _family_svg(family: dict, profile: dict, chrome: dict[str, str]) -> str:
         value = family["terminal"][role]
         x, y = margin + index * (six_chip_width + chip_gap), 468
         dash = ' stroke-dasharray="5 4"' if "=" in label else ""
-        label_fill, label_stroke = _chip_label_style(family, value, chrome)
+        label_fill = _chip_label_color(family, value, chrome)
         canvas.append(
             f'<rect x="{x:.2f}" y="{y}" width="{six_chip_width:.2f}" height="58" '
             f'rx="8" fill="{value}" stroke="{chrome["border"]}"{dash}/>'
         )
         canvas.append(
-            _chip_label_text(
+            _svg_text(
                 x + six_chip_width / 2,
                 y + 37,
                 label,
                 18 if "=" in label else 22,
                 label_fill,
                 weight="700",
-                stroke=label_stroke,
+                anchor="middle",
             )
         )
 
