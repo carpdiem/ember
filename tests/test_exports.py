@@ -201,6 +201,19 @@ def test_readme_visual_story_leads_before_setup() -> None:
             assert image.height > image.width
 
 
+def test_intro_palette_links_jump_to_their_overviews() -> None:
+    readme = (ROOT / "README.md").read_text()
+    for slug, title in zip(
+        SLUGS,
+        ("3400K Dark", "3400K Light", "2000K Dark", "1200K Dark"),
+    ):
+        link = f"- [{title}](#{slug})"
+        heading = f"### {title}"
+        image = f"docs/swatches/{slug}.svg"
+        assert link in readme
+        assert readme.index(link) < readme.index(heading) < readme.index(image)
+
+
 def test_readme_presents_the_finished_product_without_branch_history() -> None:
     readme = (ROOT / "README.md").read_text()
     first_product_heading = readme.index("## The four palettes")
@@ -234,7 +247,8 @@ def test_commanded_inventory_displays_every_palette_role() -> None:
         board_path = f"docs/swatches/{slug}.svg"
         assert readme.count(board_path) == 1
         root = ET.parse(ROOT / board_path).getroot()
-        labels = [node.text or "" for node in root.findall(".//svg:text", namespace)]
+        text_nodes = root.findall(".//svg:text", namespace)
+        labels = [node.text or "" for node in text_nodes]
         fills = [
             node.attrib["fill"]
             for node in root.findall(".//*[@fill]", namespace)
@@ -246,8 +260,16 @@ def test_commanded_inventory_displays_every_palette_role() -> None:
         for role in roles:
             assert any(label.startswith(role) for label in labels), (slug, role)
             assert family["surfaces"][role] in fills, (family["slug"], role)
+        for role in manifest["quality_targets"]["bg_roles_low_to_high"]:
+            value = family["surfaces"][role]
+            assert any(
+                node.text == value and node.attrib.get("font-size") == "16" for node in text_nodes
+            ), (slug, role, value)
         for value in family["categorical"].values():
             assert value in fills, (family["slug"], "categorical", value)
+            assert any(
+                node.text == value and node.attrib.get("font-size") == "16" for node in text_nodes
+            ), (slug, "categorical-font", value)
         for value in family["continuous_hex8"]:
             assert value in fills, (family["slug"], "sequential", value)
         for role in ("red", "green", "yellow", "blue", "magenta", "cyan"):

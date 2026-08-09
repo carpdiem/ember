@@ -9,10 +9,10 @@
 Ember was created to solve the problem of traditional color palettes having colors that appear indistinguishable once you turn on redshift. With Ember, the primary goal is distinctive colors under various color temperature filters. Only once that's satisfied do we further tweak the redshift-degenerate color channels to improve visual separation during daytime (aka - with no redshift applied).
 
 Ember comes with 4 color palettes:
-- 3400K Dark
-- 3400K Light
-- 2000K Dark
-- 1200K Dark
+- [3400K Dark](#3400k-dark)
+- [3400K Light](#3400k-light)
+- [2000K Dark](#2000k-dark)
+- [1200K Dark](#1200k-dark)
 
 The 3400K palettes are good for general use, and approximately optimized for a macbook pro's maximum Nightshift effect.
 
@@ -28,11 +28,19 @@ Ember does not apply the filter; keep using the one you already have.
 
 ## The four palettes
 
+### 3400K Dark
+
 ![3400K Dark — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-dark.svg)
+
+### 3400K Light
 
 ![3400K Light — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-light.svg)
 
+### 2000K Dark
+
 ![2000K Dark — six background surfaces, three foreground text roles, four categorical colors, four terminal accent identities with magenta=red and cyan=green aliases, and the 256-sample sequential map](docs/swatches/2000k-dark.svg)
+
+### 1200K Dark
 
 ![1200K Dark — six background surfaces, three foreground text roles, three categorical colors, three terminal accent identities with blue=yellow, magenta=red, and cyan=green aliases, and the 256-sample sequential map](docs/swatches/1200k-dark.svg)
 

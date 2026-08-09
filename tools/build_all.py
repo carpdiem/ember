@@ -245,7 +245,7 @@ def _family_svg(family: dict, profile: dict, chrome: dict[str, str]) -> str:
         )
         label_fill = _label_color(value, chrome)
         canvas.append(_svg_text(x + 10, y + 24, role, 13, label_fill))
-        canvas.append(_svg_text(x + 10, y + 50, value, 11, label_fill))
+        canvas.append(_svg_text(x + 10, y + 50, value, 16, label_fill))
 
     canvas.append(_svg_text(32, 240, "TEXT ON bg_0 · fg_0 fg_1 fg_2", 15, chrome["secondary"]))
     bg_0 = family["surfaces"]["bg_0"]
@@ -271,7 +271,7 @@ def _family_svg(family: dict, profile: dict, chrome: dict[str, str]) -> str:
                 x + category_width / 2,
                 y + 35,
                 value,
-                12,
+                16,
                 _label_color(value, chrome),
                 anchor="middle",
             )
