@@ -263,12 +263,12 @@ def test_commanded_inventory_displays_every_palette_role() -> None:
         for role in manifest["quality_targets"]["bg_roles_low_to_high"]:
             value = family["surfaces"][role]
             assert any(
-                node.text == value and node.attrib.get("font-size") == "16" for node in text_nodes
+                node.text == value and node.attrib.get("font-size") == "24" for node in text_nodes
             ), (slug, role, value)
         for value in family["categorical"].values():
             assert value in fills, (family["slug"], "categorical", value)
             assert any(
-                node.text == value and node.attrib.get("font-size") == "16" for node in text_nodes
+                node.text == value and node.attrib.get("font-size") == "24" for node in text_nodes
             ), (slug, "categorical-font", value)
         for value in family["continuous_hex8"]:
             assert value in fills, (family["slug"], "sequential", value)
@@ -276,6 +276,24 @@ def test_commanded_inventory_displays_every_palette_role() -> None:
             assert family["terminal"][role] in fills, (family["slug"], role)
         aliases = {label for label in labels if "=" in label and len(label) == 3}
         assert aliases == expected_aliases[slug]
+
+        if slug == "3400k-light":
+            uniform_labels = set(family["categorical"].values()) | {"R", "G", "Y", "B", "M", "C"}
+            chrome = manifest["families"]["3400k-dark"]["surfaces"]
+            foreground_nodes = [
+                node
+                for node in text_nodes
+                if node.text in uniform_labels and "stroke" not in node.attrib
+            ]
+            underlay_nodes = [
+                node
+                for node in text_nodes
+                if node.text in uniform_labels and node.attrib.get("stroke") == chrome["bg_0"]
+            ]
+            assert len(foreground_nodes) == len(underlay_nodes) == 12
+            assert {node.attrib.get("fill") for node in foreground_nodes} == {chrome["fg_0"]}
+            assert {node.attrib.get("fill") for node in underlay_nodes} == {chrome["bg_0"]}
+            assert {node.attrib.get("stroke-width") for node in underlay_nodes} == {"2"}
 
 
 def test_dense_overview_is_retired() -> None:
