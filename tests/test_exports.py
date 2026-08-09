@@ -189,7 +189,7 @@ def test_dense_overview_is_retired() -> None:
 def test_comparison_title_is_professional() -> None:
     story_module = runpy.run_path(str(ROOT / "tools/render_story.py"))
     assert (
-        story_module["PALETTE_STORY_TITLE"] == "Ember palette appearance: with and without Redshift"
+        story_module["PALETTE_STORY_TITLE"] == "Ember palette appearance: with and without redshift"
     )
     assert story_module["STORY_SLUGS"] == SLUGS
     for path in (ROOT / "tools/render_story.py", ROOT / "README.md"):

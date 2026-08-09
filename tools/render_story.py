@@ -25,7 +25,7 @@ PRIMARY = "#F2E3C8"
 SECONDARY = "#BFAF98"
 RULE = "#3B342C"
 STORY_SLUGS = ("3400k-dark", "3400k-light", "2000k-dark", "1200k-dark")
-PALETTE_STORY_TITLE = "Ember palette appearance: with and without Redshift"
+PALETTE_STORY_TITLE = "Ember palette appearance: with and without redshift"
 STATE_COMMANDED = "COMMANDED"
 STATE_FILTERED = "UNDER FILTER"
 
