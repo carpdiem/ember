@@ -14,7 +14,7 @@ Ember comes with 4 color palettes:
 - [2000K Dark](#2000k-dark)
 - [1200K Dark](#1200k-dark)
 
-The 3400K palettes are good for general use, and approximately optimized for a macbook pro's maximum Nightshift effect.
+The 3400K palettes are good for general use, and approximately optimized for a Macbook's maximum Nightshift effect.
 
 The 2000K and 1200K palettes are more specialized for true "deep redshift" fans (and astronomers).
 
