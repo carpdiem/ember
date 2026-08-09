@@ -263,12 +263,12 @@ def test_commanded_inventory_displays_every_palette_role() -> None:
         for role in manifest["quality_targets"]["bg_roles_low_to_high"]:
             value = family["surfaces"][role]
             assert any(
-                node.text == value and node.attrib.get("font-size") == "24" for node in text_nodes
+                node.text == value and node.attrib.get("font-size") == "16" for node in text_nodes
             ), (slug, role, value)
         for value in family["categorical"].values():
             assert value in fills, (family["slug"], "categorical", value)
             assert any(
-                node.text == value and node.attrib.get("font-size") == "24" for node in text_nodes
+                node.text == value and node.attrib.get("font-size") == "16" for node in text_nodes
             ), (slug, "categorical-font", value)
         for value in family["continuous_hex8"]:
             assert value in fills, (family["slug"], "sequential", value)
