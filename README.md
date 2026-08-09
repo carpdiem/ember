@@ -27,7 +27,7 @@ These are the exact commanded sRGB values shipped in every export. The deeper th
 target filter, the fewer color identities a family authors; aliased terminal slots
 are labeled as aliases instead of posing as additional colors.
 
-## With and without Redshift
+## With and without redshift
 
 ![Categorical colors and sequential maps of all four palettes, each shown as commanded and after that profile's modeled warm transform](docs/swatches/command-vs-simulated.png)
 

@@ -14,10 +14,14 @@ from matplotlib.colors import BoundaryNorm, ListedColormap
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+TOOLS = Path(__file__).resolve().parent
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
+for local_path in (TOOLS, SRC):
+    if str(local_path) not in sys.path:
+        sys.path.insert(0, str(local_path))
+
+from render_style import publication_chrome
 
 from ember.generate import generate_manifest
 
@@ -37,7 +41,14 @@ def render_matplotlib_gallery(manifest: dict, destination: Path) -> None:
     """Render categorical and sequential maps from the provided manifest."""
 
     families = list(manifest["families"].values())
-    figure, axes = plt.subplots(len(families), 2, figsize=(11, 7), constrained_layout=True)
+    chrome = publication_chrome(manifest)
+    figure, axes = plt.subplots(
+        len(families),
+        2,
+        figsize=(11, 7),
+        constrained_layout=True,
+        facecolor=chrome["canvas"],
+    )
     heat = np.outer(np.linspace(0, 1, 80), np.ones(320))
     for row, family in enumerate(families):
         categories = list(family["categorical"].values())
@@ -56,9 +67,9 @@ def render_matplotlib_gallery(manifest: dict, destination: Path) -> None:
             norm=categorical_norm,
             aspect="auto",
         )
-        axes[row, 0].set_title(f"{family['slug']} · categorical")
+        axes[row, 0].set_title(f"{family['slug']} · categorical", color=chrome["primary"])
         axes[row, 1].imshow(heat.T, cmap=sequential_map, aspect="auto", origin="lower")
-        axes[row, 1].set_title(f"{family['slug']} · sequential")
+        axes[row, 1].set_title(f"{family['slug']} · sequential", color=chrome["primary"])
         for axis in axes[row]:
             axis.set_axis_off()
 
@@ -66,6 +77,7 @@ def render_matplotlib_gallery(manifest: dict, destination: Path) -> None:
     figure.savefig(
         destination,
         dpi=180,
+        facecolor=chrome["canvas"],
         metadata={GALLERY_FINGERPRINT_KEY: gallery_source_fingerprint(manifest)},
     )
     plt.close(figure)

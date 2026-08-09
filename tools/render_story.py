@@ -8,22 +8,20 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+TOOLS = Path(__file__).resolve().parent
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
+for local_path in (TOOLS, SRC):
+    if str(local_path) not in sys.path:
+        sys.path.insert(0, str(local_path))
 
-from ember.color import (  # noqa: I001  # pyright: ignore[reportMissingImports]
+from render_style import publication_chrome
+
+from ember.color import (  # pyright: ignore[reportMissingImports]
     hex_to_srgb,
     warm_transform,
 )
 
-
-CANVAS = "#171512"
-PANEL = "#211E1A"
-PRIMARY = "#F2E3C8"
-SECONDARY = "#BFAF98"
-RULE = "#3B342C"
 STORY_SLUGS = ("3400k-dark", "3400k-light", "2000k-dark", "1200k-dark")
 PALETTE_STORY_TITLE = "Ember palette appearance: with and without redshift"
 STATE_COMMANDED = "COMMANDED"
@@ -60,24 +58,25 @@ def _draw_text_segments(
 def _render_palette_story(manifest: dict, path: Path) -> None:
     width, header, section_height, footer = 760, 126, 160, 72
     families = [manifest["families"][slug] for slug in STORY_SLUGS]
+    chrome = publication_chrome(manifest)
     height = header + section_height * len(families) + footer
-    image = Image.new("RGB", (width, height), CANVAS)
+    image = Image.new("RGB", (width, height), chrome["canvas"])
     draw = ImageDraw.Draw(image)
 
     draw.text(
         (24, 20),
         PALETTE_STORY_TITLE,
         font=_font(24),
-        fill=PRIMARY,
+        fill=chrome["primary"],
     )
     draw.text(
         (24, 62),
         "Each lower row is the exact upper row multiplied by that profile's RGB gains.",
         font=_font(17),
-        fill=SECONDARY,
+        fill=chrome["secondary"],
     )
-    draw.text((146, 102), "CATEGORICAL", font=_font(14), fill=SECONDARY)
-    draw.text((520, 102), "SEQUENTIAL / LOW TO HIGH", font=_font(14), fill=SECONDARY)
+    draw.text((146, 102), "CATEGORICAL", font=_font(14), fill=chrome["secondary"])
+    draw.text((520, 102), "SEQUENTIAL / LOW TO HIGH", font=_font(14), fill=chrome["secondary"])
 
     for row, family in enumerate(families):
         y = header + row * section_height
@@ -87,19 +86,19 @@ def _render_palette_story(manifest: dict, path: Path) -> None:
         count = len(categorical)
 
         if row:
-            draw.line((24, y, width - 24, y), fill=RULE, width=1)
-        draw.text((24, y + 12), family["name"], font=_font(21), fill=PRIMARY)
+            draw.line((24, y, width - 24, y), fill=chrome["rule"], width=1)
+        draw.text((24, y + 12), family["name"], font=_font(21), fill=chrome["primary"])
         draw.text(
             (width - 226, y + 16),
             f"{count} supported identities",
             font=_font(15),
-            fill=SECONDARY,
+            fill=chrome["secondary"],
         )
 
         state_rows = ((False, y + 45), (True, y + 105))
         for transformed, state_y in state_rows:
             state_title = STATE_FILTERED if transformed else STATE_COMMANDED
-            draw.text((24, state_y + 12), state_title, font=_font(15), fill=PRIMARY)
+            draw.text((24, state_y + 12), state_title, font=_font(15), fill=chrome["primary"])
 
             swatch_x, swatch_width, gap = 146, 336, 6
             each = (swatch_width - gap * (count - 1)) / count
@@ -123,12 +122,16 @@ def _render_palette_story(manifest: dict, path: Path) -> None:
                 )
 
     footer_y = header + section_height * len(families)
-    draw.rounded_rectangle((24, footer_y + 10, width - 24, height - 14), radius=12, fill=PANEL)
+    draw.rounded_rectangle(
+        (24, footer_y + 10, width - 24, height - 14),
+        radius=12,
+        fill=chrome["panel"],
+    )
     draw.text(
         (42, footer_y + 20),
         "At 1200 K the blue gain is 0: colors that differ only in blue become identical output.",
         font=_font(16),
-        fill=PRIMARY,
+        fill=chrome["primary"],
     )
 
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -192,16 +195,22 @@ def _draw_terminal_pane(
 def _render_terminal_story(manifest: dict, path: Path) -> None:
     width, header, section_height, footer = 760, 112, 384, 62
     slugs = STORY_SLUGS
+    chrome = publication_chrome(manifest)
     height = header + section_height * len(slugs) + footer
-    image = Image.new("RGB", (width, height), CANVAS)
+    image = Image.new("RGB", (width, height), chrome["canvas"])
     draw = ImageDraw.Draw(image)
 
-    draw.text((24, 18), "Terminal hierarchy survives the transform", font=_font(30), fill=PRIMARY)
+    draw.text(
+        (24, 18),
+        "Terminal hierarchy survives the transform",
+        font=_font(30),
+        fill=chrome["primary"],
+    )
     draw.text(
         (24, 60),
         "Same code and selection. Only the modeled display signal changes.",
         font=_font(17),
-        fill=SECONDARY,
+        fill=chrome["secondary"],
     )
 
     callouts = {
@@ -222,25 +231,25 @@ def _render_terminal_story(manifest: dict, path: Path) -> None:
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
         y = header + index * section_height
         if index:
-            draw.line((24, y, width - 24, y), fill=RULE)
-        draw.text((24, y + 14), family["name"], font=_font(22), fill=PRIMARY)
-        draw.text((442, y + 19), profile_labels[slug], font=_font(14), fill=SECONDARY)
+            draw.line((24, y, width - 24, y), fill=chrome["rule"])
+        draw.text((24, y + 14), family["name"], font=_font(22), fill=chrome["primary"])
+        draw.text((442, y + 19), profile_labels[slug], font=_font(14), fill=chrome["secondary"])
         _draw_terminal_pane(draw, family, gains, False, (24, y + 48, width - 24, y + 178))
         draw.text(
             (24, y + 189),
             f"same pixels x RGB [{', '.join(f'{gain:.2f}' for gain in gains)}]",
             font=_font(14),
-            fill=SECONDARY,
+            fill=chrome["secondary"],
         )
         _draw_terminal_pane(draw, family, gains, True, (24, y + 216, width - 24, y + 346))
-        draw.text((24, y + 355), callouts[slug], font=_font(16), fill=PRIMARY)
+        draw.text((24, y + 355), callouts[slug], font=_font(16), fill=chrome["primary"])
 
     footer_y = header + section_height * len(slugs)
     draw.text(
         (24, footer_y + 18),
         "Success means preserved hierarchy and meaning; not preserving every daytime hue.",
         font=_font(16),
-        fill=SECONDARY,
+        fill=chrome["secondary"],
     )
 
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -374,16 +383,22 @@ def _draw_data_pane(
 def _render_data_story(manifest: dict, path: Path) -> None:
     width, header, section_height, footer = 760, 112, 450, 62
     slugs = STORY_SLUGS
+    chrome = publication_chrome(manifest)
     height = header + section_height * len(slugs) + footer
-    image = Image.new("RGB", (width, height), CANVAS)
+    image = Image.new("RGB", (width, height), chrome["canvas"])
     draw = ImageDraw.Draw(image)
 
-    draw.text((24, 18), "Charts keep order, identity, and structure", font=_font(30), fill=PRIMARY)
+    draw.text(
+        (24, 18),
+        "Charts keep order, identity, and structure",
+        font=_font(30),
+        fill=chrome["primary"],
+    )
     draw.text(
         (24, 60),
         "Color carries meaning; labels, markers, and patterns make that meaning harder to lose.",
         font=_font(16),
-        fill=SECONDARY,
+        fill=chrome["secondary"],
     )
 
     callouts = {
@@ -404,25 +419,25 @@ def _render_data_story(manifest: dict, path: Path) -> None:
         gains = manifest["profiles"][family["profile"]]["rgb_gains"]
         y = header + index * section_height
         if index:
-            draw.line((24, y, width - 24, y), fill=RULE)
-        draw.text((24, y + 14), family["name"], font=_font(22), fill=PRIMARY)
-        draw.text((426, y + 19), profile_labels[slug], font=_font(14), fill=SECONDARY)
+            draw.line((24, y, width - 24, y), fill=chrome["rule"])
+        draw.text((24, y + 14), family["name"], font=_font(22), fill=chrome["primary"])
+        draw.text((426, y + 19), profile_labels[slug], font=_font(14), fill=chrome["secondary"])
         _draw_data_pane(draw, family, gains, False, (24, y + 48, width - 24, y + 206))
         draw.text(
             (24, y + 216),
             f"same pixels x RGB [{', '.join(f'{gain:.2f}' for gain in gains)}]",
             font=_font(14),
-            fill=SECONDARY,
+            fill=chrome["secondary"],
         )
         _draw_data_pane(draw, family, gains, True, (24, y + 244, width - 24, y + 402))
-        draw.text((24, y + 407), callouts[slug], font=_font(15), fill=PRIMARY)
+        draw.text((24, y + 407), callouts[slug], font=_font(15), fill=chrome["primary"])
 
     footer_y = header + section_height * len(slugs)
     draw.text(
         (24, footer_y + 18),
         "The palette protects the signal; redundant encoding protects the message.",
         font=_font(16),
-        fill=SECONDARY,
+        fill=chrome["secondary"],
     )
 
     path.parent.mkdir(parents=True, exist_ok=True)

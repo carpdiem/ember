@@ -29,10 +29,10 @@ must never increase as the target temperature falls.
 
 | Screenshot | High-contrast edge fraction | High-chroma pixel fraction | Oklab chroma p99 |
 |---|---:|---:|---:|
-| `terminal-commanded.png` | 1.9749% | 0.0000% | 0.0890 |
-| `terminal-simulated.png` | 0.8514% | 15.9101% | 0.1613 |
-| `data-commanded.png` | 1.5575% | 0.0000% | 0.1037 |
-| `data-simulated.png` | 0.6900% | 21.7933% | 0.1860 |
+| `terminal-commanded.png` | 1.9799% | 0.0000% | 0.0890 |
+| `terminal-simulated.png` | 0.8596% | 15.9101% | 0.1613 |
+| `data-commanded.png` | 1.5615% | 0.0000% | 0.1037 |
+| `data-simulated.png` | 0.6967% | 21.7933% | 0.1860 |
 
 Interpretation: small high-contrast edge fractions are expected around glyphs,
 axes, and markers. Commanded high-chroma area should remain scarce. A deep warm

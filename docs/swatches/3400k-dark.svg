@@ -1,60 +1,60 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="632" viewBox="0 0 760 632">
-<rect width="100%" height="100%" rx="20" fill="#131009"/>
-<text x="32" y="54" fill="#F2E7CE" font-size="34" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700">3400K Dark</text>
-<text x="728" y="50" fill="#C7B79E" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="end">6 categories · 6 terminal accents</text>
-<text x="32" y="80" fill="#9C8F7B" font-size="14" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">approximately 3400 K warm-white stress profile · commanded sRGB</text>
-<line x1="32" y1="98" x2="728" y2="98" stroke="#2E2820"/>
-<text x="32" y="130" fill="#C7B79E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">SURFACES · bg_0 → bg_5</text>
-<rect x="32.00" y="142" width="107.67" height="64" rx="8" fill="#090807" stroke="#453C31"/>
-<text x="42.0" y="166" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
-<text x="42.0" y="192" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#090807</text>
-<rect x="149.67" y="142" width="107.67" height="64" rx="8" fill="#100E0C" stroke="#453C31"/>
-<text x="159.66666666666669" y="166" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
-<text x="159.66666666666669" y="192" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#100E0C</text>
-<rect x="267.33" y="142" width="107.67" height="64" rx="8" fill="#181612" stroke="#453C31"/>
-<text x="277.33333333333337" y="166" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
-<text x="277.33333333333337" y="192" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#181612</text>
-<rect x="385.00" y="142" width="107.67" height="64" rx="8" fill="#201D19" stroke="#453C31"/>
-<text x="395.0" y="166" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
-<text x="395.0" y="192" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#201D19</text>
-<rect x="502.67" y="142" width="107.67" height="64" rx="8" fill="#29251F" stroke="#453C31"/>
-<text x="512.6666666666667" y="166" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
-<text x="512.6666666666667" y="192" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#29251F</text>
-<rect x="620.33" y="142" width="107.67" height="64" rx="8" fill="#32241B" stroke="#453C31"/>
-<text x="630.3333333333334" y="166" fill="#FFF0D8" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
-<text x="630.3333333333334" y="192" fill="#FFF0D8" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#32241B</text>
-<text x="32" y="240" fill="#C7B79E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">TEXT ON bg_0 · fg_0 fg_1 fg_2</text>
-<rect x="32" y="252" width="696" height="58" rx="8" fill="#090807" stroke="#453C31"/>
+<rect width="100%" height="100%" rx="20" fill="#090807"/>
+<text x="32" y="54" fill="#DDD0B2" font-size="34" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700">3400K Dark</text>
+<text x="728" y="50" fill="#BDAE93" font-size="20" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="end">6 categories · 6 terminal accents</text>
+<text x="32" y="80" fill="#908472" font-size="14" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">approximately 3400 K warm-white stress profile · commanded sRGB</text>
+<line x1="32" y1="98" x2="728" y2="98" stroke="#29251F"/>
+<text x="32" y="130" fill="#BDAE93" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">SURFACES · bg_0 → bg_5</text>
+<rect x="32.00" y="142" width="107.67" height="64" rx="8" fill="#090807" stroke="#32241B"/>
+<text x="42.0" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_0</text>
+<text x="42.0" y="192" fill="#DDD0B2" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#090807</text>
+<rect x="149.67" y="142" width="107.67" height="64" rx="8" fill="#100E0C" stroke="#32241B"/>
+<text x="159.66666666666669" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_1</text>
+<text x="159.66666666666669" y="192" fill="#DDD0B2" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#100E0C</text>
+<rect x="267.33" y="142" width="107.67" height="64" rx="8" fill="#181612" stroke="#32241B"/>
+<text x="277.33333333333337" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_2</text>
+<text x="277.33333333333337" y="192" fill="#DDD0B2" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#181612</text>
+<rect x="385.00" y="142" width="107.67" height="64" rx="8" fill="#201D19" stroke="#32241B"/>
+<text x="395.0" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_3</text>
+<text x="395.0" y="192" fill="#DDD0B2" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#201D19</text>
+<rect x="502.67" y="142" width="107.67" height="64" rx="8" fill="#29251F" stroke="#32241B"/>
+<text x="512.6666666666667" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_4</text>
+<text x="512.6666666666667" y="192" fill="#DDD0B2" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#29251F</text>
+<rect x="620.33" y="142" width="107.67" height="64" rx="8" fill="#32241B" stroke="#32241B"/>
+<text x="630.3333333333334" y="166" fill="#DDD0B2" font-size="13" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">bg_5</text>
+<text x="630.3333333333334" y="192" fill="#DDD0B2" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">#32241B</text>
+<text x="32" y="240" fill="#BDAE93" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">TEXT ON bg_0 · fg_0 fg_1 fg_2</text>
+<rect x="32" y="252" width="696" height="58" rx="8" fill="#090807" stroke="#32241B"/>
 <text x="52" y="288" fill="#DDD0B2" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_0 · #DDD0B2</text>
 <text x="284" y="288" fill="#BDAE93" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_1 · #BDAE93</text>
 <text x="516" y="288" fill="#908472" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">fg_2 · #908472</text>
-<text x="32" y="348" fill="#C7B79E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">CATEGORICAL · 6 COLORS</text>
-<rect x="32.00" y="360" width="107.67" height="58" rx="8" fill="#6E96D5" stroke="#453C31"/>
-<text x="85.83333333333334" y="395" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#6E96D5</text>
-<rect x="149.67" y="360" width="107.67" height="58" rx="8" fill="#DDAA69" stroke="#453C31"/>
-<text x="203.50000000000003" y="395" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#DDAA69</text>
-<rect x="267.33" y="360" width="107.67" height="58" rx="8" fill="#2E8B7E" stroke="#453C31"/>
-<text x="321.1666666666667" y="395" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#2E8B7E</text>
-<rect x="385.00" y="360" width="107.67" height="58" rx="8" fill="#67BE95" stroke="#453C31"/>
-<text x="438.8333333333333" y="395" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#67BE95</text>
-<rect x="502.67" y="360" width="107.67" height="58" rx="8" fill="#945D48" stroke="#453C31"/>
-<text x="556.5" y="395" fill="#FFF0D8" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#945D48</text>
-<rect x="620.33" y="360" width="107.67" height="58" rx="8" fill="#C3779A" stroke="#453C31"/>
-<text x="674.1666666666667" y="395" fill="#14110E" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#C3779A</text>
-<text x="32" y="456" fill="#C7B79E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">TERMINAL ANSI · 6 IDENTITIES / 16 SLOTS</text>
-<rect x="32.00" y="468" width="107.67" height="58" rx="8" fill="#F5AD9A" stroke="#453C31"/>
-<text x="85.83333333333334" y="505" fill="#14110E" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">R</text>
-<rect x="149.67" y="468" width="107.67" height="58" rx="8" fill="#7EB798" stroke="#453C31"/>
-<text x="203.50000000000003" y="505" fill="#14110E" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">G</text>
-<rect x="267.33" y="468" width="107.67" height="58" rx="8" fill="#CA9246" stroke="#453C31"/>
-<text x="321.1666666666667" y="505" fill="#14110E" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">Y</text>
-<rect x="385.00" y="468" width="107.67" height="58" rx="8" fill="#B4C6F7" stroke="#453C31"/>
-<text x="438.8333333333333" y="505" fill="#14110E" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">B</text>
-<rect x="502.67" y="468" width="107.67" height="58" rx="8" fill="#D895C2" stroke="#453C31"/>
-<text x="556.5" y="505" fill="#14110E" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">M</text>
-<rect x="620.33" y="468" width="107.67" height="58" rx="8" fill="#70DBD8" stroke="#453C31"/>
-<text x="674.1666666666667" y="505" fill="#14110E" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">C</text>
-<text x="32" y="564" fill="#C7B79E" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">SEQUENTIAL · 256 SAMPLES · LOW → HIGH</text>
+<text x="32" y="348" fill="#BDAE93" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">CATEGORICAL · 6 COLORS</text>
+<rect x="32.00" y="360" width="107.67" height="58" rx="8" fill="#6E96D5" stroke="#32241B"/>
+<text x="85.83333333333334" y="395" fill="#090807" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#6E96D5</text>
+<rect x="149.67" y="360" width="107.67" height="58" rx="8" fill="#DDAA69" stroke="#32241B"/>
+<text x="203.50000000000003" y="395" fill="#090807" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#DDAA69</text>
+<rect x="267.33" y="360" width="107.67" height="58" rx="8" fill="#2E8B7E" stroke="#32241B"/>
+<text x="321.1666666666667" y="395" fill="#090807" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#2E8B7E</text>
+<rect x="385.00" y="360" width="107.67" height="58" rx="8" fill="#67BE95" stroke="#32241B"/>
+<text x="438.8333333333333" y="395" fill="#090807" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#67BE95</text>
+<rect x="502.67" y="360" width="107.67" height="58" rx="8" fill="#945D48" stroke="#32241B"/>
+<text x="556.5" y="395" fill="#090807" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#945D48</text>
+<rect x="620.33" y="360" width="107.67" height="58" rx="8" fill="#C3779A" stroke="#32241B"/>
+<text x="674.1666666666667" y="395" fill="#090807" font-size="12" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#C3779A</text>
+<text x="32" y="456" fill="#BDAE93" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">TERMINAL ANSI · 6 IDENTITIES / 16 SLOTS</text>
+<rect x="32.00" y="468" width="107.67" height="58" rx="8" fill="#F5AD9A" stroke="#32241B"/>
+<text x="85.83333333333334" y="505" fill="#090807" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">R</text>
+<rect x="149.67" y="468" width="107.67" height="58" rx="8" fill="#7EB798" stroke="#32241B"/>
+<text x="203.50000000000003" y="505" fill="#090807" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">G</text>
+<rect x="267.33" y="468" width="107.67" height="58" rx="8" fill="#CA9246" stroke="#32241B"/>
+<text x="321.1666666666667" y="505" fill="#090807" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">Y</text>
+<rect x="385.00" y="468" width="107.67" height="58" rx="8" fill="#B4C6F7" stroke="#32241B"/>
+<text x="438.8333333333333" y="505" fill="#090807" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">B</text>
+<rect x="502.67" y="468" width="107.67" height="58" rx="8" fill="#D895C2" stroke="#32241B"/>
+<text x="556.5" y="505" fill="#090807" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">M</text>
+<rect x="620.33" y="468" width="107.67" height="58" rx="8" fill="#70DBD8" stroke="#32241B"/>
+<text x="674.1666666666667" y="505" fill="#090807" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">C</text>
+<text x="32" y="564" fill="#BDAE93" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">SEQUENTIAL · 256 SAMPLES · LOW → HIGH</text>
 <rect x="32.0000" y="576" width="2.9000" height="32" fill="#282527"/>
 <rect x="34.7188" y="576" width="2.9000" height="32" fill="#292528"/>
 <rect x="37.4375" y="576" width="2.9000" height="32" fill="#292628"/>

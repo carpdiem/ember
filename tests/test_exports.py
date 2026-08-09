@@ -27,6 +27,82 @@ SLUGS = (
 )
 
 
+def test_publication_chrome_is_the_3400k_dark_surface_ladder() -> None:
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
+    style = runpy.run_path(str(ROOT / "tools/render_style.py"))
+    chrome = style["publication_chrome"](manifest)
+    surfaces = manifest["families"]["3400k-dark"]["surfaces"]
+    assert style["PUBLICATION_FAMILY_SLUG"] == "3400k-dark"
+    assert chrome == {
+        "canvas": surfaces["bg_0"],
+        "panel": surfaces["bg_2"],
+        "raised_panel": surfaces["bg_3"],
+        "rule": surfaces["bg_4"],
+        "border": surfaces["bg_5"],
+        "primary": surfaces["fg_0"],
+        "secondary": surfaces["fg_1"],
+        "metadata": surfaces["fg_2"],
+    }
+
+
+def test_generated_graphic_chrome_uses_publication_roles() -> None:
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
+    style = runpy.run_path(str(ROOT / "tools/render_style.py"))
+    chrome = style["publication_chrome"](manifest)
+    expected_canvas = tuple(bytes.fromhex(chrome["canvas"].removeprefix("#")))
+
+    png_paths = (
+        "docs/swatches/command-vs-simulated.png",
+        "docs/samples/terminal-story.png",
+        "docs/samples/data-story.png",
+        "docs/samples/terminal-commanded.png",
+        "docs/samples/data-commanded.png",
+        "docs/matplotlib-gallery.png",
+    )
+    for relative_path in png_paths:
+        with Image.open(ROOT / relative_path) as image:
+            assert image.convert("RGB").getpixel((0, 0)) == expected_canvas, relative_path
+
+    namespace = {"svg": "http://www.w3.org/2000/svg"}
+    svg_paths = (
+        *(f"docs/swatches/{slug}.svg" for slug in SLUGS),
+        "docs/diagrams/channel-collapse.svg",
+        "docs/diagrams/failure-modes.svg",
+        "docs/diagrams/redundant-encoding.svg",
+    )
+    for relative_path in svg_paths:
+        root = ET.parse(ROOT / relative_path).getroot()
+        outer = root.find("svg:rect", namespace)
+        title = root.find(".//svg:text", namespace)
+        assert outer is not None and outer.attrib["fill"] == chrome["canvas"], relative_path
+        assert title is not None and title.attrib["fill"] == chrome["primary"], relative_path
+
+
+def test_unofficial_publication_chrome_is_retired() -> None:
+    renderer_source = "\n".join(
+        (ROOT / relative_path).read_text()
+        for relative_path in (
+            "tools/build_all.py",
+            "tools/render_gallery.py",
+            "tools/render_samples.py",
+            "tools/render_story.py",
+        )
+    )
+    for stale_color in (
+        "#171512",
+        "#211E1A",
+        "#F2E3C8",
+        "#BFAF98",
+        "#3B342C",
+        "#D7C8AC",
+        "#131009",
+        "#F2E7CE",
+        "#C7B79E",
+        "#9C8F7B",
+    ):
+        assert stale_color not in renderer_source
+
+
 def test_python_distribution_and_import_namespace_are_ember() -> None:
     metadata = tomllib.loads((ROOT / "pyproject.toml").read_text())
     assert metadata["project"]["name"] == "ember-palettes"
@@ -188,9 +264,11 @@ def test_dense_overview_is_retired() -> None:
 
 def test_comparison_title_is_professional() -> None:
     story_module = runpy.run_path(str(ROOT / "tools/render_story.py"))
+    readme = (ROOT / "README.md").read_text()
     assert (
         story_module["PALETTE_STORY_TITLE"] == "Ember palette appearance: with and without redshift"
     )
+    assert "## With and without redshift" in readme
     assert story_module["STORY_SLUGS"] == SLUGS
     for path in (ROOT / "tools/render_story.py", ROOT / "README.md"):
         assert "You ask for these colors" not in path.read_text()

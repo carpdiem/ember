@@ -8,10 +8,14 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+TOOLS = Path(__file__).resolve().parent
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
+for local_path in (TOOLS, SRC):
+    if str(local_path) not in sys.path:
+        sys.path.insert(0, str(local_path))
+
+from render_style import publication_chrome
 
 from ember.color import (  # pyright: ignore[reportMissingImports]
     hex_to_srgb,
@@ -63,7 +67,8 @@ def _draw_segments(
 def _terminal_samples(manifest: dict, destination: Path) -> None:
     width, header, row_height = 1600, 88, 370
     families = list(manifest["families"].values())
-    image = Image.new("RGB", (width, header + row_height * len(families)), "#171512")
+    chrome = publication_chrome(manifest)
+    image = Image.new("RGB", (width, header + row_height * len(families)), chrome["canvas"])
     draw = ImageDraw.Draw(image)
     title_font = ImageFont.load_default(size=36)
     code_font = ImageFont.load_default(size=34)
@@ -72,7 +77,7 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
         (32, 24),
         "Generated terminal specimen · commanded sRGB",
         font=title_font,
-        fill="#D7C8AC",
+        fill=chrome["primary"],
     )
 
     for row, family in enumerate(families):
@@ -153,12 +158,12 @@ def _terminal_samples(manifest: dict, destination: Path) -> None:
     image.save(destination / "terminal-commanded.png", optimize=True)
     simulated = image.copy()
     simulated_draw = ImageDraw.Draw(simulated)
-    simulated_draw.rectangle((0, 0, width, header), fill="#171512")
+    simulated_draw.rectangle((0, 0, width, header), fill=chrome["canvas"])
     simulated_draw.text(
         (32, 24),
         "Generated terminal specimen · simulated target transforms",
         font=title_font,
-        fill="#D7C8AC",
+        fill=chrome["primary"],
     )
     header_gains = manifest["profiles"][families[0]["profile"]]["rgb_gains"]
     _transform_box(simulated, (0, 0, width, header), header_gains)
@@ -195,7 +200,8 @@ def _draw_marker(
 def _data_samples(manifest: dict, destination: Path) -> None:
     width, header, row_height = 1600, 88, 450
     families = list(manifest["families"].values())
-    image = Image.new("RGB", (width, header + row_height * len(families)), "#171512")
+    chrome = publication_chrome(manifest)
+    image = Image.new("RGB", (width, header + row_height * len(families)), chrome["canvas"])
     draw = ImageDraw.Draw(image)
     title_font = ImageFont.load_default(size=36)
     label_font = ImageFont.load_default(size=30)
@@ -204,7 +210,7 @@ def _data_samples(manifest: dict, destination: Path) -> None:
         (32, 24),
         "Generated data specimen · commanded sRGB",
         font=title_font,
-        fill="#D7C8AC",
+        fill=chrome["primary"],
     )
 
     for row, family in enumerate(families):
@@ -355,12 +361,12 @@ def _data_samples(manifest: dict, destination: Path) -> None:
     image.save(destination / "data-commanded.png", optimize=True)
     simulated = image.copy()
     simulated_draw = ImageDraw.Draw(simulated)
-    simulated_draw.rectangle((0, 0, width, header), fill="#171512")
+    simulated_draw.rectangle((0, 0, width, header), fill=chrome["canvas"])
     simulated_draw.text(
         (32, 24),
         "Generated data specimen · simulated target transforms",
         font=title_font,
-        fill="#D7C8AC",
+        fill=chrome["primary"],
     )
     header_gains = manifest["profiles"][families[0]["profile"]]["rgb_gains"]
     _transform_box(simulated, (0, 0, width, header), header_gains)
@@ -371,64 +377,67 @@ def _data_samples(manifest: dict, destination: Path) -> None:
     simulated.save(destination / "data-simulated.png", optimize=True)
 
 
-def channel_collapse_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" width="760" height="760" viewBox="0 0 760 760">
-<rect width="760" height="760" rx="22" fill="#1B1815"/>
+def channel_collapse_svg(manifest: dict) -> str:
+    chrome = publication_chrome(manifest)
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="760" height="760" viewBox="0 0 760 760">
+<rect width="760" height="760" rx="22" fill="{chrome["canvas"]}"/>
 <g font-family="system-ui, sans-serif">
-<text x="36" y="54" fill="#F0DFC0" font-size="32" font-weight="700">Warm filters squeeze green and blue</text>
-<text x="36" y="90" fill="#BFAF98" font-size="21">Bar length = channel signal left after the modeled transform.</text>
+<text x="36" y="54" fill="{chrome["primary"]}" font-size="32" font-weight="700">Warm filters squeeze green and blue</text>
+<text x="36" y="90" fill="{chrome["secondary"]}" font-size="21">Bar length = channel signal left after the modeled transform.</text>
 
 <g transform="translate(36 136)">
-  <text x="0" y="0" fill="#E7D3B0" font-size="28" font-weight="700">3400 K</text>
-  <text x="164" y="0" fill="#BFAF98" font-size="21">R 100% · G 74% · B 53%</text>
+  <text x="0" y="0" fill="{chrome["primary"]}" font-size="28" font-weight="700">3400 K</text>
+  <text x="164" y="0" fill="{chrome["secondary"]}" font-size="21">R 100% · G 74% · B 53%</text>
   <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
-    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#352A26"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
-    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#2A3128"/><rect x="34" y="42" width="473" height="28" rx="7" fill="#82A36F"/>
-    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#252A32"/><rect x="34" y="84" width="339" height="28" rx="7" fill="#6F86A8"/>
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" y="42" width="473" height="28" rx="7" fill="#82A36F"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" y="84" width="339" height="28" rx="7" fill="#6F86A8"/>
   </g>
 </g>
 
 <g transform="translate(36 354)">
-  <text x="0" y="0" fill="#E7D3B0" font-size="28" font-weight="700">2000 K</text>
-  <text x="164" y="0" fill="#BFAF98" font-size="21">R 100% · G 54% · B 9%</text>
+  <text x="0" y="0" fill="{chrome["primary"]}" font-size="28" font-weight="700">2000 K</text>
+  <text x="164" y="0" fill="{chrome["secondary"]}" font-size="21">R 100% · G 54% · B 9%</text>
   <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
-    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#352A26"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
-    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#2A3128"/><rect x="34" y="42" width="348" height="28" rx="7" fill="#7B8A5A"/>
-    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#252A32"/><rect x="34" y="84" width="56" height="28" rx="7" fill="#576477"/>
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" y="42" width="348" height="28" rx="7" fill="#7B8A5A"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" y="84" width="56" height="28" rx="7" fill="#576477"/>
   </g>
 </g>
 
 <g transform="translate(36 572)">
-  <text x="0" y="0" fill="#E7D3B0" font-size="28" font-weight="700">1200 K</text>
-  <text x="164" y="0" fill="#BFAF98" font-size="21">R 100% · G 31% · B 0%</text>
+  <text x="0" y="0" fill="{chrome["primary"]}" font-size="28" font-weight="700">1200 K</text>
+  <text x="164" y="0" fill="{chrome["secondary"]}" font-size="21">R 100% · G 31% · B 0%</text>
   <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
-    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#352A26"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
-    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#2A3128"/><rect x="34" y="42" width="198" height="28" rx="7" fill="#736D49"/>
-    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#252A32"/><rect x="34" y="84" width="0" height="28" fill="#4B5260"/>
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" y="42" width="198" height="28" rx="7" fill="#736D49"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="{chrome["raised_panel"]}"/><rect x="34" y="84" width="0" height="28" fill="#4B5260"/>
   </g>
 </g>
 </g></svg>"""
 
 
-def redundant_encoding_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" width="760" height="830" viewBox="0 0 760 830">
-<rect width="760" height="830" rx="22" fill="#1B1512"/>
+def redundant_encoding_svg(manifest: dict) -> str:
+    chrome = publication_chrome(manifest)
+    categories = list(manifest["families"]["3400k-dark"]["categorical"].values())
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="760" height="830" viewBox="0 0 760 830">
+<rect width="760" height="830" rx="22" fill="{chrome["canvas"]}"/>
 <g font-family="system-ui, sans-serif">
-<text x="36" y="54" fill="#F2D9B5" font-size="32" font-weight="700">When hue compresses, color alone is fragile</text>
-<text x="36" y="90" fill="#BFA98C" font-size="21">The same transformed colors are used in both charts.</text>
+<text x="36" y="54" fill="{chrome["primary"]}" font-size="32" font-weight="700">When hue compresses, color alone is fragile</text>
+<text x="36" y="90" fill="{chrome["secondary"]}" font-size="21">The same transformed colors are used in both charts.</text>
 
 <g transform="translate(36 126)">
-  <text x="0" y="0" fill="#F0A991" font-size="27" font-weight="700">Wrong: identity lives only in hue</text>
-  <rect x="0" y="24" width="688" height="270" rx="14" fill="#090402" stroke="#53200F" stroke-width="2"/>
+  <text x="0" y="0" fill="{categories[4]}" font-size="27" font-weight="700">Wrong: identity lives only in hue</text>
+  <rect x="0" y="24" width="688" height="270" rx="14" fill="{chrome["panel"]}" stroke="{chrome["border"]}" stroke-width="2"/>
   <path d="M34 210 C120 70 215 250 330 115 S540 180 625 62" fill="none" stroke="#F22D00" stroke-width="7"/>
   <path d="M34 238 C130 115 235 230 345 165 S535 72 625 145" fill="none" stroke="#C94F00" stroke-width="7"/>
   <path d="M34 112 C130 220 245 62 355 142 S535 245 625 205" fill="none" stroke="#DD3F00" stroke-width="7"/>
-  <text x="24" y="328" fill="#A9846E" font-size="20">At crossings and small sizes, A/B/C become guesswork.</text>
+  <text x="24" y="328" fill="{chrome["metadata"]}" font-size="20">At crossings and small sizes, A/B/C become guesswork.</text>
 </g>
 
 <g transform="translate(36 492)">
-  <text x="0" y="0" fill="#C8E8AC" font-size="27" font-weight="700">Ember: color + pattern + marker + label</text>
-  <rect x="0" y="24" width="688" height="270" rx="14" fill="#090402" stroke="#53200F" stroke-width="2"/>
+  <text x="0" y="0" fill="{categories[3]}" font-size="27" font-weight="700">Ember: color + pattern + marker + label</text>
+  <rect x="0" y="24" width="688" height="270" rx="14" fill="{chrome["panel"]}" stroke="{chrome["border"]}" stroke-width="2"/>
   <path d="M34 210 C120 70 215 250 330 115 S540 180 625 62" fill="none" stroke="#F22D00" stroke-width="7"/>
   <circle cx="625" cy="62" r="10" fill="#F22D00"/><text x="644" y="70" fill="#F57A59" font-size="24" font-weight="700">A</text>
   <path d="M34 238 C130 115 235 230 345 165 S535 72 625 145" fill="none" stroke="#C94F00" stroke-width="7" stroke-dasharray="20 13"/>
@@ -442,6 +451,8 @@ def redundant_encoding_svg() -> str:
 def failure_modes_svg(manifest: dict) -> str:
     """Show three common failures using the exact authored transforms and colors."""
 
+    chrome = publication_chrome(manifest)
+    categories = list(manifest["families"]["3400k-dark"]["categorical"].values())
     gains_1200 = manifest["profiles"]["1200k"]["rgb_gains"]
     gains_2000 = manifest["profiles"]["2000k"]["rgb_gains"]
     family_1200 = manifest["families"]["1200k-dark"]
@@ -471,49 +482,49 @@ def failure_modes_svg(manifest: dict) -> str:
     ]
 
     return f"""<svg xmlns="http://www.w3.org/2000/svg" width="760" height="1250" viewBox="0 0 760 1250">
-<rect width="760" height="1250" rx="22" fill="#171411"/>
+<rect width="760" height="1250" rx="22" fill="{chrome["canvas"]}"/>
 <g font-family="system-ui, sans-serif">
-<text x="36" y="54" fill="#F1DFC0" font-size="32" font-weight="700">Why ordinary palettes fail</text>
-<text x="36" y="91" fill="#F1DFC0" font-size="32" font-weight="700">under aggressive warm shifts</text>
-<text x="36" y="126" fill="#BFAE96" font-size="21">Every transformed swatch below uses Ember's exact signal model.</text>
+<text x="36" y="54" fill="{chrome["primary"]}" font-size="32" font-weight="700">Why ordinary palettes fail</text>
+<text x="36" y="91" fill="{chrome["primary"]}" font-size="32" font-weight="700">under aggressive warm shifts</text>
+<text x="36" y="126" fill="{chrome["secondary"]}" font-size="21">Every transformed swatch below uses Ember's exact signal model.</text>
 
 <g transform="translate(36 172)">
-  <text x="0" y="0" fill="#E7D1AC" font-size="27" font-weight="700">1 · Daytime colors can become identical</text>
-  <text x="0" y="34" fill="#BFAE96" font-size="20">At 1200 K, blue is removed. These commands differ only in blue.</text>
-  <text x="0" y="82" fill="#D98DA1" font-size="20" font-weight="700">Naive commands</text>
-  <rect x="0" y="100" width="214" height="78" rx="10" fill="{naive_cyan}"/><text x="18" y="149" fill="#151310" font-size="21" font-family="ui-monospace, monospace">{naive_cyan}</text>
-  <rect x="232" y="100" width="214" height="78" rx="10" fill="{naive_chartreuse}"/><text x="250" y="149" fill="#151310" font-size="21" font-family="ui-monospace, monospace">{naive_chartreuse}</text>
-  <path d="M472 139 H520" stroke="#BFAE96" stroke-width="4"/><path d="M520 139 l-14 -9 v18 z" fill="#BFAE96"/>
-  <rect x="540" y="100" width="148" height="78" rx="10" fill="{collapsed}"/><text x="554" y="149" fill="#FFF0D8" font-size="20" font-family="ui-monospace, monospace">same</text>
-  <text x="0" y="218" fill="#B8D89F" font-size="20" font-weight="700">Ember target identities</text>
+  <text x="0" y="0" fill="{chrome["primary"]}" font-size="27" font-weight="700">1 · Daytime colors can become identical</text>
+  <text x="0" y="34" fill="{chrome["secondary"]}" font-size="20">At 1200 K, blue is removed. These commands differ only in blue.</text>
+  <text x="0" y="82" fill="{categories[4]}" font-size="20" font-weight="700">Naive commands</text>
+  <rect x="0" y="100" width="214" height="78" rx="10" fill="{naive_cyan}"/><text x="18" y="149" fill="{chrome["canvas"]}" font-size="21" font-family="ui-monospace, monospace">{naive_cyan}</text>
+  <rect x="232" y="100" width="214" height="78" rx="10" fill="{naive_chartreuse}"/><text x="250" y="149" fill="{chrome["canvas"]}" font-size="21" font-family="ui-monospace, monospace">{naive_chartreuse}</text>
+  <path d="M472 139 H520" stroke="{chrome["secondary"]}" stroke-width="4"/><path d="M520 139 l-14 -9 v18 z" fill="{chrome["secondary"]}"/>
+  <rect x="540" y="100" width="148" height="78" rx="10" fill="{collapsed}"/><text x="554" y="149" fill="{chrome["primary"]}" font-size="20" font-family="ui-monospace, monospace">same</text>
+  <text x="0" y="218" fill="{categories[3]}" font-size="20" font-weight="700">Ember target identities</text>
   <rect x="0" y="236" width="214" height="64" rx="10" fill="{accent_targets[0]}"/>
   <rect x="232" y="236" width="214" height="64" rx="10" fill="{accent_targets[1]}"/>
   <rect x="464" y="236" width="214" height="64" rx="10" fill="{accent_targets[2]}"/>
 </g>
 
 <g transform="translate(36 532)">
-  <text x="0" y="0" fill="#E7D1AC" font-size="27" font-weight="700">2 · Ordinary dark gray becomes a rust field</text>
-  <text x="0" y="34" fill="#BFAE96" font-size="20">Large surfaces amplify the filter. Near-black keeps the canvas quiet.</text>
-  <text x="0" y="80" fill="#D98DA1" font-size="20" font-weight="700">Ordinary dark theme</text>
-  <rect x="0" y="98" width="324" height="122" rx="12" fill="{ordinary_shifted}" stroke="#75401E" stroke-width="2"/>
-  <text x="18" y="146" fill="#F3D3B4" font-size="21" font-family="ui-monospace, monospace">{ordinary_canvas} → {ordinary_shifted}</text>
-  <text x="18" y="184" fill="#D9AE8C" font-size="19">modeled luminance {ordinary_luminance:.5f}</text>
-  <text x="360" y="80" fill="#B8D89F" font-size="20" font-weight="700">Ember 1200K canvas</text>
-  <rect x="360" y="98" width="324" height="122" rx="12" fill="{ember_shifted}" stroke="#4C2B1C" stroke-width="2"/>
-  <text x="378" y="146" fill="#F3D3B4" font-size="21" font-family="ui-monospace, monospace">{ember_canvas} → {ember_shifted}</text>
-  <text x="378" y="184" fill="#D9AE8C" font-size="19">modeled luminance {ember_luminance:.5f}</text>
+  <text x="0" y="0" fill="{chrome["primary"]}" font-size="27" font-weight="700">2 · Ordinary dark gray becomes a rust field</text>
+  <text x="0" y="34" fill="{chrome["secondary"]}" font-size="20">Large surfaces amplify the filter. Near-black keeps the canvas quiet.</text>
+  <text x="0" y="80" fill="{categories[4]}" font-size="20" font-weight="700">Ordinary dark theme</text>
+  <rect x="0" y="98" width="324" height="122" rx="12" fill="{ordinary_shifted}" stroke="{chrome["border"]}" stroke-width="2"/>
+  <text x="18" y="146" fill="{chrome["primary"]}" font-size="21" font-family="ui-monospace, monospace">{ordinary_canvas} → {ordinary_shifted}</text>
+  <text x="18" y="184" fill="{chrome["secondary"]}" font-size="19">modeled luminance {ordinary_luminance:.5f}</text>
+  <text x="360" y="80" fill="{categories[3]}" font-size="20" font-weight="700">Ember 1200K canvas</text>
+  <rect x="360" y="98" width="324" height="122" rx="12" fill="{ember_shifted}" stroke="{chrome["border"]}" stroke-width="2"/>
+  <text x="378" y="146" fill="{chrome["primary"]}" font-size="21" font-family="ui-monospace, monospace">{ember_canvas} → {ember_shifted}</text>
+  <text x="378" y="184" fill="{chrome["secondary"]}" font-size="19">modeled luminance {ember_luminance:.5f}</text>
 </g>
 
 <g transform="translate(36 842)">
-  <text x="0" y="0" fill="#E7D1AC" font-size="27" font-weight="700">3 · Pure white becomes the loudest warm signal</text>
-  <text x="0" y="34" fill="#BFAE96" font-size="20">At 2000 K, neutral source text turns orange. Restraint still matters.</text>
-  <text x="0" y="80" fill="#D98DA1" font-size="20" font-weight="700">Pure white everywhere</text>
-  <rect x="0" y="98" width="324" height="196" rx="12" fill="{background_2000}" stroke="#5A260F" stroke-width="2"/>
+  <text x="0" y="0" fill="{chrome["primary"]}" font-size="27" font-weight="700">3 · Pure white becomes the loudest warm signal</text>
+  <text x="0" y="34" fill="{chrome["secondary"]}" font-size="20">At 2000 K, neutral source text turns orange. Restraint still matters.</text>
+  <text x="0" y="80" fill="{categories[4]}" font-size="20" font-weight="700">Pure white everywhere</text>
+  <rect x="0" y="98" width="324" height="196" rx="12" fill="{background_2000}" stroke="{chrome["border"]}" stroke-width="2"/>
   <text x="18" y="143" fill="{pure_white_shifted}" font-size="24" font-family="ui-monospace, monospace">{pure_white} → {pure_white_shifted}</text>
   <text x="18" y="187" fill="{pure_white_shifted}" font-size="23" font-family="ui-monospace, monospace">Every glyph competes.</text>
   <text x="18" y="231" fill="{pure_white_shifted}" font-size="23" font-family="ui-monospace, monospace">Nothing is quiet.</text>
-  <text x="360" y="80" fill="#B8D89F" font-size="20" font-weight="700">Ember neutral + sparse color</text>
-  <rect x="360" y="98" width="324" height="196" rx="12" fill="{background_2000}" stroke="#5A260F" stroke-width="2"/>
+  <text x="360" y="80" fill="{categories[3]}" font-size="20" font-weight="700">Ember neutral + sparse color</text>
+  <rect x="360" y="98" width="324" height="196" rx="12" fill="{background_2000}" stroke="{chrome["border"]}" stroke-width="2"/>
   <text x="378" y="143" fill="{ember_text_shifted}" font-size="24" font-family="ui-monospace, monospace">{ember_text} → {ember_text_shifted}</text>
   <text x="378" y="187" fill="{ember_text_shifted}" font-size="23" font-family="ui-monospace, monospace">Body text stays primary.</text>
   <text x="378" y="231" fill="{accent_2000}" font-size="23" font-family="ui-monospace, monospace">Color marks meaning.</text>

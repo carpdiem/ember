@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="830" viewBox="0 0 760 830">
-<rect width="760" height="830" rx="22" fill="#1B1512"/>
+<rect width="760" height="830" rx="22" fill="#090807"/>
 <g font-family="system-ui, sans-serif">
-<text x="36" y="54" fill="#F2D9B5" font-size="32" font-weight="700">When hue compresses, color alone is fragile</text>
-<text x="36" y="90" fill="#BFA98C" font-size="21">The same transformed colors are used in both charts.</text>
+<text x="36" y="54" fill="#DDD0B2" font-size="32" font-weight="700">When hue compresses, color alone is fragile</text>
+<text x="36" y="90" fill="#BDAE93" font-size="21">The same transformed colors are used in both charts.</text>
 
 <g transform="translate(36 126)">
-  <text x="0" y="0" fill="#F0A991" font-size="27" font-weight="700">Wrong: identity lives only in hue</text>
-  <rect x="0" y="24" width="688" height="270" rx="14" fill="#090402" stroke="#53200F" stroke-width="2"/>
+  <text x="0" y="0" fill="#945D48" font-size="27" font-weight="700">Wrong: identity lives only in hue</text>
+  <rect x="0" y="24" width="688" height="270" rx="14" fill="#181612" stroke="#32241B" stroke-width="2"/>
   <path d="M34 210 C120 70 215 250 330 115 S540 180 625 62" fill="none" stroke="#F22D00" stroke-width="7"/>
   <path d="M34 238 C130 115 235 230 345 165 S535 72 625 145" fill="none" stroke="#C94F00" stroke-width="7"/>
   <path d="M34 112 C130 220 245 62 355 142 S535 245 625 205" fill="none" stroke="#DD3F00" stroke-width="7"/>
-  <text x="24" y="328" fill="#A9846E" font-size="20">At crossings and small sizes, A/B/C become guesswork.</text>
+  <text x="24" y="328" fill="#908472" font-size="20">At crossings and small sizes, A/B/C become guesswork.</text>
 </g>
 
 <g transform="translate(36 492)">
-  <text x="0" y="0" fill="#C8E8AC" font-size="27" font-weight="700">Ember: color + pattern + marker + label</text>
-  <rect x="0" y="24" width="688" height="270" rx="14" fill="#090402" stroke="#53200F" stroke-width="2"/>
+  <text x="0" y="0" fill="#67BE95" font-size="27" font-weight="700">Ember: color + pattern + marker + label</text>
+  <rect x="0" y="24" width="688" height="270" rx="14" fill="#181612" stroke="#32241B" stroke-width="2"/>
   <path d="M34 210 C120 70 215 250 330 115 S540 180 625 62" fill="none" stroke="#F22D00" stroke-width="7"/>
   <circle cx="625" cy="62" r="10" fill="#F22D00"/><text x="644" y="70" fill="#F57A59" font-size="24" font-weight="700">A</text>
   <path d="M34 238 C130 115 235 230 345 165 S535 72 625 145" fill="none" stroke="#C94F00" stroke-width="7" stroke-dasharray="20 13"/>

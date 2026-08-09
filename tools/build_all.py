@@ -13,10 +13,12 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
+TOOLS = Path(__file__).resolve().parent
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
-if str(SRC) not in sys.path:
-    sys.path.insert(0, str(SRC))
+for local_path in (TOOLS, SRC):
+    if str(local_path) not in sys.path:
+        sys.path.insert(0, str(local_path))
 
 from render_gallery import GALLERY_FINGERPRINT_KEY, render_matplotlib_gallery
 from render_samples import (
@@ -27,6 +29,7 @@ from render_samples import (
     sample_analysis_markdown,
 )
 from render_story import render_readme_story
+from render_style import publication_chrome
 
 from ember.color import contrast_ratio, hex_to_srgb
 from ember.generate import ANSI_NAMES, generate_manifest
@@ -160,8 +163,8 @@ def _svg_text(
     x: float,
     y: float,
     value: str,
-    size: int = 14,
-    fill: str = "#E9E1D4",
+    size: int,
+    fill: str,
     *,
     weight: str | None = None,
     anchor: str | None = None,
@@ -181,16 +184,13 @@ def _svg_text(
     return f"<text {' '.join(attributes)}>{escaped}</text>"
 
 
-def _label_color(background: str) -> str:
-    dark = "#14110E"
-    light = "#FFF0D8"
+def _label_color(background: str, chrome: dict[str, str]) -> str:
     background_rgb = hex_to_srgb(background)
-    dark_contrast = contrast_ratio(background_rgb, hex_to_srgb(dark))
-    light_contrast = contrast_ratio(background_rgb, hex_to_srgb(light))
-    return dark if dark_contrast >= light_contrast else light
+    candidates = (chrome["canvas"], chrome["primary"])
+    return max(candidates, key=lambda color: contrast_ratio(background_rgb, hex_to_srgb(color)))
 
 
-def _family_svg(family: dict, profile: dict) -> str:
+def _family_svg(family: dict, profile: dict, chrome: dict[str, str]) -> str:
     width, height = 760, 632
     margin, content_width = 32, 696
     background_roles = tuple(f"bg_{index}" for index in range(6))
@@ -226,14 +226,14 @@ def _family_svg(family: dict, profile: dict) -> str:
 
     canvas = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
-        '<rect width="100%" height="100%" rx="20" fill="#131009"/>',
-        _svg_text(32, 54, family["name"], 34, "#F2E7CE", weight="700"),
-        _svg_text(728, 50, capacity, 20, "#C7B79E", anchor="end"),
-        _svg_text(32, 80, f"{profile['target']} · commanded sRGB", 14, "#9C8F7B"),
-        '<line x1="32" y1="98" x2="728" y2="98" stroke="#2E2820"/>',
+        f'<rect width="100%" height="100%" rx="20" fill="{chrome["canvas"]}"/>',
+        _svg_text(32, 54, family["name"], 34, chrome["primary"], weight="700"),
+        _svg_text(728, 50, capacity, 20, chrome["secondary"], anchor="end"),
+        _svg_text(32, 80, f"{profile['target']} · commanded sRGB", 14, chrome["metadata"]),
+        f'<line x1="32" y1="98" x2="728" y2="98" stroke="{chrome["rule"]}"/>',
     ]
 
-    canvas.append(_svg_text(32, 130, "SURFACES · bg_0 → bg_5", 15, "#C7B79E"))
+    canvas.append(_svg_text(32, 130, "SURFACES · bg_0 → bg_5", 15, chrome["secondary"]))
     chip_gap = 10
     six_chip_width = (content_width - chip_gap * 5) / 6
     for index, role in enumerate(background_roles):
@@ -241,29 +241,30 @@ def _family_svg(family: dict, profile: dict) -> str:
         x, y = margin + index * (six_chip_width + chip_gap), 142
         canvas.append(
             f'<rect x="{x:.2f}" y="{y}" width="{six_chip_width:.2f}" height="64" '
-            f'rx="8" fill="{value}" stroke="#453C31"/>'
+            f'rx="8" fill="{value}" stroke="{chrome["border"]}"/>'
         )
-        label_fill = _label_color(value)
+        label_fill = _label_color(value, chrome)
         canvas.append(_svg_text(x + 10, y + 24, role, 13, label_fill))
         canvas.append(_svg_text(x + 10, y + 50, value, 11, label_fill))
 
-    canvas.append(_svg_text(32, 240, "TEXT ON bg_0 · fg_0 fg_1 fg_2", 15, "#C7B79E"))
+    canvas.append(_svg_text(32, 240, "TEXT ON bg_0 · fg_0 fg_1 fg_2", 15, chrome["secondary"]))
     bg_0 = family["surfaces"]["bg_0"]
     canvas.append(
-        f'<rect x="32" y="252" width="696" height="58" rx="8" fill="{bg_0}" stroke="#453C31"/>'
+        f'<rect x="32" y="252" width="696" height="58" rx="8" fill="{bg_0}" '
+        f'stroke="{chrome["border"]}"/>'
     )
     for x, role in zip((52, 284, 516), foreground_roles):
         value = family["surfaces"][role]
         canvas.append(_svg_text(x, 288, f"{role} · {value}", 16, value))
 
     count = len(family["categorical"])
-    canvas.append(_svg_text(32, 348, f"CATEGORICAL · {count} COLORS", 15, "#C7B79E"))
+    canvas.append(_svg_text(32, 348, f"CATEGORICAL · {count} COLORS", 15, chrome["secondary"]))
     category_width = (content_width - chip_gap * (count - 1)) / count
     for index, value in enumerate(family["categorical"].values()):
         x, y = margin + index * (category_width + chip_gap), 360
         canvas.append(
             f'<rect x="{x:.2f}" y="{y}" width="{category_width:.2f}" height="58" '
-            f'rx="8" fill="{value}" stroke="#453C31"/>'
+            f'rx="8" fill="{value}" stroke="{chrome["border"]}"/>'
         )
         canvas.append(
             _svg_text(
@@ -271,7 +272,7 @@ def _family_svg(family: dict, profile: dict) -> str:
                 y + 35,
                 value,
                 12,
-                _label_color(value),
+                _label_color(value, chrome),
                 anchor="middle",
             )
         )
@@ -283,7 +284,7 @@ def _family_svg(family: dict, profile: dict) -> str:
             456,
             f"TERMINAL ANSI · {identity_count} IDENTITIES / 16 SLOTS",
             15,
-            "#C7B79E",
+            chrome["secondary"],
         )
     )
     for index, ((role, _letter), label) in enumerate(zip(terminal_roles, terminal_labels)):
@@ -292,7 +293,7 @@ def _family_svg(family: dict, profile: dict) -> str:
         dash = ' stroke-dasharray="5 4"' if "=" in label else ""
         canvas.append(
             f'<rect x="{x:.2f}" y="{y}" width="{six_chip_width:.2f}" height="58" '
-            f'rx="8" fill="{value}" stroke="#453C31"{dash}/>'
+            f'rx="8" fill="{value}" stroke="{chrome["border"]}"{dash}/>'
         )
         canvas.append(
             _svg_text(
@@ -300,14 +301,22 @@ def _family_svg(family: dict, profile: dict) -> str:
                 y + 37,
                 label,
                 18 if "=" in label else 22,
-                _label_color(value),
+                _label_color(value, chrome),
                 weight="700",
                 anchor="middle",
             )
         )
 
     continuous = family["continuous_hex8"]
-    canvas.append(_svg_text(32, 564, "SEQUENTIAL · 256 SAMPLES · LOW → HIGH", 15, "#C7B79E"))
+    canvas.append(
+        _svg_text(
+            32,
+            564,
+            "SEQUENTIAL · 256 SAMPLES · LOW → HIGH",
+            15,
+            chrome["secondary"],
+        )
+    )
     for index, value in enumerate(continuous):
         x = margin + index * content_width / len(continuous)
         slice_width = min(2.9, 728 - x)
@@ -320,6 +329,7 @@ def _family_svg(family: dict, profile: dict) -> str:
 
 def build(destination: Path) -> None:
     manifest = generate_manifest()
+    chrome = publication_chrome(manifest)
     encoded = json.dumps(manifest, indent=2) + "\n"
     _write(destination / "palettes/ember.json", encoded)
     _write(destination / "src/ember/palettes.json", encoded)
@@ -382,16 +392,16 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
         )
         _write(destination / f"themes/terminal/iterm2/{slug}.itermcolors", _iterm(family))
         profile = manifest["profiles"][family["profile"]]
-        _write(destination / f"docs/swatches/{slug}.svg", _family_svg(family, profile))
+        _write(destination / f"docs/swatches/{slug}.svg", _family_svg(family, profile, chrome))
 
     render_readme_story(manifest, destination / "docs")
     render_matplotlib_gallery(manifest, destination / "docs/matplotlib-gallery.png")
     render_samples(manifest, destination / "docs/samples")
-    _write(destination / "docs/diagrams/channel-collapse.svg", channel_collapse_svg())
+    _write(destination / "docs/diagrams/channel-collapse.svg", channel_collapse_svg(manifest))
     _write(destination / "docs/diagrams/failure-modes.svg", failure_modes_svg(manifest))
     _write(
         destination / "docs/diagrams/redundant-encoding.svg",
-        redundant_encoding_svg(),
+        redundant_encoding_svg(manifest),
     )
     _write(
         destination / "docs/sample-analysis.md",
