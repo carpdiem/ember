@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
-Ember is a coordinated color system for engineers who run Redshift, Night Light, or
+Ember is a coordinated color system for people who run Redshift, Night Light, or
 another strong warm-screen filter. Each palette is authored in commanded sRGB,
 verified under its profile's modeled per-channel RGB gains, and exported as terminal
 themes (Alacritty, iTerm2, Windows Terminal), UI surface roles, categorical chart
