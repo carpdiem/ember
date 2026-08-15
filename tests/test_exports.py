@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import plistlib
+import re
 import runpy
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -350,3 +351,28 @@ def test_iterm_exports_parse() -> None:
         data = plistlib.loads((ROOT / f"themes/terminal/iterm2/{slug}.itermcolors").read_bytes())
         assert "Background Color" in data
         assert all(f"Ansi {index} Color" in data for index in range(16))
+
+
+def test_live_html_example_uses_the_exported_css_palette_contract() -> None:
+    example = (ROOT / "examples/index.html").read_text()
+
+    assert 'data-ember-palette="3400k-dark"' in example
+    assert 'href="../palettes/ember.css"' in example
+    for slug in SLUGS:
+        assert f'<option value="{slug}"' in example
+
+    assert "document.documentElement.dataset.emberPalette = palette" in example
+    assert "var(--ember-bg-0)" in example
+    assert "var(--ember-fg-0)" in example
+    assert "var(--ember-category-one)" in example
+    assert "var(--ember-category-two)" in example
+    assert "var(--ember-category-three)" in example
+    assert "var(--ember-sequential)" in example
+    assert 'class="categorical-chart"' in example
+    assert 'class="line-chart"' in example
+    assert 'class="heatmap"' in example
+
+    assert not any(
+        token in example for token in ("style.color", "style.background", "setProperty(")
+    )
+    assert not re.search(r"#[0-9a-fA-F]{3,8}(?:[;\"'])", example)

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en" data-ember-palette="3400k-dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A live article and data-visualization specimen for all four Ember palettes.">
+  <title>Ember CSS specimen — The Quiet Geometry of Night Work</title>
+  <link rel="stylesheet" href="../palettes/ember.css">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    [data-ember-palette="3400k-light"] {
+      color-scheme: light;
+    }
+
+    [data-ember-palette="3400k-dark"],
+    [data-ember-palette="2000k-dark"],
+    [data-ember-palette="1200k-dark"] {
+      color-scheme: dark;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--ember-bg-0);
+    }
+
+    body {
+      min-width: 20rem;
+      margin: 0;
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-0);
+      transition: color 160ms ease, background-color 160ms ease;
+    }
+
+    ::selection {
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-5);
+    }
+
+    a {
+      color: var(--ember-category-one);
+      text-decoration-color: color-mix(in srgb, var(--ember-category-one) 55%, transparent);
+      text-underline-offset: 0.18em;
+      text-decoration-thickness: 0.08em;
+    }
+
+    a:hover {
+      color: var(--ember-category-two);
+      text-decoration-color: currentColor;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    select:focus-visible {
+      outline: 0.18rem solid var(--ember-category-two);
+      outline-offset: 0.22rem;
+    }
+
+    .palette-switcher {
+      position: fixed;
+      z-index: 20;
+      top: 1rem;
+      right: 1rem;
+      width: min(16rem, calc(100vw - 2rem));
+      padding: 0.72rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.8rem;
+      background: color-mix(in srgb, var(--ember-bg-2) 94%, transparent);
+      box-shadow: 0 1rem 3rem color-mix(in srgb, var(--ember-bg-0) 70%, transparent);
+      backdrop-filter: blur(0.8rem);
+    }
+
+    .palette-switcher label {
+      display: block;
+      margin: 0 0 0.35rem;
+      color: var(--ember-fg-2);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .palette-switcher select {
+      width: 100%;
+      min-height: 2.35rem;
+      padding: 0.42rem 2rem 0.42rem 0.62rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.5rem;
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-3);
+      font: inherit;
+      font-weight: 650;
+    }
+
+    .page-shell {
+      width: min(100%, 72rem);
+      margin: 0 auto;
+      padding: clamp(6rem, 11vw, 9rem) 1.25rem 5rem;
+    }
+
+    .article-header,
+    .article-copy,
+    .article-footer {
+      width: min(100%, 47rem);
+      margin-inline: auto;
+    }
+
+    .eyebrow {
+      margin: 0 0 1rem;
+      color: var(--ember-category-three);
+      font-size: 0.78rem;
+      font-weight: 760;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: var(--ember-fg-0);
+      text-wrap: balance;
+    }
+
+    h1 {
+      max-width: 13ch;
+      margin: 0;
+      font-size: clamp(2.8rem, 8vw, 6.3rem);
+      font-weight: 720;
+      letter-spacing: -0.052em;
+      line-height: 0.94;
+    }
+
+    .dek {
+      max-width: 42rem;
+      margin: 1.65rem 0 0;
+      color: var(--ember-fg-1);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.2rem, 2.6vw, 1.72rem);
+      line-height: 1.46;
+    }
+
+    .byline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      margin: 2rem 0 0;
+      padding: 1rem 0;
+      border-top: 1px solid var(--ember-bg-4);
+      border-bottom: 1px solid var(--ember-bg-4);
+      color: var(--ember-fg-2);
+      font-size: 0.86rem;
+    }
+
+    .byline strong {
+      color: var(--ember-fg-0);
+    }
+
+    .article-copy {
+      margin-top: 4rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.08rem;
+      line-height: 1.82;
+    }
+
+    .article-copy > p:first-of-type::first-letter {
+      float: left;
+      margin: 0.12em 0.12em 0 0;
+      color: var(--ember-category-two);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 4.7em;
+      font-weight: 760;
+      line-height: 0.72;
+    }
+
+    .article-copy h2 {
+      margin: 4.4rem 0 1.2rem;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      font-weight: 680;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+    }
+
+    .article-copy h3 {
+      margin: 2.8rem 0 0.8rem;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 1.18rem;
+      font-weight: 690;
+      letter-spacing: -0.015em;
+    }
+
+    .article-copy p,
+    .article-copy ul,
+    .article-copy ol {
+      margin-block: 1.2rem;
+    }
+
+    .article-copy li + li {
+      margin-top: 0.48rem;
+    }
+
+    .article-copy code {
+      padding: 0.13rem 0.35rem;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 0.28rem;
+      color: var(--ember-category-three);
+      background: var(--ember-bg-2);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    blockquote {
+      margin: 2.8rem 0;
+      padding: 0.25rem 0 0.25rem 1.5rem;
+      border-left: 0.28rem solid var(--ember-category-two);
+      color: var(--ember-fg-1);
+      font-size: 1.34rem;
+      font-style: italic;
+      line-height: 1.58;
+    }
+
+    blockquote footer {
+      margin-top: 0.8rem;
+      color: var(--ember-fg-2);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.76rem;
+      font-style: normal;
+      font-weight: 680;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .aside-note {
+      margin: 2rem 0;
+      padding: 1.15rem 1.25rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.72rem;
+      background: var(--ember-bg-2);
+      color: var(--ember-fg-1);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .aside-note strong {
+      display: block;
+      margin-bottom: 0.25rem;
+      color: var(--ember-category-three);
+    }
+
+    .wide-figure {
+      width: min(100%, 66rem);
+      margin: 3.5rem auto;
+      padding: clamp(1rem, 3vw, 1.6rem);
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 1rem;
+      background: var(--ember-bg-1);
+      box-shadow: 0 1.4rem 4rem color-mix(in srgb, var(--ember-bg-0) 72%, transparent);
+    }
+
+    .figure-header {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .figure-header h3 {
+      margin: 0;
+      font-size: clamp(1.1rem, 2.5vw, 1.45rem);
+    }
+
+    .figure-header p {
+      max-width: 35rem;
+      margin: 0.32rem 0 0;
+      color: var(--ember-fg-2);
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .figure-number {
+      flex: 0 0 auto;
+      color: var(--ember-fg-2);
+      font: 700 0.68rem/1 Inter, ui-sans-serif, system-ui, sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .categorical-chart {
+      display: grid;
+      gap: 0.78rem;
+      margin-top: 1rem;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: minmax(7rem, 0.7fr) minmax(10rem, 2.3fr) 3rem;
+      align-items: center;
+      gap: 0.8rem;
+      color: var(--ember-fg-1);
+      font-size: 0.84rem;
+    }
+
+    .bar-track {
+      height: 1.35rem;
+      overflow: hidden;
+      border-radius: 0.35rem;
+      background: var(--ember-bg-3);
+    }
+
+    .bar {
+      width: var(--value);
+      height: 100%;
+      border-left: 0.24rem solid var(--series);
+      border-radius: 0.35rem;
+      background: color-mix(in srgb, var(--series) 34%, var(--ember-bg-2));
+    }
+
+    .value {
+      color: var(--ember-fg-0);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+
+    .series-one {
+      --series: var(--ember-category-one);
+    }
+
+    .series-two {
+      --series: var(--ember-category-two);
+    }
+
+    .series-three {
+      --series: var(--ember-category-three);
+    }
+
+    .capacity-bank {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 0.45rem;
+      margin-top: 1.4rem;
+    }
+
+    .capacity-chip {
+      min-height: 2rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.35rem;
+      background: var(--chip);
+    }
+
+    .capacity-chip:nth-child(1) { --chip: var(--ember-category-one); }
+    .capacity-chip:nth-child(2) { --chip: var(--ember-category-two); }
+    .capacity-chip:nth-child(3) { --chip: var(--ember-category-three); }
+    .capacity-chip:nth-child(4) { --chip: var(--ember-category-four); }
+    .capacity-chip:nth-child(5) { --chip: var(--ember-category-five); }
+    .capacity-chip:nth-child(6) { --chip: var(--ember-category-six); }
+
+    [data-ember-palette="2000k-dark"] .capacity-bank > :nth-child(n + 5),
+    [data-ember-palette="1200k-dark"] .capacity-bank > :nth-child(n + 4) {
+      display: none;
+    }
+
+    [data-ember-palette="2000k-dark"] .capacity-bank {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    [data-ember-palette="1200k-dark"] .capacity-bank {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .capacity-caption {
+      margin: 0.55rem 0 0;
+      color: var(--ember-fg-2);
+      font-size: 0.75rem;
+    }
+
+    .line-chart {
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+
+    .chart-grid line {
+      stroke: var(--ember-bg-4);
+      stroke-width: 1;
+    }
+
+    .chart-axis,
+    .chart-label {
+      fill: var(--ember-fg-2);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 13px;
+    }
+
+    .chart-line {
+      fill: none;
+      stroke: var(--series);
+      stroke-width: 3;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .chart-line.series-two {
+      stroke-dasharray: 9 6;
+    }
+
+    .chart-line.series-three {
+      stroke-dasharray: 2 6;
+    }
+
+    .chart-marker {
+      fill: var(--ember-bg-1);
+      stroke: var(--series);
+      stroke-width: 3;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .chart-end-label {
+      fill: var(--series);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .heatmap-wrap {
+      overflow-x: auto;
+      padding-bottom: 0.35rem;
+    }
+
+    .heatmap {
+      display: grid;
+      grid-template-columns: 4.5rem repeat(8, minmax(2.8rem, 1fr));
+      min-width: 38rem;
+      gap: 0.3rem;
+      align-items: center;
+    }
+
+    .heat-label {
+      padding-right: 0.4rem;
+      color: var(--ember-fg-2);
+      font-size: 0.72rem;
+      text-align: right;
+    }
+
+    .heat-cell {
+      aspect-ratio: 1.25;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 0.24rem;
+      background-image: var(--ember-sequential);
+      background-position: var(--heat-position) center;
+      background-size: 1100% 100%;
+    }
+
+    .heat-0 { --heat-position: 0%; }
+    .heat-1 { --heat-position: 10%; }
+    .heat-2 { --heat-position: 20%; }
+    .heat-3 { --heat-position: 30%; }
+    .heat-4 { --heat-position: 40%; }
+    .heat-5 { --heat-position: 50%; }
+    .heat-6 { --heat-position: 60%; }
+    .heat-7 { --heat-position: 70%; }
+    .heat-8 { --heat-position: 80%; }
+    .heat-9 { --heat-position: 90%; }
+    .heat-10 { --heat-position: 100%; }
+
+    .heat-legend {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-top: 0.85rem;
+      color: var(--ember-fg-2);
+      font-size: 0.72rem;
+    }
+
+    .heat-legend-gradient {
+      width: min(18rem, 60vw);
+      height: 0.72rem;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 999px;
+      background: var(--ember-sequential);
+    }
+
+    .data-table-wrap {
+      overflow-x: auto;
+      margin: 2rem 0;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.7rem;
+    }
+
+    .data-table {
+      width: 100%;
+      min-width: 36rem;
+      border-collapse: collapse;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.84rem;
+      line-height: 1.45;
+    }
+
+    .data-table th,
+    .data-table td {
+      padding: 0.75rem 0.9rem;
+      border-bottom: 1px solid var(--ember-bg-4);
+      text-align: left;
+    }
+
+    .data-table th {
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-3);
+      font-weight: 680;
+    }
+
+    .data-table td {
+      color: var(--ember-fg-1);
+      background: var(--ember-bg-2);
+    }
+
+    .data-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      color: var(--ember-fg-0);
+      font-weight: 650;
+    }
+
+    .status::before {
+      width: 0.62rem;
+      height: 0.62rem;
+      border-radius: 50%;
+      background: var(--status-color);
+      content: "";
+    }
+
+    .status.stable { --status-color: var(--ember-category-three); }
+    .status.watch { --status-color: var(--ember-category-two); }
+    .status.review { --status-color: var(--ember-category-one); }
+
+    pre {
+      overflow-x: auto;
+      margin: 2rem 0;
+      padding: 1.2rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.72rem;
+      color: var(--ember-fg-1);
+      background: var(--ember-bg-2);
+      font: 0.88rem/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    pre .token-keyword { color: var(--ember-category-one); }
+    pre .token-string { color: var(--ember-category-two); }
+    pre .token-comment { color: var(--ember-fg-2); }
+    pre .token-name { color: var(--ember-category-three); }
+
+    .article-footer {
+      margin-top: 5rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--ember-bg-4);
+      color: var(--ember-fg-2);
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    .article-footer p {
+      margin: 0.35rem 0;
+    }
+
+    @media (max-width: 46rem) {
+      .page-shell {
+        padding-top: 7.2rem;
+      }
+
+      .palette-switcher {
+        top: 0.65rem;
+        right: 0.65rem;
+        width: min(14rem, calc(100vw - 1.3rem));
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr 3rem;
+        gap: 0.45rem 0.7rem;
+      }
+
+      .bar-row > span:first-child {
+        grid-column: 1 / -1;
+      }
+
+      .figure-header {
+        align-items: start;
+      }
+
+      .chart-axis,
+      .chart-label {
+        font-size: 20px;
+      }
+
+      .chart-end-label {
+        font-size: 22px;
+      }
+
+      .figure-number {
+        display: none;
+      }
+
+      blockquote {
+        padding-left: 1rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      body {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="palette-switcher" aria-label="Palette selector">
+    <label for="palette-select">Ember palette</label>
+    <select id="palette-select" name="palette">
+      <option value="3400k-dark">3400K Dark</option>
+      <option value="3400k-light">3400K Light</option>
+      <option value="2000k-dark">2000K Dark</option>
+      <option value="1200k-dark">1200K Dark</option>
+    </select>
+  </aside>
+
+  <main class="page-shell">
+    <header class="article-header">
+      <p class="eyebrow">Field note · Issue 04</p>
+      <h1>The Quiet Geometry of Night Work</h1>
+      <p class="dek">An imaginary dispatch from a hilltop observatory, where signal, attention, and the last light of day all fade at different rates.</p>
+      <div class="byline">
+        <span>By <strong>Mara Venn</strong></span>
+        <span>August 2026</span>
+        <span>8 minute read</span>
+      </div>
+    </header>
+
+    <article>
+      <div class="article-copy">
+        <p>At dusk, the instruments did not become less precise; they became less forgiving. A blue trace that looked obvious at noon folded into its neighbor after sunset, while the room itself seemed to grow louder. The team had spent years tuning the telescope and only a week noticing the interface around it.</p>
+
+        <p>This specimen is a deliberately varied article surface for <a href="https://github.com/carpdiem/ember">Ember</a>. It combines long-form prose with <a href="#signals">categorical signals</a>, a <a href="#thermal-field">sequential heatmap</a>, links, controls, tables, code, and quiet metadata. Change the palette at the top-right; the page structure stays fixed while CSS variables replace the complete visual system.</p>
+
+        <h2 id="field-notes">What the room was telling us</h2>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. But the useful observation was simpler: frequent pixels should be quiet, and meaningful pixels should earn their color. The base canvas carried almost no demand. Panels separated by small surface steps did the organizing. Only status, category, and selection crossed into the accent bank.</p>
+
+        <blockquote>
+          “A display used for six hours should not behave like a flare used for six seconds.”
+          <footer>Notebook 17, west console</footer>
+        </blockquote>
+
+        <p>The operators settled on three working rules:</p>
+        <ol>
+          <li>Use position, labels, and shape before asking hue to carry identity alone.</li>
+          <li>Reserve the strongest foreground for decisions; let supporting detail remain subordinate.</li>
+          <li>Judge the transformed state directly instead of assuming daytime spacing will survive.</li>
+        </ol>
+
+        <div class="aside-note">
+          <strong>Reading note</strong>
+          This is fictional editorial copy, but the palette behavior is real. Every color on this page resolves from the selected family in <code>palettes/ember.css</code>.
+        </div>
+
+        <h3>A small inventory of ordinary text</h3>
+
+        <p>Proin vitae lacus at sem luctus aliquet. A <a href="https://github.com/carpdiem/ember#choose-a-profile">profile guide</a> can be concise without becoming invisible. Inline code such as <code>data-ember-palette</code> should read as a distinct object, not a glowing interruption. Supporting notes can soften, but essential prose cannot depend on low-contrast decoration.</p>
+
+        <ul>
+          <li><strong>Primary text</strong> carries the argument and essential labels.</li>
+          <li><em>Secondary text</em> carries context, captions, and the connective tissue.</li>
+          <li>Muted metadata remains useful without competing with either.</li>
+        </ul>
+      </div>
+
+      <figure class="wide-figure" id="signals">
+        <figcaption class="figure-header">
+          <div>
+            <h3>Signal retention by channel</h3>
+            <p>Three categories remain available in every Ember family. Fill is deliberately quiet; the full-strength edge preserves identity.</p>
+          </div>
+          <span class="figure-number">Figure 01</span>
+        </figcaption>
+
+        <div class="categorical-chart" role="img" aria-label="Horizontal bar chart: Structural contrast 88, Chromatic identity 71, Low-light detail 63">
+          <div class="bar-row series-one">
+            <span>Structural contrast</span>
+            <div class="bar-track"><div class="bar" style="--value: 88%"></div></div>
+            <span class="value">88</span>
+          </div>
+          <div class="bar-row series-two">
+            <span>Chromatic identity</span>
+            <div class="bar-track"><div class="bar" style="--value: 71%"></div></div>
+            <span class="value">71</span>
+          </div>
+          <div class="bar-row series-three">
+            <span>Low-light detail</span>
+            <div class="bar-track"><div class="bar" style="--value: 63%"></div></div>
+            <span class="value">63</span>
+          </div>
+        </div>
+
+        <div class="capacity-bank" role="img" aria-label="Six categorical colors available in 3400K Dark">
+          <span class="capacity-chip" title="Category one"></span>
+          <span class="capacity-chip" title="Category two"></span>
+          <span class="capacity-chip" title="Category three"></span>
+          <span class="capacity-chip" title="Category four"></span>
+          <span class="capacity-chip" title="Category five"></span>
+          <span class="capacity-chip" title="Category six"></span>
+        </div>
+        <p class="capacity-caption">Available category bank. It contracts from six to four to three as the selected transform becomes more severe.</p>
+      </figure>
+
+      <div class="article-copy">
+        <h2 id="patterns">Redundancy is not decoration</h2>
+
+        <p>A categorical chart should remain legible when a reader cannot recover every hue. In the next plot, each series has a direct endpoint label, a distinct dash pattern, and markers placed on the line itself. Color participates, but it is not the only witness.</p>
+      </div>
+
+      <figure class="wide-figure">
+        <figcaption class="figure-header">
+          <div>
+            <h3>Observation quality over six sessions</h3>
+            <p>Direct labels, markers, line style, and position all carry identity.</p>
+          </div>
+          <span class="figure-number">Figure 02</span>
+        </figcaption>
+
+        <svg class="line-chart" viewBox="0 0 760 360" role="img" aria-labelledby="line-title line-description">
+          <title id="line-title">Observation quality over six sessions</title>
+          <desc id="line-description">Three labeled line series with different marker and dash styles.</desc>
+          <g class="chart-grid">
+            <line x1="72" y1="54" x2="600" y2="54"></line>
+            <line x1="72" y1="126" x2="600" y2="126"></line>
+            <line x1="72" y1="198" x2="600" y2="198"></line>
+            <line x1="72" y1="270" x2="600" y2="270"></line>
+          </g>
+          <g class="chart-axis">
+            <text x="28" y="58">90</text>
+            <text x="28" y="130">70</text>
+            <text x="28" y="202">50</text>
+            <text x="28" y="274">30</text>
+            <text x="66" y="318">01</text>
+            <text x="178" y="318">02</text>
+            <text x="292" y="318">03</text>
+            <text x="406" y="318">04</text>
+            <text x="520" y="318">05</text>
+            <text x="592" y="318">06</text>
+          </g>
+
+          <path class="chart-line series-one" d="M72 236 L186 210 L300 184 L414 132 L528 108 L600 78"></path>
+          <g class="series-one">
+            <circle class="chart-marker" cx="72" cy="236" r="6"></circle>
+            <circle class="chart-marker" cx="186" cy="210" r="6"></circle>
+            <circle class="chart-marker" cx="300" cy="184" r="6"></circle>
+            <circle class="chart-marker" cx="414" cy="132" r="6"></circle>
+            <circle class="chart-marker" cx="528" cy="108" r="6"></circle>
+            <circle class="chart-marker" cx="600" cy="78" r="6"></circle>
+            <text class="chart-end-label" x="616" y="83">Calibrated</text>
+          </g>
+
+          <path class="chart-line series-two" d="M72 260 L186 226 L300 218 L414 190 L528 168 L600 144"></path>
+          <g class="series-two">
+            <rect class="chart-marker" x="67" y="255" width="10" height="10"></rect>
+            <rect class="chart-marker" x="181" y="221" width="10" height="10"></rect>
+            <rect class="chart-marker" x="295" y="213" width="10" height="10"></rect>
+            <rect class="chart-marker" x="409" y="185" width="10" height="10"></rect>
+            <rect class="chart-marker" x="523" y="163" width="10" height="10"></rect>
+            <rect class="chart-marker" x="595" y="139" width="10" height="10"></rect>
+            <text class="chart-end-label" x="616" y="149">Adaptive</text>
+          </g>
+
+          <path class="chart-line series-three" d="M72 246 L186 252 L300 232 L414 244 L528 216 L600 224"></path>
+          <g class="series-three">
+            <path class="chart-marker" d="M72 239 L79 252 L65 252 Z"></path>
+            <path class="chart-marker" d="M186 245 L193 258 L179 258 Z"></path>
+            <path class="chart-marker" d="M300 225 L307 238 L293 238 Z"></path>
+            <path class="chart-marker" d="M414 237 L421 250 L407 250 Z"></path>
+            <path class="chart-marker" d="M528 209 L535 222 L521 222 Z"></path>
+            <path class="chart-marker" d="M600 217 L607 230 L593 230 Z"></path>
+            <text class="chart-end-label" x="616" y="229">Baseline</text>
+          </g>
+        </svg>
+      </figure>
+
+      <div class="article-copy">
+        <h2 id="thermal-field">A field becomes a gradient</h2>
+
+        <p>Heatmaps ask a different question. Categories need separation; a sequential field needs order. Each cell below samples the selected family’s authored CSS gradient, from low at the left of the legend to high at the right. The data are imaginary, but the direction and monotonic progression are not.</p>
+      </div>
+
+      <figure class="wide-figure">
+        <figcaption class="figure-header">
+          <div>
+            <h3>Thermal residual across the sensor array</h3>
+            <p>Six rows, eight intervals, one ordered sequential scale.</p>
+          </div>
+          <span class="figure-number">Figure 03</span>
+        </figcaption>
+
+        <div class="heatmap-wrap">
+          <div class="heatmap" role="img" aria-label="Heatmap showing six sensor rows across eight time intervals">
+            <span class="heat-label">North</span>
+            <span class="heat-cell heat-1" title="North 01: low"></span><span class="heat-cell heat-2" title="North 02"></span><span class="heat-cell heat-4" title="North 03"></span><span class="heat-cell heat-6" title="North 04"></span><span class="heat-cell heat-8" title="North 05"></span><span class="heat-cell heat-7" title="North 06"></span><span class="heat-cell heat-5" title="North 07"></span><span class="heat-cell heat-3" title="North 08"></span>
+            <span class="heat-label">Ridge</span>
+            <span class="heat-cell heat-0" title="Ridge 01: minimum"></span><span class="heat-cell heat-1" title="Ridge 02"></span><span class="heat-cell heat-3" title="Ridge 03"></span><span class="heat-cell heat-5" title="Ridge 04"></span><span class="heat-cell heat-9" title="Ridge 05"></span><span class="heat-cell heat-10" title="Ridge 06: maximum"></span><span class="heat-cell heat-8" title="Ridge 07"></span><span class="heat-cell heat-4" title="Ridge 08"></span>
+            <span class="heat-label">West</span>
+            <span class="heat-cell heat-2" title="West 01"></span><span class="heat-cell heat-3" title="West 02"></span><span class="heat-cell heat-5" title="West 03"></span><span class="heat-cell heat-7" title="West 04"></span><span class="heat-cell heat-8" title="West 05"></span><span class="heat-cell heat-6" title="West 06"></span><span class="heat-cell heat-4" title="West 07"></span><span class="heat-cell heat-2" title="West 08"></span>
+            <span class="heat-label">Core</span>
+            <span class="heat-cell heat-3" title="Core 01"></span><span class="heat-cell heat-5" title="Core 02"></span><span class="heat-cell heat-8" title="Core 03"></span><span class="heat-cell heat-10" title="Core 04: maximum"></span><span class="heat-cell heat-9" title="Core 05"></span><span class="heat-cell heat-7" title="Core 06"></span><span class="heat-cell heat-5" title="Core 07"></span><span class="heat-cell heat-3" title="Core 08"></span>
+            <span class="heat-label">East</span>
+            <span class="heat-cell heat-1" title="East 01"></span><span class="heat-cell heat-2" title="East 02"></span><span class="heat-cell heat-4" title="East 03"></span><span class="heat-cell heat-7" title="East 04"></span><span class="heat-cell heat-6" title="East 05"></span><span class="heat-cell heat-5" title="East 06"></span><span class="heat-cell heat-3" title="East 07"></span><span class="heat-cell heat-1" title="East 08"></span>
+            <span class="heat-label">South</span>
+            <span class="heat-cell heat-0" title="South 01: minimum"></span><span class="heat-cell heat-1" title="South 02"></span><span class="heat-cell heat-2" title="South 03"></span><span class="heat-cell heat-4" title="South 04"></span><span class="heat-cell heat-5" title="South 05"></span><span class="heat-cell heat-4" title="South 06"></span><span class="heat-cell heat-2" title="South 07"></span><span class="heat-cell heat-0" title="South 08: minimum"></span>
+          </div>
+        </div>
+        <div class="heat-legend">
+          <span>Low</span>
+          <span class="heat-legend-gradient" aria-hidden="true"></span>
+          <span>High</span>
+        </div>
+      </figure>
+
+      <div class="article-copy">
+        <h2 id="ledger">The ledger after midnight</h2>
+
+        <p>Tables expose whether a theme can keep structure visible without turning every rule into an accent. The status marks below use color redundantly with plain-language labels.</p>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Station</th><th>Window</th><th>Variance</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>North aperture</td><td>22:10–22:42</td><td>1.8%</td><td><span class="status stable">Stable</span></td></tr>
+              <tr><td>Ridge sensor</td><td>22:43–23:16</td><td>3.1%</td><td><span class="status watch">Watch</span></td></tr>
+              <tr><td>Core assembly</td><td>23:17–23:51</td><td>2.4%</td><td><span class="status review">Review</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>A small code specimen</h3>
+
+        <p>The visual contract remains narrow. One attribute selects a family; exported variables carry the palette:</p>
+
+        <section aria-label="CSS usage example">
+          <pre><code><span class="token-comment">/* Palette values come from ember.css. */</span>
+<span class="token-keyword">const</span> <span class="token-name">root</span> = document.documentElement;
+root.dataset.emberPalette = <span class="token-string">"2000k-dark"</span>;
+
+<span class="token-name">article</span> {
+  color: var(--ember-fg-0);
+  background: var(--ember-bg-0);
+}</code></pre>
+        </section>
+
+        <h2 id="closing">When the display disappears</h2>
+
+        <p>By two in the morning, nobody remarked on the interface. That was the success condition. The room held together, the important signals remained distinct, and the screen stopped asking to be admired. Nulla facilisi. Curabitur consequat, nibh sed commodo varius, returned to its proper role: carrying the work rather than competing with it.</p>
+      </div>
+    </article>
+
+    <footer class="article-footer">
+      <p><strong>Ember live CSS specimen.</strong> All visual colors resolve through the selected family in <a href="../palettes/ember.css">ember.css</a>.</p>
+      <p>Article text and observation data are fictional. No filter simulation is applied on this page; use your normal Night Shift or Redshift setting to judge the live result.</p>
+    </footer>
+  </main>
+
+  <script>
+    const palettes = new Set(["3400k-dark", "3400k-light", "2000k-dark", "1200k-dark"]);
+    const categoryCounts = new Map([
+      ["3400k-dark", "Six"],
+      ["3400k-light", "Six"],
+      ["2000k-dark", "Four"],
+      ["1200k-dark", "Three"],
+    ]);
+    const selector = document.querySelector("#palette-select");
+    const capacityBank = document.querySelector(".capacity-bank");
+    const params = new URLSearchParams(window.location.search);
+
+    function applyPalette(palette, updateUrl = true) {
+      if (!palettes.has(palette)) return;
+      document.documentElement.dataset.emberPalette = palette;
+      selector.value = palette;
+      const paletteName = selector.options[selector.selectedIndex].text;
+      capacityBank.setAttribute(
+        "aria-label",
+        `${categoryCounts.get(palette)} categorical colors available in ${paletteName}`,
+      );
+
+      if (updateUrl) {
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set("palette", palette);
+        window.history.replaceState({}, "", nextUrl);
+      }
+    }
+
+    applyPalette(params.get("palette") || "3400k-dark", false);
+    selector.addEventListener("change", (event) => applyPalette(event.target.value));
+  </script>
+</body>
+</html>
