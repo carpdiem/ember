@@ -354,6 +354,51 @@ def test_iterm_exports_parse() -> None:
         assert all(f"Ansi {index} Color" in data for index in range(16))
 
 
+def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
+    landing = (ROOT / "index.html").read_text()
+
+    assert 'data-ember-palette="3400k-dark"' in landing
+    assert 'href="palettes/ember.css"' in landing
+    assert "<title>Ember — color systems for warm-shifted screens</title>" in landing
+    for slug in SLUGS:
+        assert f'<option value="{slug}"' in landing
+        assert f'class="profile-card" data-ember-palette="{slug}"' in landing
+        assert f'href="docs/swatches/{slug}.svg"' in landing
+
+    assert "document.documentElement.dataset.emberPalette = palette" in landing
+    assert 'href="examples/"' in landing
+    assert 'src="docs/swatches/command-vs-simulated.png"' in landing
+    assert "6 / 6 / 4 / 3" in landing
+    assert "256" in landing
+    assert "Ember does not pretend every daytime color survives" in landing
+    assert "Ember models digital warm-transform signals" in landing
+    assert "Fictional fixed dataset" not in landing
+    assert "Lorem ipsum" not in landing
+
+    for role in (
+        "bg-0",
+        "bg-1",
+        "bg-2",
+        "bg-3",
+        "bg-4",
+        "bg-5",
+        "fg-0",
+        "fg-1",
+        "fg-2",
+        "category-one",
+        "category-two",
+        "category-three",
+        "sequential",
+    ):
+        assert f"var(--ember-{role})" in landing
+
+    assert not any(
+        token in landing for token in ("style.color", "style.background", "setProperty(")
+    )
+    assert not re.search(r"#[0-9a-fA-F]{3,8}(?:[;\"'])", landing)
+    assert not re.search(r"(?:rgb|hsl|oklab|oklch)\(", landing, flags=re.IGNORECASE)
+
+
 def test_live_html_example_uses_the_exported_css_palette_contract() -> None:
     example = (ROOT / "examples/index.html").read_text()
 

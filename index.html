@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en" data-ember-palette="3400k-dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ember is a family of terminal, UI, chart, and sequential palettes authored to preserve useful color identity under warm display transforms.">
+  <title>Ember — color systems for warm-shifted screens</title>
+  <link rel="stylesheet" href="palettes/ember.css">
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    :root[data-ember-palette="3400k-light"] {
+      color-scheme: light;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 6rem;
+      background: var(--ember-bg-0);
+    }
+
+    body {
+      min-width: 20rem;
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-0);
+      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      transition: color 160ms ease, background-color 160ms ease;
+    }
+
+    body::before {
+      position: fixed;
+      z-index: -1;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 8%, color-mix(in srgb, var(--ember-category-one) 12%, transparent), transparent 28rem),
+        radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--ember-category-two) 9%, transparent), transparent 30rem);
+      content: "";
+      pointer-events: none;
+    }
+
+    ::selection {
+      color: var(--ember-bg-0);
+      background: var(--ember-category-one);
+    }
+
+    a {
+      color: inherit;
+      text-underline-offset: 0.2em;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    select:focus-visible {
+      outline: 0.2rem solid var(--ember-category-one);
+      outline-offset: 0.2rem;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    code,
+    pre {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    code {
+      color: var(--ember-fg-0);
+    }
+
+    .site-header {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      border-bottom: 1px solid var(--ember-bg-4);
+      background: color-mix(in srgb, var(--ember-bg-0) 90%, transparent);
+      backdrop-filter: blur(1rem);
+    }
+
+    .nav-shell,
+    .page-shell {
+      width: min(100% - 2.5rem, 76rem);
+      margin-inline: auto;
+    }
+
+    .nav-shell {
+      display: grid;
+      min-height: 4.7rem;
+      grid-template-columns: auto 1fr auto;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .brand {
+      display: inline-flex;
+      gap: 0.7rem;
+      align-items: center;
+      color: var(--ember-fg-0);
+      font-size: 1.08rem;
+      font-weight: 760;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      position: relative;
+      width: 1.65rem;
+      aspect-ratio: 1;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--ember-sequential);
+      box-shadow: 0 0 0 1px var(--ember-bg-5);
+    }
+
+    .brand-mark::after {
+      position: absolute;
+      inset: 0.42rem;
+      border-radius: inherit;
+      background: var(--ember-bg-0);
+      content: "";
+    }
+
+    .site-nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .site-nav a {
+      color: var(--ember-fg-1);
+      font-size: 0.86rem;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    .site-nav a:hover {
+      color: var(--ember-fg-0);
+    }
+
+    .site-nav .nav-cta {
+      padding: 0.48rem 0.75rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 999px;
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-2);
+    }
+
+    .palette-control {
+      display: grid;
+      gap: 0.18rem;
+    }
+
+    .palette-control span {
+      color: var(--ember-fg-2);
+      font-size: 0.66rem;
+      font-weight: 760;
+      letter-spacing: 0.12em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .palette-control select {
+      min-width: 9.6rem;
+      padding: 0.45rem 2rem 0.45rem 0.65rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.6rem;
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-2);
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 680;
+    }
+
+    .page-shell {
+      padding-bottom: 3rem;
+    }
+
+    .hero {
+      display: grid;
+      min-height: calc(100vh - 4.7rem);
+      grid-template-columns: minmax(0, 1.08fr) minmax(23rem, 0.92fr);
+      gap: clamp(3rem, 7vw, 7rem);
+      align-items: center;
+      padding-block: clamp(5rem, 11vw, 9rem);
+    }
+
+    .eyebrow,
+    .card-kicker {
+      margin: 0 0 1rem;
+      color: var(--ember-category-two);
+      font-size: 0.72rem;
+      font-weight: 780;
+      letter-spacing: 0.13em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      max-width: 10.5ch;
+      margin: 0;
+      font-size: clamp(3.3rem, 7.8vw, 6.9rem);
+      font-weight: 780;
+      letter-spacing: -0.068em;
+      line-height: 0.91;
+      text-wrap: balance;
+    }
+
+    .hero-dek {
+      max-width: 38rem;
+      margin: 2rem 0 0;
+      color: var(--ember-fg-1);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.18rem, 2.1vw, 1.5rem);
+      line-height: 1.55;
+    }
+
+    .hero-actions,
+    .section-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 2.2rem;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 3rem;
+      padding: 0.72rem 1rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.7rem;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.88rem;
+      font-weight: 730;
+      text-decoration: none;
+    }
+
+    .button-primary {
+      border-color: var(--ember-category-one);
+      color: var(--ember-bg-0);
+      background: var(--ember-category-one);
+    }
+
+    .button-secondary {
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-2);
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .proof-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem 1.2rem;
+      margin: 2rem 0 0;
+      padding: 0;
+      color: var(--ember-fg-2);
+      font-size: 0.8rem;
+      font-weight: 650;
+      list-style: none;
+    }
+
+    .proof-list li::before {
+      margin-right: 0.48rem;
+      color: var(--ember-category-three);
+      content: "●";
+    }
+
+    .hero-preview {
+      position: relative;
+      margin: 0;
+      padding: 1rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 1.25rem;
+      background: var(--ember-bg-1);
+      box-shadow: 0 1.8rem 5rem color-mix(in srgb, var(--ember-bg-0) 65%, transparent);
+    }
+
+    .preview-topline,
+    .preview-meta,
+    .profile-meta,
+    .comparison-caption {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .preview-topline {
+      padding: 0.2rem 0.2rem 0.9rem;
+      color: var(--ember-fg-2);
+      font-size: 0.68rem;
+      font-weight: 760;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .preview-state {
+      display: inline-flex;
+      gap: 0.35rem;
+      align-items: center;
+    }
+
+    .preview-state::before {
+      width: 0.48rem;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--ember-category-three);
+      content: "";
+    }
+
+    .preview-window {
+      overflow: hidden;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.9rem;
+      background: var(--ember-bg-0);
+    }
+
+    .preview-chrome {
+      display: flex;
+      gap: 0.38rem;
+      align-items: center;
+      padding: 0.78rem 0.9rem;
+      border-bottom: 1px solid var(--ember-bg-4);
+      background: var(--ember-bg-2);
+    }
+
+    .window-dot {
+      width: 0.52rem;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: var(--ember-fg-2);
+    }
+
+    .window-dot:nth-child(2) {
+      background: var(--ember-category-two);
+    }
+
+    .window-dot:nth-child(3) {
+      background: var(--ember-category-three);
+    }
+
+    .preview-layout {
+      display: grid;
+      min-height: 20rem;
+      grid-template-columns: 5.6rem 1fr;
+    }
+
+    .preview-sidebar {
+      display: grid;
+      align-content: start;
+      gap: 0.55rem;
+      padding: 1rem 0.75rem;
+      border-right: 1px solid var(--ember-bg-4);
+      background: var(--ember-bg-1);
+    }
+
+    .sidebar-line,
+    .content-line {
+      height: 0.44rem;
+      border-radius: 999px;
+      background: var(--ember-bg-5);
+    }
+
+    .sidebar-line:first-child {
+      width: 74%;
+      background: var(--ember-category-one);
+    }
+
+    .sidebar-line:nth-child(3) {
+      width: 82%;
+    }
+
+    .sidebar-line:nth-child(4) {
+      width: 66%;
+    }
+
+    .preview-content {
+      display: grid;
+      align-content: start;
+      gap: 1rem;
+      padding: 1.2rem;
+    }
+
+    .preview-heading {
+      width: 62%;
+      height: 1.05rem;
+      border-radius: 999px;
+      background: var(--ember-fg-0);
+    }
+
+    .content-lines {
+      display: grid;
+      gap: 0.48rem;
+    }
+
+    .content-line {
+      width: 100%;
+      background: var(--ember-bg-5);
+    }
+
+    .content-line:nth-child(2) {
+      width: 88%;
+    }
+
+    .content-line:nth-child(3) {
+      width: 70%;
+    }
+
+    .mini-chart {
+      display: grid;
+      height: 6.5rem;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.48rem;
+      align-items: end;
+      padding: 0.8rem;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 0.65rem;
+      background: var(--ember-bg-2);
+    }
+
+    .mini-bar {
+      min-height: 18%;
+      border-radius: 0.28rem 0.28rem 0 0;
+      background: var(--ember-category-one);
+    }
+
+    .mini-bar:nth-child(2) {
+      height: 72%;
+      background: var(--ember-category-two);
+    }
+
+    .mini-bar:nth-child(3) {
+      height: 48%;
+      background: var(--ember-category-three);
+    }
+
+    .mini-bar:nth-child(4) {
+      height: 88%;
+      background: var(--ember-category-four);
+    }
+
+    .mini-bar:nth-child(5) {
+      height: 62%;
+      background: var(--ember-category-five);
+    }
+
+    .mini-bar:nth-child(6) {
+      height: 38%;
+      background: var(--ember-category-six);
+    }
+
+    html[data-ember-palette="2000k-dark"] .hero-preview .mini-bar:nth-child(n + 5),
+    html[data-ember-palette="1200k-dark"] .hero-preview .mini-bar:nth-child(n + 4) {
+      display: none;
+    }
+
+    html[data-ember-palette="2000k-dark"] .hero-preview .mini-chart {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    html[data-ember-palette="1200k-dark"] .hero-preview .mini-chart {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .preview-ramp,
+    .profile-ramp {
+      height: 0.68rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 999px;
+      background: var(--ember-sequential);
+    }
+
+    .preview-meta {
+      padding: 1rem 0.2rem 0.1rem;
+      color: var(--ember-fg-2);
+      font-size: 0.74rem;
+      font-weight: 680;
+    }
+
+    .preview-meta strong {
+      color: var(--ember-fg-0);
+      font-weight: 760;
+    }
+
+    .palette-only {
+      display: none;
+    }
+
+    html[data-ember-palette="3400k-dark"] .palette-only[data-for="3400k-dark"],
+    html[data-ember-palette="3400k-light"] .palette-only[data-for="3400k-light"],
+    html[data-ember-palette="2000k-dark"] .palette-only[data-for="2000k-dark"],
+    html[data-ember-palette="1200k-dark"] .palette-only[data-for="1200k-dark"] {
+      display: inline;
+    }
+
+    .section {
+      padding-block: clamp(5rem, 9vw, 8rem);
+      border-top: 1px solid var(--ember-bg-4);
+      scroll-margin-top: 5.5rem;
+    }
+
+    .section-header {
+      display: grid;
+      grid-template-columns: minmax(0, 0.72fr) minmax(19rem, 0.45fr);
+      gap: 3rem;
+      align-items: end;
+      margin-bottom: 3rem;
+    }
+
+    .section-header h2,
+    .use-intro h2 {
+      max-width: 15ch;
+      margin: 0;
+      font-size: clamp(2.35rem, 5vw, 4.5rem);
+      font-weight: 760;
+      letter-spacing: -0.055em;
+      line-height: 0.98;
+      text-wrap: balance;
+    }
+
+    .section-header > p,
+    .use-intro > p {
+      margin: 0;
+      color: var(--ember-fg-1);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.08rem;
+      line-height: 1.6;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .profile-card {
+      display: grid;
+      min-height: 24rem;
+      grid-template-rows: auto 1fr auto;
+      gap: 1.5rem;
+      padding: clamp(1.2rem, 3vw, 1.8rem);
+      overflow: hidden;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 1rem;
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-0);
+    }
+
+    .profile-card[data-ember-palette="3400k-light"] {
+      color-scheme: light;
+    }
+
+    .profile-card h3 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.45rem);
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+
+    .profile-card p {
+      max-width: 40rem;
+      margin: 0.7rem 0 0;
+      color: var(--ember-fg-1);
+      font-size: 0.92rem;
+    }
+
+    .profile-card .card-kicker,
+    .use-card .card-kicker {
+      margin: 0 0 1rem;
+      color: var(--ember-category-two);
+      font-size: 0.72rem;
+      font-weight: 780;
+      letter-spacing: 0.13em;
+      line-height: 1.4;
+    }
+
+    .profile-meta {
+      margin-top: 1rem;
+      color: var(--ember-fg-2);
+      font-size: 0.72rem;
+      font-weight: 720;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .profile-visual {
+      display: grid;
+      align-content: center;
+      gap: 1rem;
+      padding: 1.2rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.75rem;
+      background: var(--ember-bg-2);
+    }
+
+    .surface-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.35rem;
+    }
+
+    .surface-chip,
+    .category-chip {
+      min-width: 0;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.36rem;
+    }
+
+    .surface-chip {
+      height: 2rem;
+      background: var(--ember-bg-0);
+    }
+
+    .surface-chip:nth-child(2) {
+      background: var(--ember-bg-1);
+    }
+
+    .surface-chip:nth-child(3) {
+      background: var(--ember-bg-2);
+    }
+
+    .surface-chip:nth-child(4) {
+      background: var(--ember-bg-3);
+    }
+
+    .surface-chip:nth-child(5) {
+      background: var(--ember-bg-4);
+    }
+
+    .surface-chip:nth-child(6) {
+      background: var(--ember-bg-5);
+    }
+
+    .category-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.35rem;
+    }
+
+    .category-row.capacity-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .category-row.capacity-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .category-chip {
+      height: 3.2rem;
+      background: var(--ember-category-one);
+    }
+
+    .category-chip:nth-child(2) {
+      background: var(--ember-category-two);
+    }
+
+    .category-chip:nth-child(3) {
+      background: var(--ember-category-three);
+    }
+
+    .category-chip:nth-child(4) {
+      background: var(--ember-category-four);
+    }
+
+    .category-chip:nth-child(5) {
+      background: var(--ember-category-five);
+    }
+
+    .category-chip:nth-child(6) {
+      background: var(--ember-category-six);
+    }
+
+    .profile-link {
+      color: var(--ember-fg-0);
+      font-size: 0.82rem;
+      font-weight: 720;
+      text-decoration-color: var(--ember-category-one);
+    }
+
+    .mechanism-points {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .mechanism-point,
+    .use-card {
+      padding: 1.4rem;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 0.85rem;
+      background: var(--ember-bg-1);
+    }
+
+    .point-number {
+      display: grid;
+      width: 2rem;
+      aspect-ratio: 1;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 50%;
+      place-items: center;
+      color: var(--ember-category-two);
+      background: var(--ember-bg-2);
+      font-size: 0.75rem;
+      font-weight: 780;
+    }
+
+    .mechanism-point h3,
+    .use-card h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+
+    .mechanism-point p,
+    .use-card > p {
+      margin: 0.65rem 0 0;
+      color: var(--ember-fg-1);
+      font-size: 0.88rem;
+    }
+
+    .comparison-figure {
+      width: min(100%, 52rem);
+      margin: 3rem auto 0;
+      padding: 0.8rem;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 1rem;
+      background: var(--ember-bg-1);
+    }
+
+    .comparison-figure img {
+      width: 100%;
+      border-radius: 0.55rem;
+    }
+
+    .comparison-caption {
+      padding: 0.9rem 0.25rem 0.1rem;
+      color: var(--ember-fg-2);
+      font-size: 0.74rem;
+    }
+
+    .comparison-caption strong {
+      color: var(--ember-fg-1);
+    }
+
+    .use-layout {
+      display: grid;
+      grid-template-columns: minmax(17rem, 0.42fr) minmax(0, 1fr);
+      gap: clamp(2rem, 7vw, 6rem);
+      align-items: start;
+    }
+
+    .use-intro {
+      position: sticky;
+      top: 7rem;
+    }
+
+    .use-intro > p {
+      margin-top: 1.4rem;
+    }
+
+    .use-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .use-card {
+      overflow: hidden;
+    }
+
+    .use-card pre {
+      margin: 1.2rem 0 0;
+      padding: 1rem;
+      overflow-x: auto;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 0.6rem;
+      color: var(--ember-fg-0);
+      background: var(--ember-bg-0);
+      font-size: 0.76rem;
+      line-height: 1.65;
+      white-space: pre;
+    }
+
+    .use-card a {
+      display: inline-block;
+      margin-top: 1rem;
+      color: var(--ember-fg-0);
+      font-size: 0.8rem;
+      font-weight: 720;
+      text-decoration-color: var(--ember-category-one);
+    }
+
+    .assurance {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      margin-top: 4rem;
+      overflow: hidden;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 0.9rem;
+      background: var(--ember-bg-4);
+    }
+
+    .assurance-item {
+      padding: 1.2rem;
+      background: var(--ember-bg-1);
+    }
+
+    .assurance-item strong {
+      display: block;
+      color: var(--ember-fg-0);
+      font-size: 1.35rem;
+      letter-spacing: -0.04em;
+    }
+
+    .assurance-item span {
+      display: block;
+      margin-top: 0.25rem;
+      color: var(--ember-fg-2);
+      font-size: 0.73rem;
+    }
+
+    .trust-note {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem;
+      align-items: start;
+      margin-top: 1rem;
+      padding: 1.2rem;
+      border-left: 0.22rem solid var(--ember-category-two);
+      color: var(--ember-fg-1);
+      background: var(--ember-bg-1);
+      font-size: 0.88rem;
+    }
+
+    .trust-note strong {
+      color: var(--ember-fg-0);
+    }
+
+    .site-footer {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: 2rem;
+      border-top: 1px solid var(--ember-bg-4);
+      color: var(--ember-fg-2);
+      font-size: 0.76rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-links a:hover {
+      color: var(--ember-fg-0);
+    }
+
+    @media (max-width: 60rem) {
+      .site-nav a:not(.nav-cta) {
+        display: none;
+      }
+
+      .hero {
+        min-height: auto;
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        max-width: 48rem;
+      }
+
+      .hero-preview {
+        width: min(100%, 37rem);
+      }
+
+      .section-header,
+      .use-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header > p {
+        max-width: 38rem;
+      }
+
+      .use-intro {
+        position: static;
+      }
+    }
+
+    @media (max-width: 45rem) {
+      html {
+        scroll-padding-top: 5rem;
+      }
+
+      .nav-shell,
+      .page-shell {
+        width: min(100% - 1.5rem, 76rem);
+      }
+
+      .nav-shell {
+        min-height: 4.25rem;
+        grid-template-columns: 1fr auto;
+        gap: 0.75rem;
+      }
+
+      .site-nav {
+        display: none;
+      }
+
+      .palette-control span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .palette-control select {
+        min-width: 8.8rem;
+        font-size: 0.76rem;
+      }
+
+      .hero {
+        gap: 3.5rem;
+        padding-block: 4.5rem 5rem;
+      }
+
+      .hero h1 {
+        font-size: clamp(3rem, 16vw, 4.8rem);
+      }
+
+      .hero-dek {
+        font-size: 1.12rem;
+      }
+
+      .hero-actions .button {
+        width: 100%;
+      }
+
+      .preview-layout {
+        min-height: 17rem;
+        grid-template-columns: 4rem 1fr;
+      }
+
+      .preview-sidebar {
+        padding-inline: 0.55rem;
+      }
+
+      .preview-content {
+        padding: 0.9rem;
+      }
+
+      .profile-grid,
+      .mechanism-points {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-card {
+        min-height: auto;
+      }
+
+      .section {
+        padding-block: 4.8rem;
+      }
+
+      .section-header {
+        gap: 1.4rem;
+      }
+
+      .assurance {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .comparison-caption,
+      .site-footer {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="nav-shell">
+      <a class="brand" href="./" aria-label="Ember home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Ember</span>
+      </a>
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="#profiles">Profiles</a>
+        <a href="#mechanism">Mechanism</a>
+        <a href="#use-ember">Use Ember</a>
+        <a class="nav-cta live-specimen-link" href="examples/">Live specimen</a>
+      </nav>
+      <label class="palette-control">
+        <span>Page palette</span>
+        <select id="palette-select" aria-label="Page palette">
+          <option value="3400k-dark">3400K Dark</option>
+          <option value="3400k-light">3400K Light</option>
+          <option value="2000k-dark">2000K Dark</option>
+          <option value="1200k-dark">1200K Dark</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow">Warm-transform color systems</p>
+        <h1 id="hero-title">Keep color useful after the screen turns warm.</h1>
+        <p class="hero-dek">Ember is a family of terminal, interface, chart, and sequential palettes authored to preserve contrast and meaningful color identity under 3400K, 2000K, and 1200K display transforms.</p>
+        <div class="hero-actions">
+          <a class="button button-primary live-specimen-link" href="examples/">Explore the live specimen</a>
+          <a class="button button-secondary" href="#use-ember">Use Ember</a>
+        </div>
+        <ul class="proof-list" aria-label="Available formats">
+          <li>Terminal themes</li>
+          <li>Matplotlib</li>
+          <li>CSS and JSON</li>
+          <li>MIT licensed</li>
+        </ul>
+      </div>
+
+      <figure class="hero-preview" aria-label="3400K Dark interface preview with six categorical colors">
+        <figcaption class="preview-topline">
+          <span>Selected family</span>
+          <span class="preview-state">
+            <span class="palette-only" data-for="3400k-dark">3400K Dark</span>
+            <span class="palette-only" data-for="3400k-light">3400K Light</span>
+            <span class="palette-only" data-for="2000k-dark">2000K Dark</span>
+            <span class="palette-only" data-for="1200k-dark">1200K Dark</span>
+          </span>
+        </figcaption>
+        <div class="preview-window" aria-hidden="true">
+          <div class="preview-chrome">
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+            <span class="window-dot"></span>
+          </div>
+          <div class="preview-layout">
+            <div class="preview-sidebar">
+              <span class="sidebar-line"></span>
+              <span class="sidebar-line"></span>
+              <span class="sidebar-line"></span>
+              <span class="sidebar-line"></span>
+            </div>
+            <div class="preview-content">
+              <span class="preview-heading"></span>
+              <div class="content-lines">
+                <span class="content-line"></span>
+                <span class="content-line"></span>
+                <span class="content-line"></span>
+              </div>
+              <div class="mini-chart">
+                <span class="mini-bar"></span>
+                <span class="mini-bar"></span>
+                <span class="mini-bar"></span>
+                <span class="mini-bar"></span>
+                <span class="mini-bar"></span>
+                <span class="mini-bar"></span>
+              </div>
+              <div class="preview-ramp"></div>
+            </div>
+          </div>
+        </div>
+        <div class="preview-meta">
+          <span>Authored identities</span>
+          <strong>
+            <span class="palette-only" data-for="3400k-dark">6</span>
+            <span class="palette-only" data-for="3400k-light">6</span>
+            <span class="palette-only" data-for="2000k-dark">4</span>
+            <span class="palette-only" data-for="1200k-dark">3</span>
+          </strong>
+        </div>
+      </figure>
+    </section>
+
+    <section class="section" id="profiles" aria-labelledby="profiles-title">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">Four constrained families</p>
+          <h2 id="profiles-title">Use only the identities the transform leaves intact.</h2>
+        </div>
+        <p>Ember does not pretend every daytime color survives a deep warm shift. Each profile exposes an honest categorical capacity while retaining the same surface, foreground, terminal, and sequential contracts.</p>
+      </div>
+
+      <div class="profile-grid">
+        <article class="profile-card" data-ember-palette="3400k-dark">
+          <header>
+            <p class="card-kicker">General-purpose dark</p>
+            <h3>3400K Dark</h3>
+            <p>A near-black family for ordinary Night Shift use, with the full six-color categorical bank.</p>
+            <div class="profile-meta"><span>6 categories</span><span>Dark surface ladder</span></div>
+          </header>
+          <div class="profile-visual" role="img" aria-label="3400K Dark surfaces, six categorical colors, and sequential ramp">
+            <div class="surface-row" aria-hidden="true">
+              <span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span>
+            </div>
+            <div class="category-row" aria-hidden="true">
+              <span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span>
+            </div>
+            <div class="profile-ramp" aria-hidden="true"></div>
+          </div>
+          <a class="profile-link" href="docs/swatches/3400k-dark.svg">Inspect the complete role map →</a>
+        </article>
+
+        <article class="profile-card" data-ember-palette="3400k-light">
+          <header>
+            <p class="card-kicker">Moderate-warm light</p>
+            <h3>3400K Light</h3>
+            <p>A warm paper-like family for light interfaces under a moderate display shift.</p>
+            <div class="profile-meta"><span>6 categories</span><span>Light surface ladder</span></div>
+          </header>
+          <div class="profile-visual" role="img" aria-label="3400K Light surfaces, six categorical colors, and sequential ramp">
+            <div class="surface-row" aria-hidden="true">
+              <span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span>
+            </div>
+            <div class="category-row" aria-hidden="true">
+              <span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span>
+            </div>
+            <div class="profile-ramp" aria-hidden="true"></div>
+          </div>
+          <a class="profile-link" href="docs/swatches/3400k-light.svg">Inspect the complete role map →</a>
+        </article>
+
+        <article class="profile-card" data-ember-palette="2000k-dark">
+          <header>
+            <p class="card-kicker">Deep redshift</p>
+            <h3>2000K Dark</h3>
+            <p>A dark specialist family for strong Redshift use, with four defensible color identities.</p>
+            <div class="profile-meta"><span>4 categories</span><span>Reduced ANSI bank</span></div>
+          </header>
+          <div class="profile-visual" role="img" aria-label="2000K Dark surfaces, four categorical colors, and sequential ramp">
+            <div class="surface-row" aria-hidden="true">
+              <span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span>
+            </div>
+            <div class="category-row capacity-4" aria-hidden="true">
+              <span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span>
+            </div>
+            <div class="profile-ramp" aria-hidden="true"></div>
+          </div>
+          <a class="profile-link" href="docs/swatches/2000k-dark.svg">Inspect the complete role map →</a>
+        </article>
+
+        <article class="profile-card" data-ember-palette="1200k-dark">
+          <header>
+            <p class="card-kicker">Extreme stress profile</p>
+            <h3>1200K Dark</h3>
+            <p>A dark family for extreme low-temperature transforms, limited to three honest identities.</p>
+            <div class="profile-meta"><span>3 categories</span><span>Blue channel absent</span></div>
+          </header>
+          <div class="profile-visual" role="img" aria-label="1200K Dark surfaces, three categorical colors, and sequential ramp">
+            <div class="surface-row" aria-hidden="true">
+              <span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span>
+            </div>
+            <div class="category-row capacity-3" aria-hidden="true">
+              <span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span>
+            </div>
+            <div class="profile-ramp" aria-hidden="true"></div>
+          </div>
+          <a class="profile-link" href="docs/swatches/1200k-dark.svg">Inspect the complete role map →</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="mechanism" aria-labelledby="mechanism-title">
+      <div class="section-header">
+        <div>
+          <p class="eyebrow">The mechanism</p>
+          <h2 id="mechanism-title">Design in the constrained state first.</h2>
+        </div>
+        <p>A warm filter is not a translucent orange layer. It applies different gains to red, green, and blue, collapsing distinctions that ordinary daytime palettes depend on.</p>
+      </div>
+
+      <div class="mechanism-points">
+        <article class="mechanism-point">
+          <span class="point-number">01</span>
+          <h3>Model the surviving signal</h3>
+          <p>Each family is tested under its target per-channel transform rather than judged only in commanded sRGB.</p>
+        </article>
+        <article class="mechanism-point">
+          <span class="point-number">02</span>
+          <h3>Protect identity and contrast</h3>
+          <p>Hard transformed-state gates come first; daytime separation is improved only inside the surviving solution space.</p>
+        </article>
+        <article class="mechanism-point">
+          <span class="point-number">03</span>
+          <h3>Export one coherent system</h3>
+          <p>The same authored families drive terminal themes, UI roles, chart colors, heatmaps, CSS, JSON, and Python.</p>
+        </article>
+      </div>
+
+      <figure class="comparison-figure">
+        <img src="docs/swatches/command-vs-simulated.png" width="760" height="838" alt="All four Ember categorical and sequential palettes shown as commanded and after their modeled warm transforms">
+        <figcaption class="comparison-caption">
+          <strong>Commanded versus modeled output</strong>
+          <span>Deterministic signal simulation, not a photograph or display calibration.</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="section" id="use-ember" aria-labelledby="use-title">
+      <div class="use-layout">
+        <div class="use-intro">
+          <p class="eyebrow">Use Ember</p>
+          <h2 id="use-title">Pick the surface that already belongs to your workflow.</h2>
+          <p>Ember ships as files and APIs, not as another filter application. Keep the warm-display tool you already use.</p>
+          <div class="section-actions">
+            <a class="button button-primary" href="https://github.com/carpdiem/ember">View the repository</a>
+            <a class="button button-secondary" href="https://github.com/carpdiem/ember#make-ember-work">Read the full guide</a>
+          </div>
+        </div>
+
+        <div class="use-grid">
+          <article class="use-card">
+            <p class="card-kicker">Terminal</p>
+            <h3>Import a native theme</h3>
+            <p>Ready-made schemes are included for Alacritty, iTerm2, and Windows Terminal.</p>
+            <pre><code>themes/terminal/
+├── alacritty/
+├── iterm2/
+└── windows-terminal/</code></pre>
+            <a href="themes/terminal/README.md">Open the terminal guide →</a>
+          </article>
+
+          <article class="use-card">
+            <p class="card-kicker">Python and Matplotlib</p>
+            <h3>Use categorical and sequential maps</h3>
+            <p>Install from GitHub, select a profile, and use the same capacity-aware contracts as the generated files.</p>
+            <pre><code>python -m pip install \
+  "ember-palettes @ git+https://github.com/carpdiem/ember.git"
+
+from ember import categorical, sequential
+categorical("3400k-dark")
+sequential("3400k-dark")</code></pre>
+            <a href="https://github.com/carpdiem/ember#matplotlib">Open the Matplotlib guide →</a>
+          </article>
+
+          <article class="use-card">
+            <p class="card-kicker">CSS and JSON</p>
+            <h3>Theme an interface with exported roles</h3>
+            <p>One semantic attribute selects a family; CSS variables carry surfaces, text, categories, and the sequential ramp.</p>
+            <pre><code>&lt;link rel="stylesheet" href="palettes/ember.css"&gt;
+
+&lt;main data-ember-palette="2000k-dark"&gt;
+  ...
+&lt;/main&gt;</code></pre>
+            <a href="palettes/ember.json">Inspect the JSON manifest →</a>
+          </article>
+        </div>
+      </div>
+
+      <div class="assurance" role="group" aria-label="Ember release facts">
+        <div class="assurance-item"><strong>4</strong><span>Canonical families</span></div>
+        <div class="assurance-item"><strong>6 / 6 / 4 / 3</strong><span>Honest categorical capacities</span></div>
+        <div class="assurance-item"><strong>256</strong><span>Sequential samples per family</span></div>
+        <div class="assurance-item"><strong>3</strong><span>Terminal export formats</span></div>
+      </div>
+
+      <aside class="trust-note">
+        <strong>Scope</strong>
+        <span>Ember models digital warm-transform signals. It does not apply a filter, calibrate a physical display, or predict every operating-system and panel pipeline. The repository publishes the transform assumptions, measured properties, and exact release gates.</span>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="page-shell site-footer">
+    <span>Ember · MIT © 2026 Michael Woods</span>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a class="live-specimen-link" href="examples/">Live specimen</a>
+      <a href="https://github.com/carpdiem/ember#what-is-the-science-behind-it">Science and validation</a>
+      <a href="https://github.com/carpdiem/ember">GitHub</a>
+      <a href="LICENSE">License</a>
+    </nav>
+  </footer>
+
+  <script>
+    const palettes = new Set(["3400k-dark", "3400k-light", "2000k-dark", "1200k-dark"]);
+    const categoryCounts = new Map([
+      ["3400k-dark", 6],
+      ["3400k-light", 6],
+      ["2000k-dark", 4],
+      ["1200k-dark", 3],
+    ]);
+    const selector = document.querySelector("#palette-select");
+    const preview = document.querySelector(".hero-preview");
+    const specimenLinks = document.querySelectorAll(".live-specimen-link");
+    const params = new URLSearchParams(window.location.search);
+
+    function applyPalette(palette, updateUrl = true) {
+      if (!palettes.has(palette)) return;
+      document.documentElement.dataset.emberPalette = palette;
+      selector.value = palette;
+      const paletteName = selector.options[selector.selectedIndex].text;
+      preview.setAttribute(
+        "aria-label",
+        `${paletteName} interface preview with ${categoryCounts.get(palette)} categorical colors`,
+      );
+      specimenLinks.forEach((link) => {
+        link.href = `examples/?palette=${palette}`;
+      });
+
+      if (updateUrl) {
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set("palette", palette);
+        window.history.replaceState({}, "", nextUrl);
+      }
+    }
+
+    applyPalette(params.get("palette") || "3400k-dark", false);
+    selector.addEventListener("change", (event) => applyPalette(event.target.value));
+  </script>
+</body>
+</html>
