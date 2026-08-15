@@ -6,6 +6,18 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
+## Contents
+
+- [Introduction](#introduction)
+- [The four palettes](#the-four-palettes): [3400K Dark](#3400k-dark) · [3400K Light](#3400k-light) · [2000K Dark](#2000k-dark) · [1200K Dark](#1200k-dark)
+- [With and without redshift](#with-and-without-redshift): [terminal](#in-a-terminal) · [charts and heatmaps](#in-charts-and-heatmaps) · [why identities disappear](#why-identities-disappear)
+- [Choose a profile](#choose-a-profile)
+- [Install and use Ember](#make-ember-work): [get the files](#1-get-the-files) · [terminal themes](#2-import-a-terminal-theme) · [UI roles](#3-use-the-ui-surface-roles) · [Matplotlib](#matplotlib) · [CSS](#css)
+- [Science and validation](#what-is-the-science-behind-it): [measured properties](#measured-properties) · [reproduce the build](#reproduce-the-build)
+- [References](#references) · [License](#license)
+
+## Introduction
+
 Ember was created to solve the problem of traditional color palettes having colors that appear indistinguishable once you turn on redshift. With Ember, the primary goal is distinctive colors under various color temperature filters. Only once that's satisfied do we further tweak the redshift-degenerate color channels to improve visual separation during daytime (aka - with no redshift applied).
 
 Ember comes with 4 color palettes:
