@@ -21,7 +21,7 @@
   --plate-shadow: 0 14px 44px color-mix(in srgb, var(--ember-bg-0) 62%, transparent);
   --ease: cubic-bezier(.33,.66,.28,1);
 }
-@media (max-width: 700px){
+@media (max-width: 1100px){
   :root{ --chrome-h: 6.75rem; }
 }
 *,*::before,*::after{ box-sizing:border-box; }
@@ -63,8 +63,7 @@ code, pre, kbd{ font-family:var(--font-mono); }
   position:fixed; inset:0 0 auto 0; height:var(--chrome-h); z-index:120;
   display:flex; flex-wrap:wrap; align-items:center; gap:.6rem 1rem;
   padding:0 clamp(.75rem, 3vw, 1.5rem);
-  background:color-mix(in srgb, var(--ember-bg-1) 93%, transparent);
-  backdrop-filter: blur(9px);
+  background:var(--ember-bg-0);
   border-bottom:var(--rule);
 }
 .burger{
@@ -90,12 +89,16 @@ code, pre, kbd{ font-family:var(--font-mono); }
   font-family:var(--font-mono); font-size:.78rem; letter-spacing:.06em;
   color:var(--ember-fg-0); text-decoration:none;
   border:1px solid var(--ember-fg-2); padding:.4rem .7rem; white-space:nowrap;
-  min-height:44px; display:inline-flex; align-items:center;
+  min-height:44px; display:inline-flex; align-items:center; gap:.45rem;
 }
 .chrome-gh:hover{ background:var(--ember-bg-3); }
+.gh-icon{ width:16px; height:16px; fill:currentColor; flex:0 0 auto; }
 
 /* palette picker — each button is scoped to its own palette for a true preview */
-.picker{ display:flex; gap:.4rem; align-items:center; }
+.picker{
+  display:flex; gap:.4rem; align-items:center;
+  background:var(--ember-bg-0);
+}
 .picker-label{
   font-family:var(--font-mono); font-size:.62rem; letter-spacing:.18em;
   color:var(--ember-fg-2); text-transform:uppercase; margin-right:.2rem;
@@ -119,14 +122,16 @@ code, pre, kbd{ font-family:var(--font-mono); }
   outline:2px solid var(--ember-fg-0); outline-offset:1px;
 }
 .pp .pp-abbr{ display:none; }
-@media (max-width:700px){
+@media (max-width:1100px){
   .chrome{ padding:.4rem .75rem; gap:.35rem .65rem; align-content:center; }
-  .brand em{ display:none; }
   .picker{ order:5; width:100%; gap:.25rem; }
   .pp{ flex:1 1 0; justify-content:center; padding:.3rem .25rem; }
+  .picker-label{ display:none; }
+}
+@media (max-width:700px){
+  .brand em{ display:none; }
   .pp .pp-full{ display:none; }
   .pp .pp-abbr{ display:inline; }
-  .picker-label{ display:none; }
 }
 
 /* ---------- hamburger menu panel ---------- */
@@ -244,11 +249,23 @@ code, pre, kbd{ font-family:var(--font-mono); }
   max-width:38rem; margin:0 0 1.4rem;
 }
 .hero-ctas{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-bottom:1rem; }
+.clone-wrap{ position:relative; max-width:100%; margin:0 0 1rem; }
 .hero-clone{
   font-size:.78rem; background:var(--ember-bg-2); border:var(--rule);
-  padding:.55rem .8rem; color:var(--ember-fg-1); overflow-x:auto; max-width:100%;
-  white-space:nowrap;
+  padding:.7rem 3.4rem .7rem .8rem; color:var(--ember-fg-1);
+  overflow-x:auto; max-width:100%; white-space:nowrap; margin:0;
 }
+.copy-clone{
+  appearance:none; position:absolute; top:50%; right:.25rem;
+  transform:translateY(-50%); width:44px; height:44px;
+  border:0; border-left:var(--rule); background:var(--ember-bg-2);
+  color:var(--ember-fg-1); cursor:pointer; display:grid; place-items:center;
+}
+.copy-clone:hover, .copy-clone:focus-visible{ color:var(--ember-fg-0); background:var(--ember-bg-3); }
+.copy-clone svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.7; }
+.copy-clone .check-icon{ display:none; }
+.copy-clone.is-copied .copy-icon{ display:none; }
+.copy-clone.is-copied .check-icon{ display:block; color:var(--ember-category-four); }
 .hero-note{ font-size:.8rem; color:var(--ember-fg-2); max-width:36rem; }
 .hero-board{
   border:var(--rule); background:var(--ember-bg-1);
@@ -266,17 +283,29 @@ code, pre, kbd{ font-family:var(--font-mono); }
   text-transform:uppercase; color:var(--ember-fg-2); margin-bottom:.3rem;
 }
 .surf-row{ display:flex; border:var(--rule); }
-.surf-row span{ flex:1 1 0; height:26px; }
+.surf-row span{
+  flex:1 1 0; height:32px; display:flex; align-items:center; justify-content:center;
+  color:var(--ember-fg-0); font-family:var(--font-mono); font-size:.52rem;
+  letter-spacing:.06em; text-transform:uppercase;
+}
 .surf-row span:nth-child(1){ background:var(--ember-bg-0); }
 .surf-row span:nth-child(2){ background:var(--ember-bg-1); }
 .surf-row span:nth-child(3){ background:var(--ember-bg-2); }
 .surf-row span:nth-child(4){ background:var(--ember-bg-3); }
 .surf-row span:nth-child(5){ background:var(--ember-bg-4); }
 .surf-row span:nth-child(6){ background:var(--ember-bg-5); }
-.fg-row{ font-size:.85rem; line-height:1.45; }
+.fg-row{ font-size:.82rem; line-height:1.4; }
+.fg-sample{ display:grid; grid-template-columns:3.2rem minmax(0,1fr); gap:.35rem; margin:.18rem 0; }
+.fg-role{ font-family:var(--font-mono); font-size:.62rem; letter-spacing:.06em; font-weight:700; }
 .fg-row .f0{ color:var(--ember-fg-0); }
 .fg-row .f1{ color:var(--ember-fg-1); }
 .fg-row .f2{ color:var(--ember-fg-2); }
+.terminal-specimen{
+  display:flex; flex-wrap:wrap; gap:.35rem 1rem; align-items:center;
+  background:var(--ember-bg-0); border:var(--rule); padding:.55rem .65rem;
+  font-family:var(--font-mono); font-size:.7rem;
+}
+.terminal-specimen code{ background:transparent; padding:0; }
 #cap-sentence{ font-size:.82rem; color:var(--ember-fg-1); margin:.4rem 0 0; }
 @media (max-width:900px){
   .hero{ grid-template-columns:1fr; min-height:0; }
@@ -521,19 +550,29 @@ code, pre, kbd{ font-family:var(--font-mono); }
   clip-path:inset(0 50% 0 0);
 }
 .compare-stack .divider{
-  position:absolute; top:0; bottom:0; left:50%; width:2px;
-  background:var(--ember-fg-0); pointer-events:none;
+  appearance:none; position:absolute; top:0; bottom:0; left:50%; width:44px;
+  transform:translateX(-50%); border:0; padding:0; background:transparent;
+  color:var(--ember-fg-0); cursor:ew-resize; touch-action:none;
+}
+.compare-stack .divider::before{
+  content:""; position:absolute; top:0; bottom:0; left:50%; width:2px;
+  transform:translateX(-50%); background:var(--ember-fg-0);
+}
+.compare-stack .divider::after{
+  content:"↔"; position:absolute; top:50%; left:50%; width:32px; height:44px;
+  transform:translate(-50%,-50%); display:grid; place-items:center;
+  background:var(--ember-bg-1); border:1px solid var(--ember-fg-0);
+  color:var(--ember-fg-0); font-family:var(--font-mono); font-size:.9rem;
+}
+.compare-stack .divider:focus{ outline:none; }
+.compare-stack .divider:hover::after,
+.compare-stack .divider:focus-visible::after{
+  background:var(--ember-bg-3); outline:2px solid var(--ember-fg-0); outline-offset:2px;
 }
 .compare-labels{
   display:flex; justify-content:space-between;
   font-family:var(--font-mono); font-size:.6rem; letter-spacing:.1em;
   color:var(--ember-fg-2); margin-top:.4rem; text-transform:uppercase;
-}
-.compare-ctl{ display:flex; align-items:center; gap:.7rem; margin-top:.6rem; }
-.compare-ctl label{ font-family:var(--font-mono); font-size:.62rem; color:var(--ember-fg-2); white-space:nowrap; }
-.compare-ctl input[type="range"]{
-  flex:1 1 auto; accent-color:var(--ember-category-one);
-  min-width:0; min-height:44px;
 }
 .mona-stage{ width:min(44vw, 34rem); }
 
@@ -545,6 +584,22 @@ code, pre, kbd{ font-family:var(--font-mono); }
   font-family:var(--font-mono); font-size:.64rem; color:var(--ember-fg-1);
 }
 .em-legend i{ display:inline-block; width:16px; height:3px; vertical-align:middle; margin-right:.4rem; }
+.em-legend .le{ color:var(--ember-category-one); }
+.em-legend .lb{ color:var(--ember-category-two); }
+.em-legend .lc{ color:var(--ember-category-three); }
+.vector-symbol{
+  position:relative; display:inline-block; margin-right:.18rem;
+  font-weight:700; line-height:1;
+}
+.vector-symbol::before{
+  content:""; position:absolute; left:0; right:-.12rem; top:-.22rem;
+  border-top:1px solid currentColor;
+}
+.vector-symbol::after{
+  content:""; position:absolute; top:-.34rem; right:-.12rem;
+  width:.22rem; height:.22rem; border-top:1px solid currentColor;
+  border-right:1px solid currentColor; transform:rotate(45deg);
+}
 .em-legend .le i{ background:var(--ember-category-one); }
 .em-legend .lb i{ background:var(--ember-category-two); }
 .em-legend .lc i{ background:var(--ember-category-three); }
@@ -588,9 +643,12 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
   <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Open sections menu">
     <span></span><span></span><span></span>
   </button>
-  <a class="brand" href="#top">Ember<em>warm-filter-safe color</em></a>
+  <a class="brand" href="#top">Ember<em>Redshift-safe color palettes</em></a>
   <div class="chrome-spacer"></div>
-  <a class="chrome-gh" href="https://github.com/carpdiem/ember">GitHub ↗</a>
+  <a class="chrome-gh" href="https://github.com/carpdiem/ember">
+    <svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.49c-2.24.49-2.71-1.08-2.71-1.08-.37-.93-.9-1.18-.9-1.18-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.88 2.34.67.07-.52.28-.88.51-1.08-1.79-.2-3.67-.89-3.67-3.98 0-.88.31-1.6.83-2.16-.08-.2-.36-1.02.08-2.13 0 0 .68-.22 2.2.82A7.65 7.65 0 0 1 8 3.98c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.11.16 1.93.08 2.13.52.56.83 1.28.83 2.16 0 3.1-1.89 3.77-3.68 3.97.29.25.55.74.55 1.5v2.22c0 .21.14.46.55.38A8 8 0 0 0 8 .2Z"/></svg>
+    <span>GitHub</span>
+  </a>
   <div class="picker" role="group" aria-label="Palette profile selector">
     <span class="picker-label">Profile</span>
     <button class="pp" type="button" data-palette="3400k-dark" data-ember-palette="3400k-dark" aria-pressed="true">
@@ -650,7 +708,14 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
       <a class="btn primary" href="https://github.com/carpdiem/ember">View source on GitHub</a>
       <a class="btn" href="#use">Use Ember</a>
     </div>
-    <pre class="hero-clone"><code>git clone https://github.com/carpdiem/ember.git</code></pre>
+    <div class="clone-wrap">
+      <pre class="hero-clone"><code id="clone-command">git clone https://github.com/carpdiem/ember.git</code></pre>
+      <button class="copy-clone" id="copy-clone" type="button" aria-label="Copy git clone command" title="Copy git clone command">
+        <svg class="copy-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 6.5h7.5v9H7z"/><path d="M5 13.5H3.5v-9H11V6"/></svg>
+        <svg class="check-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 10.5 3.25 3.25L15.5 6"/></svg>
+        <span class="visually-hidden" id="copy-feedback" aria-live="polite">Copy git clone command</span>
+      </button>
+    </div>
     <p class="hero-note">
       This page is the specimen. Everything below — text, code, instruments, maps, and
       figures — renders through the profile you select in the header. Nothing here uses a
@@ -668,15 +733,24 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <h2 id="hero-board-title">Live anatomy of the selected profile</h2>
     <div class="board-row">
       <div class="lbl"><span>Surface ladder</span><span>bg-0 → bg-5</span></div>
-      <div class="surf-row" role="img" aria-label="Six background surfaces from base canvas to strongest selection state">
-        <span></span><span></span><span></span><span></span><span></span><span></span>
+      <div class="surf-row" role="img" aria-label="Six labeled background surfaces from base canvas to strongest selection state">
+        <span>BG-0</span><span>BG-1</span><span>BG-2</span><span>BG-3</span><span>BG-4</span><span>BG-5</span>
       </div>
     </div>
     <div class="board-row fg-row">
       <div class="lbl"><span>Foreground ladder</span><span>fg-0 / fg-1 / fg-2</span></div>
-      <span class="f0">Primary text stays cream, never pure white.</span><br>
-      <span class="f1">Supporting text sits one honest step down.</span><br>
-      <span class="f2">Muted metadata — never used for body copy.</span>
+      <div class="fg-sample f0"><span class="fg-role">FG-0:</span><span id="fg-0-copy">Primary text stays cream, never pure white.</span></div>
+      <div class="fg-sample f1"><span class="fg-role">FG-1:</span><span id="fg-1-copy">Supporting text sits one honest step down.</span></div>
+      <div class="fg-sample f2"><span class="fg-role">FG-2:</span><span id="fg-2-copy">Muted metadata — never used for body copy.</span></div>
+    </div>
+    <div class="board-row">
+      <div class="lbl"><span>Terminal accents</span><span>selected profile · text on bg-0</span></div>
+      <div class="terminal-specimen" role="img" aria-label="Terminal syntax accents from the selected profile shown as text on background zero">
+        <code class="t-k">import</code>
+        <code class="t-s">"ember"</code>
+        <code class="t-f">sequential()</code>
+        <code class="t-c"># mapped output</code>
+      </div>
     </div>
     <div class="board-row">
       <div class="lbl"><span>Categorical capacity</span><span id="cap-count">6 / 6</span></div>
@@ -1046,14 +1120,12 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
                data-src-template="assets/mona-lisa-{slug}.png"
                width="640" height="957"
                alt="The same Mona Lisa with pixel luminance mapped deterministically into the selected Ember sequential colormap">
-          <div class="divider" id="mona-divider"></div>
+          <div class="divider" id="mona-divider" role="slider" tabindex="0"
+               aria-label="Comparison wipe between Ember mapping and source image"
+               aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="100"
+               aria-valuenow="50" aria-valuetext="50 percent Ember mapping"></div>
         </div>
         <div class="compare-labels"><span>◀ Ember mapping</span><span>source ▶</span></div>
-        <div class="compare-ctl">
-          <label for="mona-range">Comparison wipe</label>
-          <input type="range" id="mona-range" min="0" max="100" value="50"
-                 aria-label="Position of the wipe between Ember mapping and the untouched source image">
-        </div>
       </div>
     </div>
   </div>
@@ -1089,8 +1161,8 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
                 aria-label="Projected three-dimensional animation of a plane electromagnetic wave: electric field oscillating vertically, magnetic field horizontally, both perpendicular to the propagation axis and in phase"></canvas>
         <figcaption>
           <div class="em-legend">
-            <span class="le"><i></i>E — electric field (ŷ)</span>
-            <span class="lb"><i></i>B — magnetic field (x̂)</span>
+            <span class="le"><i></i><span class="vector-symbol" role="img" aria-label="vector E">E</span> — electric field (ŷ)</span>
+            <span class="lb"><i></i><span class="vector-symbol" role="img" aria-label="vector B">B</span> — magnetic field (x̂)</span>
             <span class="lc"><i></i>tracked phase crest</span>
           </div>
           <p class="em-cap">
@@ -1212,6 +1284,18 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     "2000k-dark":  { label: "2000K Dark",  cats: 4 },
     "1200k-dark":  { label: "1200K Dark",  cats: 3 }
   };
+  var FG_COPY = {
+    dark: [
+      "Primary text stays cream, never pure white.",
+      "Supporting text sits one honest step down.",
+      "Muted metadata — never used for body copy."
+    ],
+    light: [
+      "Primary text stays ink-dark against the warm paper.",
+      "Supporting text steps lighter without losing structure.",
+      "Muted metadata remains dark enough for compact labels."
+    ]
+  };
   var CAT_VARS = [
     "--ember-category-one", "--ember-category-two", "--ember-category-three",
     "--ember-category-four", "--ember-category-five", "--ember-category-six"
@@ -1240,6 +1324,12 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     if (!PALETTES[slug]) slug = "3400k-dark";
     var info = PALETTES[slug];
     root.setAttribute("data-ember-palette", slug);
+
+    var fgCopy = slug === "3400k-light" ? FG_COPY.light : FG_COPY.dark;
+    fgCopy.forEach(function(text, i){
+      var target = document.getElementById("fg-" + i + "-copy");
+      if (target) target.textContent = text;
+    });
 
     document.querySelectorAll(".pp").forEach(function(b){
       b.setAttribute("aria-pressed", String(b.getAttribute("data-palette") === slug));
@@ -1281,6 +1371,51 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
       applyPalette(b.getAttribute("data-palette"), true);
     });
   });
+
+  /* ---------- copy clone command ---------- */
+  var copyClone = document.getElementById("copy-clone");
+  var cloneCommand = document.getElementById("clone-command");
+  var copyFeedback = document.getElementById("copy-feedback");
+  var copyTimer = null;
+  function fallbackCopy(text){
+    var textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.className = "visually-hidden";
+    textarea.setAttribute("readonly", "");
+    document.body.appendChild(textarea);
+    textarea.select();
+    var copied = document.execCommand("copy");
+    textarea.remove();
+    return copied;
+  }
+  function copyText(text){
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext){
+      return navigator.clipboard.writeText(text).then(function(){ return true; }).catch(function(){
+        return fallbackCopy(text);
+      });
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+  function showCopyResult(copied){
+    if (!copyClone || !copyFeedback) return;
+    var message = copied ? "Copied git clone command" : "Copy unavailable";
+    copyClone.classList.toggle("is-copied", copied);
+    copyClone.setAttribute("aria-label", message);
+    copyClone.title = message;
+    copyFeedback.textContent = message;
+    if (copyTimer) clearTimeout(copyTimer);
+    copyTimer = setTimeout(function(){
+      copyClone.classList.remove("is-copied");
+      copyClone.setAttribute("aria-label", "Copy git clone command");
+      copyClone.title = "Copy git clone command";
+      copyFeedback.textContent = "Copy git clone command";
+    }, 1800);
+  }
+  if (copyClone && cloneCommand){
+    copyClone.addEventListener("click", function(){
+      copyText(cloneCommand.textContent.trim()).then(showCopyResult);
+    });
+  }
 
   /* ---------- hamburger menu ---------- */
   var burger = document.getElementById("burger");
@@ -1564,11 +1699,27 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     ctx.beginPath(); ctx.arc(cSide[0], cSide[1], 3, 0, Math.PI * 2); ctx.fill();
 
     /* labels */
-    ctx.fillStyle = colors.fg1;
     ctx.font = "12px ui-monospace, monospace";
-    ctx.fillText("E (electric, \u0177)", ey[0] - 8, ey[1] - 8);
-    ctx.fillText("B (magnetic, x\u0302)", ex[0] + 6, ex[1] + 4);
-    ctx.fillText("k \u2192 propagation at c", p1[0] - 150, p1[1] - 10);
+    function drawVectorLabel(symbol, detail, x, y, color){
+      ctx.save();
+      ctx.fillStyle = color;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.fillText(symbol + "  " + detail, x, y);
+      var symbolWidth = ctx.measureText(symbol).width;
+      var arrowY = y - 13;
+      var arrowEnd = x + symbolWidth + 1;
+      ctx.beginPath();
+      ctx.moveTo(x, arrowY); ctx.lineTo(arrowEnd, arrowY);
+      ctx.moveTo(arrowEnd, arrowY); ctx.lineTo(arrowEnd - 3, arrowY - 2);
+      ctx.moveTo(arrowEnd, arrowY); ctx.lineTo(arrowEnd - 3, arrowY + 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+    drawVectorLabel("E", "(electric, ŷ)", ey[0] - 8, ey[1] - 8, eCol);
+    drawVectorLabel("B", "(magnetic, x̂)", ex[0] + 6, ex[1] + 4, bCol);
+    ctx.fillStyle = colors.fg1;
+    ctx.fillText("k → propagation at c", p1[0] - 150, p1[1] - 10);
     ctx.fillStyle = colors.fg2;
     ctx.fillText("phase crest", cTop[0] + 8, cTop[1] - 8);
   }
@@ -1624,15 +1775,51 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   });
 
   /* ---------- Mona Lisa wipe ---------- */
-  var monaRange = document.getElementById("mona-range");
+  var monaStack = document.getElementById("compare-stack");
   var monaOver = document.getElementById("mona-over");
   var monaDivider = document.getElementById("mona-divider");
-  if (monaRange && monaOver && monaDivider){
-    monaRange.addEventListener("input", function(){
-      var v = Number(monaRange.value);
+  if (monaStack && monaOver && monaDivider){
+    var monaDragging = false;
+    function setMonaWipe(value){
+      var v = Math.max(0, Math.min(100, Math.round(value)));
       monaOver.style.clipPath = "inset(0 " + (100 - v) + "% 0 0)";
       monaDivider.style.left = v + "%";
+      monaDivider.setAttribute("aria-valuenow", String(v));
+      monaDivider.setAttribute("aria-valuetext", v + " percent Ember mapping");
+    }
+    function setMonaWipeFromPointer(e){
+      var rect = monaStack.getBoundingClientRect();
+      setMonaWipe((e.clientX - rect.left) / rect.width * 100);
+    }
+    monaDivider.addEventListener("pointerdown", function(e){
+      monaDragging = true;
+      monaDivider.setPointerCapture(e.pointerId);
+      setMonaWipeFromPointer(e);
+      e.preventDefault();
     });
+    monaDivider.addEventListener("pointermove", function(e){
+      if (monaDragging) setMonaWipeFromPointer(e);
+    });
+    function endMonaDrag(e){
+      if (!monaDragging) return;
+      monaDragging = false;
+      if (monaDivider.hasPointerCapture(e.pointerId)) monaDivider.releasePointerCapture(e.pointerId);
+    }
+    monaDivider.addEventListener("pointerup", endMonaDrag);
+    monaDivider.addEventListener("pointercancel", endMonaDrag);
+    monaDivider.addEventListener("keydown", function(e){
+      var value = Number(monaDivider.getAttribute("aria-valuenow"));
+      if (e.key === "ArrowLeft" || e.key === "ArrowDown") value -= 2;
+      else if (e.key === "ArrowRight" || e.key === "ArrowUp") value += 2;
+      else if (e.key === "PageDown") value -= 10;
+      else if (e.key === "PageUp") value += 10;
+      else if (e.key === "Home") value = 0;
+      else if (e.key === "End") value = 100;
+      else return;
+      setMonaWipe(value);
+      e.preventDefault();
+    });
+    setMonaWipe(50);
   }
 
   /* ---------- boot ---------- */

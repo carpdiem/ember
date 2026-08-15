@@ -442,6 +442,55 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
     assert not re.search(r"(?:rgb|hsl|oklab|oklch)\(", landing, flags=re.IGNORECASE)
 
 
+def test_root_landing_page_refinement_interactions() -> None:
+    landing = (ROOT / "index.html").read_text()
+
+    chrome_rule = re.search(r"\.chrome\{(.*?)\n\}", landing, flags=re.DOTALL)
+    picker_rule = re.search(r"\.picker\{(.*?)\}", landing, flags=re.DOTALL)
+    assert chrome_rule
+    assert picker_rule
+    assert "background:var(--ember-bg-0)" in chrome_rule.group(1)
+    assert "transparent" not in chrome_rule.group(1)
+    assert "background:var(--ember-bg-0)" in picker_rule.group(1)
+
+    assert "Redshift-safe color palettes" in landing
+    for role in ("BG-0", "BG-1", "BG-2", "BG-3", "BG-4", "BG-5"):
+        assert f">{role}</span>" in landing
+    for role in ("FG-0:", "FG-1:", "FG-2:"):
+        assert f">{role}</span>" in landing
+    assert 'id="fg-0-copy"' in landing
+    assert "Primary text stays ink-dark against the warm paper." in landing
+    assert 'class="terminal-specimen"' in landing
+    for token_class in ("t-k", "t-s", "t-f", "t-c"):
+        assert f'class="{token_class}"' in landing
+
+    assert 'id="mona-divider"' in landing
+    assert 'role="slider"' in landing
+    assert 'aria-valuemin="0"' in landing
+    assert 'aria-valuemax="100"' in landing
+    assert 'aria-valuenow="50"' in landing
+    assert 'type="range" id="mona-range"' not in landing
+    assert 'monaDivider.addEventListener("pointerdown"' in landing
+    assert 'monaDivider.addEventListener("pointermove"' in landing
+    assert "setPointerCapture" in landing
+    assert 'e.key === "ArrowLeft"' in landing
+    assert 'e.key === "ArrowRight"' in landing
+
+    assert 'class="vector-symbol" role="img" aria-label="vector E">E</span>' in landing
+    assert 'class="vector-symbol" role="img" aria-label="vector B">B</span>' in landing
+    assert 'drawVectorLabel("E", "(electric, ŷ)"' in landing
+    assert 'drawVectorLabel("B", "(magnetic, x̂)"' in landing
+    assert ".em-legend .le{ color:var(--ember-category-one); }" in landing
+    assert ".em-legend .lb{ color:var(--ember-category-two); }" in landing
+
+    assert 'class="gh-icon"' in landing
+    assert 'id="copy-clone"' in landing
+    assert 'aria-label="Copy git clone command"' in landing
+    assert "navigator.clipboard.writeText" in landing
+    assert 'document.execCommand("copy")' in landing
+    assert 'aria-live="polite"' in landing
+
+
 def test_legacy_live_example_redirects_to_the_unified_root() -> None:
     example = (ROOT / "examples/index.html").read_text()
 
