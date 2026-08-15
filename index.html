@@ -1,2571 +1,1644 @@
 <!DOCTYPE html>
 <html lang="en" data-ember-palette="3400k-dark">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Ember is a family of terminal, UI, chart, and sequential palettes authored to preserve useful color identity under warm display transforms.">
-  <title>Ember — color systems for warm-shifted screens</title>
-  <link rel="stylesheet" href="palettes/ember.css">
-  <style>
-    :root {
-      color-scheme: dark;
-    }
-
-    :root[data-ember-palette="3400k-light"] {
-      color-scheme: light;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: 6rem;
-      background: var(--ember-bg-0);
-    }
-
-    body {
-      min-width: 20rem;
-      margin: 0;
-      overflow-x: hidden;
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-0);
-      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-size: 1rem;
-      line-height: 1.6;
-      transition: color 160ms ease, background-color 160ms ease;
-    }
-
-    body::before {
-      position: fixed;
-      z-index: -1;
-      inset: 0;
-      background:
-        radial-gradient(circle at 15% 8%, color-mix(in srgb, var(--ember-category-one) 12%, transparent), transparent 28rem),
-        radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--ember-category-two) 9%, transparent), transparent 30rem);
-      content: "";
-      pointer-events: none;
-    }
-
-    ::selection {
-      color: var(--ember-bg-0);
-      background: var(--ember-category-one);
-    }
-
-    a {
-      color: inherit;
-      text-underline-offset: 0.2em;
-    }
-
-    a:focus-visible,
-    button:focus-visible,
-    select:focus-visible,
-    summary:focus-visible {
-      outline: 0.2rem solid var(--ember-category-one);
-      outline-offset: 0.2rem;
-    }
-
-    img {
-      display: block;
-      max-width: 100%;
-      height: auto;
-    }
-
-    code,
-    pre {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-    }
-
-    code {
-      color: var(--ember-fg-0);
-    }
-
-    .site-header {
-      position: sticky;
-      z-index: 20;
-      top: 0;
-      border-bottom: 1px solid var(--ember-bg-4);
-      background: color-mix(in srgb, var(--ember-bg-0) 90%, transparent);
-      backdrop-filter: blur(1rem);
-    }
-
-    .nav-shell,
-    .page-shell {
-      width: min(100% - 2.5rem, 76rem);
-      margin-inline: auto;
-    }
-
-    .nav-shell {
-      display: grid;
-      min-height: 4.7rem;
-      grid-template-columns: auto 1fr;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    .brand {
-      display: inline-flex;
-      gap: 0.7rem;
-      align-items: center;
-      color: var(--ember-fg-0);
-      font-size: 1.08rem;
-      font-weight: 760;
-      letter-spacing: -0.02em;
-      text-decoration: none;
-    }
-
-    .brand-mark {
-      position: relative;
-      width: 1.65rem;
-      aspect-ratio: 1;
-      flex: 0 0 auto;
-      border-radius: 50%;
-      background: var(--ember-sequential);
-      box-shadow: 0 0 0 1px var(--ember-bg-5);
-    }
-
-    .brand-mark::after {
-      position: absolute;
-      inset: 0.42rem;
-      border-radius: inherit;
-      background: var(--ember-bg-0);
-      content: "";
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 0.7rem;
-      align-items: center;
-      justify-content: flex-end;
-    }
-
-    .header-link,
-    .toc-menu summary {
-      min-height: 2.35rem;
-      padding: 0.48rem 0.75rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.65rem;
-      color: var(--ember-fg-1);
-      font-size: 0.86rem;
-      font-weight: 650;
-      text-decoration: none;
-    }
-
-    .header-link:hover,
-    .toc-menu summary:hover {
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-2);
-    }
-
-    .toc-menu {
-      position: relative;
-    }
-
-    .toc-menu summary {
-      display: inline-flex;
-      gap: 0.5rem;
-      align-items: center;
-      cursor: pointer;
-      list-style: none;
-    }
-
-    .toc-menu summary::-webkit-details-marker {
-      display: none;
-    }
-
-    .toc-menu summary::after {
-      color: var(--ember-category-two);
-      content: "↓";
-      font-size: 0.8rem;
-    }
-
-    .toc-menu[open] summary {
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-2);
-    }
-
-    .toc-panel {
-      position: absolute;
-      z-index: 30;
-      top: calc(100% + 0.7rem);
-      right: 0;
-      display: grid;
-      width: min(22rem, calc(100vw - 1.5rem));
-      padding: 0.7rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.85rem;
-      background: var(--ember-bg-1);
-      box-shadow: 0 1.2rem 3rem color-mix(in srgb, var(--ember-bg-0) 68%, transparent);
-    }
-
-    .toc-panel a {
-      display: grid;
-      grid-template-columns: 2.2rem 1fr;
-      gap: 0.65rem;
-      padding: 0.68rem 0.75rem;
-      border-radius: 0.55rem;
-      color: var(--ember-fg-1);
-      font-size: 0.83rem;
-      font-weight: 650;
-      text-decoration: none;
-    }
-
-    .toc-panel a:hover {
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-3);
-    }
-
-    .toc-panel span {
-      color: var(--ember-category-two);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-    }
-
-    .toc-panel .toc-external {
-      margin-top: 0.35rem;
-      border-top: 1px solid var(--ember-bg-4);
-      border-radius: 0;
-    }
-
-    .palette-control {
-      display: grid;
-      gap: 0.18rem;
-    }
-
-    .palette-control span {
-      color: var(--ember-fg-2);
-      font-size: 0.66rem;
-      font-weight: 760;
-      letter-spacing: 0.12em;
-      line-height: 1.2;
-      text-transform: uppercase;
-    }
-
-    .palette-control select {
-      min-width: 9.6rem;
-      padding: 0.45rem 2rem 0.45rem 0.65rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.6rem;
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-2);
-      font: inherit;
-      font-size: 0.82rem;
-      font-weight: 680;
-    }
-
-    .page-shell {
-      padding-bottom: 3rem;
-    }
-
-    .hero {
-      display: grid;
-      min-height: calc(100vh - 4.7rem);
-      grid-template-columns: minmax(0, 1.08fr) minmax(23rem, 0.92fr);
-      gap: clamp(3rem, 7vw, 7rem);
-      align-items: center;
-      padding-block: clamp(5rem, 11vw, 9rem);
-    }
-
-    .eyebrow,
-    .card-kicker {
-      margin: 0 0 1rem;
-      color: var(--ember-category-two);
-      font-size: 0.72rem;
-      font-weight: 780;
-      letter-spacing: 0.13em;
-      line-height: 1.4;
-      text-transform: uppercase;
-    }
-
-    .hero h1 {
-      max-width: 10.5ch;
-      margin: 0;
-      font-size: clamp(3.3rem, 7.8vw, 6.9rem);
-      font-weight: 780;
-      letter-spacing: -0.068em;
-      line-height: 0.91;
-      text-wrap: balance;
-    }
-
-    .hero-dek {
-      max-width: 38rem;
-      margin: 2rem 0 0;
-      color: var(--ember-fg-1);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(1.18rem, 2.1vw, 1.5rem);
-      line-height: 1.55;
-    }
-
-    .hero-actions,
-    .section-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 2.2rem;
-    }
-
-    .button {
-      display: inline-flex;
-      min-height: 3rem;
-      padding: 0.72rem 1rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.7rem;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.88rem;
-      font-weight: 730;
-      text-decoration: none;
-    }
-
-    .button-primary {
-      border-color: var(--ember-category-one);
-      color: var(--ember-bg-0);
-      background: var(--ember-category-one);
-    }
-
-    .button-secondary {
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-2);
-    }
-
-    .button:hover {
-      transform: translateY(-1px);
-    }
-
-    .proof-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.65rem 1.2rem;
-      margin: 2rem 0 0;
-      padding: 0;
-      color: var(--ember-fg-2);
-      font-size: 0.8rem;
-      font-weight: 650;
-      list-style: none;
-    }
-
-    .proof-list li::before {
-      margin-right: 0.48rem;
-      color: var(--ember-category-three);
-      content: "●";
-    }
-
-    .hero-preview {
-      position: relative;
-      margin: 0;
-      padding: 1rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 1.25rem;
-      background: var(--ember-bg-1);
-      box-shadow: 0 1.8rem 5rem color-mix(in srgb, var(--ember-bg-0) 65%, transparent);
-    }
-
-    .preview-topline,
-    .preview-meta,
-    .profile-meta,
-    .comparison-caption {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .preview-topline {
-      padding: 0.2rem 0.2rem 0.9rem;
-      color: var(--ember-fg-2);
-      font-size: 0.68rem;
-      font-weight: 760;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .preview-state {
-      display: inline-flex;
-      gap: 0.35rem;
-      align-items: center;
-    }
-
-    .preview-state::before {
-      width: 0.48rem;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: var(--ember-category-three);
-      content: "";
-    }
-
-    .preview-window {
-      overflow: hidden;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.9rem;
-      background: var(--ember-bg-0);
-    }
-
-    .preview-chrome {
-      display: flex;
-      gap: 0.38rem;
-      align-items: center;
-      padding: 0.78rem 0.9rem;
-      border-bottom: 1px solid var(--ember-bg-4);
-      background: var(--ember-bg-2);
-    }
-
-    .window-dot {
-      width: 0.52rem;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: var(--ember-fg-2);
-    }
-
-    .window-dot:nth-child(2) {
-      background: var(--ember-category-two);
-    }
-
-    .window-dot:nth-child(3) {
-      background: var(--ember-category-three);
-    }
-
-    .preview-layout {
-      display: grid;
-      min-height: 20rem;
-      grid-template-columns: 5.6rem 1fr;
-    }
-
-    .preview-sidebar {
-      display: grid;
-      align-content: start;
-      gap: 0.55rem;
-      padding: 1rem 0.75rem;
-      border-right: 1px solid var(--ember-bg-4);
-      background: var(--ember-bg-1);
-    }
-
-    .sidebar-line,
-    .content-line {
-      height: 0.44rem;
-      border-radius: 999px;
-      background: var(--ember-bg-5);
-    }
-
-    .sidebar-line:first-child {
-      width: 74%;
-      background: var(--ember-category-one);
-    }
-
-    .sidebar-line:nth-child(3) {
-      width: 82%;
-    }
-
-    .sidebar-line:nth-child(4) {
-      width: 66%;
-    }
-
-    .preview-content {
-      display: grid;
-      align-content: start;
-      gap: 1rem;
-      padding: 1.2rem;
-    }
-
-    .preview-heading {
-      width: 62%;
-      height: 1.05rem;
-      border-radius: 999px;
-      background: var(--ember-fg-0);
-    }
-
-    .content-lines {
-      display: grid;
-      gap: 0.48rem;
-    }
-
-    .content-line {
-      width: 100%;
-      background: var(--ember-bg-5);
-    }
-
-    .content-line:nth-child(2) {
-      width: 88%;
-    }
-
-    .content-line:nth-child(3) {
-      width: 70%;
-    }
-
-    .mini-chart {
-      display: grid;
-      height: 6.5rem;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 0.48rem;
-      align-items: end;
-      padding: 0.8rem;
-      border: 1px solid var(--ember-bg-4);
-      border-radius: 0.65rem;
-      background: var(--ember-bg-2);
-    }
-
-    .mini-bar {
-      min-height: 18%;
-      border-radius: 0.28rem 0.28rem 0 0;
-      background: var(--ember-category-one);
-    }
-
-    .mini-bar:nth-child(2) {
-      height: 72%;
-      background: var(--ember-category-two);
-    }
-
-    .mini-bar:nth-child(3) {
-      height: 48%;
-      background: var(--ember-category-three);
-    }
-
-    .mini-bar:nth-child(4) {
-      height: 88%;
-      background: var(--ember-category-four);
-    }
-
-    .mini-bar:nth-child(5) {
-      height: 62%;
-      background: var(--ember-category-five);
-    }
-
-    .mini-bar:nth-child(6) {
-      height: 38%;
-      background: var(--ember-category-six);
-    }
-
-    html[data-ember-palette="2000k-dark"] .hero-preview .mini-bar:nth-child(n + 5),
-    html[data-ember-palette="1200k-dark"] .hero-preview .mini-bar:nth-child(n + 4) {
-      display: none;
-    }
-
-    html[data-ember-palette="2000k-dark"] .hero-preview .mini-chart {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    html[data-ember-palette="1200k-dark"] .hero-preview .mini-chart {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .preview-ramp,
-    .profile-ramp {
-      height: 0.68rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 999px;
-      background: var(--ember-sequential);
-    }
-
-    .preview-meta {
-      padding: 1rem 0.2rem 0.1rem;
-      color: var(--ember-fg-2);
-      font-size: 0.74rem;
-      font-weight: 680;
-    }
-
-    .preview-meta strong {
-      color: var(--ember-fg-0);
-      font-weight: 760;
-    }
-
-    .palette-only {
-      display: none;
-    }
-
-    html[data-ember-palette="3400k-dark"] .palette-only[data-for="3400k-dark"],
-    html[data-ember-palette="3400k-light"] .palette-only[data-for="3400k-light"],
-    html[data-ember-palette="2000k-dark"] .palette-only[data-for="2000k-dark"],
-    html[data-ember-palette="1200k-dark"] .palette-only[data-for="1200k-dark"] {
-      display: inline;
-    }
-
-    .section {
-      padding-block: clamp(5rem, 9vw, 8rem);
-      border-top: 1px solid var(--ember-bg-4);
-      scroll-margin-top: 5.5rem;
-    }
-
-    .section-header {
-      display: grid;
-      grid-template-columns: minmax(0, 0.72fr) minmax(19rem, 0.45fr);
-      gap: 3rem;
-      align-items: end;
-      margin-bottom: 3rem;
-    }
-
-    .section-header h2,
-    .use-intro h2 {
-      max-width: 15ch;
-      margin: 0;
-      font-size: clamp(2.35rem, 5vw, 4.5rem);
-      font-weight: 760;
-      letter-spacing: -0.055em;
-      line-height: 0.98;
-      text-wrap: balance;
-    }
-
-    .section-header > p,
-    .use-intro > p {
-      margin: 0;
-      color: var(--ember-fg-1);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.08rem;
-      line-height: 1.6;
-    }
-
-    .profile-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 1rem;
-    }
-
-    .profile-card {
-      display: grid;
-      min-height: 24rem;
-      grid-template-rows: auto 1fr auto;
-      gap: 1.5rem;
-      padding: clamp(1.2rem, 3vw, 1.8rem);
-      overflow: hidden;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 1rem;
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-0);
-    }
-
-    .profile-card[data-ember-palette="3400k-light"] {
-      color-scheme: light;
-    }
-
-    .profile-card h3 {
-      margin: 0;
-      font-size: clamp(1.7rem, 3vw, 2.45rem);
-      letter-spacing: -0.04em;
-      line-height: 1;
-    }
-
-    .profile-card p {
-      max-width: 40rem;
-      margin: 0.7rem 0 0;
-      color: var(--ember-fg-1);
-      font-size: 0.92rem;
-    }
-
-    .profile-card .card-kicker,
-    .use-card .card-kicker {
-      margin: 0 0 1rem;
-      color: var(--ember-category-two);
-      font-size: 0.72rem;
-      font-weight: 780;
-      letter-spacing: 0.13em;
-      line-height: 1.4;
-    }
-
-    .profile-meta {
-      margin-top: 1rem;
-      color: var(--ember-fg-2);
-      font-size: 0.72rem;
-      font-weight: 720;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .profile-visual {
-      display: grid;
-      align-content: center;
-      gap: 1rem;
-      padding: 1.2rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.75rem;
-      background: var(--ember-bg-2);
-    }
-
-    .surface-row {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 0.35rem;
-    }
-
-    .surface-chip,
-    .category-chip {
-      min-width: 0;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.36rem;
-    }
-
-    .surface-chip {
-      height: 2rem;
-      background: var(--ember-bg-0);
-    }
-
-    .surface-chip:nth-child(2) {
-      background: var(--ember-bg-1);
-    }
-
-    .surface-chip:nth-child(3) {
-      background: var(--ember-bg-2);
-    }
-
-    .surface-chip:nth-child(4) {
-      background: var(--ember-bg-3);
-    }
-
-    .surface-chip:nth-child(5) {
-      background: var(--ember-bg-4);
-    }
-
-    .surface-chip:nth-child(6) {
-      background: var(--ember-bg-5);
-    }
-
-    .category-row {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 0.35rem;
-    }
-
-    .category-row.capacity-4 {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
-    .category-row.capacity-3 {
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .category-chip {
-      height: 3.2rem;
-      background: var(--ember-category-one);
-    }
-
-    .category-chip:nth-child(2) {
-      background: var(--ember-category-two);
-    }
-
-    .category-chip:nth-child(3) {
-      background: var(--ember-category-three);
-    }
-
-    .category-chip:nth-child(4) {
-      background: var(--ember-category-four);
-    }
-
-    .category-chip:nth-child(5) {
-      background: var(--ember-category-five);
-    }
-
-    .category-chip:nth-child(6) {
-      background: var(--ember-category-six);
-    }
-
-    .profile-link {
-      color: var(--ember-fg-0);
-      font-size: 0.82rem;
-      font-weight: 720;
-      text-decoration-color: var(--ember-category-one);
-    }
-
-    .mechanism-points {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .mechanism-point,
-    .use-card {
-      padding: 1.4rem;
-      border: 1px solid var(--ember-bg-4);
-      border-radius: 0.85rem;
-      background: var(--ember-bg-1);
-    }
-
-    .point-number {
-      display: grid;
-      width: 2rem;
-      aspect-ratio: 1;
-      margin-bottom: 1.5rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 50%;
-      place-items: center;
-      color: var(--ember-category-two);
-      background: var(--ember-bg-2);
-      font-size: 0.75rem;
-      font-weight: 780;
-    }
-
-    .mechanism-point h3,
-    .use-card h3 {
-      margin: 0;
-      font-size: 1.05rem;
-      letter-spacing: -0.02em;
-    }
-
-    .mechanism-point p,
-    .use-card > p {
-      margin: 0.65rem 0 0;
-      color: var(--ember-fg-1);
-      font-size: 0.88rem;
-    }
-
-    .comparison-figure {
-      width: min(100%, 52rem);
-      margin: 3rem auto 0;
-      padding: 0.8rem;
-      border: 1px solid var(--ember-bg-4);
-      border-radius: 1rem;
-      background: var(--ember-bg-1);
-    }
-
-    .comparison-figure img {
-      width: 100%;
-      border-radius: 0.55rem;
-    }
-
-    .comparison-caption {
-      padding: 0.9rem 0.25rem 0.1rem;
-      color: var(--ember-fg-2);
-      font-size: 0.74rem;
-    }
-
-    .comparison-caption strong {
-      color: var(--ember-fg-1);
-    }
-
-    .use-layout {
-      display: grid;
-      grid-template-columns: minmax(17rem, 0.42fr) minmax(0, 1fr);
-      gap: clamp(2rem, 7vw, 6rem);
-      align-items: start;
-    }
-
-    .use-intro {
-      position: sticky;
-      top: 7rem;
-    }
-
-    .use-intro > p {
-      margin-top: 1.4rem;
-    }
-
-    .use-grid {
-      display: grid;
-      gap: 1rem;
-    }
-
-    .use-card {
-      overflow: hidden;
-    }
-
-    .use-card pre {
-      margin: 1.2rem 0 0;
-      padding: 1rem;
-      overflow-x: auto;
-      border: 1px solid var(--ember-bg-4);
-      border-radius: 0.6rem;
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-0);
-      font-size: 0.76rem;
-      line-height: 1.65;
-      white-space: pre;
-    }
-
-    .use-card a {
-      display: inline-block;
-      margin-top: 1rem;
-      color: var(--ember-fg-0);
-      font-size: 0.8rem;
-      font-weight: 720;
-      text-decoration-color: var(--ember-category-one);
-    }
-
-    .assurance {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 1px;
-      margin-top: 4rem;
-      overflow: hidden;
-      border: 1px solid var(--ember-bg-4);
-      border-radius: 0.9rem;
-      background: var(--ember-bg-4);
-    }
-
-    .assurance-item {
-      padding: 1.2rem;
-      background: var(--ember-bg-1);
-    }
-
-    .assurance-item strong {
-      display: block;
-      color: var(--ember-fg-0);
-      font-size: 1.35rem;
-      letter-spacing: -0.04em;
-    }
-
-    .assurance-item span {
-      display: block;
-      margin-top: 0.25rem;
-      color: var(--ember-fg-2);
-      font-size: 0.73rem;
-    }
-
-    .trust-note {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 1rem;
-      align-items: start;
-      margin-top: 1rem;
-      padding: 1.2rem;
-      border-left: 0.22rem solid var(--ember-category-two);
-      color: var(--ember-fg-1);
-      background: var(--ember-bg-1);
-      font-size: 0.88rem;
-    }
-
-    .trust-note strong {
-      color: var(--ember-fg-0);
-    }
-
-    .site-footer {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-      justify-content: space-between;
-      padding-block: 2rem;
-      border-top: 1px solid var(--ember-bg-4);
-      color: var(--ember-fg-2);
-      font-size: 0.76rem;
-    }
-
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .footer-links a:hover {
-      color: var(--ember-fg-0);
-    }
-
-    .specimen-suite {
-      padding-block: 6.5rem 1rem;
-      border-top: 1px solid var(--ember-bg-4);
-    }
-
-    .suite-header {
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
-      gap: clamp(2rem, 7vw, 6rem);
-      align-items: end;
-      margin-bottom: 5rem;
-    }
-
-    .suite-header h2,
-    .specimen-heading h2 {
-      margin: 0;
-      color: var(--ember-fg-0);
-      font-size: clamp(2.35rem, 5vw, 4.6rem);
-      letter-spacing: -0.055em;
-      line-height: 0.98;
-      text-wrap: balance;
-    }
-
-    .suite-header > div > p:last-child,
-    .specimen-heading > p {
-      margin: 0;
-      color: var(--ember-fg-1);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.08rem;
-      line-height: 1.68;
-    }
-
-    .truth-key {
-      display: grid;
-      gap: 0.7rem;
-      padding: 1rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.9rem;
-      background: var(--ember-bg-1);
-    }
-
-    .truth-item {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 0.75rem;
-      align-items: start;
-      color: var(--ember-fg-1);
-      font-size: 0.78rem;
-      line-height: 1.5;
-    }
-
-    .truth-mark {
-      width: 0.62rem;
-      aspect-ratio: 1;
-      margin-top: 0.3rem;
-      border-radius: 50%;
-      background: var(--ember-category-one);
-      box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--ember-category-one) 16%, transparent);
-    }
-
-    .truth-item:nth-child(2) .truth-mark {
-      background: var(--ember-category-two);
-      box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--ember-category-two) 16%, transparent);
-    }
-
-    .truth-item:nth-child(3) .truth-mark {
-      background: var(--ember-category-three);
-      box-shadow: 0 0 0 0.22rem color-mix(in srgb, var(--ember-category-three) 16%, transparent);
-    }
-
-    .specimen-section {
-      padding-block: clamp(5rem, 10vw, 8rem);
-      border-top: 1px solid var(--ember-bg-4);
-    }
-
-    .specimen-heading {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
-      gap: clamp(2rem, 7vw, 6rem);
-      align-items: end;
-      margin-bottom: 2.4rem;
-    }
-
-    .specimen-heading h2 {
-      font-size: clamp(2rem, 4.4vw, 3.8rem);
-    }
-
-    .specimen-index,
-    .status-label {
-      color: var(--ember-category-two);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.68rem;
-      font-weight: 760;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-    }
-
-    .specimen-index {
-      display: block;
-      margin-bottom: 0.9rem;
-    }
-
-    .specimen-stage {
-      overflow: hidden;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 1.15rem;
-      background: var(--ember-bg-1);
-      box-shadow: 0 1.4rem 4rem color-mix(in srgb, var(--ember-bg-0) 40%, transparent);
-    }
-
-    .stage-caption {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      justify-content: space-between;
-      padding: 1rem 1.15rem;
-      border-bottom: 1px solid var(--ember-bg-4);
-      color: var(--ember-fg-2);
-      font-size: 0.74rem;
-      line-height: 1.5;
-    }
-
-    .stage-caption strong {
-      color: var(--ember-fg-0);
-    }
-
-    .editorial-stage {
-      padding: clamp(1.2rem, 4vw, 3.5rem);
-      background:
-        linear-gradient(90deg, transparent 0 72%, color-mix(in srgb, var(--ember-category-two) 7%, transparent) 72% 100%),
-        var(--ember-bg-1);
-    }
-
-    .editorial-masthead {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 1rem;
-      border-bottom: 0.18rem solid var(--ember-fg-0);
-      color: var(--ember-fg-1);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 0.78rem;
-      font-style: italic;
-    }
-
-    .editorial-wordmark {
-      color: var(--ember-fg-0);
-      font-size: clamp(1.3rem, 3vw, 2.2rem);
-      font-style: normal;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-    }
-
-    .editorial-header {
-      max-width: 58rem;
-      padding-block: clamp(2.5rem, 7vw, 5.8rem) 2.7rem;
-    }
-
-    .editorial-header h3 {
-      max-width: 11ch;
-      margin: 0.65rem 0 1.2rem;
-      color: var(--ember-fg-0);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(3rem, 8vw, 6.8rem);
-      font-weight: 500;
-      letter-spacing: -0.065em;
-      line-height: 0.88;
-      text-wrap: balance;
-    }
-
-    .editorial-dek {
-      max-width: 40rem;
-      margin: 0;
-      color: var(--ember-fg-1);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(1.18rem, 2.2vw, 1.55rem);
-      line-height: 1.48;
-    }
-
-    .editorial-body {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(13rem, 0.34fr);
-      gap: clamp(2rem, 6vw, 5rem);
-      padding-top: 2rem;
-      border-top: 1px solid var(--ember-bg-5);
-    }
-
-    .editorial-copy {
-      columns: 2 17rem;
-      column-gap: clamp(2rem, 5vw, 4rem);
-      color: var(--ember-fg-1);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.02rem;
-      line-height: 1.78;
-    }
-
-    .editorial-copy p {
-      margin: 0 0 1.25rem;
-    }
-
-    .editorial-copy p:first-child::first-letter {
-      float: left;
-      margin: 0.08em 0.12em 0 0;
-      color: var(--ember-category-one);
-      font-size: 4.8em;
-      font-weight: 700;
-      line-height: 0.72;
-    }
-
-    .editorial-aside {
-      align-self: start;
-      padding-top: 1rem;
-      border-top: 0.32rem solid var(--ember-category-one);
-    }
-
-    .editorial-aside blockquote {
-      margin: 0;
-      color: var(--ember-fg-0);
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: 1.35rem;
-      font-style: italic;
-      line-height: 1.35;
-    }
-
-    .editorial-aside p {
-      margin: 1rem 0 0;
-      color: var(--ember-fg-2);
-      font-size: 0.76rem;
-      line-height: 1.6;
-    }
-
-    .code-stage {
-      background: var(--ember-bg-0);
-    }
-
-    .code-toolbar,
-    .code-statusbar {
-      display: flex;
-      gap: 0.8rem;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.72rem 1rem;
-      color: var(--ember-fg-2);
-      background: var(--ember-bg-2);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.7rem;
-    }
-
-    .code-toolbar {
-      border-bottom: 1px solid var(--ember-bg-5);
-    }
-
-    .code-statusbar {
-      border-top: 1px solid var(--ember-bg-5);
-      color: var(--ember-fg-1);
-    }
-
-    .code-lights {
-      display: flex;
-      gap: 0.4rem;
-    }
-
-    .code-lights span {
-      width: 0.62rem;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: var(--ember-category-one);
-    }
-
-    .code-lights span:nth-child(2) { background: var(--ember-category-two); }
-    .code-lights span:nth-child(3) { background: var(--ember-category-three); }
-
-    .code-layout {
-      display: grid;
-      min-height: 34rem;
-      grid-template-columns: 13rem minmax(31rem, 1fr);
-    }
-
-    .file-tree {
-      padding: 1.25rem 0.75rem;
-      border-right: 1px solid var(--ember-bg-5);
-      color: var(--ember-fg-2);
-      background: var(--ember-bg-1);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.7rem;
-      line-height: 2;
-    }
-
-    .file-tree strong {
-      display: block;
-      margin-bottom: 0.5rem;
-      color: var(--ember-fg-1);
-      font-size: 0.62rem;
-      letter-spacing: 0.12em;
-    }
-
-    .file-tree span {
-      display: block;
-      padding-inline: 0.55rem;
-      border-radius: 0.35rem;
-    }
-
-    .file-tree .active-file {
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-3);
-    }
-
-    .editor-pane {
-      min-width: 0;
-      overflow-x: auto;
-    }
-
-    .editor-tabs {
-      display: flex;
-      min-width: 41rem;
-      border-bottom: 1px solid var(--ember-bg-5);
-      color: var(--ember-fg-2);
-      background: var(--ember-bg-1);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.7rem;
-    }
-
-    .editor-tab {
-      padding: 0.85rem 1.1rem;
-      border-right: 1px solid var(--ember-bg-5);
-    }
-
-    .editor-tab.active {
-      border-top: 0.16rem solid var(--ember-category-one);
-      color: var(--ember-fg-0);
-      background: var(--ember-bg-0);
-    }
-
-    .code-lines {
-      min-width: 41rem;
-      padding-block: 1.35rem;
-      color: var(--ember-fg-1);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.76rem;
-      line-height: 1.82;
-    }
-
-    .code-row {
-      display: grid;
-      grid-template-columns: 3.2rem 1fr;
-      padding-inline: 0.7rem 1.2rem;
-    }
-
-    .code-row:hover {
-      background: var(--ember-bg-2);
-    }
-
-    .line-number {
-      color: var(--ember-fg-2);
-      user-select: none;
-    }
-
-    .syntax-keyword { color: var(--ember-category-one); }
-    .syntax-name { color: var(--ember-category-two); }
-    .syntax-string { color: var(--ember-category-three); }
-    .syntax-comment { color: var(--ember-fg-2); font-style: italic; }
-
-    .terminal-output {
-      min-width: 41rem;
-      padding: 1rem 1.2rem 1.2rem;
-      border-top: 1px solid var(--ember-bg-5);
-      color: var(--ember-fg-1);
-      background: var(--ember-bg-1);
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      font-size: 0.72rem;
-      line-height: 1.7;
-    }
-
-    .terminal-output strong { color: var(--ember-category-two); }
-    .terminal-output .prompt { color: var(--ember-category-one); }
-
-    .dashboard-stage {
-      padding: clamp(0.8rem, 2.5vw, 1.6rem);
-      background:
-        linear-gradient(var(--ember-bg-4) 1px, transparent 1px),
-        linear-gradient(90deg, var(--ember-bg-4) 1px, transparent 1px),
-        var(--ember-bg-0);
-      background-size: 2.2rem 2.2rem;
-    }
-
-    .dashboard-console {
-      overflow: hidden;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.8rem;
-      background: color-mix(in srgb, var(--ember-bg-0) 93%, transparent);
-    }
-
-    .dashboard-header {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.15rem;
-      border-bottom: 1px solid var(--ember-bg-5);
-    }
-
-    .mission-id {
-      display: flex;
-      gap: 0.8rem;
-      align-items: center;
-    }
-
-    .mission-mark {
-      display: grid;
-      width: 2.2rem;
-      aspect-ratio: 1;
-      border: 1px solid var(--ember-category-one);
-      border-radius: 50%;
-      place-items: center;
-      color: var(--ember-category-one);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.68rem;
-      box-shadow: inset 0 0 0 0.3rem color-mix(in srgb, var(--ember-category-one) 10%, transparent);
-    }
-
-    .mission-id strong,
-    .mission-id span {
-      display: block;
-    }
-
-    .mission-id strong {
-      color: var(--ember-fg-0);
-      font-size: 0.84rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .mission-id span,
-    .dashboard-clock {
-      color: var(--ember-fg-2);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.65rem;
-    }
-
-    .dashboard-clock strong {
-      color: var(--ember-category-two);
-    }
-
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      border-bottom: 1px solid var(--ember-bg-5);
-    }
-
-    .kpi {
-      padding: 1rem 1.1rem;
-      border-right: 1px solid var(--ember-bg-5);
-    }
-
-    .kpi:last-child { border-right: 0; }
-
-    .kpi span,
-    .kpi small {
-      display: block;
-      color: var(--ember-fg-2);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-    }
-
-    .kpi strong {
-      display: block;
-      margin-block: 0.4rem 0.25rem;
-      color: var(--ember-fg-0);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: clamp(1.25rem, 3vw, 2rem);
-      letter-spacing: -0.05em;
-    }
-
-    .kpi:nth-child(1) strong { color: var(--ember-category-one); }
-    .kpi:nth-child(2) strong { color: var(--ember-category-two); }
-    .kpi:nth-child(3) strong { color: var(--ember-category-three); }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.55fr);
-    }
-
-    .dashboard-panel {
-      min-width: 0;
-      padding: 1.15rem;
-      border-right: 1px solid var(--ember-bg-5);
-    }
-
-    .dashboard-panel:last-child { border-right: 0; }
-
-    .panel-title {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-      color: var(--ember-fg-0);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-    }
-
-    .panel-title span { color: var(--ember-fg-2); }
-
-    .telemetry-chart {
-      width: 100%;
-      height: auto;
-      border: 1px solid var(--ember-bg-4);
-      background: var(--ember-bg-1);
-    }
-
-    .chart-gridline { stroke: var(--ember-bg-5); fill: none; stroke-width: 1; }
-    .chart-axis { stroke: var(--ember-fg-2); fill: none; stroke-width: 1.2; }
-    .chart-one { stroke: var(--ember-category-one); fill: none; stroke-width: 4; }
-    .chart-two { stroke: var(--ember-category-two); fill: none; stroke-width: 3; stroke-dasharray: 10 7; }
-    .chart-three { stroke: var(--ember-category-three); fill: none; stroke-width: 3; stroke-dasharray: 2 7; }
-    .chart-marker-one { fill: var(--ember-category-one); }
-    .chart-marker-two { fill: var(--ember-category-two); }
-    .chart-marker-three { fill: var(--ember-category-three); }
-    .chart-label { fill: var(--ember-fg-1); font: 22px "SFMono-Regular", Consolas, monospace; }
-    .chart-meta { fill: var(--ember-fg-2); font: 18px "SFMono-Regular", Consolas, monospace; }
-
-    .event-table-wrap {
-      overflow-x: auto;
-      border-top: 1px solid var(--ember-bg-5);
-    }
-
-    .event-table {
-      width: 100%;
-      min-width: 38rem;
-      border-collapse: collapse;
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.66rem;
-    }
-
-    .event-table th,
-    .event-table td {
-      padding: 0.72rem 1rem;
-      border-bottom: 1px solid var(--ember-bg-4);
-      text-align: left;
-    }
-
-    .event-table th {
-      color: var(--ember-fg-2);
-      font-weight: 650;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .event-table td { color: var(--ember-fg-1); }
-    .event-table td:nth-child(2) { color: var(--ember-category-two); }
-
-    .orbit-display {
-      position: relative;
-      display: grid;
-      min-height: 17rem;
-      border: 1px solid var(--ember-bg-4);
-      background: radial-gradient(circle, var(--ember-bg-3) 0 8%, transparent 8.5%);
-      place-items: center;
-    }
-
-    .orbit-ring {
-      position: absolute;
-      width: 67%;
-      aspect-ratio: 1;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 50%;
-      transform: rotate(-18deg) scaleY(0.48);
-    }
-
-    .orbit-ring:nth-child(2) {
-      width: 43%;
-      border-color: var(--ember-category-two);
-      border-style: dashed;
-      opacity: 0.7;
-      transform: rotate(24deg) scaleY(0.48);
-    }
-
-    .orbit-core {
-      z-index: 1;
-      color: var(--ember-category-one);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-    }
-
-    .palette-image { display: none; }
-    html[data-ember-palette="3400k-dark"] .palette-image[data-for="3400k-dark"],
-    html[data-ember-palette="3400k-light"] .palette-image[data-for="3400k-light"],
-    html[data-ember-palette="2000k-dark"] .palette-image[data-for="2000k-dark"],
-    html[data-ember-palette="1200k-dark"] .palette-image[data-for="1200k-dark"] { display: block; }
-
-    .map-stage,
-    .art-stage,
-    .wave-stage {
-      padding: clamp(0.8rem, 3vw, 2rem);
-      background: var(--ember-bg-0);
-    }
-
-    .map-frame {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--ember-bg-5);
-      background: var(--ember-bg-2);
-    }
-
-    .map-frame img {
-      width: 100%;
-      aspect-ratio: 2 / 1;
-      object-fit: cover;
-      image-rendering: auto;
-    }
-
-    .map-frame::after {
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(transparent 49.8%, color-mix(in srgb, var(--ember-fg-0) 28%, transparent) 50%, transparent 50.2%),
-        linear-gradient(90deg, transparent 49.8%, color-mix(in srgb, var(--ember-fg-0) 28%, transparent) 50%, transparent 50.2%);
-      content: "";
-      pointer-events: none;
-    }
-
-    .map-corners {
-      position: absolute;
-      z-index: 2;
-      inset: 0.65rem;
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      color: var(--ember-fg-0);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.58rem;
-      text-shadow: 0 1px var(--ember-bg-0);
-      pointer-events: none;
-    }
-
-    .scale-legend {
-      display: grid;
-      grid-template-columns: auto minmax(8rem, 1fr) auto;
-      gap: 0.8rem;
-      align-items: center;
-      margin-top: 0.9rem;
-      color: var(--ember-fg-2);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.65rem;
-    }
-
-    .scale-ramp {
-      height: 0.75rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 999px;
-      background: var(--ember-sequential);
-    }
-
-    .source-note {
-      display: flex;
-      gap: 1rem;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-top: 1.2rem;
-      color: var(--ember-fg-2);
-      font-size: 0.72rem;
-      line-height: 1.6;
-    }
-
-    .source-note p { max-width: 58rem; margin: 0; }
-    .source-note a { color: var(--ember-fg-1); white-space: nowrap; }
-
-    .art-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: clamp(0.8rem, 3vw, 1.5rem);
-      align-items: stretch;
-    }
-
-    .art-panel {
-      position: relative;
-      display: grid;
-      overflow: hidden;
-      min-height: 34rem;
-      border: 1px solid var(--ember-bg-5);
-      background: var(--ember-bg-2);
-      place-items: center;
-    }
-
-    .art-panel img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-
-    .art-label {
-      position: absolute;
-      z-index: 2;
-      top: 0.7rem;
-      left: 0.7rem;
-      padding: 0.42rem 0.55rem;
-      border: 1px solid var(--ember-bg-5);
-      border-radius: 0.35rem;
-      color: var(--ember-fg-0);
-      background: color-mix(in srgb, var(--ember-bg-0) 88%, transparent);
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .wave-figure {
-      overflow: hidden;
-      border: 1px solid var(--ember-bg-5);
-      background:
-        radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--ember-category-three) 9%, transparent), transparent 38%),
-        var(--ember-bg-1);
-    }
-
-    .wave-figure svg {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
-
-    .wave-axis { stroke: var(--ember-fg-2); stroke-width: 1.5; }
-    .wave-grid { stroke: var(--ember-bg-5); stroke-width: 1; }
-    .wave-e { stroke: var(--ember-category-one); stroke-width: 5; fill: none; }
-    .wave-b { stroke: var(--ember-category-two); stroke-width: 4; fill: none; stroke-dasharray: 12 7; }
-    .wave-label { fill: var(--ember-fg-1); font: 22px "SFMono-Regular", Consolas, monospace; }
-    .wave-meta { fill: var(--ember-fg-2); font: 17px "SFMono-Regular", Consolas, monospace; }
-    .wave-e-label { fill: var(--ember-category-one); }
-    .wave-b-label { fill: var(--ember-category-two); }
-    .energy-packet { fill: var(--ember-category-three); filter: drop-shadow(0 0 10px var(--ember-category-three)); }
-
-    .wave-scroll {
-      animation: wave-propagation 2.8s linear infinite;
-    }
-
-    .energy-packet {
-      animation: packet-propagation 5.6s linear infinite;
-    }
-
-    @keyframes wave-propagation {
-      to { transform: translateX(-300px); }
-    }
-
-    @keyframes packet-propagation {
-      from { transform: translateX(0); opacity: 0; }
-      8% { opacity: 1; }
-      92% { opacity: 1; }
-      to { transform: translateX(820px); opacity: 0; }
-    }
-
-    .wave-explanation {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1px;
-      margin-top: 1px;
-      background: var(--ember-bg-5);
-    }
-
-    .wave-mobile-legend {
-      display: none;
-    }
-
-    .wave-fact {
-      padding: 1rem;
-      color: var(--ember-fg-1);
-      background: var(--ember-bg-1);
-      font-size: 0.76rem;
-      line-height: 1.58;
-    }
-
-    .wave-fact strong {
-      display: block;
-      margin-bottom: 0.35rem;
-      color: var(--ember-fg-0);
-    }
-
-    @media (max-width: 60rem) {
-      .suite-header,
-      .specimen-heading,
-      .editorial-body,
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .header-link {
-        display: none;
-      }
-
-      .editorial-stage {
-        background: var(--ember-bg-1);
-      }
-
-      .editorial-aside {
-        max-width: 28rem;
-      }
-
-      .dashboard-panel {
-        border-right: 0;
-        border-bottom: 1px solid var(--ember-bg-5);
-      }
-
-      .dashboard-panel:last-child {
-        border-bottom: 0;
-      }
-
-      .art-panel {
-        min-height: 28rem;
-      }
-    }
-
-    @media (max-width: 45rem) {
-      .header-actions {
-        gap: 0.4rem;
-      }
-
-      .toc-menu summary {
-        padding-inline: 0.62rem;
-        font-size: 0.76rem;
-      }
-
-      .toc-menu summary::after {
-        display: none;
-      }
-
-      .toc-panel {
-        position: fixed;
-        top: 4.75rem;
-        right: 0.75rem;
-        left: 0.75rem;
-        width: auto;
-        max-height: calc(100vh - 5.5rem);
-        overflow-y: auto;
-      }
-
-      .specimen-suite {
-        padding-top: 4.8rem;
-      }
-
-      .suite-header,
-      .specimen-heading {
-        gap: 1.4rem;
-      }
-
-      .stage-caption,
-      .source-note {
-        flex-direction: column;
-      }
-
-      .editorial-stage {
-        padding: 1rem;
-      }
-
-      .editorial-masthead > span:last-child {
-        display: none;
-      }
-
-      .editorial-header h3 {
-        font-size: clamp(2.8rem, 15vw, 4.2rem);
-      }
-
-      .editorial-copy {
-        columns: 1;
-      }
-
-      .code-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .file-tree {
-        display: none;
-      }
-
-      .kpi-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .kpi:nth-child(2) { border-right: 0; }
-      .kpi:nth-child(-n + 2) { border-bottom: 1px solid var(--ember-bg-5); }
-
-      .dashboard-clock {
-        display: none;
-      }
-
-      .map-corners {
-        display: none;
-      }
-
-      .scale-legend {
-        grid-template-columns: 1fr;
-      }
-
-      .scale-legend span:last-child {
-        text-align: right;
-      }
-
-      .art-grid,
-      .wave-explanation {
-        grid-template-columns: 1fr;
-      }
-
-      .wave-label,
-      .wave-meta {
-        display: none;
-      }
-
-      .wave-mobile-legend {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1px;
-        background: var(--ember-bg-5);
-      }
-
-      .wave-mobile-legend span {
-        padding: 0.6rem 0.4rem;
-        color: var(--ember-fg-1);
-        background: var(--ember-bg-1);
-        font-family: "SFMono-Regular", Consolas, monospace;
-        font-size: 0.58rem;
-        text-align: center;
-      }
-
-      .wave-mobile-legend span:nth-child(1) { color: var(--ember-category-one); }
-      .wave-mobile-legend span:nth-child(2) { color: var(--ember-category-two); }
-      .wave-mobile-legend span:nth-child(3) { color: var(--ember-category-three); }
-
-      .art-panel {
-        min-height: 28rem;
-      }
-
-      .art-panel:first-child {
-        min-height: 17rem;
-      }
-    }
-
-    @media (max-width: 60rem) {
-      .site-nav a:not(.nav-cta) {
-        display: none;
-      }
-
-      .hero {
-        min-height: auto;
-        grid-template-columns: 1fr;
-      }
-
-      .hero-copy {
-        max-width: 48rem;
-      }
-
-      .hero-preview {
-        width: min(100%, 37rem);
-      }
-
-      .section-header,
-      .use-layout {
-        grid-template-columns: 1fr;
-      }
-
-      .section-header > p {
-        max-width: 38rem;
-      }
-
-      .use-intro {
-        position: static;
-      }
-    }
-
-    @media (max-width: 45rem) {
-      html {
-        scroll-padding-top: 5rem;
-      }
-
-      .nav-shell,
-      .page-shell {
-        width: min(100% - 1.5rem, 76rem);
-      }
-
-      .nav-shell {
-        min-height: 4.25rem;
-        grid-template-columns: 1fr auto;
-        gap: 0.75rem;
-      }
-
-      .site-nav {
-        display: none;
-      }
-
-      .palette-control span {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        clip: rect(0 0 0 0);
-        clip-path: inset(50%);
-        white-space: nowrap;
-      }
-
-      .palette-control select {
-        min-width: 8.8rem;
-        font-size: 0.76rem;
-      }
-
-      .hero {
-        gap: 3.5rem;
-        padding-block: 4.5rem 5rem;
-      }
-
-      .hero h1 {
-        font-size: clamp(3rem, 16vw, 4.8rem);
-      }
-
-      .hero-dek {
-        font-size: 1.12rem;
-      }
-
-      .hero-actions .button {
-        width: 100%;
-      }
-
-      .preview-layout {
-        min-height: 17rem;
-        grid-template-columns: 4rem 1fr;
-      }
-
-      .preview-sidebar {
-        padding-inline: 0.55rem;
-      }
-
-      .preview-content {
-        padding: 0.9rem;
-      }
-
-      .profile-grid,
-      .mechanism-points {
-        grid-template-columns: 1fr;
-      }
-
-      .profile-card {
-        min-height: auto;
-      }
-
-      .section {
-        padding-block: 4.8rem;
-      }
-
-      .section-header {
-        gap: 1.4rem;
-      }
-
-      .assurance {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .comparison-caption,
-      .site-footer {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      html {
-        scroll-behavior: auto;
-      }
-
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-      }
-
-      .wave-scroll,
-      .energy-packet {
-        animation: none !important;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember — color that survives the warm shift</title>
+<meta name="description" content="Ember authors terminal, UI, chart, and colormap palettes that remain articulate under Night Shift and Redshift warm-display transforms. This page is the live specimen.">
+<link rel="stylesheet" href="palettes/ember.css">
+<style>
+/* ============================================================
+   EMBER — ONE WARM INSTRUMENT
+   All color derives from palettes/ember.css custom properties.
+   No literal color values appear in this stylesheet.
+   ============================================================ */
+:root{
+  --chrome-h: 3.75rem;
+  --font-sans: "Avenir Next", Avenir, "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --rule: 1px solid var(--ember-bg-4);
+  --plate-shadow: 0 14px 44px color-mix(in srgb, var(--ember-bg-0) 62%, transparent);
+  --ease: cubic-bezier(.33,.66,.28,1);
+}
+@media (max-width: 700px){
+  :root{ --chrome-h: 6.75rem; }
+}
+*,*::before,*::after{ box-sizing:border-box; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation:none !important; transition:none !important; }
+}
+body{
+  margin:0;
+  background:var(--ember-bg-0);
+  color:var(--ember-fg-0);
+  font-family:var(--font-sans);
+  font-size:1rem;
+  line-height:1.55;
+  padding-top:var(--chrome-h);
+  overflow-x:hidden;
+}
+::selection{ background:var(--ember-bg-5); color:var(--ember-fg-0); }
+:focus-visible{ outline:2px solid var(--ember-fg-0); outline-offset:2px; }
+a{ color:var(--ember-category-one); text-decoration-color: color-mix(in srgb, var(--ember-category-one) 55%, transparent); }
+a:hover{ text-decoration-thickness:2px; }
+img{ max-width:100%; display:block; }
+code, pre, kbd{ font-family:var(--font-mono); }
+.visually-hidden{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+.skip-link{
+  position:fixed; top:.4rem; left:.4rem; z-index:200;
+  background:var(--ember-bg-4); color:var(--ember-fg-0);
+  padding:.5rem .8rem; border:var(--rule);
+  transform:translateY(-300%);
+}
+.skip-link:focus{ transform:none; }
+
+/* ---------- chrome (fixed header) ---------- */
+.chrome{
+  position:fixed; inset:0 0 auto 0; height:var(--chrome-h); z-index:120;
+  display:flex; flex-wrap:wrap; align-items:center; gap:.6rem 1rem;
+  padding:0 clamp(.75rem, 3vw, 1.5rem);
+  background:color-mix(in srgb, var(--ember-bg-1) 93%, transparent);
+  backdrop-filter: blur(9px);
+  border-bottom:var(--rule);
+}
+.burger{
+  appearance:none; background:transparent; border:var(--rule);
+  width:2.75rem; height:2.75rem; min-width:44px; min-height:44px;
+  padding:.55rem; cursor:pointer;
+  display:grid; gap:5px; align-content:center;
+}
+.burger span{
+  display:block; height:2px; background:var(--ember-fg-0);
+  transition: transform .22s var(--ease), opacity .22s var(--ease);
+}
+.burger[aria-expanded="true"] span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+.burger[aria-expanded="true"] span:nth-child(2){ opacity:0; }
+.burger[aria-expanded="true"] span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+.brand{
+  font-family:var(--font-mono); font-size:1.05rem; letter-spacing:.14em;
+  color:var(--ember-fg-0); text-decoration:none; text-transform:uppercase;
+}
+.brand em{ font-style:normal; color:var(--ember-fg-2); letter-spacing:.06em; font-size:.7rem; margin-left:.5rem; }
+.chrome-spacer{ flex:1 1 auto; }
+.chrome-gh{
+  font-family:var(--font-mono); font-size:.78rem; letter-spacing:.06em;
+  color:var(--ember-fg-0); text-decoration:none;
+  border:1px solid var(--ember-fg-2); padding:.4rem .7rem; white-space:nowrap;
+  min-height:44px; display:inline-flex; align-items:center;
+}
+.chrome-gh:hover{ background:var(--ember-bg-3); }
+
+/* palette picker — each button is scoped to its own palette for a true preview */
+.picker{ display:flex; gap:.4rem; align-items:center; }
+.picker-label{
+  font-family:var(--font-mono); font-size:.62rem; letter-spacing:.18em;
+  color:var(--ember-fg-2); text-transform:uppercase; margin-right:.2rem;
+}
+.pp{
+  appearance:none; cursor:pointer;
+  font-family:var(--font-mono); font-size:.68rem; letter-spacing:.04em;
+  background:var(--ember-bg-1); color:var(--ember-fg-0);
+  border:1px solid var(--ember-bg-4);
+  padding:.32rem .55rem; min-height:44px;
+  display:flex; align-items:center; gap:.4rem;
+}
+.pp .pp-dots{ display:inline-flex; gap:3px; }
+.pp .pp-dots i{
+  width:7px; height:7px; border-radius:50%;
+}
+.pp .pp-dots i:nth-child(1){ background:var(--ember-category-one); }
+.pp .pp-dots i:nth-child(2){ background:var(--ember-category-two); }
+.pp .pp-dots i:nth-child(3){ background:var(--ember-category-three); }
+.pp[aria-pressed="true"]{
+  outline:2px solid var(--ember-fg-0); outline-offset:1px;
+}
+.pp .pp-abbr{ display:none; }
+@media (max-width:700px){
+  .chrome{ padding:.4rem .75rem; gap:.35rem .65rem; align-content:center; }
+  .brand em{ display:none; }
+  .picker{ order:5; width:100%; gap:.25rem; }
+  .pp{ flex:1 1 0; justify-content:center; padding:.3rem .25rem; }
+  .pp .pp-full{ display:none; }
+  .pp .pp-abbr{ display:inline; }
+  .picker-label{ display:none; }
+}
+
+/* ---------- hamburger menu panel ---------- */
+.menu-wrap{
+  position:fixed; top:var(--chrome-h); left:0; right:0; bottom:0; z-index:110;
+  display:flex; align-items:stretch;
+}
+.menu-wrap[hidden]{ display:none; }
+.menu-backdrop{
+  position:absolute; inset:0;
+  background:color-mix(in srgb, var(--ember-bg-0) 55%, transparent);
+  border:0; padding:0; cursor:pointer; width:100%;
+}
+.menu-panel{
+  position:relative; z-index:1;
+  width:min(22rem, 88vw);
+  background:var(--ember-bg-1);
+  border-right:var(--rule);
+  padding:1.4rem 1.4rem 2rem;
+  overflow-y:auto;
+  display:flex; flex-direction:column; gap:.15rem;
+}
+.menu-panel h2{
+  font-family:var(--font-mono); font-size:.62rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ember-fg-2); margin:.9rem 0 .4rem;
+}
+.menu-panel a{
+  color:var(--ember-fg-0); text-decoration:none;
+  font-size:.95rem; padding:.45rem .5rem; min-height:44px;
+  border-left:2px solid transparent;
+  display:flex; align-items:center;
+}
+.menu-panel a:hover, .menu-panel a:focus-visible{
+  background:var(--ember-bg-3); border-left-color:var(--ember-category-one);
+}
+.menu-panel a small{ color:var(--ember-fg-2); margin-left:.4rem; font-family:var(--font-mono); font-size:.66rem; }
+
+/* ---------- shared components ---------- */
+.truth{
+  display:inline-flex; align-items:center; gap:.45rem;
+  font-family:var(--font-mono); font-size:.6rem; letter-spacing:.2em;
+  text-transform:uppercase; color:var(--ember-fg-1);
+  border:1px solid var(--ember-fg-2); padding:.28rem .55rem;
+}
+.truth::before{
+  content:""; width:7px; height:7px; border-radius:50%;
+  background:var(--ember-fg-1);
+}
+.truth.fiction{ color:var(--ember-category-two); border-color:var(--ember-category-two); }
+.truth.fiction::before{ background:var(--ember-category-two); }
+.kicker{
+  font-family:var(--font-mono); font-size:.68rem; letter-spacing:.24em;
+  text-transform:uppercase; color:var(--ember-fg-2); margin:0 0 .8rem;
+}
+.btn{
+  display:inline-flex; align-items:center; min-height:44px;
+  font-family:var(--font-mono); font-size:.82rem;
+  text-decoration:none; padding:.6rem 1rem; letter-spacing:.04em;
+  border:1px solid var(--ember-fg-2); color:var(--ember-fg-0);
+}
+.btn:hover{ background:var(--ember-bg-3); }
+.btn.primary{
+  background:var(--ember-fg-0); color:var(--ember-bg-0); border-color:var(--ember-fg-0);
+}
+.btn.primary:hover{ background:var(--ember-fg-1); border-color:var(--ember-fg-1); }
+.seq-strip{
+  height:14px; background:var(--ember-sequential); border:var(--rule);
+}
+
+/* capacity chips — .retired is applied by CSS per-palette AND by JS; never
+   references a categorical variable that the active family does not define */
+.cap-row{ display:flex; gap:.45rem; margin:.5rem 0; }
+.cap-chip{
+  flex:1 1 0; height:26px; border:1px solid var(--ember-bg-4); position:relative;
+}
+.cap-chip[data-cat="1"]{ background:var(--ember-category-one); }
+.cap-chip[data-cat="2"]{ background:var(--ember-category-two); }
+.cap-chip[data-cat="3"]{ background:var(--ember-category-three); }
+.cap-chip[data-cat="4"]{ background:var(--ember-category-four); }
+.cap-chip[data-cat="5"]{ background:var(--ember-category-five); }
+.cap-chip[data-cat="6"]{ background:var(--ember-category-six); }
+[data-ember-palette="2000k-dark"] .cap-chip[data-cat="5"],
+[data-ember-palette="2000k-dark"] .cap-chip[data-cat="6"],
+[data-ember-palette="1200k-dark"] .cap-chip[data-cat="4"],
+[data-ember-palette="1200k-dark"] .cap-chip[data-cat="5"],
+[data-ember-palette="1200k-dark"] .cap-chip[data-cat="6"],
+.cap-chip.retired{
+  background:transparent; border-style:dashed; border-color:var(--ember-fg-2);
+}
+[data-ember-palette="2000k-dark"] .cap-chip[data-cat="5"]::after,
+[data-ember-palette="2000k-dark"] .cap-chip[data-cat="6"]::after,
+[data-ember-palette="1200k-dark"] .cap-chip[data-cat="4"]::after,
+[data-ember-palette="1200k-dark"] .cap-chip[data-cat="5"]::after,
+[data-ember-palette="1200k-dark"] .cap-chip[data-cat="6"]::after,
+.cap-chip.retired::after{
+  content:""; position:absolute; left:8%; right:8%; top:50%;
+  border-top:1px solid var(--ember-fg-2);
+}
+/* ---------- hero ---------- */
+.hero{
+  min-height:calc(100vh - var(--chrome-h));
+  display:grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .95fr);
+  gap:clamp(1.5rem, 4vw, 4rem);
+  align-content:center;
+  padding:clamp(2rem, 6vh, 4rem) clamp(1rem, 5vw, 5rem);
+}
+.hero > *{ min-width:0; }
+.hero h1{
+  font-family:var(--font-serif); font-weight:500;
+  font-size:clamp(2.1rem, 4.6vw, 3.6rem); line-height:1.08;
+  margin:.2rem 0 1rem; letter-spacing:-.01em;
+}
+.hero .lede{
+  font-size:clamp(1rem, 1.35vw, 1.15rem); color:var(--ember-fg-1);
+  max-width:38rem; margin:0 0 1.4rem;
+}
+.hero-ctas{ display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; margin-bottom:1rem; }
+.hero-clone{
+  font-size:.78rem; background:var(--ember-bg-2); border:var(--rule);
+  padding:.55rem .8rem; color:var(--ember-fg-1); overflow-x:auto; max-width:100%;
+  white-space:nowrap;
+}
+.hero-note{ font-size:.8rem; color:var(--ember-fg-2); max-width:36rem; }
+.hero-board{
+  border:var(--rule); background:var(--ember-bg-1);
+  padding:1.1rem 1.2rem 1.3rem; align-self:center;
+  box-shadow:var(--plate-shadow);
+}
+.hero-board h2{
+  font-family:var(--font-mono); font-size:.66rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ember-fg-2); margin:0 0 .8rem;
+}
+.board-row{ margin-bottom:1rem; }
+.board-row .lbl{
+  display:flex; justify-content:space-between;
+  font-family:var(--font-mono); font-size:.62rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ember-fg-2); margin-bottom:.3rem;
+}
+.surf-row{ display:flex; border:var(--rule); }
+.surf-row span{ flex:1 1 0; height:26px; }
+.surf-row span:nth-child(1){ background:var(--ember-bg-0); }
+.surf-row span:nth-child(2){ background:var(--ember-bg-1); }
+.surf-row span:nth-child(3){ background:var(--ember-bg-2); }
+.surf-row span:nth-child(4){ background:var(--ember-bg-3); }
+.surf-row span:nth-child(5){ background:var(--ember-bg-4); }
+.surf-row span:nth-child(6){ background:var(--ember-bg-5); }
+.fg-row{ font-size:.85rem; line-height:1.45; }
+.fg-row .f0{ color:var(--ember-fg-0); }
+.fg-row .f1{ color:var(--ember-fg-1); }
+.fg-row .f2{ color:var(--ember-fg-2); }
+#cap-sentence{ font-size:.82rem; color:var(--ember-fg-1); margin:.4rem 0 0; }
+@media (max-width:900px){
+  .hero{ grid-template-columns:1fr; min-height:0; }
+}
+@media (max-width:700px){
+  .hero{ width:100%; padding:1.5rem 1rem 2rem; }
+}
+
+/* ---------- scene system: sticky stage + plate rail ---------- */
+.scene{ position:relative; border-top:var(--rule); }
+.stage{
+  position:sticky; top:var(--chrome-h);
+  height:calc(100vh - var(--chrome-h));
+  display:flex; align-items:center; justify-content:flex-end;
+  padding:1.5rem clamp(1rem, 4vw, 4rem);
+  overflow:hidden;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ember-bg-1) 40%, transparent),
+      transparent 30%);
+}
+.stage-inner{ width:min(60vw, 58rem); position:relative; }
+.stage .truth{ position:absolute; top:-2.2rem; left:0; background:var(--ember-bg-0); }
+.plates{
+  position:relative; z-index:6;
+  margin-top:calc(-100vh + var(--chrome-h));
+  width:min(24rem, 34vw);
+  padding:16vh 0 14vh clamp(1rem, 4vw, 4rem);
+  display:flex; flex-direction:column; gap:52vh;
+  pointer-events:none;
+}
+.plate{
+  pointer-events:auto;
+  background:color-mix(in srgb, var(--ember-bg-1) 96%, transparent);
+  border:var(--rule);
+  border-left:3px solid var(--ember-fg-2);
+  padding:1.2rem 1.3rem 1.3rem;
+  box-shadow:var(--plate-shadow);
+}
+.plate h2, .plate h3{
+  font-family:var(--font-sans); font-weight:650;
+  font-size:1.15rem; margin:.55rem 0 .55rem; letter-spacing:-.005em;
+}
+.plate p{ font-size:.9rem; color:var(--ember-fg-1); margin:.55rem 0; }
+.plate p strong{ color:var(--ember-fg-0); }
+.plate .truth{ margin-bottom:.2rem; }
+.plate code{ font-size:.8rem; background:var(--ember-bg-2); padding:.06rem .3rem; }
+@media (max-width:900px){
+  .scene{ display:flex; flex-direction:column-reverse; }
+  .stage{ position:static; height:auto; justify-content:center; padding:1rem; }
+  .stage-inner{ width:100%; }
+  .stage .truth{ position:static; display:inline-flex; margin-bottom:.7rem; }
+  .plates{
+    margin-top:0; width:auto; padding:1.2rem 1rem .4rem; gap:1rem;
+  }
+}
+
+/* ---------- editorial specimen ---------- */
+.paper{
+  background:var(--ember-bg-1); border:var(--rule);
+  padding:clamp(1.4rem, 3vw, 3rem);
+  max-height:calc(100vh - var(--chrome-h) - 3rem); overflow:hidden;
+}
+.paper .meta{
+  font-family:var(--font-mono); font-size:.66rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ember-fg-2);
+  display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:.9rem;
+}
+.paper h3{
+  font-family:var(--font-serif); font-weight:500;
+  font-size:clamp(1.5rem, 2.6vw, 2.2rem); line-height:1.12; margin:0 0 .6rem;
+}
+.paper .stand{
+  font-family:var(--font-serif); font-style:italic;
+  color:var(--ember-fg-1); font-size:1.05rem; margin:0 0 1rem;
+}
+.paper hr{ border:0; border-top:var(--rule); margin:1.1rem 0; }
+.paper .body-col{ columns:2; column-gap:2.2rem; column-rule:var(--rule); }
+.paper .body-col p{
+  font-family:var(--font-serif); font-size:.95rem; line-height:1.6;
+  margin:0 0 .8rem; color:var(--ember-fg-0);
+}
+.paper .pull{
+  font-family:var(--font-serif); font-size:1.25rem; line-height:1.35;
+  border-left:3px solid var(--ember-category-two);
+  padding-left:1rem; margin:1rem 0; break-inside:avoid;
+  color:var(--ember-fg-0);
+}
+.paper .foot{ font-size:.72rem; color:var(--ember-fg-2); font-family:var(--font-mono); }
+@media (max-width:900px){ .paper .body-col{ columns:1; } .paper{ max-height:none; } }
+
+/* ---------- terminal specimen ---------- */
+.term{
+  background:var(--ember-bg-1); border:var(--rule);
+  font-size:.8rem; line-height:1.55;
+  box-shadow:var(--plate-shadow);
+}
+.term-bar{
+  display:flex; align-items:center; gap:.5rem;
+  border-bottom:var(--rule); padding:.5rem .8rem;
+  font-family:var(--font-mono); font-size:.66rem; color:var(--ember-fg-2);
+  background:var(--ember-bg-2);
+}
+.term-bar i{ width:9px; height:9px; border-radius:50%; background:var(--ember-bg-4); border:1px solid var(--ember-fg-2); }
+.term pre{
+  margin:0; padding:1rem 1.1rem; overflow-x:auto;
+}
+.t-prompt{ color:var(--ember-fg-2); }
+.t-cmd{ color:var(--ember-fg-0); }
+.t-out{ color:var(--ember-fg-1); }
+.t-k{ color:var(--ember-category-one); }
+.t-s{ color:var(--ember-category-two); }
+.t-f{ color:var(--ember-category-three); }
+.t-c{ color:var(--ember-fg-2); font-style:italic; }
+.t-sel{ background:var(--ember-bg-5); }
+
+/* ---------- console (dense fictional instrument) ---------- */
+.console-wrap{ padding:0 clamp(.75rem, 3vw, 3rem) 3rem; }
+.console-intro{
+  margin-top:0; width:auto; max-width:44rem; gap:0;
+  padding:clamp(2rem,5vh,3rem) clamp(1rem,4vw,4rem) 1.4rem;
+  display:block;
+}
+.console-intro .plate{ max-width:44rem; }
+.console{
+  border:var(--rule); background:var(--ember-bg-1);
+  font-family:var(--font-mono);
+}
+.con-head{
+  display:flex; flex-wrap:wrap; gap:.6rem 1.6rem; align-items:center;
+  padding:.7rem 1rem; border-bottom:2px solid var(--ember-bg-4);
+  background:var(--ember-bg-2);
+}
+.con-head .mission{ font-size:.82rem; letter-spacing:.16em; }
+.con-head .field{ font-size:.66rem; color:var(--ember-fg-2); letter-spacing:.08em; }
+.con-head .field b{ color:var(--ember-fg-0); font-weight:600; margin-left:.35rem; }
+.con-grid{
+  display:grid; gap:1px; background:var(--ember-bg-4);
+  grid-template-columns:repeat(12, minmax(0,1fr));
+}
+.panel{ background:var(--ember-bg-1); padding:.7rem .8rem .8rem; min-width:0; }
+.panel h4{
+  margin:0 0 .55rem; font-size:.6rem; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--ember-fg-2);
+}
+.span3{ grid-column:span 3; } .span4{ grid-column:span 4; }
+.span5{ grid-column:span 5; } .span6{ grid-column:span 6; }
+.span8{ grid-column:span 8; } .span12{ grid-column:span 12; }
+@media (max-width:1100px){
+  .span3,.span4,.span5{ grid-column:span 6; }
+  .span8{ grid-column:span 12; }
+}
+@media (max-width:640px){
+  .span3,.span4,.span5,.span6{ grid-column:span 12; }
+}
+.gauge-row{ display:flex; gap:.8rem; justify-content:space-between; }
+.gauge-cell{ flex:1 1 0; min-width:0; text-align:center; }
+.gauge{ width:100%; max-width:110px; margin:0 auto; display:block; }
+.g-track{ fill:none; stroke:var(--ember-bg-3); stroke-width:7; }
+.g-val{ fill:none; stroke:var(--ember-category-one); stroke-width:7; }
+.g-val.bus-power{ stroke-dasharray:98 999; }
+.g-val.detector-thermal{ stroke-dasharray:68 999; }
+.g-val.signal-lock{ stroke-dasharray:109 999; }
+.gauge-cell.watch .g-val{ stroke:var(--ember-category-two); }
+.g-num{ font-size:.86rem; color:var(--ember-fg-0); display:block; margin-top:-.4rem; }
+.g-lab{ font-size:.56rem; letter-spacing:.14em; color:var(--ember-fg-2); }
+.g-lab .warn{ color:var(--ember-category-two); }
+.segbar{ display:flex; gap:2px; margin:.2rem 0 .5rem; }
+.segbar span{ flex:1 1 0; height:9px; background:var(--ember-bg-3); }
+.segbar.up span.on{ background:var(--ember-category-one); }
+.segbar.dn span.on{ background:var(--ember-category-two); }
+.kv{ display:flex; justify-content:space-between; font-size:.66rem; color:var(--ember-fg-1); }
+.kv b{ color:var(--ember-fg-0); font-weight:600; }
+.scope-c, .em-c{ width:100%; display:block; }
+.scope-c{ height:150px; background:var(--ember-bg-0); border:var(--rule); }
+.radar{ width:100%; max-width:230px; margin:0 auto; display:block; }
+.radar .rr{ fill:none; stroke:var(--ember-bg-4); }
+.radar .rx{ stroke:var(--ember-bg-4); }
+.radar .sweep line{ stroke:var(--ember-fg-2); stroke-width:1.5; }
+.radar .sweep{ transform-origin:60px 60px; animation:sweep 7s linear infinite; }
+@keyframes sweep{ to{ transform:rotate(360deg); } }
+.radar text{ fill:var(--ember-fg-2); font-size:5.5px; font-family:var(--font-mono); }
+.radar .m1{ fill:var(--ember-category-one); }
+.radar .m2{ fill:var(--ember-category-two); }
+.radar .m3{ fill:var(--ember-category-three); }
+.sparks{ display:flex; flex-direction:column; gap:.45rem; }
+.spark-row{ display:flex; align-items:center; gap:.6rem; min-width:0; }
+.spark-row .s-lab{ flex:0 0 5.2rem; font-size:.6rem; letter-spacing:.08em; color:var(--ember-fg-1); white-space:nowrap; }
+.spark-row svg{ flex:1 1 auto; min-width:0; height:22px; background:var(--ember-bg-0); border:var(--rule); }
+.spark-row .s-val{ flex:0 0 3.4rem; text-align:right; font-size:.66rem; color:var(--ember-fg-0); }
+.health{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:4px; }
+.health li{
+  display:flex; justify-content:space-between; gap:.5rem;
+  background:var(--ember-bg-2); border:var(--rule);
+  font-size:.6rem; padding:.3rem .45rem; color:var(--ember-fg-1);
+}
+.health li b{ font-weight:600; color:var(--ember-fg-2); }
+.health li.ok b::after{ content:" ● NOM"; }
+.health li.watch{ border-left:3px solid var(--ember-category-two); }
+.health li.watch b{ color:var(--ember-category-two); }
+.health li.watch b::after{ content:" ▲ WATCH"; }
+.readouts{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:.35rem .9rem; margin:0; }
+.readouts div{ display:flex; justify-content:space-between; border-bottom:1px dotted var(--ember-bg-4); padding-bottom:.15rem; }
+.readouts dt{ font-size:.6rem; letter-spacing:.06em; color:var(--ember-fg-2); }
+.readouts dd{ margin:0; font-size:.66rem; color:var(--ember-fg-0); }
+.readouts dd small{ color:var(--ember-fg-2); }
+.thermal-strip{ height:16px; background:var(--ember-sequential); border:var(--rule); position:relative; margin:.3rem 0 .2rem; }
+.thermal-strip i{
+  position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--ember-fg-0);
+}
+.thermal-title{ margin-top:.6rem; }
+.thermal-marker-a{ left:31%; }
+.thermal-marker-b{ left:68%; }
+.scope-readout{ margin-top:.35rem; }
+.spark-note{ letter-spacing:0; text-transform:none; }
+.simulation-note{ max-width:60rem; }
+.thermal-lab{ display:flex; justify-content:space-between; font-size:.56rem; color:var(--ember-fg-2); }
+.log{ list-style:none; margin:0; padding:0; font-size:.64rem; line-height:1.7; color:var(--ember-fg-1); }
+.log .t{ color:var(--ember-fg-2); margin-right:.6rem; }
+.log .warn{ color:var(--ember-category-two); }
+.log .cmd{ color:var(--ember-category-one); }
+.queue{ width:100%; border-collapse:collapse; font-size:.62rem; }
+.queue th{ text-align:left; font-weight:600; color:var(--ember-fg-2); letter-spacing:.1em; border-bottom:var(--rule); padding:.2rem .3rem; }
+.queue td{ padding:.28rem .3rem; border-bottom:1px dotted var(--ember-bg-4); color:var(--ember-fg-1); }
+.queue td:first-child{ color:var(--ember-fg-0); }
+
+/* ---------- mars / mona ---------- */
+.map-frame{ border:var(--rule); background:var(--ember-bg-1); padding:.8rem; }
+.map-frame img{ width:100%; height:auto; image-rendering:auto; }
+.map-legend{ margin-top:.7rem; }
+.map-legend .seq-strip{ height:12px; }
+.map-legend .lab{
+  display:flex; justify-content:space-between;
+  font-family:var(--font-mono); font-size:.62rem; color:var(--ember-fg-2); margin-top:.25rem;
+}
+.map-cite{ font-family:var(--font-mono); font-size:.6rem; color:var(--ember-fg-2); margin-top:.5rem; line-height:1.6; }
+.compare{ position:relative; border:var(--rule); background:var(--ember-bg-1); padding:.8rem; }
+.compare-stack{ position:relative; overflow:hidden; }
+.compare-stack img{ width:100%; height:auto; }
+.compare-stack .over{
+  position:absolute; inset:0; width:100%; height:100%;
+  clip-path:inset(0 50% 0 0);
+}
+.compare-stack .divider{
+  position:absolute; top:0; bottom:0; left:50%; width:2px;
+  background:var(--ember-fg-0); pointer-events:none;
+}
+.compare-labels{
+  display:flex; justify-content:space-between;
+  font-family:var(--font-mono); font-size:.6rem; letter-spacing:.1em;
+  color:var(--ember-fg-2); margin-top:.4rem; text-transform:uppercase;
+}
+.compare-ctl{ display:flex; align-items:center; gap:.7rem; margin-top:.6rem; }
+.compare-ctl label{ font-family:var(--font-mono); font-size:.62rem; color:var(--ember-fg-2); white-space:nowrap; }
+.compare-ctl input[type="range"]{
+  flex:1 1 auto; accent-color:var(--ember-category-one);
+  min-width:0; min-height:44px;
+}
+.mona-stage{ width:min(44vw, 34rem); }
+
+/* ---------- EM field figure ---------- */
+.em-frame{ border:var(--rule); background:var(--ember-bg-1); padding:.8rem; }
+.em-c{ aspect-ratio:16/10; background:var(--ember-bg-0); border:var(--rule); }
+.em-legend{
+  display:flex; flex-wrap:wrap; gap:1.1rem; margin-top:.6rem;
+  font-family:var(--font-mono); font-size:.64rem; color:var(--ember-fg-1);
+}
+.em-legend i{ display:inline-block; width:16px; height:3px; vertical-align:middle; margin-right:.4rem; }
+.em-legend .le i{ background:var(--ember-category-one); }
+.em-legend .lb i{ background:var(--ember-category-two); }
+.em-legend .lc i{ background:var(--ember-category-three); }
+.em-cap{ font-size:.72rem; color:var(--ember-fg-2); margin-top:.5rem; line-height:1.6; }
+.figure-flush{ margin:0; }
+.field-scene{ min-height:calc(100vh - var(--chrome-h) + 12rem); }
+@media (max-width:900px){
+  .mona-stage{ width:100%; }
+  .field-scene{ min-height:0; }
+}
+
+/* ---------- adoption ---------- */
+.use{ border-top:var(--rule); padding:clamp(2rem,6vh,4rem) clamp(1rem,5vw,5rem); }
+.use h2{ font-family:var(--font-serif); font-weight:500; font-size:clamp(1.6rem,3vw,2.4rem); margin:.3rem 0 1.2rem; }
+.use-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 21rem), 1fr)); gap:1rem; }
+.use-card{ border:var(--rule); background:var(--ember-bg-1); padding:1.1rem 1.2rem; min-width:0; }
+.use-card h3{ font-size:.95rem; margin:0 0 .5rem; }
+.use-card p{ font-size:.82rem; color:var(--ember-fg-1); margin:.4rem 0; }
+.use-card pre{
+  margin:.5rem 0; padding:.7rem .8rem; background:var(--ember-bg-0);
+  border:var(--rule); font-size:.72rem; overflow-x:auto; color:var(--ember-fg-0);
+}
+.use-card ul{ margin:.4rem 0; padding-left:1.1rem; font-size:.82rem; color:var(--ember-fg-1); }
+.profile-table{ width:100%; border-collapse:collapse; font-size:.78rem; }
+.profile-table th{ text-align:left; font-family:var(--font-mono); font-size:.62rem; letter-spacing:.12em; color:var(--ember-fg-2); border-bottom:var(--rule); padding:.3rem .4rem; }
+.profile-table td{ padding:.4rem; border-bottom:1px dotted var(--ember-bg-4); color:var(--ember-fg-1); }
+.profile-table td:first-child{ font-family:var(--font-mono); color:var(--ember-fg-0); }
+
+footer{
+  border-top:var(--rule); padding:1.6rem clamp(1rem,5vw,5rem) 2.4rem;
+  font-size:.74rem; color:var(--ember-fg-2); line-height:1.8;
+}
+footer a{ color:var(--ember-fg-1); }
+main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
+</style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="nav-shell">
-      <a class="brand" href="./" aria-label="Ember home">
-        <span class="brand-mark" aria-hidden="true"></span>
-        <span>Ember</span>
-      </a>
-      <div class="header-actions">
-        <details class="toc-menu">
-          <summary>Sections</summary>
-          <nav class="toc-panel" aria-label="Table of contents">
-            <a href="#editorial"><span>01</span>Editorial</a>
-            <a href="#code"><span>02</span>Code workspace</a>
-            <a href="#dashboard"><span>03</span>Control dashboard</a>
-            <a href="#mars"><span>04</span>Mars topography</a>
-            <a href="#mona-lisa"><span>05</span>Mona Lisa</a>
-            <a href="#wave"><span>06</span>EM wave</a>
-            <a href="#profiles"><span>07</span>Profiles</a>
-            <a href="#mechanism"><span>08</span>Mechanism</a>
-            <a href="#use-ember"><span>09</span>Use Ember</a>
-            <a class="toc-external" href="https://github.com/carpdiem/ember"><span>↗</span>GitHub repository</a>
-          </nav>
-        </details>
-        <a class="header-link" href="https://github.com/carpdiem/ember">GitHub</a>
-        <label class="palette-control">
-          <span>Page palette</span>
-          <select id="palette-select" aria-label="Page palette">
-            <option value="3400k-dark">3400K Dark</option>
-            <option value="3400k-light">3400K Light</option>
-            <option value="2000k-dark">2000K Dark</option>
-            <option value="1200k-dark">1200K Dark</option>
-          </select>
-        </label>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="chrome">
+  <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Open sections menu">
+    <span></span><span></span><span></span>
+  </button>
+  <a class="brand" href="#top">Ember<em>warm-filter-safe color</em></a>
+  <div class="chrome-spacer"></div>
+  <a class="chrome-gh" href="https://github.com/carpdiem/ember">GitHub ↗</a>
+  <div class="picker" role="group" aria-label="Palette profile selector">
+    <span class="picker-label">Profile</span>
+    <button class="pp" type="button" data-palette="3400k-dark" data-ember-palette="3400k-dark" aria-pressed="true">
+      <span class="pp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="pp-full">3400K Dark</span><span class="pp-abbr">3400 D</span>
+    </button>
+    <button class="pp" type="button" data-palette="3400k-light" data-ember-palette="3400k-light" aria-pressed="false">
+      <span class="pp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="pp-full">3400K Light</span><span class="pp-abbr">3400 L</span>
+    </button>
+    <button class="pp" type="button" data-palette="2000k-dark" data-ember-palette="2000k-dark" aria-pressed="false">
+      <span class="pp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="pp-full">2000K Dark</span><span class="pp-abbr">2000</span>
+    </button>
+    <button class="pp" type="button" data-palette="1200k-dark" data-ember-palette="1200k-dark" aria-pressed="false">
+      <span class="pp-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="pp-full">1200K Dark</span><span class="pp-abbr">1200</span>
+    </button>
+  </div>
+</header>
+
+<div class="menu-wrap" id="menu" hidden>
+  <button class="menu-backdrop" type="button" id="menu-backdrop" aria-label="Close menu"></button>
+  <nav class="menu-panel" aria-label="Site sections">
+    <h2>Specimen scenes</h2>
+    <a href="#top">Overview <small>live proof</small></a>
+    <a href="#editorial">Editorial reading <small>real product</small></a>
+    <a href="#code">Code &amp; terminal <small>real product</small></a>
+    <a href="#console">Observatory console <small>fictional telemetry</small></a>
+    <a href="#mars">Mars topography <small>real NASA data</small></a>
+    <a href="#mona">Mona Lisa mapping <small>public domain</small></a>
+    <a href="#field">Electromagnetic field <small>physics figure</small></a>
+    <h2>Adopt Ember</h2>
+    <a href="#use">Install &amp; use</a>
+    <a href="https://github.com/carpdiem/ember">GitHub repository ↗</a>
+    <a href="https://github.com/carpdiem/ember#readme">README &amp; documentation ↗</a>
+    <a href="https://github.com/carpdiem/ember/tree/main/themes/terminal">Terminal themes ↗</a>
+    <a href="https://github.com/carpdiem/ember/blob/main/LICENSE">MIT license ↗</a>
+  </nav>
+</div>
+
+<main id="main">
+
+<!-- ================= HERO ================= -->
+<section class="hero" id="top" aria-label="Overview">
+  <div>
+    <p class="kicker">Ember · four palette profiles · verified under warm-display transforms</p>
+    <h1>Color that stays articulate after your screen turns warm.</h1>
+    <p class="lede">
+      Night Shift and Redshift multiply each RGB channel by a different gain. At the
+      1200&nbsp;K extreme, blue contributes nothing — colors that differ only in blue become
+      identical. Ember authors terminal, UI, chart, and colormap roles that keep their
+      identities under modeled 3400&nbsp;K, 2000&nbsp;K, and 1200&nbsp;K transforms, and it
+      states honestly how much capacity survives each one.
+    </p>
+    <div class="hero-ctas">
+      <a class="btn primary" href="https://github.com/carpdiem/ember">View source on GitHub</a>
+      <a class="btn" href="#use">Use Ember</a>
+    </div>
+    <pre class="hero-clone"><code>git clone https://github.com/carpdiem/ember.git</code></pre>
+    <p class="hero-note">
+      This page is the specimen. Everything below — text, code, instruments, maps, and
+      figures — renders through the profile you select in the header. Nothing here uses a
+      color outside the selected family.
+    </p>
+    <noscript>
+      <p class="hero-note">
+        JavaScript is off: the page shows the <strong>3400K Dark</strong> profile.
+        Profile switching, animated figures, and image swaps are disabled, but every claim,
+        role, and adoption path below remains valid.
+      </p>
+    </noscript>
+  </div>
+  <aside class="hero-board" aria-labelledby="hero-board-title">
+    <h2 id="hero-board-title">Live anatomy of the selected profile</h2>
+    <div class="board-row">
+      <div class="lbl"><span>Surface ladder</span><span>bg-0 → bg-5</span></div>
+      <div class="surf-row" role="img" aria-label="Six background surfaces from base canvas to strongest selection state">
+        <span></span><span></span><span></span><span></span><span></span><span></span>
       </div>
     </div>
-  </header>
-
-  <main class="page-shell">
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="hero-copy">
-        <p class="eyebrow">Warm-transform color systems</p>
-        <h1 id="hero-title">Keep color useful after the screen turns warm.</h1>
-        <p class="hero-dek">Ember is a family of terminal, interface, chart, and sequential palettes authored to preserve contrast and meaningful color identity under 3400K, 2000K, and 1200K display transforms.</p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="#editorial">Enter the live specimens</a>
-          <a class="button button-secondary" href="#use-ember">Use Ember</a>
-        </div>
-        <ul class="proof-list" aria-label="Available formats">
-          <li>Terminal themes</li>
-          <li>Matplotlib</li>
-          <li>CSS and JSON</li>
-          <li>MIT licensed</li>
-        </ul>
+    <div class="board-row fg-row">
+      <div class="lbl"><span>Foreground ladder</span><span>fg-0 / fg-1 / fg-2</span></div>
+      <span class="f0">Primary text stays cream, never pure white.</span><br>
+      <span class="f1">Supporting text sits one honest step down.</span><br>
+      <span class="f2">Muted metadata — never used for body copy.</span>
+    </div>
+    <div class="board-row">
+      <div class="lbl"><span>Categorical capacity</span><span id="cap-count">6 / 6</span></div>
+      <div class="cap-row" id="cap-row" role="img" aria-label="Categorical identity capacity of the selected profile">
+        <span class="cap-chip" data-cat="1"></span>
+        <span class="cap-chip" data-cat="2"></span>
+        <span class="cap-chip" data-cat="3"></span>
+        <span class="cap-chip" data-cat="4"></span>
+        <span class="cap-chip" data-cat="5"></span>
+        <span class="cap-chip" data-cat="6"></span>
       </div>
+      <p id="cap-sentence">3400K Dark keeps <strong>6 of 6</strong> categorical identities under its transform. The contraction to 4 at 2000&nbsp;K and 3 at 1200&nbsp;K is measured honesty, not a defect.</p>
+    </div>
+    <div class="board-row">
+      <div class="lbl"><span>Sequential map</span><span>256 samples · 11 CSS stops</span></div>
+      <div class="seq-strip" role="img" aria-label="Authored sequential colormap of the selected profile, low value at left to high value at right"></div>
+    </div>
+  </aside>
+</section>
 
-      <figure class="hero-preview" aria-label="3400K Dark interface preview with six categorical colors">
-        <figcaption class="preview-topline">
-          <span>Selected family</span>
-          <span class="preview-state">
-            <span class="palette-only" data-for="3400k-dark">3400K Dark</span>
-            <span class="palette-only" data-for="3400k-light">3400K Light</span>
-            <span class="palette-only" data-for="2000k-dark">2000K Dark</span>
-            <span class="palette-only" data-for="1200k-dark">1200K Dark</span>
-          </span>
-        </figcaption>
-        <div class="preview-window" aria-hidden="true">
-          <div class="preview-chrome">
-            <span class="window-dot"></span>
-            <span class="window-dot"></span>
-            <span class="window-dot"></span>
-          </div>
-          <div class="preview-layout">
-            <div class="preview-sidebar">
-              <span class="sidebar-line"></span>
-              <span class="sidebar-line"></span>
-              <span class="sidebar-line"></span>
-              <span class="sidebar-line"></span>
-            </div>
-            <div class="preview-content">
-              <span class="preview-heading"></span>
-              <div class="content-lines">
-                <span class="content-line"></span>
-                <span class="content-line"></span>
-                <span class="content-line"></span>
-              </div>
-              <div class="mini-chart">
-                <span class="mini-bar"></span>
-                <span class="mini-bar"></span>
-                <span class="mini-bar"></span>
-                <span class="mini-bar"></span>
-                <span class="mini-bar"></span>
-                <span class="mini-bar"></span>
-              </div>
-              <div class="preview-ramp"></div>
-            </div>
-          </div>
+<!-- ================= EDITORIAL ================= -->
+<section class="scene" id="editorial" aria-label="Editorial specimen">
+  <div class="stage">
+    <div class="stage-inner">
+      <span class="truth">Real product behavior</span>
+      <article class="paper">
+        <div class="meta">
+          <span>Ember field notes</span><span>Display engineering</span><span>7 min read</span>
         </div>
-        <div class="preview-meta">
-          <span>Authored identities</span>
-          <strong>
-            <span class="palette-only" data-for="3400k-dark">6</span>
-            <span class="palette-only" data-for="3400k-light">6</span>
-            <span class="palette-only" data-for="2000k-dark">4</span>
-            <span class="palette-only" data-for="1200k-dark">3</span>
-          </strong>
+        <h3>The night your grays turned to rust</h3>
+        <p class="stand">A warm filter is not a tint laid over the screen. It is a per-channel amputation — and most palettes were never told.</p>
+        <hr>
+        <div class="body-col">
+          <p>Turn on Redshift at 1200&nbsp;K and the blue channel of your display simply stops
+          arriving. Whatever blue your theme commanded is multiplied by zero. Two syntax
+          colors that differed only in blue now emit the same photons, and no amount of
+          squinting brings the difference back.</p>
+          <p>Ember reverses the usual authoring order. It first pins hard targets in the
+          <em>transformed</em> state — contrast, lightness geometry, minimum perceptual
+          separation in Oklab — and only then, among the commanded colors that reproduce
+          those targets, chooses the set with the strongest daytime identity. At 1200&nbsp;K
+          the blue channel is otherwise wasted, so Ember spends it freely on daytime
+          distinction where the filter cannot see it.</p>
+          <blockquote class="pull">Excellent daytime spacing cannot compensate for a nighttime collision, so Ember refuses to average the two into one score.</blockquote>
+          <p>The same discipline governs what you are reading now. Body text is cream rather
+          than pure white, because pure white becomes a <em>louder</em> transformed orange
+          than a restrained cream — brightness spent on nothing. The near-black canvas
+          beneath it is a warm neutral chosen so the filter finds little to distort. Links,
+          emphasis, and the rule beside the pull quote spend chroma only where meaning
+          lives.</p>
+          <p>And when the arithmetic says only four — or three — identities survive, Ember
+          ships four or three, labels the aliases as aliases, and declines to pretend.</p>
         </div>
-      </figure>
-    </section>
+        <hr>
+        <p class="foot">Set entirely in Ember roles: fg-0 body · fg-1 standfirst · fg-2 metadata · category-one links · category-two accent rule · bg-1 paper on bg-0 canvas.</p>
+      </article>
+    </div>
+  </div>
+  <div class="plates">
+    <article class="plate">
+      <span class="truth">Real product behavior</span>
+      <h2>Scene 01 — Reading surface</h2>
+      <p>The article behind this plate is a live specimen, not a screenshot. Its headline,
+      body columns, links, pull quote, and metadata use only the selected profile's
+      <strong>fg-0 / fg-1 / fg-2</strong> ladder and its accents.</p>
+      <p>Switch profiles in the header and watch hierarchy survive: the ladder's adjacent
+      steps are release-gated in both the commanded and the transformed state.</p>
+    </article>
+    <article class="plate">
+      <span class="truth">Real product behavior</span>
+      <h3>Why cream, not white</h3>
+      <p>Human vision carries fine detail through luminance, not chroma. Ember keeps the
+      most frequent pixels — canvas and body text — warm-neutral, and reserves higher
+      chroma for semantic accents. Every foreground role clears its contrast floor on
+      every surface <strong>after</strong> the transform: 6.8:1 for primary text in the
+      3400&nbsp;K dark family, 5.3:1 even at 1200&nbsp;K.</p>
+    </article>
+  </div>
+</section>
 
-    <section class="specimen-suite" aria-labelledby="suite-title">
-      <div class="suite-header">
-        <div>
-          <p class="eyebrow">One palette · radically different surfaces</p>
-          <h2 id="suite-title">Judge Ember in use, not in a row of swatches.</h2>
-        </div>
-        <div class="truth-key" role="group" aria-label="How to interpret the specimens">
-          <div class="truth-item"><span class="truth-mark" aria-hidden="true"></span><span><strong>Real product behavior.</strong> CSS roles, family capacity, generated images, and installation paths come from the release.</span></div>
-          <div class="truth-item"><span class="truth-mark" aria-hidden="true"></span><span><strong>Real public data.</strong> Mars elevation comes directly from NASA’s MGS MOLA archive with the source and scale disclosed.</span></div>
-          <div class="truth-item"><span class="truth-mark" aria-hidden="true"></span><span><strong>Fictional interface data.</strong> Orbital telemetry is invented and labeled; it exists only to stress-test dense presentation.</span></div>
-        </div>
+<!-- ================= CODE ================= -->
+<section class="scene" id="code" aria-label="Code and terminal specimen">
+  <div class="stage">
+    <div class="stage-inner">
+      <span class="truth">Real product behavior · real repository commands</span>
+      <div class="term">
+        <div class="term-bar"><i></i><i></i><i></i><span>ember — alacritty · selected profile</span></div>
+<pre><code><span class="t-prompt">$</span> <span class="t-cmd">git clone https://github.com/carpdiem/ember.git &amp;&amp; cd ember</span>
+<span class="t-prompt">$</span> <span class="t-cmd">python -m pip install "ember-palettes @ git+https://github.com/carpdiem/ember.git"</span>
+<span class="t-prompt">$</span> <span class="t-cmd">mkdir -p ~/.config/alacritty/themes</span>
+<span class="t-prompt">$</span> <span class="t-cmd">cp themes/terminal/alacritty/2000k-dark.toml ~/.config/alacritty/themes/</span>
+<span class="t-out"># then in alacritty.toml:  [general]  import = ["~/.config/alacritty/themes/2000k-dark.toml"]</span>
+
+<span class="t-prompt">$</span> <span class="t-cmd">python</span>
+<span class="t-k">import</span> matplotlib.pyplot <span class="t-k">as</span> plt
+<span class="t-k">from</span> ember <span class="t-k">import</span> <span class="t-f">categorical</span>, <span class="t-f">categorical_norm</span>, <span class="t-f">encode_categories</span>, <span class="t-f">sequential</span>, <span class="t-f">surfaces</span>
+
+<span class="t-c"># pass the slug so capacity checks match the selected family</span>
+palette = <span class="t-s">"2000k-dark"</span>
+ui = <span class="t-f">surfaces</span>(palette)
+ids = <span class="t-f">encode_categories</span>([<span class="t-s">"control"</span>, <span class="t-s">"alpha"</span>, <span class="t-s">"beta"</span>, <span class="t-s">"gamma"</span>],
+                        [<span class="t-s">"control"</span>, <span class="t-s">"alpha"</span>, <span class="t-s">"beta"</span>, <span class="t-s">"gamma"</span>], slug=palette)
+fig, ax = plt.subplots()
+fig.patch.set_facecolor(ui[<span class="t-s">"bg_0"</span>])
+<span class="t-sel">ax.scatter(x, y, c=ids, cmap=<span class="t-f">categorical</span>(palette), norm=<span class="t-f">categorical_norm</span>(palette))</span>
+ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class="t-c"># 256 float samples, every profile</span></code></pre>
       </div>
+    </div>
+  </div>
+  <div class="plates">
+    <article class="plate">
+      <span class="truth">Real product behavior</span>
+      <h2>Scene 02 — Code &amp; terminal</h2>
+      <p>Real install commands, the real Python API, and a live selection highlight on
+      <code>bg-5</code>. The syntax roles here deliberately use only the first
+      <strong>three</strong> categorical identities — so this exact theme survives even
+      the 1200&nbsp;K profile without aliasing.</p>
+      <p>Terminal exports ship for Alacritty, iTerm2, and Windows Terminal. Deep profiles
+      repeat their supported capacities across the sixteen ANSI slots and label aliases as
+      aliases instead of posing as extra colors.</p>
+    </article>
+    <article class="plate">
+      <span class="truth">Real product behavior</span>
+      <h3>Contrast is a release gate</h3>
+      <p>Every foreground-capable terminal accent clears <strong>4.5:1</strong> against the
+      terminal base background after its target transform. Accents are also gated against
+      all three foreground roles, so a color cannot pass by colliding with muted text.</p>
+    </article>
+  </div>
+</section>
 
-      <section class="specimen-section" id="editorial" aria-labelledby="editorial-title">
-        <div class="specimen-heading">
-          <div><span class="specimen-index">01 · Editorial</span><h2 id="editorial-title">A quiet page should remain quiet after dark.</h2></div>
-          <p>Long-form reading tests a palette differently than a terminal. Hierarchy must survive through type, spacing, rules, and restrained emphasis—without turning every paragraph into colored interface chrome.</p>
-        </div>
-        <article class="specimen-stage">
-          <div class="stage-caption"><span class="status-label">Real product explanation · Live CSS specimen</span><span>Serif text · Surface hierarchy · restrained accent</span></div>
-          <div class="editorial-stage">
-            <div class="editorial-masthead"><span class="editorial-wordmark">The Night Edition</span><span>Field notes on color, attention, and useful restraint</span><span>Vol. 01 · Ember</span></div>
-            <header class="editorial-header">
-              <span class="status-label">Design systems</span>
-              <h3>Designing for the light that is left</h3>
-              <p class="editorial-dek">Warm display transforms do not merely dim a palette. They collapse color channels unevenly, changing which differences remain available to perception.</p>
-            </header>
-            <div class="editorial-body">
-              <div class="editorial-copy">
-                <p>A conventional interface is usually authored for the unshifted screen. Turn the display deeply warm and that interface is asked to solve a different problem with the same commanded colors. Reds may remain vivid while blues retreat; hues that were comfortably separate can arrive at the eye as near-neighbors.</p>
-                <p>Ember starts from the transformed state instead. Each family is optimized against a declared warm-screen model, then shipped with only the categorical identities that remain defensible there. The result is not maximal daytime variety. It is a smaller, more truthful vocabulary that continues to carry meaning.</p>
-                <p>Typography and surfaces still do most of the work. Body text uses the strongest foreground role; secondary prose steps down deliberately; rules and panels establish structure before accent color enters. That keeps the page readable even when a reader cannot—or should not have to—decode hue.</p>
-                <p>The same principle extends to charts and terminals: line style, markers, position, labels, and syntax weight remain part of the signal. Color is valuable, but it should never be the only witness.</p>
-              </div>
-              <aside class="editorial-aside" aria-label="Editorial pull quote">
-                <blockquote>“A color that exists only before the filter is not an identity. It is an accident of daylight.”</blockquote>
-                <p>Ember’s deepest profile therefore exposes three categorical colors—not six weak imitations of a capacity the transform has already removed.</p>
-              </aside>
-            </div>
-          </div>
-        </article>
-      </section>
+<!-- ================= CONSOLE ================= -->
+<section id="console" aria-label="Fictional observatory console">
+  <div class="plates console-intro">
+    <article class="plate">
+      <span class="truth fiction">Fictional telemetry — interface stress test</span>
+      <h2>Scene 03 — Observatory console</h2>
+      <p>Every number, subsystem, and event on this console is <strong>invented</strong>.
+      What is real is the palette's behavior under load: gauges, bars, scopes, sparklines,
+      health states, and logs all drawn from the selected profile's roles, with series
+      count contracting honestly to the profile's categorical capacity
+      (<span id="con-cap-inline">6</span> identities here). Shape and label redundancy back
+      up every color encoding.</p>
+    </article>
+  </div>
+  <div class="console-wrap">
+    <div class="console">
+      <div class="con-head">
+        <span class="mission">THARSIS RELAY · DEEP-SKY OBSERVATORY <b>· SIMULATION</b></span>
+        <span class="field">MET <b>0412:06:57</b></span>
+        <span class="field">MODE <b>SCIENCE-2</b></span>
+        <span class="field">CHANNEL IDENTITIES <b id="con-cap">6 / 6</b></span>
+        <span class="field">GROUND PASS <b>DSS-43 · 11 min</b></span>
+      </div>
+      <div class="con-grid">
 
-      <section class="specimen-section" id="code" aria-labelledby="code-title">
-        <div class="specimen-heading">
-          <div><span class="specimen-index">02 · Code workspace</span><h2 id="code-title">Syntax, selection, chrome, and output under one contract.</h2></div>
-          <p>This workspace uses only three categorical accents, so it remains semantically valid in every Ember family. Structure survives through foreground roles and surfaces rather than relying on a rainbow tokenizer.</p>
-        </div>
-        <div class="specimen-stage code-stage">
-          <div class="stage-caption"><span class="status-label">Real Ember API · Live CSS specimen</span><span>Three-accent syntax · Local horizontal scroll on narrow screens</span></div>
-          <div class="code-toolbar"><div class="code-lights" aria-hidden="true"><span></span><span></span><span></span></div><span>ember / examples / palette_demo.py</span><span class="palette-only" data-for="3400k-dark">3400K DARK</span><span class="palette-only" data-for="3400k-light">3400K LIGHT</span><span class="palette-only" data-for="2000k-dark">2000K DARK</span><span class="palette-only" data-for="1200k-dark">1200K DARK</span></div>
-          <div class="code-layout">
-            <aside class="file-tree" aria-label="Example file tree"><strong>EXPLORER</strong><span>⌄ ember</span><span> ⌄ examples</span><span class="active-file">  palette_demo.py</span><span> ⌄ palettes</span><span>  ember.css</span><span>  ember.json</span><span> README.md</span><span> pyproject.toml</span></aside>
-            <div class="editor-pane">
-              <div class="editor-tabs"><span class="editor-tab active">palette_demo.py</span><span class="editor-tab">ember.json</span></div>
-              <section class="code-lines" aria-label="Python example using the Ember API">
-                <div class="code-row"><span class="line-number">1</span><span><span class="syntax-keyword">from</span> ember <span class="syntax-keyword">import</span> categorical, sequential, surfaces</span></div>
-                <div class="code-row"><span class="line-number">2</span><span></span></div>
-                <div class="code-row"><span class="line-number">3</span><span>profile = <span class="syntax-string">"2000k-dark"</span></span></div>
-                <div class="code-row"><span class="line-number">4</span><span>roles = <span class="syntax-name">surfaces</span>(profile)</span></div>
-                <div class="code-row"><span class="line-number">5</span><span>series = <span class="syntax-name">categorical</span>(profile)</span></div>
-                <div class="code-row"><span class="line-number">6</span><span>terrain = <span class="syntax-name">sequential</span>(profile)</span></div>
-                <div class="code-row"><span class="line-number">7</span><span></span></div>
-                <div class="code-row"><span class="line-number">8</span><span><span class="syntax-comment"># Four defensible identities at the 2000K target.</span></span></div>
-                <div class="code-row"><span class="line-number">9</span><span><span class="syntax-keyword">assert</span> series.N == <span class="syntax-name">4</span></span></div>
-                <div class="code-row"><span class="line-number">10</span><span><span class="syntax-keyword">assert</span> terrain.N == <span class="syntax-name">256</span></span></div>
-                <div class="code-row"><span class="line-number">11</span><span><span class="syntax-keyword">assert</span> roles[<span class="syntax-string">"bg_0"</span>].startswith(<span class="syntax-string">"#"</span>)</span></div>
-                <div class="code-row"><span class="line-number">12</span><span></span></div>
-                <div class="code-row"><span class="line-number">13</span><span><span class="syntax-name">print</span>(profile, series.N, terrain.N)</span></div>
-              </section>
-              <div class="terminal-output"><span class="prompt">❯</span> uv run python examples/palette_demo.py<br><strong>2000k-dark</strong> &nbsp; 4 categorical identities &nbsp; 256 sequential samples<br><span class="prompt">❯</span> <span class="syntax-comment">ready</span></div>
-            </div>
-          </div>
-          <div class="code-statusbar"><span>main*</span><span>Python 3 · UTF-8 · LF</span><span>No color is the sole encoding</span></div>
-        </div>
-      </section>
-
-      <section class="specimen-section" id="dashboard" aria-labelledby="dashboard-title">
-        <div class="specimen-heading">
-          <div><span class="specimen-index">03 · Dense control surface</span><h2 id="dashboard-title">Operational density without neon theater.</h2></div>
-          <p>The Helios Relay console is fictional. Its fixed values do not claim mission or palette performance; they exercise compact metrics, charts, event tables, and redundant series encodings.</p>
-        </div>
-        <div class="specimen-stage">
-          <div class="stage-caption"><span class="status-label">Fictional fixed telemetry · Real Ember roles</span><span>Direct labels · dash patterns · markers · position</span></div>
-          <div class="dashboard-stage">
-            <div class="dashboard-console">
-              <header class="dashboard-header"><div class="mission-id"><span class="mission-mark">H7</span><div><strong>Helios Relay / Farpoint Array</strong><span>Deep-space optical link · simulation surface</span></div></div><div class="dashboard-clock"><strong>LINK NOMINAL</strong> · T+ 084:12:19</div></header>
-              <div class="kpi-grid">
-                <div class="kpi"><span>Link margin</span><strong>12.8 dB</strong><small>+0.7 / cycle</small></div>
-                <div class="kpi"><span>Photon rate</span><strong>4.2 Mcps</strong><small>window stable</small></div>
-                <div class="kpi"><span>Thermal drift</span><strong>+0.03 K</strong><small>inside band</small></div>
-                <div class="kpi"><span>Uplink window</span><strong>08:42</strong><small>remaining</small></div>
-              </div>
-              <div class="dashboard-grid">
-                <section class="dashboard-panel" aria-labelledby="signal-trace-title">
-                  <div class="panel-title" id="signal-trace-title">Signal coherence · last 24 frames <span>normalized / fictional</span></div>
-                  <svg class="telemetry-chart" viewBox="0 0 900 360" role="img" aria-labelledby="telemetry-chart-title telemetry-chart-desc">
-                    <title id="telemetry-chart-title">Fictional three-series signal-coherence chart</title><desc id="telemetry-chart-desc">Three fixed traces use solid, dashed, and dotted lines plus different markers and direct labels.</desc>
-                    <path class="chart-gridline" d="M70 70H830 M70 140H830 M70 210H830 M70 280H830 M200 45V300 M350 45V300 M500 45V300 M650 45V300 M800 45V300"/>
-                    <path class="chart-axis" d="M70 40V300H845"/>
-                    <path class="chart-one" d="M70 238 C150 225 185 198 255 205 S360 158 430 168 S535 105 605 120 S720 78 815 86"/>
-                    <path class="chart-two" d="M70 265 C155 254 200 230 270 238 S380 210 455 217 S570 170 640 178 S735 135 815 149"/>
-                    <path class="chart-three" d="M70 182 C145 195 205 171 275 184 S382 145 460 158 S565 141 640 132 S730 116 815 124"/>
-                    <circle class="chart-marker-one" cx="815" cy="86" r="7"/><rect class="chart-marker-two" x="808" y="142" width="14" height="14"/><path class="chart-marker-three" d="M815 115l9 16h-18z"/>
-                    <text class="chart-label" x="690" y="68">carrier</text><text class="chart-label" x="690" y="178">return</text><text class="chart-label" x="690" y="116">reference</text>
-                    <text class="chart-meta" x="70" y="330">T−24</text><text class="chart-meta" x="785" y="330">NOW</text>
-                  </svg>
-                </section>
-                <section class="dashboard-panel" aria-labelledby="orbital-geometry-title">
-                  <div class="panel-title" id="orbital-geometry-title">Relay geometry <span>schematic</span></div>
-                  <div class="orbit-display" role="img" aria-label="Fictional orbital geometry schematic"><span class="orbit-ring"></span><span class="orbit-ring"></span><span class="orbit-core">FARPOINT</span></div>
-                </section>
-              </div>
-              <div class="event-table-wrap">
-                <table class="event-table"><thead><tr><th>Timestamp</th><th>Subsystem</th><th>Event</th><th>State</th></tr></thead><tbody><tr><td>T+084:09:11</td><td>OPT-LINK</td><td>Adaptive mirror bias settled</td><td>NOMINAL</td></tr><tr><td>T+084:07:48</td><td>THERMAL</td><td>Bench gradient below watch band</td><td>CLEAR</td></tr><tr><td>T+084:03:22</td><td>GUIDANCE</td><td>Fine-track handoff completed</td><td>LOCKED</td></tr></tbody></table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="specimen-section" id="mars" aria-labelledby="mars-title">
-        <div class="specimen-heading">
-          <div><span class="specimen-index">04 · Real scalar data</span><h2 id="mars-title">The topography of Mars, measured and remapped.</h2></div>
-          <p>This is not a decorative Mars texture. Every pixel is median elevation from NASA’s Mars Orbiter Laser Altimeter, mapped directly through the selected Ember family’s authored sequential scale.</p>
-        </div>
-        <figure class="specimen-stage">
-          <figcaption class="stage-caption"><span class="status-label">Real public data · NASA MGS MOLA</span><span>1440 × 720 · 0.25°/pixel · elevation in meters</span></figcaption>
-          <div class="map-stage">
-            <div class="map-frame">
-              <img class="palette-image" data-for="3400k-dark" src="assets/mars-topography-3400k-dark.png" width="1440" height="720" alt="Global Mars MOLA topography mapped with Ember 3400K Dark">
-              <img class="palette-image" data-for="3400k-light" src="assets/mars-topography-3400k-light.png" width="1440" height="720" alt="Global Mars MOLA topography mapped with Ember 3400K Light">
-              <img class="palette-image" data-for="2000k-dark" src="assets/mars-topography-2000k-dark.png" width="1440" height="720" alt="Global Mars MOLA topography mapped with Ember 2000K Dark">
-              <img class="palette-image" data-for="1200k-dark" src="assets/mars-topography-1200k-dark.png" width="1440" height="720" alt="Global Mars MOLA topography mapped with Ember 1200K Dark">
-              <div class="map-corners" aria-hidden="true"><span>90°N · 0°E</span><span>90°N · 360°E</span></div>
-            </div>
-            <div class="scale-legend"><span>−5.887 km · low</span><span class="scale-ramp" aria-hidden="true"></span><span>+6.013 km · high</span></div>
-            <div class="source-note"><p>Display colors clip at the 1st and 99th elevation percentiles so ordinary terrain remains legible; the source remains unchanged. Full product range: −8.068 km to +21.134 km. Empty observation bins in the PDS product contain archive-supplied interpolated values.</p><a href="assets/README.md">Source and method →</a></div>
-          </div>
-        </figure>
-      </section>
-
-      <section class="specimen-section" id="mona-lisa" aria-labelledby="mona-title">
-        <div class="specimen-heading">
-          <div><span class="specimen-index">05 · Photographic luminance</span><h2 id="mona-title">A masterpiece, reduced to light and remade in Ember.</h2></div>
-          <p>Source pixels are ranked by relative luminance and mapped into the selected family’s 256-sample scale. The comparison preserves the portrait’s light structure without borrowing its original colors.</p>
-        </div>
-        <figure class="specimen-stage">
-          <figcaption class="stage-caption"><span class="status-label">Public-domain artwork · Real generated mapping</span><span>Leonardo da Vinci · C2RMF digital source</span></figcaption>
-          <div class="art-stage">
-            <div class="art-grid">
-              <div class="art-panel"><span class="art-label">Source reference</span><img src="assets/mona-lisa-c2rmf-public-domain.jpg" alt="Public-domain C2RMF image of Leonardo da Vinci's Mona Lisa"></div>
-              <div class="art-panel"><span class="art-label">Selected Ember mapping</span><img class="palette-image" data-for="3400k-dark" src="assets/mona-lisa-3400k-dark.png" width="640" alt="Mona Lisa luminance mapped with Ember 3400K Dark"><img class="palette-image" data-for="3400k-light" src="assets/mona-lisa-3400k-light.png" width="640" alt="Mona Lisa luminance mapped with Ember 3400K Light"><img class="palette-image" data-for="2000k-dark" src="assets/mona-lisa-2000k-dark.png" width="640" alt="Mona Lisa luminance mapped with Ember 2000K Dark"><img class="palette-image" data-for="1200k-dark" src="assets/mona-lisa-1200k-dark.png" width="640" alt="Mona Lisa luminance mapped with Ember 1200K Dark"></div>
-            </div>
-            <div class="source-note"><p>The photographic mapping reverses an authored ramp when necessary so dark source pixels remain dark and light pixels remain light. That is intentionally different from the Mars chart, where low and high retain scalar meaning.</p><a href="assets/README.md">Provenance and algorithm →</a></div>
-          </div>
-        </figure>
-      </section>
-
-      <section class="specimen-section" id="wave" aria-labelledby="wave-title">
-        <div class="specimen-heading">
-          <div><span class="specimen-index">06 · Animated scientific figure</span><h2 id="wave-title">A field propagates. A photon does not ride the curve.</h2></div>
-          <p>This animated schematic shows an electromagnetic wave traveling in +x with in-phase electric and magnetic fields. The two transverse fields are projected into the page for legibility; the figure is conceptual, not a scale simulation.</p>
-        </div>
-        <figure class="specimen-stage">
-          <figcaption class="stage-caption"><span class="status-label">Physics-based schematic · Live SVG and CSS</span><span>Animation stops under reduced-motion preference</span></figcaption>
-          <div class="wave-stage">
-            <div class="wave-figure">
-              <svg viewBox="0 0 1000 460" role="img" aria-labelledby="wave-svg-title wave-svg-desc">
-                <title id="wave-svg-title">Animated electromagnetic wave packet</title><desc id="wave-svg-desc">Electric and magnetic field curves move in phase along the positive x direction. The fields are perpendicular in three dimensions but projected together here.</desc>
-                <defs><clipPath id="wave-clip"><rect x="70" y="55" width="850" height="330"/></clipPath></defs>
-                <path class="wave-grid" d="M80 120H920 M80 230H920 M80 340H920 M240 70V390 M440 70V390 M640 70V390 M840 70V390"/>
-                <path class="wave-axis" d="M70 230H935 M918 218l17 12-17 12"/>
-                <g clip-path="url(#wave-clip)">
-                  <g class="wave-scroll">
-                    <path class="wave-e" d="M-200 230 C-150 90 -100 90 -50 230 S50 370 100 230 S200 90 250 230 S350 370 400 230 S500 90 550 230 S650 370 700 230 S800 90 850 230 S950 370 1000 230 S1100 90 1150 230 S1250 370 1300 230"/>
-                    <path class="wave-b" d="M-200 230 C-150 175 -100 175 -50 230 S50 285 100 230 S200 175 250 230 S350 285 400 230 S500 175 550 230 S650 285 700 230 S800 175 850 230 S950 285 1000 230 S1100 175 1150 230 S1250 285 1300 230"/>
-                  </g>
-                  <circle class="energy-packet" cx="95" cy="230" r="10"/>
-                </g>
-                <text class="wave-label wave-e-label" x="82" y="92">E field</text><text class="wave-label wave-b-label" x="82" y="370">B field · projected</text><text class="wave-label" x="745" y="215">propagation +x</text><text class="wave-meta" x="82" y="418">E ⟂ B ⟂ direction · fields oscillate in phase</text>
+        <div class="panel span4">
+          <h4>Power · Thermal · Lock</h4>
+          <div class="gauge-row">
+            <div class="gauge-cell">
+              <svg class="gauge" viewBox="0 0 100 62" role="img" aria-label="Bus power gauge, 27.4 volts, 78 percent of nominal">
+                <path class="g-track" d="M10 55 A40 40 0 0 1 90 55"/>
+                <path class="g-val bus-power" d="M10 55 A40 40 0 0 1 90 55"/>
               </svg>
+              <span class="g-num">27.4 V</span>
+              <span class="g-lab">BUS POWER</span>
             </div>
-            <div class="wave-mobile-legend" aria-hidden="true"><span>E field</span><span>B field · projected</span><span>Propagation +x</span></div>
-            <div class="wave-explanation">
-              <div class="wave-fact"><strong>Perpendicular fields</strong>The electric field, magnetic field, and direction of travel form mutually perpendicular axes in free space.</div>
-              <div class="wave-fact"><strong>One propagating phase</strong>E and B reach zero and extrema together. The dashed line is a projection cue, not a delayed field.</div>
-              <div class="wave-fact"><strong>No bead-on-a-wave claim</strong>The moving point indicates a localized energy packet. It does not imply that a photon follows either sinusoidal field path.</div>
+            <div class="gauge-cell watch">
+              <svg class="gauge" viewBox="0 0 100 62" role="img" aria-label="Detector thermal gauge, 141 kelvin, watch state">
+                <path class="g-track" d="M10 55 A40 40 0 0 1 90 55"/>
+                <path class="g-val detector-thermal" d="M10 55 A40 40 0 0 1 90 55"/>
+              </svg>
+              <span class="g-num">141 K</span>
+              <span class="g-lab"><span class="warn">▲ THERMAL</span></span>
+            </div>
+            <div class="gauge-cell">
+              <svg class="gauge" viewBox="0 0 100 62" role="img" aria-label="Signal lock gauge, 87 percent">
+                <path class="g-track" d="M10 55 A40 40 0 0 1 90 55"/>
+                <path class="g-val signal-lock" d="M10 55 A40 40 0 0 1 90 55"/>
+              </svg>
+              <span class="g-num">87 %</span>
+              <span class="g-lab">SIGNAL LOCK</span>
             </div>
           </div>
-        </figure>
-      </section>
-    </section>
-
-    <section class="section" id="profiles" aria-labelledby="profiles-title">
-      <div class="section-header">
-        <div>
-          <p class="eyebrow">Four constrained families</p>
-          <h2 id="profiles-title">Use only the identities the transform leaves intact.</h2>
+          <div class="thermal-lab thermal-title"><span>DETECTOR PLANE THERMAL PROFILE (sequential map, low→high)</span></div>
+          <div class="thermal-strip" role="img" aria-label="Detector plane thermal profile drawn on the sequential colormap with two sensor markers">
+            <i class="thermal-marker-a"></i><i class="thermal-marker-b"></i>
+          </div>
+          <div class="thermal-lab"><span>128 K</span><span>sensors A · B</span><span>166 K</span></div>
         </div>
-        <p>Ember does not pretend every daytime color survives a deep warm shift. Each profile exposes an honest categorical capacity while retaining the same surface, foreground, terminal, and sequential contracts.</p>
-      </div>
 
-      <div class="profile-grid">
-        <article class="profile-card" data-ember-palette="3400k-dark">
-          <header>
-            <p class="card-kicker">General-purpose dark</p>
-            <h3>3400K Dark</h3>
-            <p>A near-black family for ordinary Night Shift use, with the full six-color categorical bank.</p>
-            <div class="profile-meta"><span>6 categories</span><span>Dark surface ladder</span></div>
-          </header>
-          <div class="profile-visual" role="img" aria-label="3400K Dark surfaces, six categorical colors, and sequential ramp">
-            <div class="surface-row" aria-hidden="true">
-              <span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span>
-            </div>
-            <div class="category-row" aria-hidden="true">
-              <span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span>
-            </div>
-            <div class="profile-ramp" aria-hidden="true"></div>
+        <div class="panel span3">
+          <h4>Comm link</h4>
+          <div class="kv"><span>UPLINK · X-band</span><b>2.1 kbps</b></div>
+          <div class="segbar up" aria-hidden="true">
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span></span><span></span><span></span>
           </div>
-          <a class="profile-link" href="docs/swatches/3400k-dark.svg">Inspect the complete role map →</a>
-        </article>
-
-        <article class="profile-card" data-ember-palette="3400k-light">
-          <header>
-            <p class="card-kicker">Moderate-warm light</p>
-            <h3>3400K Light</h3>
-            <p>A warm paper-like family for light interfaces under a moderate display shift.</p>
-            <div class="profile-meta"><span>6 categories</span><span>Light surface ladder</span></div>
-          </header>
-          <div class="profile-visual" role="img" aria-label="3400K Light surfaces, six categorical colors, and sequential ramp">
-            <div class="surface-row" aria-hidden="true">
-              <span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span>
-            </div>
-            <div class="category-row" aria-hidden="true">
-              <span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span>
-            </div>
-            <div class="profile-ramp" aria-hidden="true"></div>
+          <div class="kv"><span>DOWNLINK · Ka-band</span><b>142 kbps</b></div>
+          <div class="segbar dn" aria-hidden="true">
+            <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span>
           </div>
-          <a class="profile-link" href="docs/swatches/3400k-light.svg">Inspect the complete role map →</a>
-        </article>
-
-        <article class="profile-card" data-ember-palette="2000k-dark">
-          <header>
-            <p class="card-kicker">Deep redshift</p>
-            <h3>2000K Dark</h3>
-            <p>A dark specialist family for strong Redshift use, with four defensible color identities.</p>
-            <div class="profile-meta"><span>4 categories</span><span>Reduced ANSI bank</span></div>
-          </header>
-          <div class="profile-visual" role="img" aria-label="2000K Dark surfaces, four categorical colors, and sequential ramp">
-            <div class="surface-row" aria-hidden="true">
-              <span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span>
-            </div>
-            <div class="category-row capacity-4" aria-hidden="true">
-              <span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span>
-            </div>
-            <div class="profile-ramp" aria-hidden="true"></div>
-          </div>
-          <a class="profile-link" href="docs/swatches/2000k-dark.svg">Inspect the complete role map →</a>
-        </article>
-
-        <article class="profile-card" data-ember-palette="1200k-dark">
-          <header>
-            <p class="card-kicker">Extreme stress profile</p>
-            <h3>1200K Dark</h3>
-            <p>A dark family for extreme low-temperature transforms, limited to three honest identities.</p>
-            <div class="profile-meta"><span>3 categories</span><span>Blue channel absent</span></div>
-          </header>
-          <div class="profile-visual" role="img" aria-label="1200K Dark surfaces, three categorical colors, and sequential ramp">
-            <div class="surface-row" aria-hidden="true">
-              <span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span><span class="surface-chip"></span>
-            </div>
-            <div class="category-row capacity-3" aria-hidden="true">
-              <span class="category-chip"></span><span class="category-chip"></span><span class="category-chip"></span>
-            </div>
-            <div class="profile-ramp" aria-hidden="true"></div>
-          </div>
-          <a class="profile-link" href="docs/swatches/1200k-dark.svg">Inspect the complete role map →</a>
-        </article>
-      </div>
-    </section>
-
-    <section class="section" id="mechanism" aria-labelledby="mechanism-title">
-      <div class="section-header">
-        <div>
-          <p class="eyebrow">The mechanism</p>
-          <h2 id="mechanism-title">Design in the constrained state first.</h2>
+          <div class="kv"><span>RANGE</span><b>1.318 AU</b></div>
+          <div class="kv"><span>ONE-WAY LIGHT TIME</span><b>10 m 57 s</b></div>
+          <div class="kv"><span>FRAME ERRORS / 10⁴</span><b>0.3</b></div>
+          <div class="kv"><span>BUFFER FILL</span><b>61 %</b></div>
         </div>
-        <p>A warm filter is not a translucent orange layer. It applies different gains to red, green, and blue, collapsing distinctions that ordinary daytime palettes depend on.</p>
-      </div>
 
-      <div class="mechanism-points">
-        <article class="mechanism-point">
-          <span class="point-number">01</span>
-          <h3>Model the surviving signal</h3>
-          <p>Each family is tested under its target per-channel transform rather than judged only in commanded sRGB.</p>
-        </article>
-        <article class="mechanism-point">
-          <span class="point-number">02</span>
-          <h3>Protect identity and contrast</h3>
-          <p>Hard transformed-state gates come first; daytime separation is improved only inside the surviving solution space.</p>
-        </article>
-        <article class="mechanism-point">
-          <span class="point-number">03</span>
-          <h3>Export one coherent system</h3>
-          <p>The same authored families drive terminal themes, UI roles, chart colors, heatmaps, CSS, JSON, and Python.</p>
-        </article>
-      </div>
+        <div class="panel span5">
+          <h4>Spectral scope · channel A</h4>
+          <canvas class="scope-c" id="scope" width="640" height="150" role="img" aria-label="Animated spectral scope trace, fictional signal"></canvas>
+          <div class="kv scope-readout"><span>CENTER 8.42 GHz · SPAN 4 MHz</span><b>SNR 23.6 dB</b></div>
+        </div>
 
-      <figure class="comparison-figure">
-        <img src="docs/swatches/command-vs-simulated.png" width="760" height="838" alt="All four Ember categorical and sequential palettes shown as commanded and after their modeled warm transforms">
-        <figcaption class="comparison-caption">
-          <strong>Commanded versus modeled output</strong>
-          <span>Deterministic signal simulation, not a photograph or display calibration.</span>
+        <div class="panel span5">
+          <h4>Detector channels <span id="spark-note" class="spark-note">· one series per available identity</span></h4>
+          <div class="sparks" id="sparks"></div>
+          <noscript><p class="kv"><span>Channel sparklines require JavaScript.</span></p></noscript>
+        </div>
+
+        <div class="panel span3">
+          <h4>Approach plot · plane-of-sky</h4>
+          <svg class="radar" viewBox="0 0 120 120" role="img" aria-label="Fictional plane-of-sky plot with three tracked objects at increasing range rings">
+            <circle class="rr" cx="60" cy="60" r="18"/>
+            <circle class="rr" cx="60" cy="60" r="36"/>
+            <circle class="rr" cx="60" cy="60" r="54"/>
+            <line class="rx" x1="60" y1="4" x2="60" y2="116"/>
+            <line class="rx" x1="4" y1="60" x2="116" y2="60"/>
+            <g class="sweep"><line x1="60" y1="60" x2="60" y2="7"/></g>
+            <circle class="m1" cx="83" cy="41" r="3"/>
+            <text x="88" y="40">TGT-1</text>
+            <rect class="m2" x="38" y="76" width="5.4" height="5.4"/>
+            <text x="30" y="90">REL-2</text>
+            <path class="m3" d="M52 30 l3.4 6 h-6.8 z"/>
+            <text x="40" y="26">DBR-3</text>
+          </svg>
+          <div class="kv"><span>RINGS</span><b>50 · 100 · 150 km</b></div>
+        </div>
+
+        <div class="panel span4">
+          <h4>Subsystem health</h4>
+          <ul class="health">
+            <li class="ok"><span>EPS</span><b></b></li>
+            <li class="ok"><span>ADCS</span><b></b></li>
+            <li class="watch"><span>TCS LOOP-B</span><b></b></li>
+            <li class="ok"><span>C&amp;DH</span><b></b></li>
+            <li class="ok"><span>PROP</span><b></b></li>
+            <li class="ok"><span>COMM-X</span><b></b></li>
+            <li class="ok"><span>COMM-KA</span><b></b></li>
+            <li class="watch"><span>STAR TRK-2</span><b></b></li>
+            <li class="ok"><span>PAYLOAD-A</span><b></b></li>
+            <li class="ok"><span>PAYLOAD-B</span><b></b></li>
+            <li class="ok"><span>FSW</span><b></b></li>
+            <li class="ok"><span>MECH</span><b></b></li>
+          </ul>
+        </div>
+
+        <div class="panel span4">
+          <h4>Readouts</h4>
+          <dl class="readouts">
+            <div><dt>WHEEL 1 SPEED</dt><dd>2 140 <small>rpm</small></dd></div>
+            <div><dt>WHEEL 2 SPEED</dt><dd>1 986 <small>rpm</small></dd></div>
+            <div><dt>ATTITUDE ERROR</dt><dd>0.004 <small>°</small></dd></div>
+            <div><dt>SLEW RATE</dt><dd>0.12 <small>°/s</small></dd></div>
+            <div><dt>PROPELLANT</dt><dd>61.8 <small>kg</small></dd></div>
+            <div><dt>TANK PRESSURE</dt><dd>212 <small>kPa</small></dd></div>
+            <div><dt>ARRAY CURRENT</dt><dd>8.9 <small>A</small></dd></div>
+            <div><dt>BATTERY SoC</dt><dd>93 <small>%</small></dd></div>
+            <div><dt>CPU LOAD</dt><dd>34 <small>%</small></dd></div>
+            <div><dt>SSR FILL</dt><dd>412 <small>Gb</small></dd></div>
+          </dl>
+        </div>
+
+        <div class="panel span5">
+          <h4>Event log</h4>
+          <ul class="log">
+            <li><span class="t">0412:04:12</span><span class="cmd">CMD</span> SEQ tharsis_scan_07 loaded, 84 steps</li>
+            <li><span class="t">0412:04:58</span>PAYLOAD-A integration started · 900 s</li>
+            <li><span class="t">0412:05:31</span><span class="warn">▲ WATCH</span> TCS LOOP-B pump current +6 % over trend</li>
+            <li><span class="t">0412:05:33</span>TCS heater duty rebalanced autonomously</li>
+            <li><span class="t">0412:05:47</span><span class="warn">▲ WATCH</span> STAR TRK-2 residual 0.9″, TRK-1 primary</li>
+            <li><span class="t">0412:06:02</span><span class="cmd">CMD</span> Ka downlink rate step 96 → 142 kbps</li>
+            <li><span class="t">0412:06:40</span>SSR playback window opened · DSS-43</li>
+            <li><span class="t">0412:06:55</span>PAYLOAD-B dark-frame calibration queued</li>
+          </ul>
+        </div>
+
+        <div class="panel span3">
+          <h4>Command queue</h4>
+          <table class="queue">
+            <thead><tr><th scope="col">MET</th><th scope="col">CMD</th><th scope="col">ST</th></tr></thead>
+            <tbody>
+              <tr><td>0412:08:00</td><td>SCAN_07 §12</td><td>ARMED</td></tr>
+              <tr><td>0412:11:20</td><td>SSR_PLAYBK</td><td>ARMED</td></tr>
+              <tr><td>0412:14:05</td><td>TRK2_DIAG</td><td>HOLD</td></tr>
+              <tr><td>0412:17:30</td><td>DESAT_RW</td><td>PEND</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+    <p class="map-cite simulation-note">
+      Simulation notice: mission, spacecraft, values, and events above are fictional and exist
+      only to stress-test information density. The color behavior — capacity contraction,
+      contrast, warning encoding with shape redundancy — is the real product.
+    </p>
+  </div>
+</section>
+
+<!-- ================= MARS ================= -->
+<section class="scene" id="mars" aria-label="Mars topography specimen">
+  <div class="stage">
+    <div class="stage-inner">
+      <span class="truth">Real NASA data — MGS MOLA topography</span>
+      <figure class="map-frame figure-flush">
+        <img id="mars-img"
+             src="assets/mars-topography-3400k-dark.png"
+             data-src-template="assets/mars-topography-{slug}.png"
+             width="1440" height="720"
+             alt="Global Mars topography from MGS MOLA, 1440 by 720 grid, elevation mapped through the selected Ember sequential colormap">
+        <figcaption class="map-legend">
+          <div class="seq-strip" role="img" aria-label="Elevation color scale, low at left to high at right"></div>
+          <div class="lab"><span>−5 887 m (1st pct)</span><span>elevation vs. Mars areoid · low → high</span><span>+6 013 m (99th pct)</span></div>
+          <p class="map-cite">
+            MOLA MEGDR <code>MEGT90N000CB.IMG</code> v2.0 · 0.25°/px simple cylindrical grid · every pixel is
+            median topography in meters, planetary radius minus areoid radius · full source range −8 068 m to
+            +21 134 m; only the color scale is clipped at the 1st–99th percentiles · empty bins carry
+            archive-supplied interpolation. Smith et&nbsp;al., NASA PDS, MGS-M-MOLA-5-MEGDR-L3-V1.0, 2003.
+          </p>
         </figcaption>
       </figure>
-    </section>
+    </div>
+  </div>
+  <div class="plates">
+    <article class="plate">
+      <span class="truth">Real NASA data</span>
+      <h2>Scene 04 — A planet through the sequential map</h2>
+      <p>This is not a decorative Mars texture. Each pixel encodes measured elevation, and
+      the selected profile's <strong>256-sample sequential map</strong> carries it —
+      resampled to equal perceptual steps <em>after</em> the warm transform, with strictly
+      monotonic transformed lightness.</p>
+      <p>Olympus Mons and Hellas remain legible in every profile because spacing is
+      engineered in the state your filter actually shows you.</p>
+    </article>
+    <article class="plate">
+      <span class="truth">Real NASA data</span>
+      <h3>The light profile is not inverted</h3>
+      <p>Scalar low→high always follows the authored ramp direction. In 3400K&nbsp;Light the
+      ramp runs light→dark, so high terrain reads <strong>dark</strong> — deliberately.
+      Reversing it to make peaks bright would break the family's scalar semantics.</p>
+    </article>
+  </div>
+</section>
 
-    <section class="section" id="use-ember" aria-labelledby="use-title">
-      <div class="use-layout">
-        <div class="use-intro">
-          <p class="eyebrow">Use Ember</p>
-          <h2 id="use-title">Pick the surface that already belongs to your workflow.</h2>
-          <p>Ember ships as files and APIs, not as another filter application. Keep the warm-display tool you already use.</p>
-          <div class="section-actions">
-            <a class="button button-primary" href="https://github.com/carpdiem/ember">View the repository</a>
-            <a class="button button-secondary" href="https://github.com/carpdiem/ember#make-ember-work">Read the full guide</a>
+<!-- ================= MONA ================= -->
+<section class="scene" id="mona" aria-label="Mona Lisa mapping specimen">
+  <div class="stage">
+    <div class="stage-inner mona-stage">
+      <span class="truth">Public-domain artwork + deterministic mapping</span>
+      <div class="compare">
+        <div class="compare-stack" id="compare-stack">
+          <img src="assets/mona-lisa-c2rmf-public-domain.jpg"
+               width="640" height="957"
+               alt="Mona Lisa by Leonardo da Vinci, C2RMF retouched digitization, public domain source image">
+          <img class="over" id="mona-over"
+               src="assets/mona-lisa-3400k-dark.png"
+               data-src-template="assets/mona-lisa-{slug}.png"
+               width="640" height="957"
+               alt="The same Mona Lisa with pixel luminance mapped deterministically into the selected Ember sequential colormap">
+          <div class="divider" id="mona-divider"></div>
+        </div>
+        <div class="compare-labels"><span>◀ Ember mapping</span><span>source ▶</span></div>
+        <div class="compare-ctl">
+          <label for="mona-range">Comparison wipe</label>
+          <input type="range" id="mona-range" min="0" max="100" value="50"
+                 aria-label="Position of the wipe between Ember mapping and the untouched source image">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="plates">
+    <article class="plate">
+      <span class="truth">Public-domain art · deterministic mapping</span>
+      <h2>Scene 05 — A photograph is not a scalar field</h2>
+      <p>Pixels are ranked by WCAG relative luminance, stretched across the 1st–99th
+      percentile, and mapped into the profile's 256 sequential samples. Where an authored
+      ramp runs light→dark, generation reverses it <strong>for this photographic case
+      only</strong>, so dark paint stays dark — the opposite convention from the Mars
+      scalar map, on purpose.</p>
+      <p>The source is untouched: same crop, same geometry, no cosmetic handicap. Drag the
+      wipe and judge the mapping against it directly.</p>
+    </article>
+    <article class="plate">
+      <span class="truth">Provenance</span>
+      <h3>Source</h3>
+      <p><em>Mona Lisa</em>, Leonardo da Vinci · C2RMF retouched digitization via Wikimedia
+      Commons · public domain, recorded SHA-256 in <code>assets/README.md</code>. The four
+      mapped PNGs are rebuilt deterministically by <code>tools/build_all.py</code>.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ================= EM FIELD ================= -->
+<section class="scene field-scene" id="field" aria-label="Electromagnetic field figure">
+  <div class="stage">
+    <div class="stage-inner">
+      <span class="truth">Physics figure — real geometry, live palette</span>
+      <figure class="em-frame figure-flush">
+        <canvas class="em-c" id="em" width="960" height="600" role="img"
+                aria-label="Projected three-dimensional animation of a plane electromagnetic wave: electric field oscillating vertically, magnetic field horizontally, both perpendicular to the propagation axis and in phase"></canvas>
+        <figcaption>
+          <div class="em-legend">
+            <span class="le"><i></i>E — electric field (ŷ)</span>
+            <span class="lb"><i></i>B — magnetic field (x̂)</span>
+            <span class="lc"><i></i>tracked phase crest</span>
           </div>
-        </div>
+          <p class="em-cap">
+            A plane electromagnetic wave in vacuum: <strong>E</strong> and <strong>B</strong>
+            oscillate in phase, mutually perpendicular and perpendicular to the propagation
+            direction <strong>k</strong>. The marked crest tracks one phase front moving at
+            c — it is a feature of the field, not a particle riding the curve.
+          </p>
+          <noscript><p class="em-cap">Enable JavaScript to render the field figure.</p></noscript>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+  <div class="plates">
+    <article class="plate">
+      <span class="truth">Physics figure</span>
+      <h2>Scene 06 — Fields in depth</h2>
+      <p>The figure is drawn dependency-free on a perspective projection: floor grid, axis
+      triad, field vectors, and envelope curves all live in one 3-D frame. E rides
+      <strong>category-one</strong>, B rides <strong>category-two</strong>, the crest marker
+      <strong>category-three</strong> — the three identities every Ember profile guarantees,
+      so this figure never degrades.</p>
+      <p>Under <code>prefers-reduced-motion</code> the animation freezes into a single
+      honest pose with the same labeling.</p>
+    </article>
+  </div>
+</section>
 
-        <div class="use-grid">
-          <article class="use-card">
-            <p class="card-kicker">Terminal</p>
-            <h3>Import a native theme</h3>
-            <p>Ready-made schemes are included for Alacritty, iTerm2, and Windows Terminal.</p>
-            <pre><code>themes/terminal/
-├── alacritty/
-├── iterm2/
-└── windows-terminal/</code></pre>
-            <a href="themes/terminal/README.md">Open the terminal guide →</a>
-          </article>
+<!-- ================= ADOPTION ================= -->
+<section class="use" id="use" aria-label="Install and use Ember">
+  <p class="kicker">Adopt Ember · MIT licensed · no build step, no registry, just files</p>
+  <h2>Take the profile home.</h2>
+  <div class="use-grid">
+    <div class="use-card">
+      <h3>Get the files</h3>
+      <pre><code>git clone https://github.com/carpdiem/ember.git
+cd ember</code></pre>
+      <p>Python users can skip the clone:</p>
+      <pre><code>python -m pip install \
+  "ember-palettes @ git+https://github.com/carpdiem/ember.git"</code></pre>
+      <p>There is no PyPI package; install straight from GitHub.</p>
+    </div>
+    <div class="use-card">
+      <h3>Terminal themes</h3>
+      <pre><code>mkdir -p ~/.config/alacritty/themes
+cp themes/terminal/alacritty/2000k-dark.toml \
+   ~/.config/alacritty/themes/</code></pre>
+      <ul>
+        <li><strong>Alacritty:</strong> <code>import</code> the copied TOML from <code>alacritty.toml</code></li>
+        <li><strong>iTerm2:</strong> Settings → Profiles → Colors → Import from <code>themes/terminal/iterm2/</code></li>
+        <li><strong>Windows Terminal:</strong> paste a scheme object from <code>themes/terminal/windows-terminal/</code></li>
+      </ul>
+    </div>
+    <div class="use-card">
+      <h3>CSS &amp; JSON</h3>
+      <pre><code>&lt;link rel="stylesheet" href="ember.css"&gt;
+&lt;section data-ember-palette="3400k-dark"&gt;
+  …color: var(--ember-fg-0);
+  background: var(--ember-bg-0);
+&lt;/section&gt;</code></pre>
+      <p><code>palettes/ember.css</code> exposes surfaces, foregrounds, categories, and 11
+      sequential stops. <code>palettes/ember.json</code> carries all 256 float samples,
+      ANSI slots, gains, and measured results.</p>
+    </div>
+    <div class="use-card">
+      <h3>Python / Matplotlib</h3>
+      <pre><code>from ember import (categorical, categorical_norm,
+                   encode_categories, sequential, surfaces)
+ui = surfaces("1200k-dark")   # bg_0…bg_5, fg_0…fg_2
+cmap = sequential("1200k-dark")  # 256 samples</code></pre>
+      <p>Pass the slug to <code>categorical_norm()</code> and
+      <code>encode_categories()</code> so capacity checks match the family.</p>
+    </div>
+    <div class="use-card">
+      <h3>Choose a profile</h3>
+      <table class="profile-table">
+        <thead><tr><th scope="col">Slug</th><th scope="col">Use when</th><th scope="col">Categories</th></tr></thead>
+        <tbody>
+          <tr><td>3400k-dark</td><td>near-black general-purpose warm theme</td><td>6</td></tr>
+          <tr><td>3400k-light</td><td>moderate warm shift on a light surface</td><td>6</td></tr>
+          <tr><td>2000k-dark</td><td>Redshift near 2000 K</td><td>4</td></tr>
+          <tr><td>1200k-dark</td><td>extreme 1200 K stress profile</td><td>3</td></tr>
+        </tbody>
+      </table>
+      <p>Start with <code>3400k-dark</code> unless you deliberately run a deeper filter.
+      Deep profiles are dark-only: a filtered light canvas becomes a large orange-red field.</p>
+    </div>
+    <div class="use-card">
+      <h3>Provenance &amp; license</h3>
+      <ul>
+        <li><a href="https://github.com/carpdiem/ember">Repository</a> · <a href="https://github.com/carpdiem/ember#readme">README</a> · <a href="https://github.com/carpdiem/ember/blob/main/LICENSE">MIT license</a></li>
+        <li>Ember does not apply the warm filter — keep the one you already use.</li>
+        <li>Rebuild everything: <code>uv run python tools/build_all.py --check</code></li>
+        <li>Mars: NASA PDS MOLA MEGDR (acknowledged, CC0-style reuse guidance). Mona Lisa: public domain via Wikimedia Commons.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
 
-          <article class="use-card">
-            <p class="card-kicker">Python and Matplotlib</p>
-            <h3>Use categorical and sequential maps</h3>
-            <p>Install from GitHub, select a profile, and use the same capacity-aware contracts as the generated files.</p>
-            <pre><code>python -m pip install \
-  "ember-palettes @ git+https://github.com/carpdiem/ember.git"
+<footer>
+  <p>
+    Ember · MIT © 2026 Michael Woods ·
+    <a href="https://github.com/carpdiem/ember">github.com/carpdiem/ember</a> ·
+    profiles are software signal models, not calibrated physical color temperatures ·
+    console telemetry on this page is fictional; Mars elevation and the Mona Lisa source are real,
+    documented public data with recorded checksums in <a href="https://github.com/carpdiem/ember/blob/main/assets/README.md">assets/README.md</a>.
+  </p>
+</footer>
 
-from ember import categorical, sequential
-categorical("3400k-dark")
-sequential("3400k-dark")</code></pre>
-            <a href="https://github.com/carpdiem/ember#matplotlib">Open the Matplotlib guide →</a>
-          </article>
+<script>
+(function(){
+  "use strict";
 
-          <article class="use-card">
-            <p class="card-kicker">CSS and JSON</p>
-            <h3>Theme an interface with exported roles</h3>
-            <p>One semantic attribute selects a family; CSS variables carry surfaces, text, categories, and the sequential ramp.</p>
-            <pre><code>&lt;link rel="stylesheet" href="palettes/ember.css"&gt;
+  /* ---------- palette state ---------- */
+  var PALETTES = {
+    "3400k-dark":  { label: "3400K Dark",  cats: 6 },
+    "3400k-light": { label: "3400K Light", cats: 6 },
+    "2000k-dark":  { label: "2000K Dark",  cats: 4 },
+    "1200k-dark":  { label: "1200K Dark",  cats: 3 }
+  };
+  var CAT_VARS = [
+    "--ember-category-one", "--ember-category-two", "--ember-category-three",
+    "--ember-category-four", "--ember-category-five", "--ember-category-six"
+  ];
+  var root = document.documentElement;
+  var reducedMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var colors = {};
 
-&lt;main data-ember-palette="2000k-dark"&gt;
-  ...
-&lt;/main&gt;</code></pre>
-            <a href="palettes/ember.json">Inspect the JSON manifest →</a>
-          </article>
-        </div>
-      </div>
+  function cssVar(name){
+    return getComputedStyle(root).getPropertyValue(name).trim();
+  }
+  function refreshColors(){
+    var slug = root.getAttribute("data-ember-palette");
+    var n = PALETTES[slug].cats;
+    colors = {
+      bg0: cssVar("--ember-bg-0"), bg1: cssVar("--ember-bg-1"),
+      bg3: cssVar("--ember-bg-3"), bg4: cssVar("--ember-bg-4"),
+      fg0: cssVar("--ember-fg-0"), fg1: cssVar("--ember-fg-1"),
+      fg2: cssVar("--ember-fg-2"),
+      cats: []
+    };
+    for (var i = 0; i < n; i++) colors.cats.push(cssVar(CAT_VARS[i]));
+  }
 
-      <div class="assurance" role="group" aria-label="Ember release facts">
-        <div class="assurance-item"><strong>4</strong><span>Canonical families</span></div>
-        <div class="assurance-item"><strong>6 / 6 / 4 / 3</strong><span>Honest categorical capacities</span></div>
-        <div class="assurance-item"><strong>256</strong><span>Sequential samples per family</span></div>
-        <div class="assurance-item"><strong>3</strong><span>Terminal export formats</span></div>
-      </div>
+  function applyPalette(slug, updateUrl){
+    if (!PALETTES[slug]) slug = "3400k-dark";
+    var info = PALETTES[slug];
+    root.setAttribute("data-ember-palette", slug);
 
-      <aside class="trust-note" aria-label="Ember scope">
-        <strong>Scope</strong>
-        <span>Ember models digital warm-transform signals. It does not apply a filter, calibrate a physical display, or predict every operating-system and panel pipeline. The repository publishes the transform assumptions, measured properties, and exact release gates.</span>
-      </aside>
-    </section>
-  </main>
-
-  <footer class="page-shell site-footer">
-    <span>Ember · MIT © 2026 Michael Woods</span>
-    <nav class="footer-links" aria-label="Footer navigation">
-      <a href="#editorial">Live specimens</a>
-      <a href="https://github.com/carpdiem/ember#what-is-the-science-behind-it">Science and validation</a>
-      <a href="https://github.com/carpdiem/ember">GitHub</a>
-      <a href="LICENSE">License</a>
-    </nav>
-  </footer>
-
-  <script>
-    const palettes = new Set(["3400k-dark", "3400k-light", "2000k-dark", "1200k-dark"]);
-    const categoryCounts = new Map([
-      ["3400k-dark", 6],
-      ["3400k-light", 6],
-      ["2000k-dark", 4],
-      ["1200k-dark", 3],
-    ]);
-    const selector = document.querySelector("#palette-select");
-    const preview = document.querySelector(".hero-preview");
-    const toc = document.querySelector(".toc-menu");
-    const params = new URLSearchParams(window.location.search);
-
-    function applyPalette(palette, updateUrl = true) {
-      if (!palettes.has(palette)) return;
-      document.documentElement.dataset.emberPalette = palette;
-      selector.value = palette;
-      const paletteName = selector.options[selector.selectedIndex].text;
-      preview.setAttribute(
-        "aria-label",
-        `${paletteName} interface preview with ${categoryCounts.get(palette)} categorical colors`,
-      );
-      if (updateUrl) {
-        const nextUrl = new URL(window.location.href);
-        nextUrl.searchParams.set("palette", palette);
-        window.history.replaceState({}, "", nextUrl);
-      }
-    }
-
-    applyPalette(params.get("palette") || "3400k-dark", false);
-    selector.addEventListener("change", (event) => applyPalette(event.target.value));
-    toc.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => toc.removeAttribute("open"));
+    document.querySelectorAll(".pp").forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-palette") === slug));
     });
-  </script>
+
+    document.querySelectorAll("[data-src-template]").forEach(function(img){
+      img.src = img.getAttribute("data-src-template").replace("{slug}", slug);
+    });
+
+    document.querySelectorAll("#cap-row .cap-chip").forEach(function(chip, i){
+      chip.classList.toggle("retired", i >= info.cats);
+    });
+    var capCount = document.getElementById("cap-count");
+    if (capCount) capCount.textContent = info.cats + " / 6";
+    var capSentence = document.getElementById("cap-sentence");
+    if (capSentence){
+      capSentence.innerHTML = info.label + " keeps <strong>" + info.cats +
+        " of 6</strong> categorical identities under its transform. The contraction to 4 at 2000\u00a0K and 3 at 1200\u00a0K is measured honesty, not a defect.";
+    }
+    var conCap = document.getElementById("con-cap");
+    if (conCap) conCap.textContent = info.cats + " / 6";
+    var conInline = document.getElementById("con-cap-inline");
+    if (conInline) conInline.textContent = String(info.cats);
+
+    refreshColors();
+    buildSparklines(info.cats);
+    drawEM();
+    drawScope();
+
+    if (updateUrl && window.history && history.replaceState){
+      var url = new URL(window.location.href);
+      url.searchParams.set("palette", slug);
+      history.replaceState(null, "", url);
+    }
+  }
+
+  document.querySelectorAll(".pp").forEach(function(b){
+    b.addEventListener("click", function(){
+      applyPalette(b.getAttribute("data-palette"), true);
+    });
+  });
+
+  /* ---------- hamburger menu ---------- */
+  var burger = document.getElementById("burger");
+  var menu = document.getElementById("menu");
+  var backdrop = document.getElementById("menu-backdrop");
+  function openMenu(){
+    menu.hidden = false;
+    burger.setAttribute("aria-expanded", "true");
+    burger.setAttribute("aria-label", "Close sections menu");
+    var first = menu.querySelector("a");
+    if (first) first.focus();
+  }
+  function closeMenu(refocus){
+    menu.hidden = true;
+    burger.setAttribute("aria-expanded", "false");
+    burger.setAttribute("aria-label", "Open sections menu");
+    if (refocus) burger.focus();
+  }
+  burger.addEventListener("click", function(){
+    if (menu.hidden) openMenu(); else closeMenu(true);
+  });
+  backdrop.addEventListener("click", function(){ closeMenu(true); });
+  menu.addEventListener("click", function(e){
+    if (e.target.closest("a")) closeMenu(false);
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && !menu.hidden) closeMenu(true);
+  });
+
+  /* ---------- deterministic PRNG for fictional telemetry ---------- */
+  function mulberry32(seed){
+    return function(){
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      var t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ---------- sparklines (series count follows capacity) ---------- */
+  var SPARK_LABELS = ["DET-A 512nm", "DET-B 640nm", "DET-C 760nm", "DET-D 850nm", "DET-E 940nm", "DET-F 1.1um"];
+  var SPARK_VALUES = ["412.6", "398.1", "441.9", "379.4", "405.2", "388.7"];
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  function buildSparklines(count){
+    var host = document.getElementById("sparks");
+    if (!host) return;
+    host.textContent = "";
+    for (var s = 0; s < count; s++){
+      var row = document.createElement("div");
+      row.className = "spark-row";
+      var lab = document.createElement("span");
+      lab.className = "s-lab";
+      lab.textContent = SPARK_LABELS[s];
+      var svg = document.createElementNS(SVG_NS, "svg");
+      svg.setAttribute("viewBox", "0 0 100 22");
+      svg.setAttribute("preserveAspectRatio", "none");
+      svg.setAttribute("role", "img");
+      svg.setAttribute("aria-label", "Fictional trend sparkline for channel " + SPARK_LABELS[s]);
+      var rng = mulberry32(1000 + s * 97);
+      var pts = [];
+      var y = 11;
+      for (var x = 0; x <= 100; x += 2.5){
+        y += (rng() - 0.5) * 4.5;
+        y = Math.max(3, Math.min(19, y));
+        pts.push(x.toFixed(1) + "," + y.toFixed(1));
+      }
+      var line = document.createElementNS(SVG_NS, "polyline");
+      line.setAttribute("points", pts.join(" "));
+      line.setAttribute("fill", "none");
+      line.setAttribute("stroke-width", "1.4");
+      line.style.stroke = "var(" + CAT_VARS[s] + ")";
+      svg.appendChild(line);
+      var val = document.createElement("span");
+      val.className = "s-val";
+      val.textContent = SPARK_VALUES[s];
+      row.appendChild(lab); row.appendChild(svg); row.appendChild(val);
+      host.appendChild(row);
+    }
+  }
+
+  /* ---------- canvas helpers ---------- */
+  function fitCanvas(c){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = c.clientWidth, h = c.clientHeight;
+    if (!w || !h) return null;
+    var pw = Math.round(w * dpr), ph = Math.round(h * dpr);
+    if (c.width !== pw || c.height !== ph){ c.width = pw; c.height = ph; }
+    var ctx = c.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+
+  /* ---------- spectral scope ---------- */
+  var scopeCanvas = document.getElementById("scope");
+  var scopeT = 0;
+  function drawScope(){
+    if (!scopeCanvas) return;
+    var f = fitCanvas(scopeCanvas);
+    if (!f) return;
+    var ctx = f.ctx, W = f.w, H = f.h;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalAlpha = 0.6;
+    ctx.strokeStyle = colors.bg3;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (var gx = 0; gx <= W; gx += W / 8){ ctx.moveTo(gx, 0); ctx.lineTo(gx, H); }
+    for (var gy = 0; gy <= H; gy += H / 4){ ctx.moveTo(0, gy); ctx.lineTo(W, gy); }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    /* noise floor */
+    ctx.strokeStyle = colors.fg2;
+    ctx.globalAlpha = 0.55;
+    ctx.beginPath();
+    var rng = mulberry32(77);
+    for (var x = 0; x <= W; x += 3){
+      var yn = H * 0.78 + (rng() - 0.5) * 8 + Math.sin(x * 0.05 + scopeT * 2) * 2;
+      if (x === 0) ctx.moveTo(x, yn); else ctx.lineTo(x, yn);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    /* carrier trace */
+    ctx.strokeStyle = colors.fg0;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    for (var x2 = 0; x2 <= W; x2 += 2){
+      var u = (x2 / W - 0.5);
+      var peak = Math.exp(-u * u * 140) * H * 0.55;
+      var side = Math.exp(-(u - 0.22) * (u - 0.22) * 400) * H * 0.18
+               + Math.exp(-(u + 0.27) * (u + 0.27) * 500) * H * 0.13;
+      var ripple = Math.sin(x2 * 0.11 + scopeT * 3) * 2.2;
+      var yv = H * 0.8 - peak - side + ripple;
+      if (x2 === 0) ctx.moveTo(x2, yv); else ctx.lineTo(x2, yv);
+    }
+    ctx.stroke();
+    /* marker on carrier */
+    ctx.strokeStyle = colors.cats[0] || colors.fg1;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(W * 0.5, 4);
+    ctx.lineTo(W * 0.5, H - 4);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = colors.fg2;
+    ctx.font = "10px ui-monospace, monospace";
+    ctx.fillText("8.420 GHz", W * 0.5 + 6, 14);
+  }
+
+  /* ---------- projected 3-D EM wave ---------- */
+  var emCanvas = document.getElementById("em");
+  var emPhase = 0.6;
+  var YAW = 1.02, PITCH = 0.40, FDIST = 7.2;
+  var K = 2 * Math.PI / 2.2, AMP = 1.0, ZMIN = -3, ZMAX = 3;
+
+  function drawEM(){
+    if (!emCanvas) return;
+    var f = fitCanvas(emCanvas);
+    if (!f) return;
+    var ctx = f.ctx, W = f.w, H = f.h;
+    var unit = Math.min(W / 8.2, H / 4.6);
+    var cx = W * 0.5, cyc = H * 0.52;
+    var cy_ = Math.cos(YAW), sy_ = Math.sin(YAW);
+    var cp = Math.cos(PITCH), sp = Math.sin(PITCH);
+    function proj(x, y, z){
+      var x1 = x * cy_ + z * sy_;
+      var z1 = -x * sy_ + z * cy_;
+      var y2 = y * cp - z1 * sp;
+      var z2 = y * sp + z1 * cp;
+      var s = FDIST / (FDIST + z2);
+      return [cx + x1 * s * unit, cyc - y2 * s * unit, s];
+    }
+    ctx.clearRect(0, 0, W, H);
+
+    /* floor grid, y = -1.45 plane */
+    ctx.strokeStyle = colors.fg2;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.28;
+    ctx.beginPath();
+    var gy0 = -1.45, gi;
+    for (gi = -2; gi <= 2; gi++){
+      var gx = gi * 0.6;
+      var a = proj(gx, gy0, ZMIN), b = proj(gx, gy0, ZMAX);
+      ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+    }
+    for (gi = 0; gi <= 8; gi++){
+      var gz = ZMIN + gi * (ZMAX - ZMIN) / 8;
+      var a2 = proj(-1.2, gy0, gz), b2 = proj(1.2, gy0, gz);
+      ctx.moveTo(a2[0], a2[1]); ctx.lineTo(b2[0], b2[1]);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    /* propagation axis with arrowhead */
+    ctx.strokeStyle = colors.fg1;
+    ctx.lineWidth = 1.4;
+    var p0 = proj(0, 0, ZMIN), p1 = proj(0, 0, ZMAX + 0.45);
+    ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+    var pa = proj(0, 0.09, ZMAX + 0.2), pb = proj(0, -0.09, ZMAX + 0.2);
+    ctx.fillStyle = colors.fg1;
+    ctx.beginPath();
+    ctx.moveTo(p1[0], p1[1]); ctx.lineTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]);
+    ctx.closePath(); ctx.fill();
+
+    /* axis triad at the near end */
+    var o = proj(0, 0, ZMIN);
+    var ey = proj(0, 1.5, ZMIN), ex = proj(1.5, 0, ZMIN);
+    ctx.strokeStyle = colors.fg2;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    ctx.moveTo(o[0], o[1]); ctx.lineTo(ey[0], ey[1]);
+    ctx.moveTo(o[0], o[1]); ctx.lineTo(ex[0], ex[1]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    var N = 150, i, z, ph, e;
+    var eCol = colors.cats[0] || colors.fg0;
+    var bCol = colors.cats[1] || colors.fg1;
+    var cCol = colors.cats[2] || colors.fg2;
+
+    /* B field: vectors and envelope in the horizontal (x) plane — drawn first */
+    ctx.strokeStyle = bCol;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    for (i = 0; i <= N; i += 6){
+      z = ZMIN + (ZMAX - ZMIN) * i / N;
+      ph = K * z - emPhase;
+      e = AMP * Math.sin(ph);
+      var ba = proj(0, 0, z), bt = proj(e, 0, z);
+      ctx.moveTo(ba[0], ba[1]); ctx.lineTo(bt[0], bt[1]);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (i = 0; i <= N; i++){
+      z = ZMIN + (ZMAX - ZMIN) * i / N;
+      e = AMP * Math.sin(K * z - emPhase);
+      var bp = proj(e, 0, z);
+      if (i === 0) ctx.moveTo(bp[0], bp[1]); else ctx.lineTo(bp[0], bp[1]);
+    }
+    ctx.stroke();
+
+    /* E field: vectors and envelope in the vertical (y) plane */
+    ctx.strokeStyle = eCol;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    for (i = 0; i <= N; i += 6){
+      z = ZMIN + (ZMAX - ZMIN) * i / N;
+      e = AMP * Math.sin(K * z - emPhase);
+      var ea = proj(0, 0, z), et = proj(0, e, z);
+      ctx.moveTo(ea[0], ea[1]); ctx.lineTo(et[0], et[1]);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (i = 0; i <= N; i++){
+      z = ZMIN + (ZMAX - ZMIN) * i / N;
+      e = AMP * Math.sin(K * z - emPhase);
+      var ep = proj(0, e, z);
+      if (i === 0) ctx.moveTo(ep[0], ep[1]); else ctx.lineTo(ep[0], ep[1]);
+    }
+    ctx.stroke();
+
+    /* tracked phase crest: one z where sin = 1, wrapped into view */
+    var lambda = 2 * Math.PI / K;
+    var zc = (Math.PI / 2 + emPhase) / K;
+    while (zc > ZMAX) zc -= lambda;
+    while (zc < ZMIN) zc += lambda;
+    var cTop = proj(0, AMP, zc), cBot = proj(0, -1.45, zc), cSide = proj(AMP, 0, zc);
+    ctx.strokeStyle = cCol;
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(cTop[0], cTop[1]); ctx.lineTo(cBot[0], cBot[1]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = cCol;
+    ctx.beginPath(); ctx.arc(cTop[0], cTop[1], 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cSide[0], cSide[1], 3, 0, Math.PI * 2); ctx.fill();
+
+    /* labels */
+    ctx.fillStyle = colors.fg1;
+    ctx.font = "12px ui-monospace, monospace";
+    ctx.fillText("E (electric, \u0177)", ey[0] - 8, ey[1] - 8);
+    ctx.fillText("B (magnetic, x\u0302)", ex[0] + 6, ex[1] + 4);
+    ctx.fillText("k \u2192 propagation at c", p1[0] - 150, p1[1] - 10);
+    ctx.fillStyle = colors.fg2;
+    ctx.fillText("phase crest", cTop[0] + 8, cTop[1] - 8);
+  }
+
+  /* ---------- animation loop, visibility- and motion-aware ---------- */
+  var emVisible = false, scopeVisible = false, rafId = null, lastT = 0;
+
+  function loop(ts){
+    rafId = null;
+    if (reducedMQ.matches) return;
+    var dt = lastT ? Math.min((ts - lastT) / 1000, 0.05) : 0.016;
+    lastT = ts;
+    if (emVisible){ emPhase += dt * 1.5; drawEM(); }
+    if (scopeVisible){ scopeT += dt; drawScope(); }
+    if (emVisible || scopeVisible) rafId = requestAnimationFrame(loop);
+    else lastT = 0;
+  }
+  function kick(){
+    if (!rafId && !reducedMQ.matches && (emVisible || scopeVisible)){
+      lastT = 0;
+      rafId = requestAnimationFrame(loop);
+    }
+  }
+  if ("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.target === emCanvas) emVisible = en.isIntersecting;
+        if (en.target === scopeCanvas) scopeVisible = en.isIntersecting;
+      });
+      kick();
+    }, { threshold: 0.05 });
+    if (emCanvas) io.observe(emCanvas);
+    if (scopeCanvas) io.observe(scopeCanvas);
+  } else {
+    emVisible = scopeVisible = true;
+    kick();
+  }
+  function onMotionChange(){
+    if (reducedMQ.matches){
+      if (rafId){ cancelAnimationFrame(rafId); rafId = null; }
+      emPhase = 0.6; scopeT = 0;
+      drawEM(); drawScope();
+    } else {
+      kick();
+    }
+  }
+  if (reducedMQ.addEventListener) reducedMQ.addEventListener("change", onMotionChange);
+
+  var resizeTimer = null;
+  window.addEventListener("resize", function(){
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){ drawEM(); drawScope(); }, 120);
+  });
+
+  /* ---------- Mona Lisa wipe ---------- */
+  var monaRange = document.getElementById("mona-range");
+  var monaOver = document.getElementById("mona-over");
+  var monaDivider = document.getElementById("mona-divider");
+  if (monaRange && monaOver && monaDivider){
+    monaRange.addEventListener("input", function(){
+      var v = Number(monaRange.value);
+      monaOver.style.clipPath = "inset(0 " + (100 - v) + "% 0 0)";
+      monaDivider.style.left = v + "%";
+    });
+  }
+
+  /* ---------- boot ---------- */
+  var initial = new URLSearchParams(window.location.search).get("palette");
+  applyPalette(initial && PALETTES[initial] ? initial : "3400k-dark", false);
+})();
+</script>
 </body>
 </html>

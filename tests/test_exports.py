@@ -360,50 +360,62 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
 
     assert 'data-ember-palette="3400k-dark"' in landing
     assert 'href="palettes/ember.css"' in landing
-    assert "<title>Ember — color systems for warm-shifted screens</title>" in landing
-    for slug in SLUGS:
-        assert f'<option value="{slug}"' in landing
-        assert f'class="profile-card" data-ember-palette="{slug}"' in landing
-        assert f'href="docs/swatches/{slug}.svg"' in landing
-        assert f'src="assets/mars-topography-{slug}.png"' in landing
-        assert f'src="assets/mona-lisa-{slug}.png"' in landing
+    assert "<title>Ember — color that survives the warm shift</title>" in landing
+    assert 'data-src-template="assets/mars-topography-{slug}.png"' in landing
+    assert 'data-src-template="assets/mona-lisa-{slug}.png"' in landing
 
-    assert "document.documentElement.dataset.emberPalette = palette" in landing
-    assert 'href="examples/"' not in landing
-    assert 'src="docs/swatches/command-vs-simulated.png"' in landing
-    assert "6 / 6 / 4 / 3" in landing
-    assert "256" in landing
-    assert "Ember does not pretend every daytime color survives" in landing
-    assert "Ember models digital warm-transform signals" in landing
-    assert "Fictional fixed telemetry · Real Ember roles" in landing
-    assert "Real public data · NASA MGS MOLA" in landing
-    assert "Public-domain artwork · Real generated mapping" in landing
-    assert "Physics-based schematic · Live SVG and CSS" in landing
-    for section_id in (
-        "editorial",
-        "code",
-        "dashboard",
-        "mars",
-        "mona-lisa",
-        "wave",
-        "profiles",
-        "mechanism",
-        "use-ember",
-    ):
+    expected_capacities = {
+        "3400k-dark": 6,
+        "3400k-light": 6,
+        "2000k-dark": 4,
+        "1200k-dark": 3,
+    }
+    for slug, capacity in expected_capacities.items():
+        assert f'data-palette="{slug}"' in landing
+        assert f'data-ember-palette="{slug}"' in landing
+        profile_pattern = rf'"{re.escape(slug)}":\s+\{{[^}}]*cats:\s*{capacity}\s*\}}'
+        assert re.search(profile_pattern, landing)
+
+    for section_id in ("editorial", "code", "console", "mars", "mona", "field", "use"):
         assert f'id="{section_id}"' in landing
         assert f'href="#{section_id}"' in landing
-    assert 'class="toc-menu"' in landing
-    assert 'class="telemetry-chart"' in landing
-    assert 'class="wave-scroll"' in landing
-    assert 'class="energy-packet"' in landing
-    assert "@keyframes wave-propagation" in landing
+
+    assert 'class="burger"' in landing
+    assert 'class="menu-panel"' in landing
+    assert 'aria-controls="menu"' in landing
+    assert 'if (e.key === "Escape" && !menu.hidden) closeMenu(true)' in landing
+    assert 'history.replaceState(null, "", url)' in landing
+
+    assert "Fictional telemetry — interface stress test" in landing
+    assert "Real NASA data — MGS MOLA topography" in landing
+    assert "Public-domain artwork + deterministic mapping" in landing
+    assert "Physics figure — real geometry, live palette" in landing
+    assert 'id="sparks"' in landing
+    assert 'id="scope"' in landing
+    assert 'id="em"' in landing
+    assert 'role="img"' in landing
+    assert "one series per available identity" in landing
+    assert "field, not a particle riding the curve" in landing
+
     assert "@media (prefers-reduced-motion: reduce)" in landing
-    assert "animation: none !important" in landing
-    assert ".chart-axis { stroke: var(--ember-fg-2); fill: none;" in landing
-    assert "−5.887 km" in landing
-    assert "+6.013 km" in landing
-    assert "−8.068 km to +21.134 km" in landing
-    assert 'href="assets/README.md"' in landing
+    assert "animation:none !important" in landing
+    assert "if (reducedMQ.matches) return" in landing
+    assert "emPhase = 0.6; scopeT = 0" in landing
+
+    assert '--font-sans: "Avenir Next"' in landing
+    assert ".field-scene" in landing
+    assert ".console-intro" in landing
+    assert ".mona-stage" in landing
+    assert "min-height:44px" in landing
+    assert ".hero > *{ min-width:0; }" in landing
+    assert 'style="' not in landing
+    assert 'role="img" aria-label="Animated spectral scope trace' in landing
+    assert (
+        'role="img"\n                aria-label="Projected three-dimensional animation' in landing
+    )
+
+    assert 'href="examples/"' not in landing
+    assert "256" in landing
     assert "Lorem ipsum" not in landing
 
     for role in (
