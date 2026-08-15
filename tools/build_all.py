@@ -55,9 +55,16 @@ BASE_MANAGED_PATHS = (
     "docs/sample-analysis.md",
 )
 
-EXAMPLE_SOURCE_IMAGE = ROOT / "examples/assets/mona-lisa-c2rmf-public-domain.jpg"
-EXAMPLE_SOURCE_SHA256 = "5f223c31ba0a477eb7cbe5e5f959d822cbfc46081b19b96498cbd5601d9ac81d"
-EXAMPLE_IMAGE_WIDTH = 640
+ASSET_DIR = ROOT / "assets"
+MONA_LISA_SOURCE_IMAGE = ASSET_DIR / "mona-lisa-c2rmf-public-domain.jpg"
+MONA_LISA_SOURCE_SHA256 = "5f223c31ba0a477eb7cbe5e5f959d822cbfc46081b19b96498cbd5601d9ac81d"
+MONA_LISA_IMAGE_WIDTH = 640
+MARS_TOPOGRAPHY_SOURCE = ASSET_DIR / "megt90n000cb.img"
+MARS_TOPOGRAPHY_SOURCE_SHA256 = "25f16fb7aaf857898dcf98bc4f841341a24f8b9f7e98453ca083bc45d897ca2c"
+MARS_TOPOGRAPHY_LABEL = ASSET_DIR / "megt90n000cb.lbl"
+MARS_TOPOGRAPHY_LABEL_SHA256 = "5a3fe60256afa1c35fea5d551fe0ab0a9198fb2bcd2c2e161d078aa69627ebac"
+MARS_TOPOGRAPHY_SHAPE = (720, 1440)
+MARS_TOPOGRAPHY_DISPLAY_RANGE_METERS = (-5887, 6013)
 
 
 def _write(path: Path, content: str | bytes) -> None:
@@ -89,7 +96,16 @@ def _css(manifest: dict) -> str:
     return "\n".join(lines)
 
 
-def _example_colormap_image(family: dict) -> bytes:
+def _palette_image(indices: np.ndarray, palette: np.ndarray) -> bytes:
+    palette_rgb8 = np.rint(palette * 255.0).astype(np.uint8)
+    mapped = Image.fromarray(indices.astype(np.uint8))
+    mapped.putpalette(palette_rgb8.reshape(-1).tolist())
+    output = io.BytesIO()
+    mapped.save(output, format="PNG", compress_level=9)
+    return output.getvalue()
+
+
+def _mona_lisa_colormap_image(family: dict) -> bytes:
     """Map source luminance to the family's sequential colors.
 
     The authored scalar ramp reverses in 3400K Light. Image luminance must not:
@@ -97,14 +113,14 @@ def _example_colormap_image(family: dict) -> bytes:
     lighter endpoint, independent of the family's low-to-high scalar direction.
     """
 
-    source_digest = hashlib.sha256(EXAMPLE_SOURCE_IMAGE.read_bytes()).hexdigest()
-    if source_digest != EXAMPLE_SOURCE_SHA256:
+    source_digest = hashlib.sha256(MONA_LISA_SOURCE_IMAGE.read_bytes()).hexdigest()
+    if source_digest != MONA_LISA_SOURCE_SHA256:
         raise ValueError("Mona Lisa source image does not match its recorded public-domain asset")
 
-    with Image.open(EXAMPLE_SOURCE_IMAGE) as source:
+    with Image.open(MONA_LISA_SOURCE_IMAGE) as source:
         source = source.convert("RGB")
-        height = round(source.height * EXAMPLE_IMAGE_WIDTH / source.width)
-        source = source.resize((EXAMPLE_IMAGE_WIDTH, height), Image.Resampling.LANCZOS)
+        height = round(source.height * MONA_LISA_IMAGE_WIDTH / source.width)
+        source = source.resize((MONA_LISA_IMAGE_WIDTH, height), Image.Resampling.LANCZOS)
         source_rgb = np.asarray(source, dtype=float) / 255.0
 
     luminance = wcag_luminance(source_rgb)
@@ -117,12 +133,35 @@ def _example_colormap_image(family: dict) -> bytes:
         palette = palette[::-1]
 
     indices = np.rint(normalized * (len(palette) - 1)).astype(np.uint8)
-    palette_rgb8 = np.rint(palette * 255.0).astype(np.uint8)
-    mapped = Image.fromarray(indices)
-    mapped.putpalette(palette_rgb8.reshape(-1).tolist())
-    output = io.BytesIO()
-    mapped.save(output, format="PNG", compress_level=9)
-    return output.getvalue()
+    return _palette_image(indices, palette)
+
+
+def _mars_topography_colormap_image(family: dict) -> bytes:
+    """Map real MOLA elevations through the authored low-to-high scalar ramp."""
+
+    source_digest = hashlib.sha256(MARS_TOPOGRAPHY_SOURCE.read_bytes()).hexdigest()
+    label_digest = hashlib.sha256(MARS_TOPOGRAPHY_LABEL.read_bytes()).hexdigest()
+    if source_digest != MARS_TOPOGRAPHY_SOURCE_SHA256:
+        raise ValueError("MOLA topography source does not match its recorded PDS asset")
+    if label_digest != MARS_TOPOGRAPHY_LABEL_SHA256:
+        raise ValueError("MOLA topography label does not match its recorded PDS asset")
+
+    elevation = np.fromfile(MARS_TOPOGRAPHY_SOURCE, dtype=">i2")
+    expected_size = int(np.prod(MARS_TOPOGRAPHY_SHAPE))
+    if elevation.size != expected_size:
+        raise ValueError(
+            f"MOLA topography source has {elevation.size} samples, expected {expected_size}"
+        )
+    elevation = elevation.reshape(MARS_TOPOGRAPHY_SHAPE)
+    low, high = np.quantile(elevation, (0.01, 0.99))
+    display_range = (round(float(low)), round(float(high)))
+    if display_range != MARS_TOPOGRAPHY_DISPLAY_RANGE_METERS:
+        raise ValueError(f"MOLA display range changed: {display_range}")
+
+    normalized = np.clip((elevation - low) / (high - low), 0.0, 1.0)
+    palette = np.asarray(family["continuous_rgb"], dtype=float)
+    indices = np.rint(normalized * (len(palette) - 1)).astype(np.uint8)
+    return _palette_image(indices, palette)
 
 
 def _alacritty(family: dict) -> str:
@@ -443,9 +482,10 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
         _write(destination / f"themes/terminal/iterm2/{slug}.itermcolors", _iterm(family))
         profile = manifest["profiles"][family["profile"]]
         _write(destination / f"docs/swatches/{slug}.svg", _family_svg(family, profile, chrome))
+        _write(destination / f"assets/mona-lisa-{slug}.png", _mona_lisa_colormap_image(family))
         _write(
-            destination / f"examples/assets/mona-lisa-{slug}.png",
-            _example_colormap_image(family),
+            destination / f"assets/mars-topography-{slug}.png",
+            _mars_topography_colormap_image(family),
         )
 
     render_readme_story(manifest, destination / "docs")
@@ -492,7 +532,8 @@ def check() -> int:
                     Path(f"themes/terminal/alacritty/{slug}.toml"),
                     Path(f"themes/terminal/iterm2/{slug}.itermcolors"),
                     Path(f"themes/terminal/windows-terminal/{slug}.json"),
-                    Path(f"examples/assets/mona-lisa-{slug}.png"),
+                    Path(f"assets/mona-lisa-{slug}.png"),
+                    Path(f"assets/mars-topography-{slug}.png"),
                 )
             )
 

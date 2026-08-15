@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import plistlib
 import re
@@ -364,15 +365,45 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
         assert f'<option value="{slug}"' in landing
         assert f'class="profile-card" data-ember-palette="{slug}"' in landing
         assert f'href="docs/swatches/{slug}.svg"' in landing
+        assert f'src="assets/mars-topography-{slug}.png"' in landing
+        assert f'src="assets/mona-lisa-{slug}.png"' in landing
 
     assert "document.documentElement.dataset.emberPalette = palette" in landing
-    assert 'href="examples/"' in landing
+    assert 'href="examples/"' not in landing
     assert 'src="docs/swatches/command-vs-simulated.png"' in landing
     assert "6 / 6 / 4 / 3" in landing
     assert "256" in landing
     assert "Ember does not pretend every daytime color survives" in landing
     assert "Ember models digital warm-transform signals" in landing
-    assert "Fictional fixed dataset" not in landing
+    assert "Fictional fixed telemetry · Real Ember roles" in landing
+    assert "Real public data · NASA MGS MOLA" in landing
+    assert "Public-domain artwork · Real generated mapping" in landing
+    assert "Physics-based schematic · Live SVG and CSS" in landing
+    for section_id in (
+        "editorial",
+        "code",
+        "dashboard",
+        "mars",
+        "mona-lisa",
+        "wave",
+        "profiles",
+        "mechanism",
+        "use-ember",
+    ):
+        assert f'id="{section_id}"' in landing
+        assert f'href="#{section_id}"' in landing
+    assert 'class="toc-menu"' in landing
+    assert 'class="telemetry-chart"' in landing
+    assert 'class="wave-scroll"' in landing
+    assert 'class="energy-packet"' in landing
+    assert "@keyframes wave-propagation" in landing
+    assert "@media (prefers-reduced-motion: reduce)" in landing
+    assert "animation: none !important" in landing
+    assert ".chart-axis { stroke: var(--ember-fg-2); fill: none;" in landing
+    assert "−5.887 km" in landing
+    assert "+6.013 km" in landing
+    assert "−8.068 km to +21.134 km" in landing
+    assert 'href="assets/README.md"' in landing
     assert "Lorem ipsum" not in landing
 
     for role in (
@@ -399,43 +430,22 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
     assert not re.search(r"(?:rgb|hsl|oklab|oklch)\(", landing, flags=re.IGNORECASE)
 
 
-def test_live_html_example_uses_the_exported_css_palette_contract() -> None:
+def test_legacy_live_example_redirects_to_the_unified_root() -> None:
     example = (ROOT / "examples/index.html").read_text()
 
-    assert 'data-ember-palette="3400k-dark"' in example
-    assert 'href="../palettes/ember.css"' in example
-    for slug in SLUGS:
-        assert f'<option value="{slug}"' in example
-
-    assert "document.documentElement.dataset.emberPalette = palette" in example
-    assert "var(--ember-bg-0)" in example
-    assert "var(--ember-fg-0)" in example
-    assert "var(--ember-category-one)" in example
-    assert "var(--ember-category-two)" in example
-    assert "var(--ember-category-three)" in example
-    assert "var(--ember-sequential)" in example
-    assert 'class="categorical-chart"' in example
-    assert 'class="line-chart"' in example
-    assert 'class="heatmap"' in example
-    assert 'class="capacity-donut"' in example
-    assert "Real palette mechanics" in example
-    assert example.count("Fictional fixed dataset") >= 2
-    assert "Fictional values · Real Ember scale" in example
-    assert "Signal retention by channel" not in example
-    assert "Lorem ipsum" not in example
-    assert "public domain via Wikimedia Commons" in example
-    for slug in SLUGS:
-        assert f'src="assets/mona-lisa-{slug}.png"' in example
-
-    assert not any(
-        token in example for token in ("style.color", "style.background", "setProperty(")
-    )
-    assert not re.search(r"#[0-9a-fA-F]{3,8}(?:[;\"'])", example)
+    assert '<link rel="canonical" href="../">' in example
+    assert 'target = new URL("../", window.location.href)' in example
+    assert "target.search = window.location.search" in example
+    assert 'target.hash = "editorial"' in example
+    assert "window.location.replace(target)" in example
+    assert 'href="../#editorial"' in example
+    assert "palette-select" not in example
+    assert "ember.css" not in example
 
 
 def test_mona_lisa_example_colormaps_preserve_source_luminance_polarity() -> None:
     manifest = json.loads((ROOT / "palettes/ember.json").read_text())
-    source_path = ROOT / "examples/assets/mona-lisa-c2rmf-public-domain.jpg"
+    source_path = ROOT / "assets/mona-lisa-c2rmf-public-domain.jpg"
     with Image.open(source_path) as source:
         source = source.convert("RGB")
         height = round(source.height * 640 / source.width)
@@ -444,7 +454,7 @@ def test_mona_lisa_example_colormaps_preserve_source_luminance_polarity() -> Non
 
     dark_cutoff, light_cutoff = np.quantile(source_luminance, (0.1, 0.9))
     for slug in SLUGS:
-        output_path = ROOT / f"examples/assets/mona-lisa-{slug}.png"
+        output_path = ROOT / f"assets/mona-lisa-{slug}.png"
         with Image.open(output_path) as output:
             output_rgb = np.asarray(output.convert("RGB"), dtype=float) / 255.0
             assert output.size == (640, height)
@@ -468,3 +478,45 @@ def test_mona_lisa_example_colormaps_preserve_source_luminance_polarity() -> Non
             tuple(color) for color in np.unique((output_rgb * 255).round().reshape(-1, 3), axis=0)
         }
         assert rendered_colors <= authored_colors
+
+
+def test_mars_topography_colormaps_preserve_real_scalar_indices() -> None:
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
+    source_path = ROOT / "assets/megt90n000cb.img"
+    label_path = ROOT / "assets/megt90n000cb.lbl"
+    source_bytes = source_path.read_bytes()
+    label_bytes = label_path.read_bytes()
+
+    assert hashlib.sha256(source_bytes).hexdigest() == (
+        "25f16fb7aaf857898dcf98bc4f841341a24f8b9f7e98453ca083bc45d897ca2c"
+    )
+    assert hashlib.sha256(label_bytes).hexdigest() == (
+        "5a3fe60256afa1c35fea5d551fe0ab0a9198fb2bcd2c2e161d078aa69627ebac"
+    )
+    label = label_bytes.decode("ascii")
+    assert "LINES                        = 720" in label
+    assert "LINE_SAMPLES                 = 1440" in label
+    assert "SAMPLE_TYPE                  = MSB_INTEGER" in label
+    assert "UNIT                         = METER" in label
+
+    elevation = np.frombuffer(source_bytes, dtype=">i2").reshape(720, 1440)
+    assert (int(elevation.min()), int(elevation.max())) == (-8068, 21134)
+    low, high = np.quantile(elevation, (0.01, 0.99))
+    assert (float(low), float(high)) == (-5887.0, 6013.0)
+    normalized = np.clip((elevation - low) / (high - low), 0.0, 1.0)
+    expected_indices = np.rint(normalized * 255).astype(np.uint8)
+
+    for slug in SLUGS:
+        output_path = ROOT / f"assets/mars-topography-{slug}.png"
+        with Image.open(output_path) as output:
+            assert output.mode == "P"
+            assert output.size == (1440, 720)
+            assert np.array_equal(np.asarray(output), expected_indices)
+            rendered_palette = np.asarray(output.getpalette()[: 256 * 3], dtype=np.uint8).reshape(
+                256, 3
+            )
+
+        authored_palette = np.rint(
+            np.asarray(manifest["families"][slug]["continuous_rgb"]) * 255
+        ).astype(np.uint8)
+        assert np.array_equal(rendered_palette, authored_palette)
