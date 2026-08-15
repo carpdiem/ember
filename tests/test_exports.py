@@ -345,6 +345,13 @@ def test_windows_terminal_exports_parse() -> None:
         assert data["background"].startswith("#")
 
 
+def test_warp_exports_cover_both_theme_modes() -> None:
+    for slug in SLUGS:
+        theme = (ROOT / f"themes/terminal/warp/{slug}.yaml").read_text()
+        assert f"details: {'lighter' if slug.endswith('-light') else 'darker'}" in theme
+        assert theme.count("    ") == 16
+
+
 def test_iterm_exports_parse() -> None:
     for slug in SLUGS:
         data = plistlib.loads((ROOT / f"themes/terminal/iterm2/{slug}.itermcolors").read_bytes())

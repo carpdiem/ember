@@ -134,6 +134,23 @@ def _windows_terminal(family: dict) -> str:
     return json.dumps(payload, indent=2) + "\n"
 
 
+def _warp(family: dict) -> str:
+    terminal = family["terminal"]
+    lines = [
+        f"name: {family['name']}",
+        f"accent: '{terminal['blue']}'",
+        f"background: '{family['surfaces']['bg_0']}'",
+        f"details: {'darker' if family['mode'] == 'dark' else 'lighter'}",
+        f"foreground: '{family['surfaces']['fg_0']}'",
+        "terminal_colors:",
+    ]
+    for group, names in (("bright", ANSI_NAMES[8:]), ("normal", ANSI_NAMES[:8])):
+        lines.append(f"  {group}:")
+        for name in sorted(names):
+            lines.append(f"    {name.removeprefix('bright_')}: '{terminal[name]}'")
+    return "\n".join(lines) + "\n"
+
+
 def _iterm_color(value: str) -> dict:
     rgb = hex_to_srgb(value)
     return {
@@ -344,7 +361,7 @@ def build(destination: Path) -> None:
     _write(destination / "palettes/ember.css", _css(manifest))
     terminal_readme = """# Terminal themes
 
-Generated imports are provided for Alacritty, iTerm2, and Windows Terminal. Each
+Generated imports are provided for Alacritty, iTerm2, Warp, and Windows Terminal. Each
 uses the family’s primary background and foreground. Alternative surfaces live in
 the JSON manifest, generated CSS, and Python `surfaces()` API; substitute them when a
 different canvas is needed. Terminal formats themselves expose only their native primary
@@ -368,6 +385,11 @@ Restart Alacritty or reload its configuration.
 
 Open **Settings → Profiles → Colors → Color Presets… → Import…**, choose a
 `.itermcolors` file, then select the imported preset from **Color Presets…**.
+
+### Warp
+
+Copy one generated YAML file into `~/.warp/themes`, then select it from
+**Settings → Appearance → Current Theme**.
 
 ### Windows Terminal
 
@@ -399,6 +421,7 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
             destination / f"themes/terminal/windows-terminal/{slug}.json", _windows_terminal(family)
         )
         _write(destination / f"themes/terminal/iterm2/{slug}.itermcolors", _iterm(family))
+        _write(destination / f"themes/terminal/warp/{slug}.yaml", _warp(family))
         profile = manifest["profiles"][family["profile"]]
         _write(destination / f"docs/swatches/{slug}.svg", _family_svg(family, profile, chrome))
 
@@ -445,6 +468,7 @@ def check() -> int:
                     Path(f"docs/swatches/{slug}.svg"),
                     Path(f"themes/terminal/alacritty/{slug}.toml"),
                     Path(f"themes/terminal/iterm2/{slug}.itermcolors"),
+                    Path(f"themes/terminal/warp/{slug}.yaml"),
                     Path(f"themes/terminal/windows-terminal/{slug}.json"),
                 )
             )
