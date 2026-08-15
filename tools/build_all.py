@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
+import io
 import json
 import plistlib
 import sys
@@ -31,7 +33,7 @@ from render_samples import (
 from render_story import render_readme_story
 from render_style import publication_chrome
 
-from ember.color import contrast_ratio, hex_to_srgb
+from ember.color import contrast_ratio, hex_to_srgb, wcag_luminance
 from ember.generate import ANSI_NAMES, generate_manifest
 
 BASE_MANAGED_PATHS = (
@@ -52,6 +54,10 @@ BASE_MANAGED_PATHS = (
     "docs/diagrams/redundant-encoding.svg",
     "docs/sample-analysis.md",
 )
+
+EXAMPLE_SOURCE_IMAGE = ROOT / "examples/assets/mona-lisa-c2rmf-public-domain.jpg"
+EXAMPLE_SOURCE_SHA256 = "5f223c31ba0a477eb7cbe5e5f959d822cbfc46081b19b96498cbd5601d9ac81d"
+EXAMPLE_IMAGE_WIDTH = 640
 
 
 def _write(path: Path, content: str | bytes) -> None:
@@ -81,6 +87,42 @@ def _css(manifest: dict) -> str:
         lines.append("}")
         lines.append("")
     return "\n".join(lines)
+
+
+def _example_colormap_image(family: dict) -> bytes:
+    """Map source luminance to the family's sequential colors.
+
+    The authored scalar ramp reverses in 3400K Light. Image luminance must not:
+    dark source pixels always map to the darker endpoint and light pixels to the
+    lighter endpoint, independent of the family's low-to-high scalar direction.
+    """
+
+    source_digest = hashlib.sha256(EXAMPLE_SOURCE_IMAGE.read_bytes()).hexdigest()
+    if source_digest != EXAMPLE_SOURCE_SHA256:
+        raise ValueError("Mona Lisa source image does not match its recorded public-domain asset")
+
+    with Image.open(EXAMPLE_SOURCE_IMAGE) as source:
+        source = source.convert("RGB")
+        height = round(source.height * EXAMPLE_IMAGE_WIDTH / source.width)
+        source = source.resize((EXAMPLE_IMAGE_WIDTH, height), Image.Resampling.LANCZOS)
+        source_rgb = np.asarray(source, dtype=float) / 255.0
+
+    luminance = wcag_luminance(source_rgb)
+    low, high = np.quantile(luminance, (0.01, 0.99))
+    normalized = np.clip((luminance - low) / (high - low), 0.0, 1.0)
+
+    palette = np.asarray(family["continuous_rgb"], dtype=float)
+    endpoint_luminance = wcag_luminance(palette[[0, -1]])
+    if endpoint_luminance[0] > endpoint_luminance[1]:
+        palette = palette[::-1]
+
+    indices = np.rint(normalized * (len(palette) - 1)).astype(np.uint8)
+    palette_rgb8 = np.rint(palette * 255.0).astype(np.uint8)
+    mapped = Image.fromarray(indices)
+    mapped.putpalette(palette_rgb8.reshape(-1).tolist())
+    output = io.BytesIO()
+    mapped.save(output, format="PNG", compress_level=9)
+    return output.getvalue()
 
 
 def _alacritty(family: dict) -> str:
@@ -401,6 +443,10 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
         _write(destination / f"themes/terminal/iterm2/{slug}.itermcolors", _iterm(family))
         profile = manifest["profiles"][family["profile"]]
         _write(destination / f"docs/swatches/{slug}.svg", _family_svg(family, profile, chrome))
+        _write(
+            destination / f"examples/assets/mona-lisa-{slug}.png",
+            _example_colormap_image(family),
+        )
 
     render_readme_story(manifest, destination / "docs")
     render_matplotlib_gallery(manifest, destination / "docs/matplotlib-gallery.png")
@@ -446,6 +492,7 @@ def check() -> int:
                     Path(f"themes/terminal/alacritty/{slug}.toml"),
                     Path(f"themes/terminal/iterm2/{slug}.itermcolors"),
                     Path(f"themes/terminal/windows-terminal/{slug}.json"),
+                    Path(f"examples/assets/mona-lisa-{slug}.png"),
                 )
             )
 

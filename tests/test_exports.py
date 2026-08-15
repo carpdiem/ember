@@ -18,6 +18,7 @@ except ModuleNotFoundError:  # Python 3.10
     import tomli as tomllib
 
 from ember import categorical, categorical_norm, encode_categories, sequential, surfaces
+from ember.color import wcag_luminance
 
 ROOT = Path(__file__).resolve().parents[1]
 SLUGS = (
@@ -371,8 +372,54 @@ def test_live_html_example_uses_the_exported_css_palette_contract() -> None:
     assert 'class="categorical-chart"' in example
     assert 'class="line-chart"' in example
     assert 'class="heatmap"' in example
+    assert 'class="capacity-donut"' in example
+    assert "Real palette mechanics" in example
+    assert example.count("Fictional fixed dataset") >= 2
+    assert "Fictional values · Real Ember scale" in example
+    assert "Signal retention by channel" not in example
+    assert "Lorem ipsum" not in example
+    assert "public domain via Wikimedia Commons" in example
+    for slug in SLUGS:
+        assert f'src="assets/mona-lisa-{slug}.png"' in example
 
     assert not any(
         token in example for token in ("style.color", "style.background", "setProperty(")
     )
     assert not re.search(r"#[0-9a-fA-F]{3,8}(?:[;\"'])", example)
+
+
+def test_mona_lisa_example_colormaps_preserve_source_luminance_polarity() -> None:
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
+    source_path = ROOT / "examples/assets/mona-lisa-c2rmf-public-domain.jpg"
+    with Image.open(source_path) as source:
+        source = source.convert("RGB")
+        height = round(source.height * 640 / source.width)
+        source = source.resize((640, height), Image.Resampling.LANCZOS)
+        source_luminance = wcag_luminance(np.asarray(source, dtype=float) / 255.0).ravel()
+
+    dark_cutoff, light_cutoff = np.quantile(source_luminance, (0.1, 0.9))
+    for slug in SLUGS:
+        output_path = ROOT / f"examples/assets/mona-lisa-{slug}.png"
+        with Image.open(output_path) as output:
+            output_rgb = np.asarray(output.convert("RGB"), dtype=float) / 255.0
+            assert output.size == (640, height)
+
+        output_luminance = wcag_luminance(output_rgb).ravel()
+        correlation = float(np.corrcoef(source_luminance, output_luminance)[0, 1])
+        assert correlation > 0.8, (slug, correlation)
+        dark_source_output = float(output_luminance[source_luminance <= dark_cutoff].mean())
+        light_source_output = float(output_luminance[source_luminance >= light_cutoff].mean())
+        assert light_source_output > dark_source_output + 0.2, (
+            slug,
+            dark_source_output,
+            light_source_output,
+        )
+
+        authored_colors = {
+            tuple(round(channel * 255) for channel in color)
+            for color in manifest["families"][slug]["continuous_rgb"]
+        }
+        rendered_colors = {
+            tuple(color) for color in np.unique((output_rgb * 255).round().reshape(-1, 3), axis=0)
+        }
+        assert rendered_colors <= authored_colors

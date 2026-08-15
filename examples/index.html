@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A live article and data-visualization specimen for all four Ember palettes.">
-  <title>Ember CSS specimen — The Quiet Geometry of Night Work</title>
+  <meta name="description" content="A live, clearly labeled typography and data specimen for all four Ember palettes.">
+  <title>Ember live CSS specimen</title>
   <link rel="stylesheet" href="../palettes/ember.css">
   <style>
     * {
@@ -29,7 +29,15 @@
 
     html {
       scroll-behavior: smooth;
+      scroll-padding-top: 6.5rem;
       background: var(--ember-bg-0);
+    }
+
+    .specimen-header,
+    .mechanics-section,
+    .editorial-divider,
+    .wide-figure {
+      scroll-margin-top: 6.5rem;
     }
 
     body {
@@ -106,6 +114,221 @@
       padding: clamp(6rem, 11vw, 9rem) 1.25rem 5rem;
     }
 
+    .specimen-header,
+    .mechanics-section {
+      width: min(100%, 66rem);
+      margin-inline: auto;
+    }
+
+    .specimen-header h1 {
+      max-width: 11ch;
+    }
+
+    .truth-key {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin-top: 2rem;
+    }
+
+    .truth-card {
+      padding: 1rem 1.05rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.72rem;
+      background: var(--ember-bg-2);
+      color: var(--ember-fg-1);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .truth-card strong,
+    .data-status {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: var(--ember-category-three);
+      font-size: 0.68rem;
+      font-weight: 760;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .mechanics-section {
+      margin-top: 4.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--ember-bg-4);
+    }
+
+    .section-intro {
+      max-width: 45rem;
+      color: var(--ember-fg-1);
+      line-height: 1.65;
+    }
+
+    .section-intro h2 {
+      margin: 0 0 0.7rem;
+      font-size: clamp(1.8rem, 4vw, 2.7rem);
+      letter-spacing: -0.035em;
+    }
+
+    .section-intro p {
+      margin: 0;
+    }
+
+    .mechanics-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+      align-items: start;
+    }
+
+    .mechanics-card {
+      margin: 0;
+      padding: clamp(1rem, 3vw, 1.4rem);
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 1rem;
+      background: var(--ember-bg-1);
+    }
+
+    .mechanics-card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .mechanics-card figcaption > p,
+    .mechanics-note {
+      margin: 0.45rem 0 0;
+      color: var(--ember-fg-2);
+      font-size: 0.78rem;
+      line-height: 1.5;
+    }
+
+    .capacity-layout {
+      display: grid;
+      place-items: center;
+      gap: 1.1rem;
+      padding-top: 1.2rem;
+    }
+
+    .capacity-donut {
+      position: relative;
+      display: grid;
+      width: min(12rem, 58vw);
+      aspect-ratio: 1;
+      place-items: center;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 50%;
+      background: var(--capacity-gradient);
+    }
+
+    .capacity-donut::after {
+      position: absolute;
+      width: 54%;
+      aspect-ratio: 1;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 50%;
+      background: var(--ember-bg-1);
+      content: "";
+    }
+
+    .capacity-count {
+      position: relative;
+      z-index: 1;
+      color: var(--ember-fg-0);
+      font-size: 2.5rem;
+      font-weight: 720;
+      letter-spacing: -0.05em;
+    }
+
+    .capacity-count span {
+      display: none;
+    }
+
+    [data-ember-palette="3400k-dark"],
+    [data-ember-palette="3400k-light"] {
+      --capacity-gradient: conic-gradient(
+        var(--ember-category-one) 0 15%, var(--ember-bg-1) 15% 16.667%,
+        var(--ember-category-two) 16.667% 31.667%, var(--ember-bg-1) 31.667% 33.333%,
+        var(--ember-category-three) 33.333% 48.333%, var(--ember-bg-1) 48.333% 50%,
+        var(--ember-category-four) 50% 65%, var(--ember-bg-1) 65% 66.667%,
+        var(--ember-category-five) 66.667% 81.667%, var(--ember-bg-1) 81.667% 83.333%,
+        var(--ember-category-six) 83.333% 98.333%, var(--ember-bg-1) 98.333% 100%
+      );
+    }
+
+    [data-ember-palette="2000k-dark"] {
+      --capacity-gradient: conic-gradient(
+        var(--ember-category-one) 0 23%, var(--ember-bg-1) 23% 25%,
+        var(--ember-category-two) 25% 48%, var(--ember-bg-1) 48% 50%,
+        var(--ember-category-three) 50% 73%, var(--ember-bg-1) 73% 75%,
+        var(--ember-category-four) 75% 98%, var(--ember-bg-1) 98% 100%
+      );
+    }
+
+    [data-ember-palette="1200k-dark"] {
+      --capacity-gradient: conic-gradient(
+        var(--ember-category-one) 0 31%, var(--ember-bg-1) 31% 33.333%,
+        var(--ember-category-two) 33.333% 64.333%, var(--ember-bg-1) 64.333% 66.667%,
+        var(--ember-category-three) 66.667% 97.667%, var(--ember-bg-1) 97.667% 100%
+      );
+    }
+
+    [data-ember-palette="3400k-dark"] .capacity-count .count-3400-dark,
+    [data-ember-palette="3400k-light"] .capacity-count .count-3400-light,
+    [data-ember-palette="2000k-dark"] .capacity-count .count-2000-dark,
+    [data-ember-palette="1200k-dark"] .capacity-count .count-1200-dark {
+      display: inline;
+    }
+
+    .palette-art {
+      display: none;
+      width: 100%;
+      max-height: 31rem;
+      margin-top: 1rem;
+      border: 1px solid var(--ember-bg-5);
+      border-radius: 0.72rem;
+      background: var(--ember-bg-2);
+      object-fit: contain;
+    }
+
+    [data-ember-palette="3400k-dark"] .palette-art[data-art-palette="3400k-dark"],
+    [data-ember-palette="3400k-light"] .palette-art[data-art-palette="3400k-light"],
+    [data-ember-palette="2000k-dark"] .palette-art[data-art-palette="2000k-dark"],
+    [data-ember-palette="1200k-dark"] .palette-art[data-art-palette="1200k-dark"] {
+      display: block;
+    }
+
+    .art-ramp {
+      height: 0.72rem;
+      margin-top: 0.75rem;
+      border: 1px solid var(--ember-bg-4);
+      border-radius: 999px;
+      background: var(--ember-sequential);
+    }
+
+    .editorial-divider {
+      width: min(100%, 66rem);
+      margin: 5rem auto 3.5rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--ember-bg-4);
+    }
+
+    .editorial-divider p {
+      margin: 0;
+    }
+
+    .editorial-divider .section-intro {
+      margin-top: 0.5rem;
+    }
+
+    .fiction-label {
+      color: var(--ember-category-two);
+      font-size: 0.72rem;
+      font-weight: 760;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
     .article-header,
     .article-copy,
     .article-footer {
@@ -124,12 +347,14 @@
 
     h1,
     h2,
-    h3 {
+    h3,
+    h4 {
       color: var(--ember-fg-0);
       text-wrap: balance;
     }
 
-    h1 {
+    h1,
+    .article-title {
       max-width: 13ch;
       margin: 0;
       font-size: clamp(2.8rem, 8vw, 6.3rem);
@@ -180,7 +405,7 @@
       line-height: 0.72;
     }
 
-    .article-copy h2 {
+    .article-copy h3 {
       margin: 4.4rem 0 1.2rem;
       font-family: Inter, ui-sans-serif, system-ui, sans-serif;
       font-size: clamp(1.8rem, 4vw, 2.7rem);
@@ -189,7 +414,7 @@
       line-height: 1.08;
     }
 
-    .article-copy h3 {
+    .article-copy h4 {
       margin: 2.8rem 0 0.8rem;
       font-family: Inter, ui-sans-serif, system-ui, sans-serif;
       font-size: 1.18rem;
@@ -345,6 +570,7 @@
 
     .capacity-bank {
       display: grid;
+      width: min(100%, 18rem);
       grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 0.45rem;
       margin-top: 1.4rem;
@@ -580,6 +806,11 @@
         padding-top: 7.2rem;
       }
 
+      .truth-key,
+      .mechanics-grid {
+        grid-template-columns: 1fr;
+      }
+
       .palette-switcher {
         top: 0.65rem;
         right: 0.65rem;
@@ -640,104 +871,170 @@
   </aside>
 
   <main class="page-shell">
-    <header class="article-header">
-      <p class="eyebrow">Field note · Issue 04</p>
-      <h1>The Quiet Geometry of Night Work</h1>
-      <p class="dek">An imaginary dispatch from a hilltop observatory, where signal, attention, and the last light of day all fade at different rates.</p>
-      <div class="byline">
-        <span>By <strong>Mara Venn</strong></span>
-        <span>August 2026</span>
-        <span>8 minute read</span>
+    <header class="specimen-header">
+      <p class="eyebrow">Live implementation · Four Ember families</p>
+      <h1>Ember CSS specimen</h1>
+      <p class="dek">A working surface for judging typography, interface roles, categorical capacity, sequential data, and image luminance under the selected Ember palette.</p>
+      <div class="truth-key" role="group" aria-label="How to interpret this page">
+        <div class="truth-card">
+          <strong>Real palette behavior</strong>
+          The category count, sequential ramp, recolored artwork, surfaces, and every interface color come from Ember’s generated artifacts and change with the selector.
+        </div>
+        <div class="truth-card">
+          <strong>Fictional editorial specimen</strong>
+          The observatory story and its chart values are invented layout material. They are explicitly labeled and stay fixed so palette changes can be compared against the same content.
+        </div>
       </div>
     </header>
 
-    <article>
+    <section class="mechanics-section" aria-labelledby="mechanics-title">
+      <div class="section-intro">
+        <h2 id="mechanics-title">Real palette mechanics</h2>
+        <p>These examples report or render actual properties of the selected family. They are not illustrative claims: changing the palette changes the available category count and the pixels in the mapped artwork.</p>
+      </div>
+
+      <div class="mechanics-grid">
+        <figure class="mechanics-card">
+          <figcaption>
+            <span class="data-status">Real profile property</span>
+            <h3>Distinct categorical capacity</h3>
+            <p>The number of identities Ember authors for the selected warm-transform target.</p>
+          </figcaption>
+          <div class="capacity-layout">
+            <div class="capacity-donut" role="img" aria-label="Six categorical colors available in 3400K Dark">
+              <span class="capacity-count" aria-hidden="true">
+                <span class="count-3400-dark">6</span>
+                <span class="count-3400-light">6</span>
+                <span class="count-2000-dark">4</span>
+                <span class="count-1200-dark">3</span>
+              </span>
+            </div>
+            <div class="capacity-bank" role="img" aria-label="Six categorical colors available in 3400K Dark">
+              <span class="capacity-chip" title="Category one"></span>
+              <span class="capacity-chip" title="Category two"></span>
+              <span class="capacity-chip" title="Category three"></span>
+              <span class="capacity-chip" title="Category four"></span>
+              <span class="capacity-chip" title="Category five"></span>
+              <span class="capacity-chip" title="Category six"></span>
+            </div>
+          </div>
+          <p class="mechanics-note">Actual capacity: six at 3400K, four at 2000K, and three at 1200K. The chart changes with the selected profile.</p>
+        </figure>
+
+        <figure class="mechanics-card">
+          <figcaption>
+            <span class="data-status">Real generated rendering</span>
+            <h3>Mona Lisa mapped by source luminance</h3>
+            <p>Each source pixel is ranked by luminance and mapped into the selected family’s 256-sample sequential colors.</p>
+          </figcaption>
+          <img class="palette-art" data-art-palette="3400k-dark" src="assets/mona-lisa-3400k-dark.png" width="640" height="954" alt="Mona Lisa recolored with the 3400K Dark sequential map">
+          <img class="palette-art" data-art-palette="3400k-light" src="assets/mona-lisa-3400k-light.png" width="640" height="954" alt="Mona Lisa recolored with the 3400K Light sequential map">
+          <img class="palette-art" data-art-palette="2000k-dark" src="assets/mona-lisa-2000k-dark.png" width="640" height="954" alt="Mona Lisa recolored with the 2000K Dark sequential map">
+          <img class="palette-art" data-art-palette="1200k-dark" src="assets/mona-lisa-1200k-dark.png" width="640" height="954" alt="Mona Lisa recolored with the 1200K Dark sequential map">
+          <div class="art-ramp" role="img" aria-label="The selected palette's authored low-to-high sequential ramp"></div>
+          <p class="mechanics-note">Image mapping is luminance-correct rather than scalar-direction naïve: the darkest source pixels always receive the darkest map colors and the lightest receive the lightest. For 3400K Light, generation reverses the authored low-to-high ramp before mapping the image. Source: Leonardo da Vinci’s <a href="https://commons.wikimedia.org/wiki/File:Mona_Lisa,_by_Leonardo_da_Vinci,_from_C2RMF_retouched.jpg">Mona Lisa, C2RMF retouched image</a>, public domain via Wikimedia Commons.</p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="editorial-divider" aria-labelledby="editorial-title">
+      <p class="fiction-label">Everything below is fictional specimen content</p>
+      <div class="section-intro">
+        <h2 id="editorial-title">Editorial typography and data-display test</h2>
+        <p>The prose, people, stations, and numerical values below are invented. They remain identical across palettes so you can compare presentation rather than changing data.</p>
+      </div>
+    </section>
+
+    <article aria-label="Fictional editorial specimen">
+      <header class="article-header">
+        <p class="eyebrow">Fictional field note · Issue 04</p>
+        <h2 class="article-title">The Quiet Geometry of Night Work</h2>
+        <p class="dek">An imaginary dispatch from a hilltop observatory, where signal, attention, and the last light of day all fade at different rates.</p>
+        <div class="byline">
+          <span>By <strong>Mara Venn</strong></span>
+          <span>August 2026</span>
+          <span>8 minute read</span>
+        </div>
+      </header>
+
       <div class="article-copy">
-        <p>At dusk, the instruments did not become less precise; they became less forgiving. A blue trace that looked obvious at noon folded into its neighbor after sunset, while the room itself seemed to grow louder. The team had spent years tuning the telescope and only a week noticing the interface around it.</p>
+        <p>At dusk, the instruments did not become less precise; they became less forgiving. A trace that looked obvious at noon folded into its neighbor after sunset, while the room itself seemed to grow louder. The team had spent years tuning the telescope and only a week learning the temperament of the ridge.</p>
 
-        <p>This specimen is a deliberately varied article surface for <a href="https://github.com/carpdiem/ember">Ember</a>. It combines long-form prose with <a href="#signals">categorical signals</a>, a <a href="#thermal-field">sequential heatmap</a>, links, controls, tables, code, and quiet metadata. Change the palette at the top-right; the page structure stays fixed while CSS variables replace the complete visual system.</p>
+        <p>The first clear night arrived after three days of wind. Mara logged the last cloud at 21:46, Eli reopened the north aperture, and the west console began counting usable frames in groups of twelve. Nothing dramatic happened. The work returned as a sequence of small checks performed in the same order.</p>
 
-        <h2 id="field-notes">What the room was telling us</h2>
+        <h3 id="field-notes">What the room was telling us</h3>
 
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. But the useful observation was simpler: frequent pixels should be quiet, and meaningful pixels should earn their color. The base canvas carried almost no demand. Panels separated by small surface steps did the organizing. Only status, category, and selection crossed into the accent bank.</p>
+        <p>The mountain announced each change indirectly. A cooling fan shifted pitch before the sensor temperature moved. Dust lifted from the service road several minutes before a gust reached the dome. On the monitor, the first warning was usually a widening gap between two measurements that had agreed all evening.</p>
 
         <blockquote>
-          “A display used for six hours should not behave like a flare used for six seconds.”
+          “The ridge never changes its mind all at once. It leaves a trail of small revisions.”
           <footer>Notebook 17, west console</footer>
         </blockquote>
 
         <p>The operators settled on three working rules:</p>
         <ol>
-          <li>Use position, labels, and shape before asking hue to carry identity alone.</li>
-          <li>Reserve the strongest foreground for decisions; let supporting detail remain subordinate.</li>
-          <li>Judge the transformed state directly instead of assuming daytime spacing will survive.</li>
+          <li>Calibrate before the first exposure, even when the previous night ended cleanly.</li>
+          <li>Write down the timestamp before explaining what might have caused the change.</li>
+          <li>Treat unexplained drift as a reason to pause, not a reason to smooth the record.</li>
         </ol>
 
         <div class="aside-note">
-          <strong>Reading note</strong>
-          This is fictional editorial copy, but the palette behavior is real. Every color on this page resolves from the selected family in <code>palettes/ember.css</code>.
+          <strong>Fictional specimen content</strong>
+          Mara Venn, the observatory, and every observation value below were invented for this page. They are not claims about a real facility or instrument.
         </div>
 
-        <h3>A small inventory of ordinary text</h3>
+        <h4>A small inventory of ordinary notes</h4>
 
-        <p>Proin vitae lacus at sem luctus aliquet. A <a href="https://github.com/carpdiem/ember#choose-a-profile">profile guide</a> can be concise without becoming invisible. Inline code such as <code>data-ember-palette</code> should read as a distinct object, not a glowing interruption. Supporting notes can soften, but essential prose cannot depend on low-contrast decoration.</p>
+        <p>At 23:14, the ridge sensor recorded a brief rise and returned to baseline before anyone reached the outer door. Mara marked the interval <code>R-17</code>, added no theory, and moved to the next checklist. The restraint mattered: a clean note could survive a wrong first guess.</p>
 
         <ul>
-          <li><strong>Primary text</strong> carries the argument and essential labels.</li>
-          <li><em>Secondary text</em> carries context, captions, and the connective tissue.</li>
-          <li>Muted metadata remains useful without competing with either.</li>
+          <li><strong>Weather log:</strong> clear sky, intermittent ridge wind.</li>
+          <li><em>Instrument log:</em> two recalibrations, neither repeated.</li>
+          <li>Shift note: compare the west-console clock before tomorrow’s run.</li>
         </ul>
       </div>
 
       <figure class="wide-figure" id="signals">
         <figcaption class="figure-header">
           <div>
-            <h3>Signal retention by channel</h3>
-            <p>Three categories remain available in every Ember family. Fill is deliberately quiet; the full-strength edge preserves identity.</p>
+            <span class="data-status">Fictional fixed dataset</span>
+            <h3>Usable frames recovered by station</h3>
+            <p>Invented values that stay fixed across palette changes. The bars exist to test categorical fills and labels, not to report Ember performance.</p>
           </div>
           <span class="figure-number">Figure 01</span>
         </figcaption>
 
-        <div class="categorical-chart" role="img" aria-label="Horizontal bar chart: Structural contrast 88, Chromatic identity 71, Low-light detail 63">
+        <div class="categorical-chart" role="img" aria-label="Fictional horizontal bar chart: North aperture 88 usable frames, Ridge sensor 71, Core assembly 63">
           <div class="bar-row series-one">
-            <span>Structural contrast</span>
+            <span>North aperture</span>
             <div class="bar-track"><div class="bar" style="--value: 88%"></div></div>
             <span class="value">88</span>
           </div>
           <div class="bar-row series-two">
-            <span>Chromatic identity</span>
+            <span>Ridge sensor</span>
             <div class="bar-track"><div class="bar" style="--value: 71%"></div></div>
             <span class="value">71</span>
           </div>
           <div class="bar-row series-three">
-            <span>Low-light detail</span>
+            <span>Core assembly</span>
             <div class="bar-track"><div class="bar" style="--value: 63%"></div></div>
             <span class="value">63</span>
           </div>
         </div>
-
-        <div class="capacity-bank" role="img" aria-label="Six categorical colors available in 3400K Dark">
-          <span class="capacity-chip" title="Category one"></span>
-          <span class="capacity-chip" title="Category two"></span>
-          <span class="capacity-chip" title="Category three"></span>
-          <span class="capacity-chip" title="Category four"></span>
-          <span class="capacity-chip" title="Category five"></span>
-          <span class="capacity-chip" title="Category six"></span>
-        </div>
-        <p class="capacity-caption">Available category bank. It contracts from six to four to three as the selected transform becomes more severe.</p>
       </figure>
 
       <div class="article-copy">
-        <h2 id="patterns">Redundancy is not decoration</h2>
+        <h3 id="patterns">The six-session trace</h3>
 
-        <p>A categorical chart should remain legible when a reader cannot recover every hue. In the next plot, each series has a direct endpoint label, a distinct dash pattern, and markers placed on the line itself. Color participates, but it is not the only witness.</p>
+        <p>By the sixth session, three processing passes had become part of the nightly ledger. The calibrated pass rose steadily, the adaptive pass followed more slowly, and the untouched baseline wandered near the middle. Mara kept all three because agreement was useful and disagreement was evidence.</p>
       </div>
 
       <figure class="wide-figure">
         <figcaption class="figure-header">
           <div>
+            <span class="data-status">Fictional fixed dataset</span>
             <h3>Observation quality over six sessions</h3>
-            <p>Direct labels, markers, line style, and position all carry identity.</p>
+            <p>Invented values fixed across palettes; direct labels, markers, line style, and position carry each series identity.</p>
           </div>
           <span class="figure-number">Figure 02</span>
         </figcaption>
@@ -800,16 +1097,17 @@
       </figure>
 
       <div class="article-copy">
-        <h2 id="thermal-field">A field becomes a gradient</h2>
+        <h3 id="thermal-field">A field becomes a gradient</h3>
 
-        <p>Heatmaps ask a different question. Categories need separation; a sequential field needs order. Each cell below samples the selected family’s authored CSS gradient, from low at the left of the legend to high at the right. The data are imaginary, but the direction and monotonic progression are not.</p>
+        <p>Before midnight, the sensor array began to show a broad warm band moving from the ridge toward the core. The values below are part of the invented story, but they gave the team a compact way to compare location and time without pretending every fluctuation deserved an alarm.</p>
       </div>
 
       <figure class="wide-figure">
         <figcaption class="figure-header">
           <div>
+            <span class="data-status">Fictional values · Real Ember scale</span>
             <h3>Thermal residual across the sensor array</h3>
-            <p>Six rows, eight intervals, one ordered sequential scale.</p>
+            <p>The matrix is invented and fixed; its cells use the selected family’s actual authored low-to-high sequential ramp.</p>
           </div>
           <span class="figure-number">Figure 03</span>
         </figcaption>
@@ -838,9 +1136,9 @@
       </figure>
 
       <div class="article-copy">
-        <h2 id="ledger">The ledger after midnight</h2>
+        <h3 id="ledger">The ledger after midnight</h3>
 
-        <p>Tables expose whether a theme can keep structure visible without turning every rule into an accent. The status marks below use color redundantly with plain-language labels.</p>
+        <p>At 01:20, Eli condensed the shift into three rows: one station stable, one worth watching, and one requiring review before the next run. The labels were provisional, but the timestamps and variances were copied directly from the fictional night log.</p>
 
         <div class="data-table-wrap">
           <table class="data-table">
@@ -855,12 +1153,18 @@
           </table>
         </div>
 
-        <h3>A small code specimen</h3>
+        <h3 id="closing">When the room went quiet</h3>
 
-        <p>The visual contract remains narrow. One attribute selects a family; exported variables carry the palette:</p>
+        <p>By two in the morning, the wind had dropped below the ridge and the three traces had stopped arguing. Mara closed the aperture, circled <code>R-17</code> once, and left the explanation blank. Dawn would make the room easier to see, but not necessarily easier to understand.</p>
+      </div>
+    </article>
 
-        <section aria-label="CSS usage example">
-          <pre><code><span class="token-comment">/* Palette values come from ember.css. */</span>
+    <section class="mechanics-section" aria-labelledby="code-title">
+      <div class="section-intro">
+        <span class="data-status">Real implementation example</span>
+        <h2 id="code-title">One attribute selects the family</h2>
+        <p>The interactive page changes only the root state and URL. Exported variables in <a href="../palettes/ember.css">ember.css</a> carry the interface palette:</p>
+        <pre><code><span class="token-comment">/* Palette values come from ember.css. */</span>
 <span class="token-keyword">const</span> <span class="token-name">root</span> = document.documentElement;
 root.dataset.emberPalette = <span class="token-string">"2000k-dark"</span>;
 
@@ -868,17 +1172,12 @@ root.dataset.emberPalette = <span class="token-string">"2000k-dark"</span>;
   color: var(--ember-fg-0);
   background: var(--ember-bg-0);
 }</code></pre>
-        </section>
-
-        <h2 id="closing">When the display disappears</h2>
-
-        <p>By two in the morning, nobody remarked on the interface. That was the success condition. The room held together, the important signals remained distinct, and the screen stopped asking to be admired. Nulla facilisi. Curabitur consequat, nibh sed commodo varius, returned to its proper role: carrying the work rather than competing with it.</p>
       </div>
-    </article>
+    </section>
 
     <footer class="article-footer">
-      <p><strong>Ember live CSS specimen.</strong> All visual colors resolve through the selected family in <a href="../palettes/ember.css">ember.css</a>.</p>
-      <p>Article text and observation data are fictional. No filter simulation is applied on this page; use your normal Night Shift or Redshift setting to judge the live result.</p>
+      <p><strong>Ember live CSS specimen.</strong> Interface, chart, and typography colors resolve through the selected family in <a href="../palettes/ember.css">ember.css</a>. The four artwork variants are deterministic generated assets built from the same authoritative manifest.</p>
+      <p>The observatory section and its data are fictional and fixed. No filter simulation is applied on this page; use your normal Night Shift or Redshift setting to judge the live result.</p>
     </footer>
   </main>
 
@@ -891,7 +1190,7 @@ root.dataset.emberPalette = <span class="token-string">"2000k-dark"</span>;
       ["1200k-dark", "Three"],
     ]);
     const selector = document.querySelector("#palette-select");
-    const capacityBank = document.querySelector(".capacity-bank");
+    const capacityVisuals = document.querySelectorAll(".capacity-bank, .capacity-donut");
     const params = new URLSearchParams(window.location.search);
 
     function applyPalette(palette, updateUrl = true) {
@@ -899,10 +1198,12 @@ root.dataset.emberPalette = <span class="token-string">"2000k-dark"</span>;
       document.documentElement.dataset.emberPalette = palette;
       selector.value = palette;
       const paletteName = selector.options[selector.selectedIndex].text;
-      capacityBank.setAttribute(
-        "aria-label",
-        `${categoryCounts.get(palette)} categorical colors available in ${paletteName}`,
-      );
+      capacityVisuals.forEach((visual) => {
+        visual.setAttribute(
+          "aria-label",
+          `${categoryCounts.get(palette)} categorical colors available in ${paletteName}`,
+        );
+      });
 
       if (updateUrl) {
         const nextUrl = new URL(window.location.href);
