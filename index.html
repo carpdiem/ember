@@ -730,6 +730,24 @@ code, pre, kbd{ font-family:var(--font-mono); }
   margin:.5rem 0; padding:.7rem .8rem; background:var(--ember-bg-0);
   border:var(--rule); font-size:.72rem; overflow-x:auto; color:var(--ember-fg-0);
 }
+.copy-code{ position:relative; margin:.5rem 0; }
+.copy-code .use-copy-pre{ margin:0; padding-right:3.65rem; }
+.copy-code-button{
+  appearance:none; position:absolute; top:1px; right:1px; z-index:1;
+  width:44px; height:44px; padding:0; cursor:pointer;
+  display:grid; place-items:center; border:0; border-left:var(--rule); border-bottom:var(--rule);
+  background:var(--ember-bg-0); color:var(--ember-fg-2);
+}
+.copy-code-button:hover, .copy-code-button:focus-visible{
+  background:var(--ember-bg-3); color:var(--ember-fg-0);
+}
+.copy-code-button svg{
+  width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.7;
+}
+.copy-code-button .check-icon{ display:none; }
+.copy-code-button.is-copied .copy-icon{ display:none; }
+.copy-code-button.is-copied .check-icon{ display:block; color:var(--ember-terminal-green); }
+.copy-code-button.is-copy-error{ color:var(--ember-terminal-red); }
 .use-card ul{ margin:.4rem 0; padding-left:1.1rem; font-size:.82rem; color:var(--ember-fg-1); }
 .profile-table{ width:100%; border-collapse:collapse; font-size:.78rem; }
 .profile-table th{ text-align:left; font-family:var(--font-mono); font-size:.62rem; letter-spacing:.12em; color:var(--ember-fg-2); border-bottom:var(--rule); padding:.3rem .4rem; }
@@ -1315,19 +1333,20 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
 <section class="use information-plane" id="use" aria-label="Install and use Ember">
   <p class="kicker">Adopt Ember · MIT licensed · no build step, no registry, just files</p>
   <h2>Take the profile home.</h2>
+  <span class="visually-hidden" id="use-copy-feedback" aria-live="polite"></span>
   <div class="use-grid">
     <div class="use-card">
       <h3>Get the files</h3>
-      <pre><code>git clone https://github.com/carpdiem/ember.git
+      <pre data-copy-label="clone commands"><code>git clone https://github.com/carpdiem/ember.git
 cd ember</code></pre>
       <p>Python users can skip the clone:</p>
-      <pre><code>python -m pip install \
+      <pre data-copy-label="direct pip install command"><code>python -m pip install \
   "ember-palettes @ git+https://github.com/carpdiem/ember.git"</code></pre>
       <p>There is no PyPI package; install straight from GitHub.</p>
     </div>
     <div class="use-card">
       <h3>Terminal themes</h3>
-      <pre><code>mkdir -p ~/.config/alacritty/themes
+      <pre data-copy-label="Alacritty setup commands"><code>mkdir -p ~/.config/alacritty/themes
 cp themes/terminal/alacritty/2000k-dark.toml \
    ~/.config/alacritty/themes/</code></pre>
       <ul>
@@ -1338,18 +1357,23 @@ cp themes/terminal/alacritty/2000k-dark.toml \
     </div>
     <div class="use-card">
       <h3>CSS &amp; JSON</h3>
-      <pre><code>&lt;link rel="stylesheet" href="ember.css"&gt;
-&lt;section data-ember-palette="3400k-dark"&gt;
-  …color: var(--ember-fg-0);
+      <pre data-copy-label="CSS example"><code>&lt;link rel="stylesheet" href="palettes/ember.css"&gt;
+&lt;section class="ember-panel" data-ember-palette="3400k-dark"&gt;
+  Ember survives the warm shift.
+&lt;/section&gt;
+&lt;style&gt;
+.ember-panel {
+  color: var(--ember-fg-0);
   background: var(--ember-bg-0);
-&lt;/section&gt;</code></pre>
+}
+&lt;/style&gt;</code></pre>
       <p><code>palettes/ember.css</code> exposes surfaces, foregrounds, categories, and 11
       sequential stops. <code>palettes/ember.json</code> carries all 256 float samples,
       ANSI slots, gains, and measured results.</p>
     </div>
     <div class="use-card">
       <h3>Python / Matplotlib</h3>
-      <pre><code>from ember import (categorical, categorical_norm,
+      <pre data-copy-label="Python example"><code>from ember import (categorical, categorical_norm,
                    encode_categories, sequential, surfaces)
 ui = surfaces("1200k-dark")   # bg_0…bg_5, fg_0…fg_2
 cmap = sequential("1200k-dark")  # 256 samples</code></pre>
@@ -1609,6 +1633,41 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
       copyText(cloneCommand.textContent.trim()).then(showCopyResult);
     });
   }
+
+  /* ---------- adoption code-copy controls ---------- */
+  var useCopyFeedback = document.getElementById("use-copy-feedback");
+  document.querySelectorAll("#use pre[data-copy-label]").forEach(function(pre){
+    var label = pre.getAttribute("data-copy-label");
+    var code = pre.querySelector("code");
+    var wrapper = document.createElement("div");
+    var button = document.createElement("button");
+    wrapper.className = "copy-code";
+    pre.classList.add("use-copy-pre");
+    pre.parentNode.insertBefore(wrapper, pre);
+    wrapper.appendChild(pre);
+    button.className = "copy-code-button";
+    button.type = "button";
+    button.setAttribute("aria-label", "Copy " + label);
+    button.title = "Copy " + label;
+    button.innerHTML = '<svg class="copy-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 6.5h7.5v9H7z"/><path d="M5 13.5H3.5v-9H11V6"/></svg><svg class="check-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 10.5 3.25 3.25L15.5 6"/></svg>';
+    wrapper.appendChild(button);
+    button.addEventListener("click", function(){
+      copyText(code.textContent.trim()).then(function(copied){
+        var message = copied ? "Copied " + label : "Copy unavailable for " + label;
+        button.classList.toggle("is-copied", copied);
+        button.classList.toggle("is-copy-error", !copied);
+        button.setAttribute("aria-label", message);
+        button.title = message;
+        if (useCopyFeedback) useCopyFeedback.textContent = message;
+        if (button.copyResetTimer) clearTimeout(button.copyResetTimer);
+        button.copyResetTimer = setTimeout(function(){
+          button.classList.remove("is-copied", "is-copy-error");
+          button.setAttribute("aria-label", "Copy " + label);
+          button.title = "Copy " + label;
+        }, 1800);
+      });
+    });
+  });
 
   /* ---------- semantic information / demonstration parallax ---------- */
   var demonstrationSections = redshiftSections;
