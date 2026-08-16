@@ -20,6 +20,7 @@ except ModuleNotFoundError:  # Python 3.10
 
 from ember import categorical, categorical_norm, encode_categories, sequential, surfaces
 from ember.color import srgb_to_oklab
+from ember.generate import ANSI_NAMES
 
 ROOT = Path(__file__).resolve().parents[1]
 SLUGS = (
@@ -125,6 +126,7 @@ def test_obsolete_prelaunch_exports_are_absent() -> None:
             for terminal, suffix in (
                 ("alacritty", "toml"),
                 ("iterm2", "itermcolors"),
+                ("apple-terminal", "terminal"),
                 ("windows-terminal", "json"),
             )
             for slug in obsolete_slugs
@@ -173,6 +175,7 @@ def test_ember_css_and_terminal_exports_are_canonical() -> None:
             assert f"--ember-terminal-{role}: {expected};" in family_block.group(1)
         assert (ROOT / f"themes/terminal/alacritty/{slug}.toml").is_file()
         assert (ROOT / f"themes/terminal/iterm2/{slug}.itermcolors").is_file()
+        assert (ROOT / f"themes/terminal/apple-terminal/{slug}.terminal").is_file()
         assert (ROOT / f"themes/terminal/windows-terminal/{slug}.json").is_file()
     assert "--rs-" not in css
     assert "data-redshift-palette" not in css
@@ -364,6 +367,55 @@ def test_iterm_exports_parse() -> None:
         data = plistlib.loads((ROOT / f"themes/terminal/iterm2/{slug}.itermcolors").read_bytes())
         assert "Background Color" in data
         assert all(f"Ansi {index} Color" in data for index in range(16))
+
+
+def _apple_terminal_hex(blob: bytes) -> str:
+    """Decode an archived NSColor blob back to #RRGGBB."""
+    archive = plistlib.loads(blob)
+    assert archive["$archiver"] == "NSKeyedArchiver"
+    color = archive["$objects"][1]
+    assert color["NSColorSpace"] == 2
+    channels = color["NSRGB"].rstrip(b"\x00").split()
+    return "#" + "".join(f"{round(float(channel) * 255):02X}" for channel in channels)
+
+
+def test_apple_terminal_exports_round_trip_to_the_manifest() -> None:
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
+    ansi_keys = (
+        "ANSIBlackColor",
+        "ANSIRedColor",
+        "ANSIGreenColor",
+        "ANSIYellowColor",
+        "ANSIBlueColor",
+        "ANSIMagentaColor",
+        "ANSICyanColor",
+        "ANSIWhiteColor",
+        "ANSIBrightBlackColor",
+        "ANSIBrightRedColor",
+        "ANSIBrightGreenColor",
+        "ANSIBrightYellowColor",
+        "ANSIBrightBlueColor",
+        "ANSIBrightMagentaColor",
+        "ANSIBrightCyanColor",
+        "ANSIBrightWhiteColor",
+    )
+    for slug in SLUGS:
+        family = manifest["families"][slug]
+        data = plistlib.loads(
+            (ROOT / f"themes/terminal/apple-terminal/{slug}.terminal").read_bytes()
+        )
+        assert data["name"] == family["name"]
+        assert data["type"] == "Window Settings"
+        assert "Font" not in data
+
+        assert _apple_terminal_hex(data["BackgroundColor"]) == family["surfaces"]["bg_0"]
+        assert _apple_terminal_hex(data["TextColor"]) == family["surfaces"]["fg_0"]
+        assert _apple_terminal_hex(data["SelectionColor"]) == family["surfaces"]["bg_5"]
+        assert _apple_terminal_hex(data["CursorColor"]) == family["surfaces"]["fg_1"]
+
+        terminal = family["terminal"]
+        exported = [_apple_terminal_hex(data[key]) for key in ansi_keys]
+        assert exported == [terminal[name] for name in ANSI_NAMES]
 
 
 def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
