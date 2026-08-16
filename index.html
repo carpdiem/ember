@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ember — color that survives the warm shift</title>
-<meta name="description" content="Ember authors terminal, UI, chart, and colormap palettes that remain articulate under Night Shift and Redshift warm-display transforms. This page is the live specimen.">
+<title>Ember — color palettes for Night Shift and Redshift</title>
+<meta name="description" content="Ember provides tested color palettes for terminals, apps, charts, and color maps used with Night Shift, Redshift, and other warm screen filters.">
 <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
@@ -821,15 +821,15 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
 <div class="menu-wrap" id="menu" hidden>
   <button class="menu-backdrop" type="button" id="menu-backdrop" aria-label="Close menu"></button>
   <nav class="menu-panel" aria-label="Site sections">
-    <h2>Specimen scenes</h2>
-    <a href="#top">Overview <small>live proof</small></a>
-    <a href="#editorial">Editorial reading <small>real product</small></a>
-    <a href="#code">Code &amp; terminal <small>real product</small></a>
-    <a href="#console">Observatory console <small>fictional telemetry</small></a>
-    <a href="#mars">Mars topography <small>real NASA data</small></a>
-    <a href="#mona">Mona Lisa mapping <small>public domain</small></a>
-    <a href="#field">Electromagnetic field <small>physics figure</small></a>
-    <h2>Adopt Ember</h2>
+    <h2>What this page shows</h2>
+    <a href="#top">Overview <small>what Ember is</small></a>
+    <a href="#editorial">Reading text <small>text and surfaces</small></a>
+    <a href="#code">Terminal and code <small>ANSI and Python</small></a>
+    <a href="#console">Interface stress test <small>fictional data</small></a>
+    <a href="#mars">Mars elevation <small>NASA data</small></a>
+    <a href="#mona">Image mapping <small>Mona Lisa</small></a>
+    <a href="#field">Field diagram <small>three data colors</small></a>
+    <h2>Use Ember</h2>
     <a href="#use">Install &amp; use</a>
     <a href="https://github.com/carpdiem/ember">GitHub repository ↗</a>
     <a href="https://github.com/carpdiem/ember#readme">README &amp; documentation ↗</a>
@@ -843,14 +843,13 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
 <!-- ================= HERO ================= -->
 <section class="hero information-plane" id="top" aria-label="Overview">
   <div>
-    <p class="kicker">Ember · four palette profiles · verified under warm-display transforms</p>
-    <h1>Color that stays articulate after your screen turns warm.</h1>
+    <p class="kicker">Four tested palettes for terminals, apps, charts, and color maps</p>
+    <h1>Color palettes for Night Shift, Redshift, and other warm screen filters.</h1>
     <p class="lede">
-      Night Shift and Redshift multiply each RGB channel by a different gain. At the
-      1200&nbsp;K extreme, the blue channel contributes nothing. Colors that differ only in
-      blue become identical. Ember defines terminal, UI, chart, and colormap roles. These
-      roles keep their identities under modeled 3400&nbsp;K, 2000&nbsp;K, and 1200&nbsp;K transforms.
-      Ember also states how many distinct color identities survive each transform.
+      Warm screen filters change the red, green, and blue output of a display by different
+      amounts. Colors that look distinct without the filter can become identical after it.
+      Ember tests each palette under modeled 3400&nbsp;K, 2000&nbsp;K, and 1200&nbsp;K filters and
+      reports how many text, interface, terminal, and chart colors remain distinct.
     </p>
     <div class="hero-ctas">
       <a class="btn primary" href="https://github.com/carpdiem/ember">View source on GitHub</a>
@@ -865,20 +864,19 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
       </button>
     </div>
     <p class="hero-note">
-      This page is the specimen. Everything below — text, code, instruments, maps, and
-      figures — renders through the profile you select in the header. Nothing here uses a
-      color outside the selected family.
+      Select a profile in the header to apply it to every example below: text, code,
+      interface controls, maps, and diagrams. Each example uses only colors from that profile.
     </p>
     <noscript>
       <p class="hero-note">
-        JavaScript is off, so the page shows the <strong>3400K Dark</strong> profile.
-        Profile switching, animated figures, and image swaps are disabled. Every claim,
-        role, and adoption path below remains valid.
+        This page uses the <strong>3400K Dark</strong> profile when JavaScript is disabled.
+        Profile switching, animation, and image comparison require JavaScript. The palette
+        information and installation instructions remain available.
       </p>
     </noscript>
   </div>
   <aside class="hero-board" aria-labelledby="hero-board-title">
-    <h2 id="hero-board-title">Live anatomy of the selected profile</h2>
+    <h2 id="hero-board-title">What the selected palette contains</h2>
     <div class="board-row">
       <div class="lbl"><span>Surface ladder</span><span>bg-0 → bg-5</span></div>
       <div class="surf-row" role="img" aria-label="Six labeled background surfaces from base canvas to strongest selection state">
@@ -887,9 +885,9 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     </div>
     <div class="board-row fg-row">
       <div class="lbl"><span>Foreground ladder</span><span>fg-0 / fg-1 / fg-2</span></div>
-      <div class="fg-sample f0"><span class="fg-role">FG-0:</span><span id="fg-0-copy">Primary text stays cream, never pure white.</span></div>
-      <div class="fg-sample f1"><span class="fg-role">FG-1:</span><span id="fg-1-copy">Supporting text sits one honest step down.</span></div>
-      <div class="fg-sample f2"><span class="fg-role">FG-2:</span><span id="fg-2-copy">Muted metadata — never used for body copy.</span></div>
+      <div class="fg-sample f0"><span class="fg-role">FG-0:</span><span id="fg-0-copy">Primary text uses cream on dark surfaces.</span></div>
+      <div class="fg-sample f1"><span class="fg-role">FG-1:</span><span id="fg-1-copy">Supporting text uses lower contrast.</span></div>
+      <div class="fg-sample f2"><span class="fg-role">FG-2:</span><span id="fg-2-copy">Metadata uses the lowest text contrast.</span></div>
     </div>
     <div class="board-row">
       <div class="lbl"><span>Terminal accents</span><span id="terminal-accent-count">6 terminal accents · text on bg-0</span></div>
@@ -912,7 +910,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
         <span class="cap-chip" data-cat="5"></span>
         <span class="cap-chip" data-cat="6"></span>
       </div>
-      <p id="cap-sentence">3400K Dark keeps <strong>6 of 6</strong> categorical identities under its transform. The contraction to 4 at 2000&nbsp;K and 3 at 1200&nbsp;K is measured honesty, not a defect.</p>
+      <p id="cap-sentence">3400K Dark provides <strong>6 distinct categorical colors</strong> after the modeled filter. The 2000&nbsp;K profile provides 4; the 1200&nbsp;K profile provides 3.</p>
     </div>
     <div class="board-row">
       <div class="lbl"><span>Sequential map</span><span>256 samples · 11 CSS stops</span></div>
@@ -922,66 +920,58 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
 </section>
 
 <!-- ================= EDITORIAL ================= -->
-<section class="scene" id="editorial" aria-label="Editorial specimen">
+<section class="scene" id="editorial" aria-label="Reading text example">
   <div class="stage">
     <div class="stage-inner demonstration-plane">
       <article class="paper">
         <div class="meta">
-          <span>Ember field notes</span><span>Display engineering</span><span>7 min read</span>
+          <span>Ember color tests</span><span>Warm screen filters</span><span>7 min read</span>
         </div>
-        <h3>The night your grays turned to rust</h3>
-        <p class="stand">A warm filter is not a tint. It applies a different gain to each RGB channel. Most palettes do not account for this.</p>
+        <h3>Warm screen filters can merge colors</h3>
+        <p class="stand">A warm screen filter changes each RGB channel by a different amount. Most palettes are tested only before the filter.</p>
         <hr>
         <div class="body-col">
-          <p>At 1200&nbsp;K, Redshift multiplies the display's blue output by zero. Your theme
-          can command blue, but the display emits none. Two syntax colors that differ only in
-          blue now emit the same light. The viewer cannot recover the difference.</p>
-          <p>Ember reverses the usual authoring order. It first sets hard targets in the
-          <em>transformed</em> state. These targets cover contrast, lightness geometry, and
-          minimum perceptual separation in Oklab. Oklab models perceived color difference.
-          Ember then selects the commanded colors that meet these targets and have the
-          strongest daytime identity. At 1200&nbsp;K the transform discards the blue channel.
-          Ember can therefore use blue to improve daytime distinction without changing the
-          1200&nbsp;K result.</p>
-          <blockquote class="pull">Excellent daytime spacing cannot compensate for a nighttime collision, so Ember refuses to average the two into one score.</blockquote>
-          <p>The same discipline governs the text you read now. Body text is cream, not pure
-          white. Under the transform, pure white becomes a <em>stronger</em> orange than
-          cream, and that extra brightness carries no information. The near-black canvas
-          beneath the text is a warm neutral. The filter changes this neutral only slightly.
-          Links, emphasis, and the rule beside the pull quote use chroma only where it carries
-          meaning.</p>
-          <p>When the arithmetic shows that only four or three identities survive, Ember
-          ships four or three. It labels the aliases as aliases. It does not claim more
-          identities.</p>
+          <p>At 1200&nbsp;K, the modeled Redshift transform sets blue output to zero. Two syntax
+          colors that differ only in blue then produce the same displayed color.</p>
+          <p>Ember tests colors after applying each modeled filter. It requires minimum
+          contrast, ordered lightness, and minimum perceptual separation in Oklab, a color
+          space designed to approximate human perception. Ember then chooses source colors
+          that meet those filtered-state targets and remain distinct during the day. At
+          1200&nbsp;K, blue can improve daytime separation without changing the filtered result.</p>
+          <blockquote class="pull">A color pair fails if the target filter makes the colors indistinguishable, even when they look distinct without the filter.</blockquote>
+          <p>Ember uses cream body text on a near-black warm-neutral background. Pure white
+          becomes brighter orange under a warm filter without improving legibility. Links,
+          emphasis, and status marks use higher-chroma colors because those colors carry
+          specific meaning.</p>
+          <p>The 3400&nbsp;K profiles provide six distinct category colors after filtering. The
+          2000&nbsp;K profile provides four. The 1200&nbsp;K profile provides three. Repeated ANSI
+          slots are labeled as aliases.</p>
         </div>
         <hr>
-        <p class="foot">Set entirely in Ember roles: fg-0 body · fg-1 standfirst · fg-2 metadata · category-one links · category-two accent rule · bg-1 paper on bg-0 canvas.</p>
+        <p class="foot">This article uses Ember roles throughout: fg-0 body · fg-1 standfirst · fg-2 metadata · category-one links · category-two accent rule · bg-1 paper on bg-0 canvas.</p>
       </article>
     </div>
   </div>
   <div class="plates information-plane">
     <article class="plate">
-      <h2>Scene 01 — Reading surface</h2>
-      <p>The article behind this plate is a live specimen, not a screenshot. Its headline,
-      body columns, links, pull quote, and metadata use only the selected profile's
-      <strong>fg-0 / fg-1 / fg-2</strong> ladder and its accents.</p>
-      <p>Switch profiles in the header, and the hierarchy survives. Before release, Ember
-      checks each adjacent pair of ladder steps in both the commanded state and the
-      transformed state.</p>
+      <h2>Reading text</h2>
+      <p>This live article uses the selected profile for its headline, body text, links,
+      pull quote, metadata, background, and rules.</p>
+      <p>Use the header to switch profiles. Ember tests the contrast between adjacent
+      foreground levels before and after each modeled filter.</p>
     </article>
     <article class="plate">
-      <h3>Why cream, not white</h3>
-      <p>Human vision carries fine detail through luminance, not chroma. Ember keeps the
-      most frequent pixels — canvas and body text — warm-neutral, and reserves higher
-      chroma for semantic accents. Every foreground role clears its contrast floor on
-      every surface <strong>after</strong> the transform: 6.8:1 for primary text in the
-      3400&nbsp;K dark family, 5.3:1 even at 1200&nbsp;K.</p>
+      <h3>Cream text on dark backgrounds</h3>
+      <p>Fine detail depends mostly on luminance. Ember uses warm-neutral colors for the
+      canvas and body text, then uses higher-chroma colors for links and status. After the
+      modeled filter, every text color meets its contrast requirement on every surface:
+      6.8:1 for primary text in 3400K Dark and 5.3:1 in 1200K Dark.</p>
     </article>
   </div>
 </section>
 
 <!-- ================= CODE ================= -->
-<section class="scene" id="code" aria-label="Code and terminal specimen">
+<section class="scene" id="code" aria-label="Code and terminal example">
   <div class="stage">
     <div class="stage-inner demonstration-plane">
       <span class="truth">Real repository commands</span>
@@ -1012,21 +1002,19 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
   </div>
   <div class="plates information-plane">
     <article class="plate">
-      <h2>Scene 02 — Code &amp; terminal</h2>
-      <p>Real install commands, the real Python API, and a live selection highlight on
-      <code>bg-5</code>. The terminal accent line expands to every distinct ANSI accent the
-      selected profile supports: <strong>six</strong> at 3400&nbsp;K, four at 2000&nbsp;K,
-      and three at 1200&nbsp;K.</p>
-      <p>Terminal exports ship for Alacritty, iTerm2, and Windows Terminal. Deep profiles
-      repeat their supported accents across the sixteen ANSI slots. They label the aliases
-      as aliases instead of presenting them as extra colors.</p>
+      <h2>Terminal and code colors</h2>
+      <p>This example uses real installation commands, the Python API, and <code>bg-5</code>
+      for selected text. It shows every distinct ANSI accent in the selected profile: six
+      at 3400&nbsp;K, four at 2000&nbsp;K, and three at 1200&nbsp;K.</p>
+      <p>Ember includes themes for Alacritty, iTerm2, and Windows Terminal. The 2000&nbsp;K and
+      1200&nbsp;K themes repeat their supported colors across the sixteen ANSI slots and mark
+      the repeated slots as aliases.</p>
     </article>
     <article class="plate">
-      <h3>Contrast is a release gate</h3>
-      <p>Every foreground-capable terminal accent clears <strong>4.5:1</strong> against the
-      terminal base background after its target transform. The gate also checks each accent
-      against all three foreground roles. An accent cannot pass if it collides with muted
-      text.</p>
+      <h3>Terminal contrast requirements</h3>
+      <p>Each foreground-capable terminal accent must provide at least
+      <strong>4.5:1</strong> contrast against the base background after its target filter.
+      The same test compares every accent with all three text colors, including muted text.</p>
     </article>
   </div>
 </section>
@@ -1036,13 +1024,11 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
   <div class="plates console-intro information-plane">
     <article class="plate">
       <span class="truth fiction">Fictional telemetry — interface stress test</span>
-      <h2>Scene 03 — Observatory console</h2>
-      <p>Every number, subsystem, and event on this console is <strong>invented</strong>.
-      The palette's behavior under load is real. Gauges, bars, scopes, sparklines, health
-      states, and logs all draw from the selected profile's roles. The number of data series
-      contracts to the profile's categorical capacity
-      (<span id="con-cap-inline">6</span> identities here). Shapes and labels back up every
-      color encoding, so no meaning depends on color alone.</p>
+      <h2>Interface colors under high information density</h2>
+      <p>This fictional console tests the selected palette across gauges, bars, scopes,
+      sparklines, health states, and logs. It displays up to
+      <span id="con-cap-inline">6</span> distinct data series for the selected profile.
+      Shapes and labels repeat every meaning encoded by color.</p>
     </article>
   </div>
   <div class="console-wrap demonstration-plane">
@@ -1202,16 +1188,15 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       </div>
     </div>
     <p class="map-cite simulation-note">
-      Simulation notice: the mission, spacecraft, values, and events above are fictional.
-      They exist only to test the palette at high information density. The color behavior is
-      the real product: capacity contraction, contrast, and warning encoding backed by
-      shape.
+      The mission, spacecraft, values, and events are fictional. This interface tests the
+      selected palette at high information density, including data-series capacity, text
+      contrast, and warnings identified by both color and shape.
     </p>
   </div>
 </section>
 
 <!-- ================= MARS ================= -->
-<section class="scene" id="mars" aria-label="Mars topography specimen">
+<section class="scene" id="mars" aria-label="Mars elevation example">
   <div class="stage">
     <div class="stage-inner demonstration-plane">
       <span class="truth">Real NASA data — MGS MOLA topography</span>
@@ -1237,28 +1222,24 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
   <div class="plates information-plane">
     <article class="plate">
       <span class="truth">Real NASA data</span>
-      <h2>Scene 04 — A planet through the sequential map</h2>
-      <p>This image is not a decorative Mars texture. Each pixel encodes measured elevation.
-      The selected profile's <strong>256-sample sequential map</strong> shows that
-      elevation. The map is resampled to equal perceptual steps <em>after</em> the warm
-      transform, and its transformed lightness is strictly monotonic.</p>
-      <p>Olympus Mons and Hellas remain legible in every profile because Ember engineers the
-      color spacing in the transformed state. This is the state your filter actually shows
-      you.</p>
+      <h2>Mars elevation mapped with Ember</h2>
+      <p>Each pixel represents measured Mars elevation from NASA's MGS MOLA dataset. The
+      selected profile maps those values through 256 colors. Those colors have equal
+      perceptual spacing and strictly ordered lightness after the modeled filter.</p>
+      <p>That filtered-state spacing keeps Olympus Mons, Hellas, and other elevation features
+      visible in every profile.</p>
     </article>
     <article class="plate">
       <span class="truth">Real NASA data</span>
-      <h3>The light profile is not inverted</h3>
-      <p>Scalar low→high always follows the authored ramp direction. In 3400K&nbsp;Light the
-      ramp runs light→dark, so high terrain reads <strong>dark</strong>. This direction is
-      deliberate. Reversing the ramp to make peaks bright would break the family's scalar
-      semantics.</p>
+      <h3>Higher terrain is darker in 3400K Light</h3>
+      <p>The 3400K Light color map assigns light colors to low values and dark colors to high
+      values. Every scalar map follows the low-to-high direction defined by its profile.</p>
     </article>
   </div>
 </section>
 
 <!-- ================= MONA ================= -->
-<section class="scene" id="mona" aria-label="Mona Lisa mapping specimen">
+<section class="scene" id="mona" aria-label="Mona Lisa color mapping example">
   <div class="stage">
     <div class="stage-inner mona-stage demonstration-plane">
       <span class="truth">Public-domain artwork + deterministic mapping</span>
@@ -1283,20 +1264,19 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
   </div>
   <div class="plates information-plane">
     <article class="plate">
-      <span class="truth">Public-domain art · deterministic mapping</span>
-      <h2>Scene 05 — A photograph is not a scalar field</h2>
-      <p>The build maps each pixel by its Oklab perceptual lightness. It stretches the
-      lightness values across the 1st–99th percentile. It then maps the values into the
-      profile's 256 sequential samples. Some authored ramps run light→dark. The build
-      reverses these ramps <strong>for this photographic case only</strong>, so dark paint
-      stays dark. This is the opposite convention from the Mars scalar map. The difference
-      is deliberate.</p>
-      <p>The source image is untouched: same crop, same geometry, no cosmetic changes. Drag
-      the wipe to compare the mapping with the source directly.</p>
+      <span class="truth">Public-domain source image · generated Ember mapping</span>
+      <h2>Photograph mapped by perceptual lightness</h2>
+      <p>The build calculates the Oklab lightness of each source pixel, stretches the values
+      between the 1st and 99th percentiles, and assigns one of the selected profile's 256
+      colors. For photographs, dark source pixels map to dark palette colors and light source
+      pixels map to light palette colors. The Mars map instead follows the profile's authored
+      low-to-high scalar direction.</p>
+      <p>The mapped image preserves the source crop and geometry. Drag the wipe to compare it
+      with the source image.</p>
     </article>
     <article class="plate">
       <span class="truth">Provenance</span>
-      <h3>Source</h3>
+      <h3>Image source and build</h3>
       <p><em>Mona Lisa</em>, Leonardo da Vinci · C2RMF retouched digitization via Wikimedia
       Commons · public domain, recorded SHA-256 in <code>assets/README.md</code>. The four
       mapped PNGs are rebuilt deterministically by <code>tools/build_all.py</code>.</p>
@@ -1308,7 +1288,7 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
 <section class="scene field-scene" id="field" aria-label="Electromagnetic field figure">
   <div class="stage">
     <div class="stage-inner demonstration-plane">
-      <span class="truth">Physics figure — real geometry, live palette</span>
+      <span class="truth">Physics diagram · selected palette colors</span>
       <figure class="em-frame figure-flush">
         <canvas class="em-c" id="em" width="960" height="600" role="img"
                 aria-label="Projected three-dimensional animation of a plane electromagnetic wave: electric field oscillating vertically, magnetic field horizontally, both perpendicular to the propagation axis and in phase"></canvas>
@@ -1319,10 +1299,9 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
             <span class="lc"><i></i>tracked phase crest</span>
           </div>
           <p class="em-cap">
-            A plane electromagnetic wave in vacuum: <strong>E</strong> and <strong>B</strong>
-            oscillate in phase, mutually perpendicular and perpendicular to the propagation
-            direction <strong>k</strong>. The marked crest tracks one phase front moving at
-            c — it is a feature of the field, not a particle riding the curve.
+            In a plane electromagnetic wave in vacuum, <strong>E</strong> and <strong>B</strong>
+            oscillate in phase. They are perpendicular to each other and to the propagation
+            direction <strong>k</strong>. The marked crest follows one phase front moving at c.
           </p>
           <noscript><p class="em-cap">Enable JavaScript to render the field figure.</p></noscript>
         </figcaption>
@@ -1332,32 +1311,31 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
   <div class="plates information-plane">
     <article class="plate">
       <span class="truth">Physics figure</span>
-      <h2>Scene 06 — Fields in depth</h2>
-      <p>The page draws this figure without libraries, on a perspective projection. The
-      floor grid, axis triad, field vectors, and envelope curves all share one 3-D frame.
-      E uses <strong>category-one</strong>, B uses <strong>category-two</strong>, and the
-      crest marker uses <strong>category-three</strong>. Every Ember profile guarantees
-      these three identities. Therefore, the three markers remain distinct in every profile.</p>
-      <p>Under <code>prefers-reduced-motion</code> the animation stops at a single static
-      frame that keeps the same labels.</p>
+      <h2>Electromagnetic field colors</h2>
+      <p>The floor grid, axes, field vectors, and envelope curves share one perspective 3-D
+      frame. E uses <strong>category-one</strong>, B uses <strong>category-two</strong>, and the
+      crest marker uses <strong>category-three</strong>. Every Ember profile provides at least
+      these three distinct colors.</p>
+      <p>When <code>prefers-reduced-motion</code> is enabled, the figure displays one static
+      frame with the same labels.</p>
     </article>
   </div>
 </section>
 
 <!-- ================= ADOPTION ================= -->
 <section class="use information-plane" id="use" aria-label="Install and use Ember">
-  <p class="kicker">Adopt Ember · MIT licensed · no build step, no registry, just files</p>
-  <h2>Install and use Ember.</h2>
+  <p class="kicker">MIT-licensed files for terminals, CSS, JSON, Python, and Matplotlib</p>
+  <h2>Install Ember.</h2>
   <span class="visually-hidden" id="use-copy-feedback" aria-live="polite"></span>
   <div class="use-grid">
     <div class="use-card">
       <h3>Get the files</h3>
       <pre data-copy-label="clone commands"><code>git clone https://github.com/carpdiem/ember.git
 cd ember</code></pre>
-      <p>Python users can skip the clone:</p>
+      <p>Python users can install directly from GitHub:</p>
       <pre data-copy-label="direct pip install command"><code>python -m pip install \
   "ember-palettes @ git+https://github.com/carpdiem/ember.git"</code></pre>
-      <p>There is no PyPI package; install straight from GitHub.</p>
+      <p>The package installs directly from GitHub.</p>
     </div>
     <div class="use-card">
       <h3>Terminal themes</h3>
@@ -1374,7 +1352,7 @@ cp themes/terminal/alacritty/2000k-dark.toml \
       <h3>CSS &amp; JSON</h3>
       <pre data-copy-label="CSS example"><code>&lt;link rel="stylesheet" href="palettes/ember.css"&gt;
 &lt;section class="ember-panel" data-ember-palette="3400k-dark"&gt;
-  Ember survives the warm shift.
+  This panel uses Ember.
 &lt;/section&gt;
 &lt;style&gt;
 .ember-panel {
@@ -1382,9 +1360,9 @@ cp themes/terminal/alacritty/2000k-dark.toml \
   background: var(--ember-bg-0);
 }
 &lt;/style&gt;</code></pre>
-      <p><code>palettes/ember.css</code> exposes surfaces, foregrounds, categories, and 11
-      sequential stops. <code>palettes/ember.json</code> carries all 256 float samples,
-      ANSI slots, gains, and measured results.</p>
+      <p><code>palettes/ember.css</code> provides surfaces, text colors, category colors, and
+      11 sequential stops. <code>palettes/ember.json</code> provides all 256 sequential
+      samples, ANSI slots, filter gains, and test results.</p>
     </div>
     <div class="use-card">
       <h3>Python / Matplotlib</h3>
@@ -1392,8 +1370,8 @@ cp themes/terminal/alacritty/2000k-dark.toml \
                    encode_categories, sequential, surfaces)
 ui = surfaces("1200k-dark")   # bg_0…bg_5, fg_0…fg_2
 cmap = sequential("1200k-dark")  # 256 samples</code></pre>
-      <p>Pass the slug to <code>categorical_norm()</code> and
-      <code>encode_categories()</code> so capacity checks match the family.</p>
+      <p>Pass the profile slug to <code>categorical_norm()</code> and
+      <code>encode_categories()</code> so both functions use that profile's category limit.</p>
     </div>
     <div class="use-card">
       <h3>Choose a profile</h3>
@@ -1406,15 +1384,16 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
           <tr><td>1200k-dark</td><td>extreme 1200 K stress profile</td><td>3</td></tr>
         </tbody>
       </table>
-      <p>Use <code>3400k-dark</code> by default. Select a deeper profile only if you use a
-      lower filter temperature. Deep profiles are dark-only because a warm filter turns a
-      light canvas into a large orange-red field.</p>
+      <p>Start with <code>3400k-dark</code>. Use <code>2000k-dark</code> or
+      <code>1200k-dark</code> when your screen filter uses those lower temperatures. Ember
+      provides only dark profiles at 2000&nbsp;K and 1200&nbsp;K because the filter turns a light
+      background into a bright orange-red field.</p>
     </div>
     <div class="use-card">
       <h3>Provenance &amp; license</h3>
       <ul>
         <li><a href="https://github.com/carpdiem/ember">Repository</a> · <a href="https://github.com/carpdiem/ember#readme">README</a> · <a href="https://github.com/carpdiem/ember/blob/main/LICENSE">MIT license</a></li>
-        <li>Ember does not apply the warm filter. Keep the filter you already use.</li>
+        <li>Use Ember with Night Shift, Redshift, or another warm screen filter. Ember supplies the colors.</li>
         <li>Rebuild everything: <code>uv run python tools/build_all.py --check</code></li>
         <li>Mars: NASA PDS MOLA MEGDR (acknowledged, CC0-style reuse guidance). Mona Lisa: public domain via Wikimedia Commons.</li>
       </ul>
@@ -1427,8 +1406,8 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   <p>
     Ember · MIT © 2026 Michael Woods ·
     <a href="https://github.com/carpdiem/ember">github.com/carpdiem/ember</a> ·
-    profiles are software signal models, not calibrated physical color temperatures ·
-    console telemetry on this page is fictional; Mars elevation and the Mona Lisa source are real,
+    profiles use software models of warm screen filters rather than calibrated display measurements ·
+    the interface stress test uses fictional data · Mars elevation and the Mona Lisa source use
     documented public data with recorded checksums in <a href="https://github.com/carpdiem/ember/blob/main/assets/README.md">assets/README.md</a>.
   </p>
 </footer>
@@ -1452,14 +1431,14 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   };
   var FG_COPY = {
     dark: [
-      "Primary text stays cream, never pure white.",
-      "Supporting text sits one honest step down.",
-      "Muted metadata — never used for body copy."
+      "Primary text uses cream on dark surfaces.",
+      "Supporting text uses lower contrast.",
+      "Metadata uses the lowest text contrast."
     ],
     light: [
-      "Primary text stays ink-dark against the warm paper.",
-      "Supporting text steps lighter without losing structure.",
-      "Muted metadata remains dark enough for compact labels."
+      "Primary text uses dark ink on light surfaces.",
+      "Supporting text uses lower contrast.",
+      "Metadata uses the lowest text contrast."
     ]
   };
   var CAT_VARS = [
@@ -1479,7 +1458,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
       var button = section.querySelector(".redshift-toggle");
       if (!button) return;
       var active = section.getAttribute("data-redshift-simulated") === "true";
-      var label = section.getAttribute("aria-label") || "live specimen";
+      var label = section.getAttribute("aria-label") || "example";
       section.setAttribute("data-redshift-profile", redshift.profile);
       button.setAttribute("aria-pressed", String(active));
       button.setAttribute("aria-label", (active ? "Deactivate" : "Activate") +
@@ -1579,8 +1558,8 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     if (capCount) capCount.textContent = info.cats + " / 6";
     var capSentence = document.getElementById("cap-sentence");
     if (capSentence){
-      capSentence.innerHTML = info.label + " keeps <strong>" + info.cats +
-        " of 6</strong> categorical identities under its transform. The contraction to 4 at 2000\u00a0K and 3 at 1200\u00a0K is measured honesty, not a defect.";
+      capSentence.innerHTML = info.label + " provides <strong>" + info.cats +
+        " distinct categorical colors</strong> after the modeled filter. The 2000\u00a0K profile provides 4; the 1200\u00a0K profile provides 3.";
     }
     var conCap = document.getElementById("con-cap");
     if (conCap) conCap.textContent = info.cats + " / 6";

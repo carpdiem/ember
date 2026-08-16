@@ -371,7 +371,7 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
 
     assert 'data-ember-palette="3400k-dark"' in landing
     assert 'href="palettes/ember.css"' in landing
-    assert "<title>Ember — color that survives the warm shift</title>" in landing
+    assert "<title>Ember — color palettes for Night Shift and Redshift</title>" in landing
     assert 'data-src-template="assets/mars-topography-{slug}.png"' in landing
     assert 'data-src-template="assets/mona-lisa-{slug}.png"' in landing
 
@@ -400,15 +400,15 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
     assert "Fictional telemetry — interface stress test" in landing
     assert "Real NASA data — MGS MOLA topography" in landing
     assert "Public-domain artwork + deterministic mapping" in landing
-    assert "The build maps each pixel by its Oklab perceptual lightness" in landing
+    assert "The build calculates the Oklab lightness of each source pixel" in landing
     assert "pixel perceptual lightness mapped deterministically" in landing
-    assert "Physics figure — real geometry, live palette" in landing
+    assert "Physics diagram · selected palette colors" in landing
     assert 'id="sparks"' in landing
     assert 'id="scope"' in landing
     assert 'id="em"' in landing
     assert 'role="img"' in landing
     assert "one series per available identity" in landing
-    assert "field, not a particle riding the curve" in landing
+    assert "The marked crest follows one phase front moving at c." in landing
 
     assert "@media (prefers-reduced-motion: reduce)" in landing
     assert "animation:none !important" in landing
@@ -514,7 +514,7 @@ def test_root_landing_page_refinement_interactions() -> None:
     for role in ("FG-0:", "FG-1:", "FG-2:"):
         assert f">{role}</span>" in landing
     assert 'id="fg-0-copy"' in landing
-    assert "Primary text stays ink-dark against the warm paper." in landing
+    assert "Primary text uses dark ink on light surfaces." in landing
     assert 'class="terminal-specimen"' in landing
     assert 'id="terminal-accent-count"' in landing
     for index, role in enumerate(("red", "green", "yellow", "blue", "magenta", "cyan"), 1):
