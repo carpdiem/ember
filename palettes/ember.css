@@ -17,6 +17,12 @@
   --ember-category-four: #67BE95;
   --ember-category-five: #945D48;
   --ember-category-six: #C3779A;
+  --ember-terminal-red: #F5AD9A;
+  --ember-terminal-green: #7EB798;
+  --ember-terminal-yellow: #CA9246;
+  --ember-terminal-blue: #B4C6F7;
+  --ember-terminal-magenta: #D895C2;
+  --ember-terminal-cyan: #70DBD8;
   --ember-sequential: linear-gradient(90deg, #282527 0%, #3B3139 10%, #4D3E4A 20%, #614A58 30%, #765863 40%, #8A686A 50%, #9D796C 60%, #B08A6E 70%, #C39E75 80%, #D3B589 90%, #E2CDA1 100%);
 }
 
@@ -36,6 +42,12 @@
   --ember-category-four: #5B2A07;
   --ember-category-five: #2A632D;
   --ember-category-six: #556BAA;
+  --ember-terminal-red: #470D05;
+  --ember-terminal-green: #174213;
+  --ember-terminal-yellow: #894C03;
+  --ember-terminal-blue: #162252;
+  --ember-terminal-magenta: #643563;
+  --ember-terminal-cyan: #00766E;
   --ember-sequential: linear-gradient(90deg, #F2E5BC 0%, #DFCA9C 10%, #CEB083 20%, #BE9671 30%, #AB7D64 40%, #96675E 50%, #815459 60%, #6A4550 70%, #523843 80%, #3B2C34 90%, #252126 100%);
 }
 
@@ -53,6 +65,12 @@
   --ember-category-two: #E99096;
   --ember-category-three: #A46449;
   --ember-category-four: #A3DCA9;
+  --ember-terminal-red: #EC8B96;
+  --ember-terminal-green: #74E5C0;
+  --ember-terminal-yellow: #C39C49;
+  --ember-terminal-blue: #A7D1FB;
+  --ember-terminal-magenta: #EC8B96;
+  --ember-terminal-cyan: #74E5C0;
   --ember-sequential: linear-gradient(90deg, #17110F 0%, #2B1F21 10%, #3F2C33 20%, #553A46 30%, #6C485A 40%, #84596C 50%, #9B6B7A 60%, #B18185 70%, #C89D8E 80%, #DDBB9D 90%, #F2D9AE 100%);
 }
 
@@ -69,5 +87,11 @@
   --ember-category-one: #BB6572;
   --ember-category-two: #8FF0FF;
   --ember-category-three: #E9B76C;
+  --ember-terminal-red: #F29298;
+  --ember-terminal-green: #C9FFB4;
+  --ember-terminal-yellow: #DDCD81;
+  --ember-terminal-blue: #DDCD81;
+  --ember-terminal-magenta: #F29298;
+  --ember-terminal-cyan: #C9FFB4;
   --ember-sequential: linear-gradient(90deg, #100C0B 0%, #24181E 10%, #392531 20%, #4F3246 30%, #67415C 40%, #805270 50%, #986881 60%, #B0838E 70%, #CAA49B 80%, #E5C4A9 90%, #FFE5B8 100%);
 }

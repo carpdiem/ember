@@ -156,10 +156,21 @@ def test_surface_api_returns_an_independent_copy() -> None:
 
 def test_ember_css_and_terminal_exports_are_canonical() -> None:
     css = (ROOT / "palettes/ember.css").read_text()
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
+    terminal_roles = ("red", "green", "yellow", "blue", "magenta", "cyan")
     for role in ("bg_0", "bg_1", "bg_2", "bg_3", "bg_4", "bg_5", "fg_0", "fg_1", "fg_2"):
         assert f"--ember-{role.replace('_', '-')}:" in css
     for slug in SLUGS:
         assert f'data-ember-palette="{slug}"' in css
+        family_block = re.search(
+            rf'\[data-ember-palette="{re.escape(slug)}"\] \{{(.*?)\n\}}',
+            css,
+            flags=re.DOTALL,
+        )
+        assert family_block
+        for role in terminal_roles:
+            expected = manifest["families"][slug]["terminal"][role]
+            assert f"--ember-terminal-{role}: {expected};" in family_block.group(1)
         assert (ROOT / f"themes/terminal/alacritty/{slug}.toml").is_file()
         assert (ROOT / f"themes/terminal/iterm2/{slug}.itermcolors").is_file()
         assert (ROOT / f"themes/terminal/windows-terminal/{slug}.json").is_file()
@@ -435,9 +446,8 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
     ):
         assert f"var(--ember-{role})" in landing
 
-    assert not any(
-        token in landing for token in ("style.color", "style.background", "setProperty(")
-    )
+    assert not any(token in landing for token in ("style.color", "style.background"))
+    assert 'setProperty("--ember' not in landing
     assert not re.search(r"#[0-9a-fA-F]{3,8}(?:[;\"'])", landing)
     assert not re.search(r"(?:rgb|hsl|oklab|oklch)\(", landing, flags=re.IGNORECASE)
 
@@ -461,8 +471,21 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert 'id="fg-0-copy"' in landing
     assert "Primary text stays ink-dark against the warm paper." in landing
     assert 'class="terminal-specimen"' in landing
-    for token_class in ("t-k", "t-s", "t-f", "t-c"):
-        assert f'class="{token_class}"' in landing
+    assert 'id="terminal-accent-count"' in landing
+    for index, role in enumerate(("red", "green", "yellow", "blue", "magenta", "cyan"), 1):
+        assert f'data-cat="{index}" data-terminal="{role}"' in landing
+        assert f"color:var(--ember-terminal-{role})" in landing
+    assert 'document.querySelectorAll(".terminal-accent[data-cat]")' in landing
+    assert 'token.hidden = Number(token.getAttribute("data-cat")) > info.cats' in landing
+    assert 'info.cats + " terminal accents · text on bg-0"' in landing
+
+    assert "real product behavior" not in landing.lower()
+    assert "--stage-plane-y" in landing
+    assert ".stage::before" in landing
+    assert "updateStageParallax" in landing
+    assert 'window.addEventListener("scroll", queueStageParallax, { passive:true })' in landing
+    assert 'window.matchMedia("(max-width: 900px)")' in landing
+    assert "reducedMQ.matches" in landing
 
     assert 'id="mona-divider"' in landing
     assert 'role="slider"' in landing
@@ -478,8 +501,10 @@ def test_root_landing_page_refinement_interactions() -> None:
 
     assert 'class="vector-symbol" role="img" aria-label="vector E">E</span>' in landing
     assert 'class="vector-symbol" role="img" aria-label="vector B">B</span>' in landing
-    assert 'drawVectorLabel("E", "(electric, ŷ)"' in landing
-    assert 'drawVectorLabel("B", "(magnetic, x̂)"' in landing
+    assert 'drawVectorLabel("E", "(electric field, ŷ)"' in landing
+    assert 'drawVectorLabel("B", "(magnetic field, x̂)"' in landing
+    assert "— electric field (ŷ)" in landing
+    assert "— magnetic field (x̂)" in landing
     assert ".em-legend .le{ color:var(--ember-category-one); }" in landing
     assert ".em-legend .lb{ color:var(--ember-category-two); }" in landing
 

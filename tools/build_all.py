@@ -87,6 +87,8 @@ def _css(manifest: dict) -> str:
             lines.append(f"  --ember-{name.replace('_', '-')}: {value};")
         for name, value in family["categorical"].items():
             lines.append(f"  --ember-category-{name}: {value};")
+        for name in ("red", "green", "yellow", "blue", "magenta", "cyan"):
+            lines.append(f"  --ember-terminal-{name}: {family['terminal'][name]};")
         continuous = family["continuous_hex8"]
         stops = [continuous[round(i * 255 / 10)] for i in range(11)]
         gradient = ", ".join(f"{color} {i * 10}%" for i, color in enumerate(stops))
