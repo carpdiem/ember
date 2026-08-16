@@ -472,7 +472,7 @@ code, pre, kbd{ font-family:var(--font-mono); }
 
 /* ---------- console (dense fictional instrument) ---------- */
 #console{
-  --demonstration-plane-y:0px; --substrate-plane-y:0px;
+  --information-plane-y:0px; --demonstration-plane-y:0px; --substrate-plane-y:0px;
   position:relative; isolation:isolate; overflow:hidden;
   background:var(--ember-bg-0); border-top:var(--rule);
 }
@@ -483,9 +483,13 @@ code, pre, kbd{ font-family:var(--font-mono); }
 .console-intro{
   margin-top:0; margin-bottom:-1.6rem; width:auto; max-width:44rem; gap:0;
   padding:clamp(2rem,5vh,3rem) clamp(1rem,4vw,4rem) 1.4rem;
-  display:block; transform:none;
+  display:block;
+  transform:translate3d(0,var(--information-plane-y),0); will-change:transform;
 }
 .console-intro .plate{ max-width:44rem; }
+@media (prefers-reduced-motion:reduce){
+  .console-intro{ transform:none; will-change:auto; }
+}
 .console{
   border:var(--rule); background:var(--ember-bg-1);
   font-family:var(--font-mono);
@@ -1493,6 +1497,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     var substrateRate = compactSceneMQ.matches ? 84 : 54;
     var viewportMidpoint = window.innerHeight / 2;
     demonstrationSections.forEach(function(section){
+      var informationOffset = 0;
       var demonstrationOffset = 0;
       var substrateOffset = 0;
       if (enabled){
@@ -1509,7 +1514,16 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
           -substrateRange,
           Math.min(substrateRange, -distance * substrateRate)
         );
+        if (section.id === "console"){
+          var informationRange = compactSceneMQ.matches ? 28 : 72;
+          var informationRate = compactSceneMQ.matches ? 84 : 180;
+          informationOffset = Math.max(
+            -informationRange,
+            Math.min(informationRange, rect.top / window.innerHeight * informationRate)
+          );
+        }
       }
+      section.style.setProperty("--information-plane-y", informationOffset.toFixed(1) + "px");
       section.style.setProperty("--demonstration-plane-y", demonstrationOffset.toFixed(1) + "px");
       section.style.setProperty("--substrate-plane-y", substrateOffset.toFixed(1) + "px");
     });

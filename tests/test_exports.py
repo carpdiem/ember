@@ -530,6 +530,13 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert landing.count('class="plates information-plane"') >= 5
     assert 'class="plates console-intro information-plane"' in landing
     assert 'class="console-wrap demonstration-plane"' in landing
+    assert "--information-plane-y" in landing
+    assert "translate3d(0,var(--information-plane-y),0)" in landing
+    assert 'section.id === "console"' in landing
+    assert "var informationRange = compactSceneMQ.matches ? 28 : 72;" in landing
+    assert "var informationRate = compactSceneMQ.matches ? 84 : 180;" in landing
+    assert 'section.style.setProperty("--information-plane-y"' in landing
+    assert "@media (prefers-reduced-motion:reduce){\n  .console-intro{ transform:none" in landing
     assert "--demonstration-plane-x" in landing
     assert "--demonstration-plane-y" in landing
     assert "--substrate-plane-y" in landing
