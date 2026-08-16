@@ -496,14 +496,17 @@ def test_root_landing_page_refinement_interactions() -> None:
             f'.pp-dot[data-cat="{index}"]{{ background:var(--ember-category-{role}); }}' in landing
         )
     assert "background:transparent" in palette_link_rule.group(1)
+    assert "color:var(--ember-fg-2)" in palette_link_rule.group(1)
     assert "border:0" in palette_link_rule.group(1)
     assert "min-height:44px" in palette_link_rule.group(1)
     assert "position:relative" in palette_link_rule.group(1)
     palette_surface_rule = re.search(r"\.pp::before\{(.*?)\}", landing, flags=re.DOTALL)
     assert palette_surface_rule
-    assert "background:var(--ember-bg-1)" in palette_surface_rule.group(1)
+    assert "background:var(--ember-bg-3)" in palette_surface_rule.group(1)
     assert "border:1px solid var(--ember-bg-4)" in palette_surface_rule.group(1)
     assert "inset:5px 2px" in palette_surface_rule.group(1)
+    assert '.pp[aria-pressed="true"]{ color:var(--ember-fg-0); }' in landing
+    assert '.pp[aria-pressed="true"]::before{ border-color:var(--ember-terminal-red); }' in landing
 
     assert "Redshift-safe color palettes" in landing
     for role in ("BG-0", "BG-1", "BG-2", "BG-3", "BG-4", "BG-5"):
