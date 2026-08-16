@@ -458,12 +458,23 @@ def test_root_landing_page_refinement_interactions() -> None:
     landing = (ROOT / "index.html").read_text()
 
     chrome_rule = re.search(r"\.chrome\{(.*?)\n\}", landing, flags=re.DOTALL)
+    github_rule = re.search(r"\.chrome-gh\{(.*?)\n\}", landing, flags=re.DOTALL)
     picker_rule = re.search(r"\.picker\{(.*?)\}", landing, flags=re.DOTALL)
+    palette_link_rule = re.search(r"\.pp\{(.*?)\n\}", landing, flags=re.DOTALL)
     assert chrome_rule
+    assert github_rule
     assert picker_rule
+    assert palette_link_rule
     assert "background:var(--ember-bg-0)" in chrome_rule.group(1)
     assert "transparent" not in chrome_rule.group(1)
+    assert "border" not in github_rule.group(1)
     assert "background:var(--ember-bg-0)" in picker_rule.group(1)
+    assert '<span class="picker-label">Palette:</span>' in landing
+    for label in ("3400K Dark", "3400K Light", "2000K Dark", "1200K Dark"):
+        assert f'aria-label="Use {label} palette"' in landing
+    assert "background:transparent" in palette_link_rule.group(1)
+    assert "border:0" in palette_link_rule.group(1)
+    assert "min-height:44px" in palette_link_rule.group(1)
 
     assert "Redshift-safe color palettes" in landing
     for role in ("BG-0", "BG-1", "BG-2", "BG-3", "BG-4", "BG-5"):
@@ -481,11 +492,25 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert 'token.hidden = Number(token.getAttribute("data-cat")) > info.cats' in landing
     assert 'info.cats + " terminal accents · text on bg-0"' in landing
 
+    terminal_accent_rule = re.search(r"\.terminal-accent\{(.*?)\}", landing, flags=re.DOTALL)
+    assert terminal_accent_rule
+    assert "font-weight:400" in terminal_accent_rule.group(1)
+
     assert "real product behavior" not in landing.lower()
-    assert "--stage-plane-y" in landing
-    assert ".stage::before" in landing
-    assert "updateStageParallax" in landing
-    assert 'window.addEventListener("scroll", queueStageParallax, { passive:true })' in landing
+    assert 'class="stage-inner demonstration-plane"' in landing
+    assert landing.count('class="plates information-plane"') >= 5
+    assert 'class="plates console-intro information-plane"' in landing
+    assert 'class="console-wrap demonstration-plane"' in landing
+    assert "--demonstration-plane-x" in landing
+    assert "--demonstration-plane-y" in landing
+    assert "--substrate-plane-y" in landing
+    assert "--stage-plane-y" not in landing
+    assert "left:var(--demonstration-plane-x)" in landing
+    assert "calc(var(--demonstration-plane-x) + 2rem - min(30rem, 42vw))" in landing
+    assert "updateDemonstrationParallax" in landing
+    assert (
+        'window.addEventListener("scroll", queueDemonstrationParallax, { passive:true })' in landing
+    )
     assert 'window.matchMedia("(max-width: 900px)")' in landing
     assert "reducedMQ.matches" in landing
 
