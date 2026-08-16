@@ -325,6 +325,47 @@ code, pre, kbd{ font-family:var(--font-mono); }
 }
 
 /* ---------- semantic depth: information passes over slower demonstrations ---------- */
+.redshift-filter-defs{
+  position:absolute; width:0; height:0; overflow:hidden; pointer-events:none;
+}
+.redshift-control{
+  position:sticky; top:calc(var(--chrome-h) + .65rem); z-index:9;
+  height:0; padding:0 clamp(1rem, 4vw, 4rem);
+  display:flex; justify-content:flex-end; pointer-events:none;
+}
+.redshift-toggle{
+  pointer-events:auto; transform:translateY(.65rem);
+  min-height:44px; display:inline-flex; align-items:center; gap:.55rem;
+  padding:.45rem .65rem; border:1px solid var(--ember-fg-2);
+  background:var(--ember-bg-1); color:var(--ember-fg-0);
+  box-shadow:var(--plate-shadow); cursor:pointer;
+  font-family:var(--font-mono); font-size:.68rem; font-weight:700;
+  letter-spacing:.08em; text-transform:uppercase;
+}
+.redshift-toggle:hover{ background:var(--ember-bg-3); border-color:var(--ember-fg-1); }
+.redshift-toggle:focus-visible{ outline:2px solid var(--ember-fg-0); outline-offset:3px; }
+.redshift-toggle-indicator{
+  width:8px; height:8px; flex:0 0 auto; border:1px solid currentColor; border-radius:50%;
+  background:transparent;
+}
+.redshift-toggle-temp{
+  padding-left:.55rem; border-left:1px solid currentColor; color:var(--ember-fg-1);
+  font-variant-numeric:tabular-nums;
+}
+[data-redshift-simulated="true"] .redshift-toggle{
+  background:var(--ember-fg-0); color:var(--ember-bg-0); border-color:var(--ember-fg-0);
+}
+[data-redshift-simulated="true"] .redshift-toggle-indicator{ background:currentColor; }
+[data-redshift-simulated="true"] .redshift-toggle-temp{ color:currentColor; }
+[data-redshift-simulated="true"][data-redshift-profile="3400k"] .demonstration-plane{
+  filter:url(#redshift-3400k);
+}
+[data-redshift-simulated="true"][data-redshift-profile="2000k"] .demonstration-plane{
+  filter:url(#redshift-2000k);
+}
+[data-redshift-simulated="true"][data-redshift-profile="1200k"] .demonstration-plane{
+  filter:url(#redshift-1200k);
+}
 .scene{
   --demonstration-plane-x:clamp(18rem, 38vw, 46rem);
   --plane-overlap:clamp(.75rem, 2.2vw, 2rem);
@@ -393,6 +434,13 @@ code, pre, kbd{ font-family:var(--font-mono); }
 .plate code{ font-size:.8rem; background:var(--ember-bg-2); padding:.06rem .3rem; }
 @media (max-width:680px){
   .scene{ display:flex; flex-direction:column-reverse; }
+  .scene > .redshift-control{ order:999; }
+  .redshift-control{
+    top:var(--chrome-h); height:54px; padding:0 1rem; align-items:flex-start;
+    background:var(--ember-bg-0); border-bottom:var(--rule);
+  }
+  .redshift-toggle{ font-size:.62rem; gap:.45rem; padding:.4rem .55rem; }
+  .redshift-toggle-temp{ padding-left:.45rem; }
   .stage{
     position:relative; top:auto; height:auto; justify-content:center;
     margin-top:-1.35rem; padding:2rem 1rem 1rem;
@@ -473,10 +521,10 @@ code, pre, kbd{ font-family:var(--font-mono); }
 /* ---------- console (dense fictional instrument) ---------- */
 #console{
   --information-plane-y:0px; --demonstration-plane-y:0px; --substrate-plane-y:0px;
-  position:relative; isolation:isolate; overflow:hidden;
+  position:relative; isolation:isolate; overflow:clip;
   background:var(--ember-bg-0); border-top:var(--rule);
 }
-#console > *{ position:relative; }
+#console > :not(.redshift-control){ position:relative; }
 #console .information-plane{ z-index:6; }
 #console .demonstration-plane{ z-index:2; }
 .console-wrap{ padding:0 clamp(.75rem, 3vw, 3rem) 3rem; }
@@ -698,6 +746,20 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
+
+<svg class="redshift-filter-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="redshift-3400k" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 .74 0 0 0  0 0 .53 0 0  0 0 0 1 0"/>
+    </filter>
+    <filter id="redshift-2000k" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 .54360078 0 0 0  0 0 .08679949 0 0  0 0 0 1 0"/>
+    </filter>
+    <filter id="redshift-1200k" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 .30942099 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+    </filter>
+  </defs>
+</svg>
 
 <header class="chrome">
   <button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu" aria-label="Open sections menu">
@@ -1342,6 +1404,12 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     "2000k-dark":  { label: "2000K Dark",  cats: 4 },
     "1200k-dark":  { label: "1200K Dark",  cats: 3 }
   };
+  var REDSHIFT_PROFILES = {
+    "3400k-dark":  { profile: "3400k", temperature: "3400 K" },
+    "3400k-light": { profile: "3400k", temperature: "3400 K" },
+    "2000k-dark":  { profile: "2000k", temperature: "2000 K" },
+    "1200k-dark":  { profile: "1200k", temperature: "1200 K" }
+  };
   var FG_COPY = {
     dark: [
       "Primary text stays cream, never pure white.",
@@ -1362,6 +1430,61 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   var reducedMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
   var compactSceneMQ = window.matchMedia("(max-width: 680px)");
   var colors = {};
+  var redshiftSections = Array.from(document.querySelectorAll(".scene, #console"));
+
+  function updateRedshiftControls(){
+    var slug = root.getAttribute("data-ember-palette");
+    var redshift = REDSHIFT_PROFILES[slug] || REDSHIFT_PROFILES["3400k-dark"];
+    redshiftSections.forEach(function(section){
+      var button = section.querySelector(".redshift-toggle");
+      if (!button) return;
+      var active = section.getAttribute("data-redshift-simulated") === "true";
+      var label = section.getAttribute("aria-label") || "live specimen";
+      section.setAttribute("data-redshift-profile", redshift.profile);
+      button.setAttribute("aria-pressed", String(active));
+      button.setAttribute("aria-label", (active ? "Deactivate" : "Activate") +
+        " simulated " + redshift.temperature + " redshift for " + label);
+      button.title = button.getAttribute("aria-label");
+      button.querySelector(".redshift-toggle-label").textContent =
+        active ? "Redshift on" : "Simulate redshift";
+      button.querySelector(".redshift-toggle-temp").textContent = redshift.temperature;
+    });
+  }
+
+  function setupRedshiftControls(){
+    redshiftSections.forEach(function(section){
+      var demonstration = section.querySelector(".demonstration-plane");
+      if (!demonstration) return;
+      demonstration.id = section.id + "-demonstration";
+      section.setAttribute("data-redshift-simulated", "false");
+
+      var control = document.createElement("div");
+      control.className = "redshift-control";
+      var button = document.createElement("button");
+      button.className = "redshift-toggle";
+      button.type = "button";
+      button.setAttribute("aria-controls", demonstration.id);
+      button.setAttribute("aria-pressed", "false");
+
+      var indicator = document.createElement("span");
+      indicator.className = "redshift-toggle-indicator";
+      indicator.setAttribute("aria-hidden", "true");
+      var label = document.createElement("span");
+      label.className = "redshift-toggle-label";
+      var temperature = document.createElement("span");
+      temperature.className = "redshift-toggle-temp";
+      button.append(indicator, label, temperature);
+      control.appendChild(button);
+      section.prepend(control);
+
+      button.addEventListener("click", function(){
+        var active = section.getAttribute("data-redshift-simulated") === "true";
+        section.setAttribute("data-redshift-simulated", String(!active));
+        updateRedshiftControls();
+      });
+    });
+    updateRedshiftControls();
+  }
 
   function cssVar(name){
     return getComputedStyle(root).getPropertyValue(name).trim();
@@ -1383,6 +1506,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     if (!PALETTES[slug]) slug = "3400k-dark";
     var info = PALETTES[slug];
     root.setAttribute("data-ember-palette", slug);
+    updateRedshiftControls();
 
     var fgCopy = slug === "3400k-light" ? FG_COPY.light : FG_COPY.dark;
     fgCopy.forEach(function(text, i){
@@ -1487,7 +1611,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   }
 
   /* ---------- semantic information / demonstration parallax ---------- */
-  var demonstrationSections = Array.from(document.querySelectorAll(".scene, #console"));
+  var demonstrationSections = redshiftSections;
   var demonstrationParallaxFrame = null;
   function updateDemonstrationParallax(){
     var enabled = !reducedMQ.matches;
@@ -1947,6 +2071,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   }
 
   /* ---------- boot ---------- */
+  setupRedshiftControls();
   var initial = new URLSearchParams(window.location.search).get("palette");
   applyPalette(initial && PALETTES[initial] ? initial : "3400k-dark", false);
 })();

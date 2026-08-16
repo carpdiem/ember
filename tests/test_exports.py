@@ -558,6 +558,30 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert "margin-top:-1.35rem" in landing
     assert "reducedMQ.matches" in landing
 
+    assert landing.count('color-interpolation-filters="sRGB"') == 3
+    assert 'id="redshift-3400k"' in landing
+    assert "0 .74 0 0 0  0 0 .53 0 0" in landing
+    assert 'id="redshift-2000k"' in landing
+    assert "0 .54360078 0 0 0  0 0 .08679949 0 0" in landing
+    assert 'id="redshift-1200k"' in landing
+    assert "0 .30942099 0 0 0  0 0 0 0 0" in landing
+    assert (
+        'var redshiftSections = Array.from(document.querySelectorAll(".scene, #console"))'
+        in landing
+    )
+    assert 'demonstration.id = section.id + "-demonstration"' in landing
+    assert 'button.setAttribute("aria-controls", demonstration.id)' in landing
+    assert 'button.setAttribute("aria-pressed", String(active))' in landing
+    assert 'section.setAttribute("data-redshift-simulated", String(!active))' in landing
+    assert 'section.setAttribute("data-redshift-profile", redshift.profile)' in landing
+    assert 'active ? "Redshift on" : "Simulate redshift"' in landing
+    assert "position:sticky; top:calc(var(--chrome-h) + .65rem)" in landing
+    assert '[data-redshift-simulated="true"][data-redshift-profile="3400k"]' in landing
+    assert '[data-redshift-simulated="true"][data-redshift-profile="2000k"]' in landing
+    assert '[data-redshift-simulated="true"][data-redshift-profile="1200k"]' in landing
+    assert "setupRedshiftControls();" in landing
+    assert "updateRedshiftControls();" in landing
+
     assert 'id="mona-divider"' in landing
     assert 'role="slider"' in landing
     assert 'aria-valuemin="0"' in landing
