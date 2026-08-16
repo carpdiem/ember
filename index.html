@@ -848,8 +848,11 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <p class="lede">
       Warm screen filters change the red, green, and blue output of a display by different
       amounts. Colors that look distinct without the filter can become identical after it.
-      Ember tests each palette under modeled 3400&nbsp;K, 2000&nbsp;K, and 1200&nbsp;K filters and
-      reports how many text, interface, terminal, and chart colors remain distinct.
+      Ember palettes are developed and tested under modeled 3400&nbsp;K, 2000&nbsp;K, and
+      1200&nbsp;K filters to select text, interface, terminal, and chart colors that you can
+      still tell apart when you are working in the middle of the night with a dark-red
+      screen. Each profile reports exactly how many category and terminal accent colors
+      remain distinct.
     </p>
     <div class="hero-ctas">
       <a class="btn primary" href="https://github.com/carpdiem/ember">View source on GitHub</a>
@@ -933,13 +936,14 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
         <div class="body-col">
           <p>At 1200&nbsp;K, the modeled Redshift transform sets blue output to zero. Two syntax
           colors that differ only in blue then produce the same displayed color.</p>
-          <p>Ember tests colors after applying each modeled filter. It requires minimum
-          contrast, ordered lightness, and minimum perceptual separation in Oklab, a color
-          space designed to approximate human perception. Ember then chooses source colors
-          that meet those filtered-state targets and remain distinct during the day. At
-          1200&nbsp;K, blue can improve daytime separation without changing the filtered result.</p>
+          <p>Ember palettes are developed against the filtered result. Each palette has
+          minimum targets for contrast, ordered lightness, and perceptual separation in
+          Oklab, a color space designed to approximate human perception. The source colors
+          are chosen to meet those targets after filtering and remain distinct during the
+          day. At 1200&nbsp;K, blue can improve daytime separation without changing the
+          filtered result.</p>
           <blockquote class="pull">A color pair fails if the target filter makes the colors indistinguishable, even when they look distinct without the filter.</blockquote>
-          <p>Ember uses cream body text on a near-black warm-neutral background. Pure white
+          <p>Ember palettes use cream body text on a near-black warm-neutral background. Pure white
           becomes brighter orange under a warm filter without improving legibility. Links,
           emphasis, and status marks use higher-chroma colors because those colors carry
           specific meaning.</p>
@@ -957,15 +961,14 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
       <h2>Reading text</h2>
       <p>This live article uses the selected profile for its headline, body text, links,
       pull quote, metadata, background, and rules.</p>
-      <p>Use the header to switch profiles. Ember tests the contrast between adjacent
-      foreground levels before and after each modeled filter.</p>
+      <p>Use the header to switch profiles. Ember palettes meet their minimum contrast
+      requirements both before and after the modeled screen filter is applied.</p>
     </article>
     <article class="plate">
-      <h3>Cream text on dark backgrounds</h3>
-      <p>Fine detail depends mostly on luminance. Ember uses warm-neutral colors for the
-      canvas and body text, then uses higher-chroma colors for links and status. After the
-      modeled filter, every text color meets its contrast requirement on every surface:
-      6.8:1 for primary text in 3400K Dark and 5.3:1 in 1200K Dark.</p>
+      <h3>Warm-neutral text and backgrounds</h3>
+      <p>Ember palettes use warm-neutral colors for the canvas and body text because fine
+      detail depends mostly on luminance. Higher-chroma colors are reserved for links and
+      status.</p>
     </article>
   </div>
 </section>
@@ -1006,15 +1009,16 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       <p>This example uses real installation commands, the Python API, and <code>bg-5</code>
       for selected text. It shows every distinct ANSI accent in the selected profile: six
       at 3400&nbsp;K, four at 2000&nbsp;K, and three at 1200&nbsp;K.</p>
-      <p>Ember includes themes for Alacritty, iTerm2, and Windows Terminal. The 2000&nbsp;K and
-      1200&nbsp;K themes repeat their supported colors across the sixteen ANSI slots and mark
-      the repeated slots as aliases.</p>
+      <p>Terminal themes are included for Alacritty, iTerm2, and Windows Terminal. Every
+      theme assigns its accent colors to both the normal and bright ANSI slots. In the
+      2000&nbsp;K and 1200&nbsp;K themes, some ANSI names also share a color because only four
+      or three accent colors remain distinct.</p>
     </article>
     <article class="plate">
       <h3>Terminal contrast requirements</h3>
-      <p>Each foreground-capable terminal accent must provide at least
-      <strong>4.5:1</strong> contrast against the base background after its target filter.
-      The same test compares every accent with all three text colors, including muted text.</p>
+      <p>Each terminal accent color provides at least <strong>4.5:1</strong> contrast against
+      the terminal background after its target filter. Each accent also remains perceptually
+      distinct from the palette's primary, secondary, and metadata text colors.</p>
     </article>
   </div>
 </section>
@@ -1265,12 +1269,12 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
   <div class="plates information-plane">
     <article class="plate">
       <span class="truth">Public-domain source image · generated Ember mapping</span>
-      <h2>Photograph mapped by perceptual lightness</h2>
-      <p>The build calculates the Oklab lightness of each source pixel, stretches the values
-      between the 1st and 99th percentiles, and assigns one of the selected profile's 256
-      colors. For photographs, dark source pixels map to dark palette colors and light source
-      pixels map to light palette colors. The Mars map instead follows the profile's authored
-      low-to-high scalar direction.</p>
+      <h2>Image mapped by perceptual lightness</h2>
+      <p>This example with the Mona Lisa calculates the Oklab lightness of each source pixel,
+      stretches the values between the 1st and 99th percentiles, and assigns one of the
+      selected profile's 256 colors. For images, dark source pixels map to dark palette colors
+      and light source pixels map to light palette colors. The Mars map instead follows the
+      profile's authored low-to-high scalar direction.</p>
       <p>The mapped image preserves the source crop and geometry. Drag the wipe to compare it
       with the source image.</p>
     </article>

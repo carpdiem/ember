@@ -26,10 +26,20 @@ class HeadingParser(HTMLParser):
 
 def test_landing_page_leads_with_a_direct_description() -> None:
     landing = (ROOT / "index.html").read_text()
+    normalized = " ".join(landing.split())
     assert (
         "<h1>Color palettes for Night Shift, Redshift, and other warm screen filters.</h1>"
         in landing
     )
+    assert "Ember palettes are developed and tested under modeled" in landing
+    assert "Ember palettes meet their minimum contrast" in landing
+    assert (
+        "Every theme assigns its accent colors to both the normal and bright ANSI slots."
+        in normalized
+    )
+    assert "Each terminal accent color provides at least" in landing
+    assert "<h2>Image mapped by perceptual lightness</h2>" in landing
+    assert "This example with the Mona Lisa calculates the Oklab lightness" in landing
 
 
 def test_descriptive_copy_does_not_restore_rejected_abstractions() -> None:
@@ -50,8 +60,14 @@ def test_descriptive_copy_does_not_restore_rejected_abstractions() -> None:
         "scene 05",
         "scene 06",
         "the night your grays turned to rust",
+        "ember tests each palette",
+        "ember tests the contrast",
+        "foreground-capable terminal accent",
+        "muted text",
+        "photograph mapped by perceptual lightness",
+        "the build calculates the oklab lightness",
     }
-    assert not rejected.intersection(landing)
+    assert not [phrase for phrase in rejected if phrase in landing]
 
 
 def test_headings_name_the_subject_instead_of_negating_an_alternative() -> None:

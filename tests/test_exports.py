@@ -400,7 +400,7 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
     assert "Fictional telemetry — interface stress test" in landing
     assert "Real NASA data — MGS MOLA topography" in landing
     assert "Public-domain artwork + deterministic mapping" in landing
-    assert "The build calculates the Oklab lightness of each source pixel" in landing
+    assert "This example with the Mona Lisa calculates the Oklab lightness" in landing
     assert "pixel perceptual lightness mapped deterministically" in landing
     assert "Physics diagram · selected palette colors" in landing
     assert 'id="sparks"' in landing
