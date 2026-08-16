@@ -13,16 +13,13 @@
    No literal color values appear in this stylesheet.
    ============================================================ */
 :root{
-  --chrome-h: 3.75rem;
+  --chrome-h: 6.75rem;
   --font-sans: "Avenir Next", Avenir, "Segoe UI", "Helvetica Neue", sans-serif;
   --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --rule: 1px solid var(--ember-bg-4);
   --plate-shadow: 0 14px 44px color-mix(in srgb, var(--ember-bg-0) 62%, transparent);
   --ease: cubic-bezier(.33,.66,.28,1);
-}
-@media (max-width: 1100px){
-  :root{ --chrome-h: 6.75rem; }
 }
 *,*::before,*::after{ box-sizing:border-box; }
 html{ scroll-behavior:smooth; }
@@ -61,8 +58,8 @@ code, pre, kbd{ font-family:var(--font-mono); }
 /* ---------- chrome (fixed header) ---------- */
 .chrome{
   position:fixed; inset:0 0 auto 0; height:var(--chrome-h); z-index:120;
-  display:flex; flex-wrap:wrap; align-items:center; gap:.6rem 1rem;
-  padding:0 clamp(.75rem, 3vw, 1.5rem);
+  display:flex; flex-wrap:wrap; align-items:center; align-content:center; gap:.35rem .65rem;
+  padding:.4rem clamp(.75rem, 3vw, 1.5rem);
   background:var(--ember-bg-0);
   border-bottom:var(--rule);
 }
@@ -94,9 +91,9 @@ code, pre, kbd{ font-family:var(--font-mono); }
 .chrome-gh:hover{ color:var(--ember-fg-0); text-decoration:underline; text-underline-offset:.22em; }
 .gh-icon{ width:15px; height:15px; fill:currentColor; flex:0 0 auto; }
 
-/* palette picker — compact links with full-size hit targets */
+/* palette picker — compact scoped surfaces inside full-size hit targets */
 .picker{
-  display:flex; gap:.15rem; align-items:center;
+  order:5; width:100%; display:flex; gap:.18rem; align-items:center;
   background:var(--ember-bg-0);
 }
 .picker-label{
@@ -105,34 +102,36 @@ code, pre, kbd{ font-family:var(--font-mono); }
 }
 .pp{
   appearance:none; cursor:pointer;
-  font-family:var(--font-mono); font-size:.66rem; letter-spacing:.02em;
-  background:transparent; color:var(--ember-fg-2);
-  border:0; padding:.25rem .35rem; min-height:44px;
+  position:relative; isolation:isolate;
+  font-family:var(--font-mono); font-size:.72rem; letter-spacing:.02em;
+  background:transparent; color:var(--ember-fg-1);
+  border:0; padding:.25rem .55rem; min-height:44px;
   display:inline-flex; align-items:center; justify-content:center; gap:.35rem;
-  text-decoration:underline; text-decoration-color:transparent;
-  text-underline-offset:.24em; text-decoration-thickness:1px;
 }
-.pp:hover{ color:var(--ember-fg-1); text-decoration-color:currentColor; }
+.pp::before{
+  content:""; position:absolute; inset:5px 2px; z-index:-1;
+  background:var(--ember-bg-1); border:1px solid var(--ember-bg-4);
+}
+.pp:hover{ color:var(--ember-fg-0); }
+.pp:hover::before{ border-color:var(--ember-fg-2); }
 .pp-dots{ display:inline-flex; align-items:center; gap:2px; opacity:.72; }
 .pp[aria-pressed="true"] .pp-dots{ opacity:1; }
-.pp-dot{ width:4px; height:4px; border-radius:50%; flex:0 0 auto; }
+.pp-dot{ width:5px; height:5px; border-radius:50%; flex:0 0 auto; }
 .pp-dot[data-cat="1"]{ background:var(--ember-category-one); }
 .pp-dot[data-cat="2"]{ background:var(--ember-category-two); }
 .pp-dot[data-cat="3"]{ background:var(--ember-category-three); }
 .pp-dot[data-cat="4"]{ background:var(--ember-category-four); }
 .pp-dot[data-cat="5"]{ background:var(--ember-category-five); }
 .pp-dot[data-cat="6"]{ background:var(--ember-category-six); }
-.pp[aria-pressed="true"]{
-  color:var(--ember-fg-0); text-decoration-color:currentColor;
-}
+.pp[aria-pressed="true"]{ color:var(--ember-fg-0); }
+.pp[aria-pressed="true"]::before{ border-color:var(--ember-fg-0); }
 .pp .pp-abbr{ display:none; }
-@media (max-width:1100px){
-  .chrome{ padding:.4rem .75rem; gap:.35rem .65rem; align-content:center; }
-  .picker{ order:5; width:100%; gap:.05rem; }
-  .pp{ flex:0 1 auto; padding:.25rem .35rem; }
-}
 @media (max-width:700px){
+  .chrome{ padding:.4rem .75rem; }
+  .picker{ gap:.05rem; }
   .brand em{ display:none; }
+  .pp{ flex:0 1 auto; padding:.25rem .35rem; font-size:.66rem; }
+  .pp-dot{ width:4px; height:4px; }
   .pp .pp-full{ display:none; }
   .pp .pp-abbr{ display:inline; }
 }
@@ -327,7 +326,8 @@ code, pre, kbd{ font-family:var(--font-mono); }
 
 /* ---------- semantic depth: information passes over slower demonstrations ---------- */
 .scene{
-  --demonstration-plane-x:clamp(23rem, 38vw, 46rem);
+  --demonstration-plane-x:clamp(18rem, 38vw, 46rem);
+  --plane-overlap:clamp(.75rem, 2.2vw, 2rem);
   --demonstration-plane-y:0px; --substrate-plane-y:0px;
   position:relative; isolation:isolate; border-top:var(--rule);
 }
@@ -364,7 +364,7 @@ code, pre, kbd{ font-family:var(--font-mono); }
   box-shadow:inset 0 0 4rem var(--ember-bg-0);
 }
 .stage-inner{
-  width:min(60vw, 58rem); position:absolute; left:var(--demonstration-plane-x);
+  width:min(60vw, 58rem, calc(100vw - var(--demonstration-plane-x) - 1rem)); position:absolute; left:var(--demonstration-plane-x);
 }
 .stage .truth{ position:absolute; top:-2.2rem; left:0; z-index:3; background:var(--ember-bg-0); }
 .plates{
@@ -373,7 +373,7 @@ code, pre, kbd{ font-family:var(--font-mono); }
   padding:16vh 0 14vh clamp(1rem, 4vw, 4rem);
   display:flex; flex-direction:column; gap:52vh;
   pointer-events:none;
-  transform:translateX(calc(var(--demonstration-plane-x) + 2rem - min(30rem, 42vw)));
+  transform:translateX(calc(var(--demonstration-plane-x) + var(--plane-overlap) - min(30rem, 42vw)));
 }
 .plate{
   pointer-events:auto;
@@ -391,9 +391,12 @@ code, pre, kbd{ font-family:var(--font-mono); }
 .plate p strong{ color:var(--ember-fg-0); }
 .plate .truth{ margin-bottom:.2rem; }
 .plate code{ font-size:.8rem; background:var(--ember-bg-2); padding:.06rem .3rem; }
-@media (max-width:900px){
+@media (max-width:680px){
   .scene{ display:flex; flex-direction:column-reverse; }
-  .stage{ position:relative; top:auto; height:auto; justify-content:center; padding:1rem; }
+  .stage{
+    position:relative; top:auto; height:auto; justify-content:center;
+    margin-top:-1.35rem; padding:2rem 1rem 1rem;
+  }
   .stage-inner{ width:100%; position:relative; left:auto; }
   .stage .truth{ position:static; display:inline-flex; margin-bottom:.7rem; }
   .plates{
@@ -401,7 +404,7 @@ code, pre, kbd{ font-family:var(--font-mono); }
     transform:none;
   }
 }
-@media (max-width:900px), (prefers-reduced-motion:reduce){
+@media (prefers-reduced-motion:reduce){
   .demonstration-plane{ transform:none; will-change:auto; }
   .stage::before, #console::before{
     transform:scale(1.06); will-change:auto;
@@ -440,7 +443,7 @@ code, pre, kbd{ font-family:var(--font-mono); }
   color:var(--ember-fg-0);
 }
 .paper .foot{ font-size:.72rem; color:var(--ember-fg-2); font-family:var(--font-mono); }
-@media (max-width:900px){ .paper .body-col{ columns:1; } .paper{ max-height:none; } }
+@media (max-width:680px){ .paper .body-col{ columns:1; } .paper{ max-height:none; } }
 
 /* ---------- terminal specimen ---------- */
 .term{
@@ -659,7 +662,7 @@ code, pre, kbd{ font-family:var(--font-mono); }
 .em-cap{ font-size:.72rem; color:var(--ember-fg-2); margin-top:.5rem; line-height:1.6; }
 .figure-flush{ margin:0; }
 .field-scene{ min-height:calc(100vh - var(--chrome-h) + 12rem); }
-@media (max-width:900px){
+@media (max-width:680px){
   .mona-stage{ width:100%; }
   .field-scene{ min-height:0; }
 }
@@ -1353,7 +1356,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   ];
   var root = document.documentElement;
   var reducedMQ = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var compactSceneMQ = window.matchMedia("(max-width: 900px)");
+  var compactSceneMQ = window.matchMedia("(max-width: 680px)");
   var colors = {};
 
   function cssVar(name){
@@ -1483,17 +1486,29 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   var demonstrationSections = Array.from(document.querySelectorAll(".scene, #console"));
   var demonstrationParallaxFrame = null;
   function updateDemonstrationParallax(){
-    var enabled = !reducedMQ.matches && !compactSceneMQ.matches;
+    var enabled = !reducedMQ.matches;
+    var demonstrationRange = compactSceneMQ.matches ? 20 : 28;
+    var substrateRange = compactSceneMQ.matches ? 28 : 42;
+    var demonstrationRate = compactSceneMQ.matches ? 60 : 34;
+    var substrateRate = compactSceneMQ.matches ? 84 : 54;
     var viewportMidpoint = window.innerHeight / 2;
     demonstrationSections.forEach(function(section){
       var demonstrationOffset = 0;
       var substrateOffset = 0;
       if (enabled){
         var rect = section.getBoundingClientRect();
-        var distance = (rect.top + rect.height / 2 - viewportMidpoint) /
-          Math.max(rect.height, window.innerHeight);
-        demonstrationOffset = Math.max(-28, Math.min(28, -distance * 34));
-        substrateOffset = Math.max(-42, Math.min(42, -distance * 54));
+        var distance = compactSceneMQ.matches
+          ? rect.top / window.innerHeight
+          : (rect.top + rect.height / 2 - viewportMidpoint) /
+            Math.max(rect.height, window.innerHeight);
+        demonstrationOffset = Math.max(
+          -demonstrationRange,
+          Math.min(demonstrationRange, -distance * demonstrationRate)
+        );
+        substrateOffset = Math.max(
+          -substrateRange,
+          Math.min(substrateRange, -distance * substrateRate)
+        );
       }
       section.style.setProperty("--demonstration-plane-y", demonstrationOffset.toFixed(1) + "px");
       section.style.setProperty("--substrate-plane-y", substrateOffset.toFixed(1) + "px");

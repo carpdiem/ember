@@ -468,6 +468,9 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert "background:var(--ember-bg-0)" in chrome_rule.group(1)
     assert "transparent" not in chrome_rule.group(1)
     assert "border" not in github_rule.group(1)
+    assert "--chrome-h: 6.75rem" in landing
+    assert "order:5" in picker_rule.group(1)
+    assert "width:100%" in picker_rule.group(1)
     assert "background:var(--ember-bg-0)" in picker_rule.group(1)
     assert '<span class="picker-label">Palette:</span>' in landing
     for label in ("3400K Dark", "3400K Light", "2000K Dark", "1200K Dark"):
@@ -495,6 +498,12 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert "background:transparent" in palette_link_rule.group(1)
     assert "border:0" in palette_link_rule.group(1)
     assert "min-height:44px" in palette_link_rule.group(1)
+    assert "position:relative" in palette_link_rule.group(1)
+    palette_surface_rule = re.search(r"\.pp::before\{(.*?)\}", landing, flags=re.DOTALL)
+    assert palette_surface_rule
+    assert "background:var(--ember-bg-1)" in palette_surface_rule.group(1)
+    assert "border:1px solid var(--ember-bg-4)" in palette_surface_rule.group(1)
+    assert "inset:5px 2px" in palette_surface_rule.group(1)
 
     assert "Redshift-safe color palettes" in landing
     for role in ("BG-0", "BG-1", "BG-2", "BG-3", "BG-4", "BG-5"):
@@ -526,12 +535,20 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert "--substrate-plane-y" in landing
     assert "--stage-plane-y" not in landing
     assert "left:var(--demonstration-plane-x)" in landing
-    assert "calc(var(--demonstration-plane-x) + 2rem - min(30rem, 42vw))" in landing
+    assert "calc(var(--demonstration-plane-x) + var(--plane-overlap) - min(30rem, 42vw))" in landing
     assert "updateDemonstrationParallax" in landing
     assert (
         'window.addEventListener("scroll", queueDemonstrationParallax, { passive:true })' in landing
     )
-    assert 'window.matchMedia("(max-width: 900px)")' in landing
+    assert 'window.matchMedia("(max-width: 680px)")' in landing
+    assert "var enabled = !reducedMQ.matches;" in landing
+    assert "var demonstrationRange = compactSceneMQ.matches ? 20 : 28;" in landing
+    assert "var substrateRange = compactSceneMQ.matches ? 28 : 42;" in landing
+    assert "var demonstrationRate = compactSceneMQ.matches ? 60 : 34;" in landing
+    assert "var substrateRate = compactSceneMQ.matches ? 84 : 54;" in landing
+    assert "var distance = compactSceneMQ.matches" in landing
+    assert "@media (max-width:680px)" in landing
+    assert "margin-top:-1.35rem" in landing
     assert "reducedMQ.matches" in landing
 
     assert 'id="mona-divider"' in landing
