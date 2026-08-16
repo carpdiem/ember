@@ -725,3 +725,10 @@ def test_mars_topography_colormaps_preserve_real_scalar_indices() -> None:
             np.asarray(manifest["families"][slug]["continuous_rgb"]) * 255
         ).astype(np.uint8)
         assert np.array_equal(rendered_palette, authored_palette)
+
+
+def test_3400k_scalar_assets_are_identical_across_interface_modes() -> None:
+    for stem in ("mars-topography", "mona-lisa"):
+        dark = ROOT / f"assets/{stem}-3400k-dark.png"
+        light = ROOT / f"assets/{stem}-3400k-light.png"
+        assert dark.read_bytes() == light.read_bytes()

@@ -48,6 +48,10 @@ Ember does not apply the filter; keep using the one you already have.
 
 ![3400K Light — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-light.svg)
 
+3400K Dark and 3400K Light intentionally share the exact same 256-sample sequential map.
+Low values are dark and high values are bright in both interface modes, so changing the
+surrounding canvas and text does not change scalar meaning.
+
 ### 2000K Dark
 
 ![2000K Dark — six background surfaces, three foreground text roles, four categorical colors, four terminal accent identities with magenta=red and cyan=green aliases, and the 256-sample sequential map](docs/swatches/2000k-dark.svg)

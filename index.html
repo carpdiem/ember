@@ -1249,9 +1249,10 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
     </article>
     <article class="plate">
       <span class="truth">Real NASA data</span>
-      <h3>Higher terrain is darker in 3400K Light</h3>
-      <p>The 3400K Light color map assigns light colors to low values and dark colors to high
-      values. Every scalar map follows the low-to-high direction defined by its palette.</p>
+      <h3>One sequential map for both 3400 K palettes</h3>
+      <p>3400 K Dark and 3400 K Light share the same 256 colors in the same order. Low values
+      are dark and high values are bright, so switching interface palettes does not reverse
+      scalar meaning.</p>
     </article>
   </div>
 </section>

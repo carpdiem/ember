@@ -139,6 +139,15 @@ BACKGROUND_SURFACE_ROLES = (
     "bg_5",
 )
 
+SEQUENTIAL_3400K_ANCHORS = (
+    "#282527",
+    "#51404F",
+    "#7F5E69",
+    "#A17C6C",
+    "#C49D70",
+    "#E2CDA1",
+)
+
 FAMILIES = (
     FamilyDefinition(
         slug="3400k-dark",
@@ -205,7 +214,7 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.998,
         foreground_chroma_direction="decreasing",
         foreground_chroma_order_tolerance=0.003,
-        sequential_anchors=("#282527", "#51404F", "#7F5E69", "#A17C6C", "#C49D70", "#E2CDA1"),
+        sequential_anchors=SEQUENTIAL_3400K_ANCHORS,
     ),
     FamilyDefinition(
         slug="3400k-light",
@@ -270,7 +279,7 @@ FAMILIES = (
         foreground_night_minimum_chroma_vector_cosine=0.999,
         foreground_chroma_direction="increasing",
         foreground_chroma_order_tolerance=0.003,
-        sequential_anchors=("#F2E5BC", "#D7BF8D", "#B08061", "#80515A", "#533844", "#252126"),
+        sequential_anchors=SEQUENTIAL_3400K_ANCHORS,
     ),
     FamilyDefinition(
         slug="2000k-dark",

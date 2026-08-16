@@ -76,6 +76,22 @@ def test_honest_temperature_families() -> None:
         assert len(family["surfaces"]) == 9
 
 
+def test_3400k_palettes_share_one_dark_to_bright_sequential_map() -> None:
+    definitions = {family.slug: family for family in FAMILIES}
+    assert (
+        definitions["3400k-dark"].sequential_anchors
+        is definitions["3400k-light"].sequential_anchors
+    )
+
+    families = generate_manifest()["families"]
+    dark = families["3400k-dark"]
+    light = families["3400k-light"]
+    assert dark["continuous_rgb"] == light["continuous_rgb"]
+    assert dark["continuous_hex8"] == light["continuous_hex8"]
+    assert dark["metrics"]["continuous"] == light["metrics"]["continuous"]
+    assert dark["metrics"]["continuous"]["shifted_lightness_direction"] == "increasing"
+
+
 def test_numbered_surface_roles_have_locked_values() -> None:
     manifest = generate_manifest()
     roles = ["bg_0", "bg_1", "bg_2", "bg_3", "bg_4", "bg_5"]

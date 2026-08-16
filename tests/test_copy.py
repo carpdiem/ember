@@ -46,6 +46,8 @@ def test_landing_page_leads_with_a_direct_description() -> None:
     assert "This fictional console applies the selected palette" in landing
     assert "Each measured value maps to one of 256 colors" in normalized
     assert "Only dark palettes are available" in normalized
+    assert "One sequential map for both 3400 K palettes" in landing
+    assert "switching interface palettes does not reverse scalar meaning" in normalized
 
 
 def test_descriptive_copy_does_not_restore_rejected_abstractions() -> None:
@@ -84,6 +86,7 @@ def test_descriptive_copy_does_not_restore_rejected_abstractions() -> None:
         "this live article uses the selected profile",
         "ember provides only dark profiles",
         "only dark profiles are available",
+        "higher terrain is darker in 3400k light",
         "the package installs directly from github",
     }
     assert not [phrase for phrase in rejected if phrase in landing]

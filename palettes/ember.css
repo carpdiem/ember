@@ -48,7 +48,7 @@
   --ember-terminal-blue: #162252;
   --ember-terminal-magenta: #643563;
   --ember-terminal-cyan: #00766E;
-  --ember-sequential: linear-gradient(90deg, #F2E5BC 0%, #DFCA9C 10%, #CEB083 20%, #BE9671 30%, #AB7D64 40%, #96675E 50%, #815459 60%, #6A4550 70%, #523843 80%, #3B2C34 90%, #252126 100%);
+  --ember-sequential: linear-gradient(90deg, #282527 0%, #3B3139 10%, #4D3E4A 20%, #614A58 30%, #765863 40%, #8A686A 50%, #9D796C 60%, #B08A6E 70%, #C39E75 80%, #D3B589 90%, #E2CDA1 100%);
 }
 
 [data-ember-palette="2000k-dark"] {
