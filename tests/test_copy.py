@@ -40,11 +40,12 @@ def test_landing_page_leads_with_a_direct_description() -> None:
     assert "Each terminal accent color provides at least" in landing
     assert "<h2>Image mapped by perceptual lightness</h2>" in landing
     assert "This example with the Mona Lisa calculates the Oklab lightness" in landing
+    assert "This live article uses the selected palette" in landing
     assert "Each Ember palette meets minimum targets" in landing
     assert "The repository includes terminal themes" in landing
     assert "This fictional console applies the selected palette" in landing
     assert "Each measured value maps to one of 256 colors" in normalized
-    assert "Only dark profiles are available" in normalized
+    assert "Only dark palettes are available" in normalized
 
 
 def test_descriptive_copy_does_not_restore_rejected_abstractions() -> None:
@@ -80,7 +81,9 @@ def test_descriptive_copy_does_not_restore_rejected_abstractions() -> None:
         "this fictional console tests",
         "this interface tests",
         "selected profile maps those values",
+        "this live article uses the selected profile",
         "ember provides only dark profiles",
+        "only dark profiles are available",
         "the package installs directly from github",
     }
     assert not [phrase for phrase in rejected if phrase in landing]

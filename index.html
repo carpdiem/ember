@@ -806,7 +806,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <svg class="gh-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .2a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.49c-2.24.49-2.71-1.08-2.71-1.08-.37-.93-.9-1.18-.9-1.18-.73-.5.06-.49.06-.49.81.06 1.23.83 1.23.83.72 1.23 1.88.88 2.34.67.07-.52.28-.88.51-1.08-1.79-.2-3.67-.89-3.67-3.98 0-.88.31-1.6.83-2.16-.08-.2-.36-1.02.08-2.13 0 0 .68-.22 2.2.82A7.65 7.65 0 0 1 8 3.98c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.11.16 1.93.08 2.13.52.56.83 1.28.83 2.16 0 3.1-1.89 3.77-3.68 3.97.29.25.55.74.55 1.5v2.22c0 .21.14.46.55.38A8 8 0 0 0 8 .2Z"/></svg>
     <span>GitHub</span>
   </a>
-  <div class="picker" role="group" aria-label="Palette profile selector">
+  <div class="picker" role="group" aria-label="Palette selector">
     <span class="picker-label">Palette:</span>
     <button class="pp" type="button" data-palette="3400k-dark" data-ember-palette="3400k-dark" aria-label="Use 3400K Dark palette" aria-pressed="true">
       <span class="pp-dots" aria-hidden="true"><i class="pp-dot" data-cat="1"></i><i class="pp-dot" data-cat="2"></i><i class="pp-dot" data-cat="3"></i><i class="pp-dot" data-cat="4"></i><i class="pp-dot" data-cat="5"></i><i class="pp-dot" data-cat="6"></i></span>
@@ -860,7 +860,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
       Ember palettes are developed and tested under modeled 3400&nbsp;K, 2000&nbsp;K, and
       1200&nbsp;K filters to select text, interface, terminal, and chart colors that you can
       still tell apart when you are working in the middle of the night with a dark-red
-      screen. Each profile reports exactly how many category and terminal accent colors
+      screen. Each palette specifies exactly how many category and terminal accent colors
       remain distinct.
     </p>
     <div class="hero-ctas">
@@ -876,13 +876,13 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
       </button>
     </div>
     <p class="hero-note">
-      Select a profile in the header to apply it to every example below: text, code,
-      interface controls, maps, and diagrams. Each example uses only colors from that profile.
+      Select a palette in the header to apply it to every example below: text, code,
+      interface controls, maps, and diagrams. Each example uses only colors from that palette.
     </p>
     <noscript>
       <p class="hero-note">
-        This page uses the <strong>3400K Dark</strong> profile when JavaScript is disabled.
-        Profile switching, animation, and image comparison require JavaScript. The palette
+        This page uses the <strong>3400K Dark</strong> palette when JavaScript is disabled.
+        Palette switching, animation, and image comparison require JavaScript. The palette
         information and installation instructions remain available.
       </p>
     </noscript>
@@ -918,7 +918,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     </div>
     <div class="board-row">
       <div class="lbl"><span>Categorical capacity</span><span id="cap-count">6 / 6</span></div>
-      <div class="cap-row" id="cap-row" role="img" aria-label="Categorical identity capacity of the selected profile">
+      <div class="cap-row" id="cap-row" role="img" aria-label="Categorical identity capacity of the selected palette">
         <span class="cap-chip" data-cat="1"></span>
         <span class="cap-chip" data-cat="2"></span>
         <span class="cap-chip" data-cat="3"></span>
@@ -926,11 +926,11 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
         <span class="cap-chip" data-cat="5"></span>
         <span class="cap-chip" data-cat="6"></span>
       </div>
-      <p id="cap-sentence">3400K Dark provides <strong>6 distinct categorical colors</strong> after the modeled filter. The 2000&nbsp;K profile provides 4; the 1200&nbsp;K profile provides 3.</p>
+      <p id="cap-sentence">3400K Dark provides <strong>6 distinct categorical colors</strong> after the modeled filter. The 2000&nbsp;K palette provides 4; the 1200&nbsp;K palette provides 3.</p>
     </div>
     <div class="board-row">
       <div class="lbl"><span>Sequential map</span><span>256 samples · 11 CSS stops</span></div>
-      <div class="seq-strip" role="img" aria-label="Authored sequential colormap of the selected profile, low value at left to high value at right"></div>
+      <div class="seq-strip" role="img" aria-label="Authored sequential colormap of the selected palette, low value at left to high value at right"></div>
     </div>
     </div>
   </aside>
@@ -961,8 +961,8 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
           becomes brighter orange under a warm filter without improving legibility. Links,
           emphasis, and status marks use higher-chroma colors because those colors carry
           specific meaning.</p>
-          <p>The 3400&nbsp;K profiles provide six distinct category colors after filtering. The
-          2000&nbsp;K profile provides four. The 1200&nbsp;K profile provides three. Repeated ANSI
+          <p>The 3400&nbsp;K palettes provide six distinct category colors after filtering. The
+          2000&nbsp;K palette provides four. The 1200&nbsp;K palette provides three. Repeated ANSI
           slots are labeled as aliases.</p>
         </div>
         <hr>
@@ -973,9 +973,9 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
   <div class="plates information-plane">
     <article class="plate">
       <h2>Reading text</h2>
-      <p>This live article uses the selected profile for its headline, body text, links,
+      <p>This live article uses the selected palette for its headline, body text, links,
       pull quote, metadata, background, and rules.</p>
-      <p>Use the header to switch profiles. Ember palettes meet their minimum contrast
+      <p>Use the header to switch palettes. Ember palettes meet their minimum contrast
       requirements both before and after the modeled screen filter is applied.</p>
     </article>
     <article class="plate">
@@ -993,7 +993,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <div class="stage-inner demonstration-plane">
       <span class="truth">Real repository commands</span>
       <div class="term">
-        <div class="term-bar"><i></i><i></i><i></i><span>ember — alacritty · selected profile</span></div>
+        <div class="term-bar"><i></i><i></i><i></i><span>ember — alacritty · selected palette</span></div>
 <pre><code><span class="t-prompt">$</span> <span class="t-cmd">git clone https://github.com/carpdiem/ember.git &amp;&amp; cd ember</span>
 <span class="t-prompt">$</span> <span class="t-cmd">python -m pip install "ember-palettes @ git+https://github.com/carpdiem/ember.git"</span>
 <span class="t-prompt">$</span> <span class="t-cmd">mkdir -p ~/.config/alacritty/themes</span>
@@ -1001,7 +1001,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
 <span class="t-out"># then in alacritty.toml:  [general]  import = ["~/.config/alacritty/themes/2000k-dark.toml"]</span>
 
 <span class="t-prompt">$</span> <span class="t-cmd">python</span>
-<span class="t-out"># selected profile terminal accents:</span> <span class="terminal-accent" data-cat="1" data-terminal="red">red</span> <span class="terminal-accent" data-cat="2" data-terminal="green">green</span> <span class="terminal-accent" data-cat="3" data-terminal="yellow">yellow</span> <span class="terminal-accent" data-cat="4" data-terminal="blue">blue</span> <span class="terminal-accent" data-cat="5" data-terminal="magenta">magenta</span> <span class="terminal-accent" data-cat="6" data-terminal="cyan">cyan</span>
+<span class="t-out"># selected palette terminal accents:</span> <span class="terminal-accent" data-cat="1" data-terminal="red">red</span> <span class="terminal-accent" data-cat="2" data-terminal="green">green</span> <span class="terminal-accent" data-cat="3" data-terminal="yellow">yellow</span> <span class="terminal-accent" data-cat="4" data-terminal="blue">blue</span> <span class="terminal-accent" data-cat="5" data-terminal="magenta">magenta</span> <span class="terminal-accent" data-cat="6" data-terminal="cyan">cyan</span>
 <span class="t-k">import</span> matplotlib.pyplot <span class="t-k">as</span> plt
 <span class="t-k">from</span> ember <span class="t-k">import</span> <span class="t-f">categorical</span>, <span class="t-f">categorical_norm</span>, <span class="t-f">encode_categories</span>, <span class="t-f">sequential</span>, <span class="t-f">surfaces</span>
 
@@ -1013,7 +1013,7 @@ ids = <span class="t-f">encode_categories</span>([<span class="t-s">"control"</s
 fig, ax = plt.subplots()
 fig.patch.set_facecolor(ui[<span class="t-s">"bg_0"</span>])
 <span class="t-sel">ax.scatter(x, y, c=ids, cmap=<span class="t-f">categorical</span>(palette), norm=<span class="t-f">categorical_norm</span>(palette))</span>
-ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class="t-c"># 256 float samples, every profile</span></code></pre>
+ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class="t-c"># 256 float samples, every palette</span></code></pre>
       </div>
     </div>
   </div>
@@ -1021,7 +1021,7 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
     <article class="plate">
       <h2>Terminal and code colors</h2>
       <p>This example uses real installation commands, the Python API, and <code>bg-5</code>
-      for selected text. It shows every distinct ANSI accent in the selected profile: six
+      for selected text. It shows every distinct ANSI accent in the selected palette: six
       at 3400&nbsp;K, four at 2000&nbsp;K, and three at 1200&nbsp;K.</p>
       <p>The repository includes terminal themes for Alacritty, iTerm2, and Windows Terminal.
       Every theme assigns its accent colors to both the normal and bright ANSI slots. In the
@@ -1044,7 +1044,7 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       <span class="truth fiction">Fictional telemetry · dense interface example</span>
       <h2>Interface colors under high information density</h2>
       <p>This fictional console applies the selected palette to gauges, bars, scopes,
-      sparklines, health states, and logs. The selected profile supports up to
+      sparklines, health states, and logs. The selected palette supports up to
       <span id="con-cap-inline">6</span> distinct data series. Shapes and labels repeat every
       meaning encoded by color.</p>
     </article>
@@ -1242,16 +1242,16 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       <span class="truth">Real NASA data</span>
       <h2>Mars elevation mapped with Ember</h2>
       <p>Each pixel represents measured Mars elevation from NASA's MGS MOLA dataset. Each
-      measured value maps to one of 256 colors from the selected profile. Those colors have
+      measured value maps to one of 256 colors from the selected palette. Those colors have
       equal perceptual spacing and strictly ordered lightness after the modeled filter.</p>
       <p>That filtered-state spacing keeps Olympus Mons, Hellas, and other elevation features
-      visible in every profile.</p>
+      visible in every palette.</p>
     </article>
     <article class="plate">
       <span class="truth">Real NASA data</span>
       <h3>Higher terrain is darker in 3400K Light</h3>
       <p>The 3400K Light color map assigns light colors to low values and dark colors to high
-      values. Every scalar map follows the low-to-high direction defined by its profile.</p>
+      values. Every scalar map follows the low-to-high direction defined by its palette.</p>
     </article>
   </div>
 </section>
@@ -1286,9 +1286,9 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       <h2>Image mapped by perceptual lightness</h2>
       <p>This example with the Mona Lisa calculates the Oklab lightness of each source pixel,
       stretches the values between the 1st and 99th percentiles, and assigns one of the
-      selected profile's 256 colors. For images, dark source pixels map to dark palette colors
+      selected palette's 256 colors. For images, dark source pixels map to dark palette colors
       and light source pixels map to light palette colors. The Mars map instead follows the
-      profile's authored low-to-high scalar direction.</p>
+      palette's authored low-to-high scalar direction.</p>
       <p>The mapped image preserves the source crop and geometry. Drag the wipe to compare it
       with the source image.</p>
     </article>
@@ -1332,7 +1332,7 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       <h2>Electromagnetic field colors</h2>
       <p>The floor grid, axes, field vectors, and envelope curves share one perspective 3-D
       frame. E uses <strong>category-one</strong>, B uses <strong>category-two</strong>, and the
-      crest marker uses <strong>category-three</strong>. Every Ember profile provides at least
+      crest marker uses <strong>category-three</strong>. Every Ember palette provides at least
       these three distinct colors.</p>
       <p>When <code>prefers-reduced-motion</code> is enabled, the figure displays one static
       frame with the same labels.</p>
@@ -1387,23 +1387,23 @@ cp themes/terminal/alacritty/2000k-dark.toml \
                    encode_categories, sequential, surfaces)
 ui = surfaces("1200k-dark")   # bg_0…bg_5, fg_0…fg_2
 cmap = sequential("1200k-dark")  # 256 samples</code></pre>
-      <p>Pass the profile slug to <code>categorical_norm()</code> and
-      <code>encode_categories()</code> so both functions use that profile's category limit.</p>
+      <p>Pass the palette slug to <code>categorical_norm()</code> and
+      <code>encode_categories()</code> so both functions use that palette's category limit.</p>
     </div>
     <div class="use-card">
-      <h3>Choose a profile</h3>
+      <h3>Choose a palette</h3>
       <table class="profile-table">
         <thead><tr><th scope="col">Slug</th><th scope="col">Use when</th><th scope="col">Categories</th></tr></thead>
         <tbody>
           <tr><td>3400k-dark</td><td>near-black general-purpose warm theme</td><td>6</td></tr>
           <tr><td>3400k-light</td><td>moderate warm shift on a light surface</td><td>6</td></tr>
           <tr><td>2000k-dark</td><td>Redshift near 2000 K</td><td>4</td></tr>
-          <tr><td>1200k-dark</td><td>extreme 1200 K stress profile</td><td>3</td></tr>
+          <tr><td>1200k-dark</td><td>extreme 1200 K warm-screen setting</td><td>3</td></tr>
         </tbody>
       </table>
       <p>Start with <code>3400k-dark</code>. Use <code>2000k-dark</code> or
       <code>1200k-dark</code> when your screen filter uses those lower temperatures. Only dark
-      profiles are available at 2000&nbsp;K and 1200&nbsp;K because the filter turns a light
+      palettes are available at 2000&nbsp;K and 1200&nbsp;K because the filter turns a light
       background into a bright orange-red field.</p>
     </div>
     <div class="use-card">
@@ -1423,7 +1423,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   <p>
     Ember · MIT © 2026 Michael Woods ·
     <a href="https://github.com/carpdiem/ember">github.com/carpdiem/ember</a> ·
-    profiles use software models of warm screen filters rather than calibrated display measurements ·
+    palettes use software models of warm screen filters rather than calibrated display measurements ·
     the interface stress test uses fictional data · Mars elevation and the Mona Lisa source use
     documented public data with recorded checksums in <a href="https://github.com/carpdiem/ember/blob/main/assets/README.md">assets/README.md</a>.
   </p>
@@ -1581,7 +1581,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     var capSentence = document.getElementById("cap-sentence");
     if (capSentence){
       capSentence.innerHTML = info.label + " provides <strong>" + info.cats +
-        " distinct categorical colors</strong> after the modeled filter. The 2000\u00a0K profile provides 4; the 1200\u00a0K profile provides 3.";
+        " distinct categorical colors</strong> after the modeled filter. The 2000\u00a0K palette provides 4; the 1200\u00a0K palette provides 3.";
     }
     var conCap = document.getElementById("con-cap");
     if (conCap) conCap.textContent = info.cats + " / 6";
