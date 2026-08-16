@@ -1,6 +1,6 @@
 # Terminal themes
 
-Generated imports are provided for Alacritty, iTerm2, and Windows Terminal. Each
+Generated imports are provided for Alacritty, iTerm2, macOS Terminal, and Windows Terminal. Each
 uses the family’s primary background and foreground. Alternative surfaces live in
 the JSON manifest, generated CSS, and Python `surfaces()` API; substitute them when a
 different canvas is needed. Terminal formats themselves expose only their native primary
@@ -24,6 +24,15 @@ Restart Alacritty or reload its configuration.
 
 Open **Settings → Profiles → Colors → Color Presets… → Import…**, choose a
 `.itermcolors` file, then select the imported preset from **Color Presets…**.
+
+### macOS Terminal
+
+Double-click a `.terminal` file, or run `open <file>.terminal`. Terminal imports it as a
+profile and opens a window using it. Make it permanent under
+**Settings → Profiles**: select the imported profile and click **Default**.
+
+Generated profiles set colors only. Font, window size, and other profile settings stay at
+Terminal's defaults so an import does not overwrite unrelated preferences.
 
 ### Windows Terminal
 

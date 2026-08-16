@@ -55,6 +55,25 @@ BASE_MANAGED_PATHS = (
     "docs/sample-analysis.md",
 )
 
+APPLE_TERMINAL_ANSI_KEYS = (
+    "ANSIBlackColor",
+    "ANSIRedColor",
+    "ANSIGreenColor",
+    "ANSIYellowColor",
+    "ANSIBlueColor",
+    "ANSIMagentaColor",
+    "ANSICyanColor",
+    "ANSIWhiteColor",
+    "ANSIBrightBlackColor",
+    "ANSIBrightRedColor",
+    "ANSIBrightGreenColor",
+    "ANSIBrightYellowColor",
+    "ANSIBrightBlueColor",
+    "ANSIBrightMagentaColor",
+    "ANSIBrightCyanColor",
+    "ANSIBrightWhiteColor",
+)
+
 ASSET_DIR = ROOT / "assets"
 MONA_LISA_SOURCE_IMAGE = ASSET_DIR / "mona-lisa-c2rmf-public-domain.jpg"
 MONA_LISA_SOURCE_SHA256 = "5f223c31ba0a477eb7cbe5e5f959d822cbfc46081b19b96498cbd5601d9ac81d"
@@ -239,6 +258,43 @@ def _iterm(family: dict) -> bytes:
     }
     for index, name in enumerate(ANSI_NAMES):
         payload[f"Ansi {index} Color"] = _iterm_color(terminal[name])
+    return plistlib.dumps(payload, sort_keys=True)
+
+
+def _apple_terminal_color(value: str) -> bytes:
+    """Encode one color the way Terminal.app stores it: an archived NSColor blob."""
+    rgb = hex_to_srgb(value)
+    archive = {
+        "$version": 100000,
+        "$archiver": "NSKeyedArchiver",
+        "$top": {"root": plistlib.UID(1)},
+        "$objects": [
+            "$null",
+            {
+                "NSRGB": f"{rgb[0]:.9f} {rgb[1]:.9f} {rgb[2]:.9f}".encode() + b"\x00",
+                "NSColorSpace": 2,
+                "$class": plistlib.UID(2),
+            },
+            {"$classname": "NSColor", "$classes": ["NSColor", "NSObject"]},
+        ],
+    }
+    return plistlib.dumps(archive, fmt=plistlib.FMT_BINARY, sort_keys=True)
+
+
+def _apple_terminal(family: dict) -> bytes:
+    terminal = family["terminal"]
+    surfaces = family["surfaces"]
+    payload = {
+        "name": family["name"],
+        "type": "Window Settings",
+        "BackgroundColor": _apple_terminal_color(surfaces["bg_0"]),
+        "TextColor": _apple_terminal_color(surfaces["fg_0"]),
+        "TextBoldColor": _apple_terminal_color(surfaces["fg_0"]),
+        "CursorColor": _apple_terminal_color(surfaces["fg_1"]),
+        "SelectionColor": _apple_terminal_color(surfaces["bg_5"]),
+    }
+    for name, key in zip(ANSI_NAMES, APPLE_TERMINAL_ANSI_KEYS, strict=True):
+        payload[key] = _apple_terminal_color(terminal[name])
     return plistlib.dumps(payload, sort_keys=True)
 
 
@@ -427,7 +483,7 @@ def build(destination: Path) -> None:
     _write(destination / "palettes/ember.css", _css(manifest))
     terminal_readme = """# Terminal themes
 
-Generated imports are provided for Alacritty, iTerm2, and Windows Terminal. Each
+Generated imports are provided for Alacritty, iTerm2, macOS Terminal, and Windows Terminal. Each
 uses the family’s primary background and foreground. Alternative surfaces live in
 the JSON manifest, generated CSS, and Python `surfaces()` API; substitute them when a
 different canvas is needed. Terminal formats themselves expose only their native primary
@@ -451,6 +507,15 @@ Restart Alacritty or reload its configuration.
 
 Open **Settings → Profiles → Colors → Color Presets… → Import…**, choose a
 `.itermcolors` file, then select the imported preset from **Color Presets…**.
+
+### macOS Terminal
+
+Double-click a `.terminal` file, or run `open <file>.terminal`. Terminal imports it as a
+profile and opens a window using it. Make it permanent under
+**Settings → Profiles**: select the imported profile and click **Default**.
+
+Generated profiles set colors only. Font, window size, and other profile settings stay at
+Terminal's defaults so an import does not overwrite unrelated preferences.
 
 ### Windows Terminal
 
@@ -482,6 +547,9 @@ pairing under `metrics.shifted_text_contrast` in the JSON manifest.
             destination / f"themes/terminal/windows-terminal/{slug}.json", _windows_terminal(family)
         )
         _write(destination / f"themes/terminal/iterm2/{slug}.itermcolors", _iterm(family))
+        _write(
+            destination / f"themes/terminal/apple-terminal/{slug}.terminal", _apple_terminal(family)
+        )
         profile = manifest["profiles"][family["profile"]]
         _write(destination / f"docs/swatches/{slug}.svg", _family_svg(family, profile, chrome))
         _write(destination / f"assets/mona-lisa-{slug}.png", _mona_lisa_colormap_image(family))
@@ -533,6 +601,7 @@ def check() -> int:
                     Path(f"docs/swatches/{slug}.svg"),
                     Path(f"themes/terminal/alacritty/{slug}.toml"),
                     Path(f"themes/terminal/iterm2/{slug}.itermcolors"),
+                    Path(f"themes/terminal/apple-terminal/{slug}.terminal"),
                     Path(f"themes/terminal/windows-terminal/{slug}.json"),
                     Path(f"assets/mona-lisa-{slug}.png"),
                     Path(f"assets/mars-topography-{slug}.png"),
