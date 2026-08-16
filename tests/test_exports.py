@@ -397,7 +397,7 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
     assert 'if (e.key === "Escape" && !menu.hidden) closeMenu(true)' in landing
     assert 'history.replaceState(null, "", url)' in landing
 
-    assert "Fictional telemetry — interface stress test" in landing
+    assert "Fictional telemetry · dense interface example" in landing
     assert "Real NASA data — MGS MOLA topography" in landing
     assert "Public-domain artwork + deterministic mapping" in landing
     assert "This example with the Mona Lisa calculates the Oklab lightness" in landing

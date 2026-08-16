@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ember — color palettes for Night Shift and Redshift</title>
-<meta name="description" content="Ember provides tested color palettes for terminals, apps, charts, and color maps used with Night Shift, Redshift, and other warm screen filters.">
+<meta name="description" content="Ember is a set of color palettes for terminals, apps, charts, and color maps used with Night Shift, Redshift, and other warm screen filters.">
 <link rel="icon" href="favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="favicon.svg" type="image/svg+xml" sizes="any">
 <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
@@ -825,7 +825,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <a href="#top">Overview <small>what Ember is</small></a>
     <a href="#editorial">Reading text <small>text and surfaces</small></a>
     <a href="#code">Terminal and code <small>ANSI and Python</small></a>
-    <a href="#console">Interface stress test <small>fictional data</small></a>
+    <a href="#console">Interface example <small>fictional telemetry</small></a>
     <a href="#mars">Mars elevation <small>NASA data</small></a>
     <a href="#mona">Image mapping <small>Mona Lisa</small></a>
     <a href="#field">Field diagram <small>three data colors</small></a>
@@ -843,7 +843,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
 <!-- ================= HERO ================= -->
 <section class="hero information-plane" id="top" aria-label="Overview">
   <div>
-    <p class="kicker">Four tested palettes for terminals, apps, charts, and color maps</p>
+    <p class="kicker">Four palettes for terminals, apps, charts, and color maps</p>
     <h1>Color palettes for Night Shift, Redshift, and other warm screen filters.</h1>
     <p class="lede">
       Warm screen filters change the red, green, and blue output of a display by different
@@ -928,21 +928,21 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <div class="stage-inner demonstration-plane">
       <article class="paper">
         <div class="meta">
-          <span>Ember color tests</span><span>Warm screen filters</span><span>7 min read</span>
+          <span>Ember palette design</span><span>Warm screen filters</span><span>7 min read</span>
         </div>
         <h3>Warm screen filters can merge colors</h3>
-        <p class="stand">A warm screen filter changes each RGB channel by a different amount. Most palettes are tested only before the filter.</p>
+        <p class="stand">A warm screen filter changes each RGB channel by a different amount. Most palette specifications describe only the unfiltered colors.</p>
         <hr>
         <div class="body-col">
           <p>At 1200&nbsp;K, the modeled Redshift transform sets blue output to zero. Two syntax
           colors that differ only in blue then produce the same displayed color.</p>
-          <p>Ember palettes are developed against the filtered result. Each palette has
-          minimum targets for contrast, ordered lightness, and perceptual separation in
-          Oklab, a color space designed to approximate human perception. The source colors
-          are chosen to meet those targets after filtering and remain distinct during the
-          day. At 1200&nbsp;K, blue can improve daytime separation without changing the
-          filtered result.</p>
-          <blockquote class="pull">A color pair fails if the target filter makes the colors indistinguishable, even when they look distinct without the filter.</blockquote>
+          <p>Each Ember palette meets minimum targets for contrast, ordered lightness, and
+          perceptual separation after its modeled filter is applied. Perceptual separation is
+          measured in Oklab, a color space designed to approximate human perception. The
+          unfiltered colors also remain distinct during the day. At 1200&nbsp;K, differences
+          in blue can improve daytime separation even though the filter sets blue output to
+          zero.</p>
+          <blockquote class="pull">Colors that carry different meanings remain distinguishable both before and after the target filter is applied.</blockquote>
           <p>Ember palettes use cream body text on a near-black warm-neutral background. Pure white
           becomes brighter orange under a warm filter without improving legibility. Links,
           emphasis, and status marks use higher-chroma colors because those colors carry
@@ -1009,8 +1009,8 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       <p>This example uses real installation commands, the Python API, and <code>bg-5</code>
       for selected text. It shows every distinct ANSI accent in the selected profile: six
       at 3400&nbsp;K, four at 2000&nbsp;K, and three at 1200&nbsp;K.</p>
-      <p>Terminal themes are included for Alacritty, iTerm2, and Windows Terminal. Every
-      theme assigns its accent colors to both the normal and bright ANSI slots. In the
+      <p>The repository includes terminal themes for Alacritty, iTerm2, and Windows Terminal.
+      Every theme assigns its accent colors to both the normal and bright ANSI slots. In the
       2000&nbsp;K and 1200&nbsp;K themes, some ANSI names also share a color because only four
       or three accent colors remain distinct.</p>
     </article>
@@ -1027,12 +1027,12 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
 <section id="console" aria-label="Fictional observatory console">
   <div class="plates console-intro information-plane">
     <article class="plate">
-      <span class="truth fiction">Fictional telemetry — interface stress test</span>
+      <span class="truth fiction">Fictional telemetry · dense interface example</span>
       <h2>Interface colors under high information density</h2>
-      <p>This fictional console tests the selected palette across gauges, bars, scopes,
-      sparklines, health states, and logs. It displays up to
-      <span id="con-cap-inline">6</span> distinct data series for the selected profile.
-      Shapes and labels repeat every meaning encoded by color.</p>
+      <p>This fictional console applies the selected palette to gauges, bars, scopes,
+      sparklines, health states, and logs. The selected profile supports up to
+      <span id="con-cap-inline">6</span> distinct data series. Shapes and labels repeat every
+      meaning encoded by color.</p>
     </article>
   </div>
   <div class="console-wrap demonstration-plane">
@@ -1192,9 +1192,9 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       </div>
     </div>
     <p class="map-cite simulation-note">
-      The mission, spacecraft, values, and events are fictional. This interface tests the
-      selected palette at high information density, including data-series capacity, text
-      contrast, and warnings identified by both color and shape.
+      The mission, spacecraft, values, and events are fictional. The console demonstrates
+      data-series capacity, text contrast, and warnings identified by both color and shape at
+      high information density.
     </p>
   </div>
 </section>
@@ -1227,9 +1227,9 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
     <article class="plate">
       <span class="truth">Real NASA data</span>
       <h2>Mars elevation mapped with Ember</h2>
-      <p>Each pixel represents measured Mars elevation from NASA's MGS MOLA dataset. The
-      selected profile maps those values through 256 colors. Those colors have equal
-      perceptual spacing and strictly ordered lightness after the modeled filter.</p>
+      <p>Each pixel represents measured Mars elevation from NASA's MGS MOLA dataset. Each
+      measured value maps to one of 256 colors from the selected profile. Those colors have
+      equal perceptual spacing and strictly ordered lightness after the modeled filter.</p>
       <p>That filtered-state spacing keeps Olympus Mons, Hellas, and other elevation features
       visible in every profile.</p>
     </article>
@@ -1339,7 +1339,6 @@ cd ember</code></pre>
       <p>Python users can install directly from GitHub:</p>
       <pre data-copy-label="direct pip install command"><code>python -m pip install \
   "ember-palettes @ git+https://github.com/carpdiem/ember.git"</code></pre>
-      <p>The package installs directly from GitHub.</p>
     </div>
     <div class="use-card">
       <h3>Terminal themes</h3>
@@ -1389,8 +1388,8 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
         </tbody>
       </table>
       <p>Start with <code>3400k-dark</code>. Use <code>2000k-dark</code> or
-      <code>1200k-dark</code> when your screen filter uses those lower temperatures. Ember
-      provides only dark profiles at 2000&nbsp;K and 1200&nbsp;K because the filter turns a light
+      <code>1200k-dark</code> when your screen filter uses those lower temperatures. Only dark
+      profiles are available at 2000&nbsp;K and 1200&nbsp;K because the filter turns a light
       background into a bright orange-red field.</p>
     </div>
     <div class="use-card">
