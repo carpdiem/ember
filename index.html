@@ -1150,7 +1150,7 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
                src="assets/mona-lisa-3400k-dark.png"
                data-src-template="assets/mona-lisa-{slug}.png"
                width="640" height="957"
-               alt="The same Mona Lisa with pixel luminance mapped deterministically into the selected Ember sequential colormap">
+               alt="The same Mona Lisa with pixel perceptual lightness mapped deterministically into the selected Ember sequential colormap">
           <div class="divider" id="mona-divider" role="slider" tabindex="0"
                aria-label="Comparison wipe between Ember mapping and source image"
                aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="100"
@@ -1164,7 +1164,7 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
     <article class="plate">
       <span class="truth">Public-domain art · deterministic mapping</span>
       <h2>Scene 05 — A photograph is not a scalar field</h2>
-      <p>Pixels are ranked by WCAG relative luminance, stretched across the 1st–99th
+      <p>Pixels are mapped by Oklab perceptual lightness, stretched across the 1st–99th
       percentile, and mapped into the profile's 256 sequential samples. Where an authored
       ramp runs light→dark, generation reverses it <strong>for this photographic case
       only</strong>, so dark paint stays dark — the opposite convention from the Mars

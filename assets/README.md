@@ -11,7 +11,7 @@ Every raster on the Ember site is either an immutable source with recorded prove
 - Commons rights metadata: public domain; attribution not required
 - Source SHA-256: `5f223c31ba0a477eb7cbe5e5f959d822cbfc46081b19b96498cbd5601d9ac81d`
 
-The four `mona-lisa-<palette>.png` files resize the source to 640 pixels wide, rank pixels by WCAG relative luminance, stretch the 1st–99th percentile range, and map it into each family's 256-sample sequential colors. If an authored scalar ramp runs from light to dark, generation reverses that ramp for this photographic mapping so dark source pixels remain dark and light source pixels remain light.
+The four `mona-lisa-<palette>.png` files resize the source to 640 pixels wide, map pixels by Oklab perceptual lightness, stretch the 1st–99th percentile range, and map it into each family's 256-sample sequential colors. If an authored scalar ramp runs from light to dark, generation reverses that ramp for this photographic mapping so dark source pixels remain dark and light source pixels remain light.
 
 ## Mars — NASA MGS MOLA topography
 

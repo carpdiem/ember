@@ -19,7 +19,7 @@ except ModuleNotFoundError:  # Python 3.10
     import tomli as tomllib
 
 from ember import categorical, categorical_norm, encode_categories, sequential, surfaces
-from ember.color import wcag_luminance
+from ember.color import srgb_to_oklab
 
 ROOT = Path(__file__).resolve().parents[1]
 SLUGS = (
@@ -400,6 +400,8 @@ def test_root_landing_page_uses_the_exported_css_palette_contract() -> None:
     assert "Fictional telemetry — interface stress test" in landing
     assert "Real NASA data — MGS MOLA topography" in landing
     assert "Public-domain artwork + deterministic mapping" in landing
+    assert "Pixels are mapped by Oklab perceptual lightness" in landing
+    assert "pixel perceptual lightness mapped deterministically" in landing
     assert "Physics figure — real geometry, live palette" in landing
     assert 'id="sparks"' in landing
     assert 'id="scope"' in landing
@@ -529,27 +531,48 @@ def test_legacy_live_example_redirects_to_the_unified_root() -> None:
     assert "ember.css" not in example
 
 
-def test_mona_lisa_example_colormaps_preserve_source_luminance_polarity() -> None:
+def test_mona_lisa_example_colormaps_preserve_source_perceptual_lightness() -> None:
     manifest = json.loads((ROOT / "palettes/ember.json").read_text())
+    provenance = (ROOT / "assets/README.md").read_text()
+    assert "map pixels by Oklab perceptual lightness" in provenance
+    assert "rank pixels by WCAG relative luminance" not in provenance
     source_path = ROOT / "assets/mona-lisa-c2rmf-public-domain.jpg"
     with Image.open(source_path) as source:
         source = source.convert("RGB")
         height = round(source.height * 640 / source.width)
         source = source.resize((640, height), Image.Resampling.LANCZOS)
-        source_luminance = wcag_luminance(np.asarray(source, dtype=float) / 255.0).ravel()
+        source_lightness = srgb_to_oklab(np.asarray(source, dtype=float) / 255.0)[..., 0]
 
-    dark_cutoff, light_cutoff = np.quantile(source_luminance, (0.1, 0.9))
+    low, high = np.quantile(source_lightness, (0.01, 0.99))
+    normalized = np.clip((source_lightness - low) / (high - low), 0.0, 1.0)
+    expected_indices = np.rint(normalized * 255).astype(np.uint8)
+    dark_cutoff, light_cutoff = np.quantile(source_lightness, (0.1, 0.9))
+
+    def forehead_detail_energy(lightness: np.ndarray) -> float:
+        forehead = lightness[135:215, 245:365]
+        center = forehead[1:-1, 1:-1]
+        high_frequency = center - 0.25 * (
+            forehead[:-2, 1:-1] + forehead[2:, 1:-1] + forehead[1:-1, :-2] + forehead[1:-1, 2:]
+        )
+        return float(np.sqrt(np.mean(high_frequency**2)))
+
+    source_detail = forehead_detail_energy(source_lightness)
+
     for slug in SLUGS:
         output_path = ROOT / f"assets/mona-lisa-{slug}.png"
         with Image.open(output_path) as output:
-            output_rgb = np.asarray(output.convert("RGB"), dtype=float) / 255.0
+            assert output.mode == "P"
             assert output.size == (640, height)
+            assert np.array_equal(np.asarray(output), expected_indices)
+            output_rgb = np.asarray(output.convert("RGB"), dtype=float) / 255.0
 
-        output_luminance = wcag_luminance(output_rgb).ravel()
-        correlation = float(np.corrcoef(source_luminance, output_luminance)[0, 1])
-        assert correlation > 0.8, (slug, correlation)
-        dark_source_output = float(output_luminance[source_luminance <= dark_cutoff].mean())
-        light_source_output = float(output_luminance[source_luminance >= light_cutoff].mean())
+        output_lightness = srgb_to_oklab(output_rgb)[..., 0]
+        detail_gain = forehead_detail_energy(output_lightness) / source_detail
+        assert detail_gain <= 1.2, (slug, detail_gain)
+        correlation = float(np.corrcoef(source_lightness.ravel(), output_lightness.ravel())[0, 1])
+        assert correlation > 0.95, (slug, correlation)
+        dark_source_output = float(output_lightness[source_lightness <= dark_cutoff].mean())
+        light_source_output = float(output_lightness[source_lightness >= light_cutoff].mean())
         assert light_source_output > dark_source_output + 0.2, (
             slug,
             dark_source_output,

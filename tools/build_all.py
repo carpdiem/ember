@@ -33,7 +33,7 @@ from render_samples import (
 from render_story import render_readme_story
 from render_style import publication_chrome
 
-from ember.color import contrast_ratio, hex_to_srgb, wcag_luminance
+from ember.color import contrast_ratio, hex_to_srgb, srgb_to_oklab
 from ember.generate import ANSI_NAMES, generate_manifest
 
 BASE_MANAGED_PATHS = (
@@ -108,9 +108,9 @@ def _palette_image(indices: np.ndarray, palette: np.ndarray) -> bytes:
 
 
 def _mona_lisa_colormap_image(family: dict) -> bytes:
-    """Map source luminance to the family's sequential colors.
+    """Map source perceptual lightness to the family's sequential colors.
 
-    The authored scalar ramp reverses in 3400K Light. Image luminance must not:
+    The authored scalar ramp reverses in 3400K Light. Image lightness must not:
     dark source pixels always map to the darker endpoint and light pixels to the
     lighter endpoint, independent of the family's low-to-high scalar direction.
     """
@@ -125,13 +125,13 @@ def _mona_lisa_colormap_image(family: dict) -> bytes:
         source = source.resize((MONA_LISA_IMAGE_WIDTH, height), Image.Resampling.LANCZOS)
         source_rgb = np.asarray(source, dtype=float) / 255.0
 
-    luminance = wcag_luminance(source_rgb)
-    low, high = np.quantile(luminance, (0.01, 0.99))
-    normalized = np.clip((luminance - low) / (high - low), 0.0, 1.0)
+    lightness = srgb_to_oklab(source_rgb)[..., 0]
+    low, high = np.quantile(lightness, (0.01, 0.99))
+    normalized = np.clip((lightness - low) / (high - low), 0.0, 1.0)
 
     palette = np.asarray(family["continuous_rgb"], dtype=float)
-    endpoint_luminance = wcag_luminance(palette[[0, -1]])
-    if endpoint_luminance[0] > endpoint_luminance[1]:
+    endpoint_lightness = srgb_to_oklab(palette[[0, -1]])[:, 0]
+    if endpoint_lightness[0] > endpoint_lightness[1]:
         palette = palette[::-1]
 
     indices = np.rint(normalized * (len(palette) - 1)).astype(np.uint8)
