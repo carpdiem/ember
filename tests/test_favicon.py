@@ -43,7 +43,13 @@ def test_favicon_uses_the_3400k_dark_bg_0_and_fg_0_contract() -> None:
         assert any(color == FG_0 for _, color in colors)
 
 
-def test_favicon_font_outline_has_redistribution_notice() -> None:
-    license_text = (ROOT / "LICENSES" / "DejaVu-Fonts.txt").read_text()
-    assert "Copyright (c) 2003 by Bitstream, Inc." in license_text
-    assert "Permission is hereby granted, free of charge" in license_text
+def test_favicon_is_a_plain_text_e() -> None:
+    root = ET.parse(ROOT / "favicon.svg").getroot()
+    namespace = {"svg": "http://www.w3.org/2000/svg"}
+    text = root.find("svg:text", namespace)
+
+    assert text is not None
+    assert text.text == "E"
+    assert text.attrib["font-family"] == "Arial, Helvetica, sans-serif"
+    assert text.attrib["font-weight"] == "600"
+    assert text.attrib["text-anchor"] == "middle"
