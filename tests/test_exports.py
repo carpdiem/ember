@@ -194,7 +194,7 @@ def test_generated_swatch_rectangles_fit_their_canvas() -> None:
             assert y + rectangle_height <= height + 0.01, path
 
 
-def test_readme_leads_with_product_choice_proof_and_setup() -> None:
+def test_readme_leads_with_product_and_visual_story_before_setup() -> None:
     readme = (ROOT / "README.md").read_text()
     boards = [f"docs/swatches/{slug}.svg" for slug in SLUGS]
     hero = "docs/swatches/command-vs-simulated.png"
@@ -205,10 +205,10 @@ def test_readme_leads_with_product_choice_proof_and_setup() -> None:
     setup = readme.index("## Install and use Ember")
     palette_details = readme.index("## The four palettes")
     science = readme.index("## The science behind Ember")
-    positions = [readme.index(path) for path in (*boards, terminal, data, mechanism)]
-    assert choice < readme.index(hero) < setup < palette_details
+    positions = [readme.index(path) for path in (*boards, hero, terminal, data, mechanism)]
+    assert readme.startswith("# Ember: Nightshift / Redshift safe color palettes\n")
     assert positions == sorted(positions)
-    assert palette_details < positions[0] < positions[-1] < science
+    assert palette_details < positions[0] < positions[-1] < choice < setup < science
     assert readme.count(hero) == 1
     assert all(readme.count(board) == 1 for board in boards)
     assert "<details>" not in readme
@@ -227,12 +227,12 @@ def test_palette_choice_links_jump_to_their_overviews() -> None:
         heading = f"### {title}"
         image = f"docs/swatches/{slug}.svg"
         assert link in readme
-        assert readme.index(link) < readme.index(heading) < readme.index(image)
+        assert readme.index(heading) < readme.index(image) < readme.index(link)
 
 
 def test_readme_presents_the_finished_product_without_branch_history() -> None:
     readme = (ROOT / "README.md").read_text()
-    first_product_heading = readme.index("## Choose a palette")
+    first_product_heading = readme.index("## The four palettes")
     setup = readme.index("## Install and use Ember")
     assert first_product_heading < setup
     for stale_phrase in (

@@ -1,4 +1,4 @@
-# Ember
+# Ember: Nightshift / Redshift safe color palettes
 
 [See it live](https://www.usuallypragmatic.com/ember/)
 
@@ -18,6 +18,61 @@ you already have.
 [![License: MIT](https://img.shields.io/badge/License-MIT-c7a76b.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-6f806a.svg)](pyproject.toml)
 
+## The four palettes
+
+### 3400K Dark
+
+![3400K Dark — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-dark.svg)
+
+### 3400K Light
+
+![3400K Light — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-light.svg)
+
+3400K Dark and 3400K Light intentionally share the exact same 256-sample sequential map.
+Low values are dark and high values are bright in both interface modes, so changing the
+surrounding canvas and text does not change scalar meaning.
+
+### 2000K Dark
+
+![2000K Dark — six background surfaces, three foreground text roles, four categorical colors, four terminal accent identities with magenta=red and cyan=green aliases, and the 256-sample sequential map](docs/swatches/2000k-dark.svg)
+
+### 1200K Dark
+
+![1200K Dark — six background surfaces, three foreground text roles, three categorical colors, three terminal accent identities with blue=yellow, magenta=red, and cyan=green aliases, and the 256-sample sequential map](docs/swatches/1200k-dark.svg)
+
+These are the exact commanded sRGB values shipped in every export. Deeper filters
+leave fewer color identities available, so unsupported ANSI names intentionally
+share supported colors and are labeled as aliases.
+
+## With and without redshift
+
+![Categorical colors and sequential maps of all four palettes, each shown as commanded and after its modeled warm transform](docs/swatches/command-vs-simulated.png)
+
+Each pair shows the colors sent to the display followed by a deterministic simulation
+of the modeled filtered output.
+
+### In a terminal
+
+![The same code and selection in all four palettes, rendered filter-off and with the modeled filter-on output](docs/samples/terminal-story.png)
+
+### In charts and heatmaps
+
+![The same heatmap, bar chart, and labeled line series in all four palettes, rendered filter-off and with the modeled filter-on output](docs/samples/data-story.png)
+
+### Why warm filters merge colors
+
+![RGB channel survival under the 3400 K, 2000 K, and 1200 K warm-filter models](docs/diagrams/channel-collapse.svg)
+
+A warm filter multiplies red, green, and blue by different gains. At Ember's 1200 K
+model the blue gain is zero, so colors that differ only in blue produce identical
+output. The deeper palettes therefore provide fewer semantic color identities, and
+unsupported ANSI names intentionally share supported colors.
+
+Filtered rows are deterministic signal simulations — commanded sRGB multiplied by
+each transform's published gains. They are not photographs, calibrated physical color
+temperatures, or predictions of every display pipeline. Turn off any active warm
+filter before judging them, or your screen applies the transform a second time.
+
 ## Choose a palette
 
 | Palette | Choose it for | Categories |
@@ -32,16 +87,12 @@ Start with `3400k-dark` for a dark interface or `3400k-light` for a light one. C
 Only dark palettes are provided at 2000 K and 1200 K because a deeply filtered light
 canvas becomes a large orange-red field.
 
-![Categorical colors and sequential maps of all four palettes, each shown as commanded and after its modeled warm transform](docs/swatches/command-vs-simulated.png)
-
-Each pair shows the colors sent to the display followed by a deterministic simulation
-of the modeled filtered output.
-
 ## Contents
 
-- [Install and use Ember](#install-and-use-ember): [get the files](#1-get-the-files) · [terminal themes](#2-import-a-terminal-theme) · [UI roles](#3-use-the-ui-surface-roles) · [Matplotlib](#matplotlib) · [CSS](#css)
 - [The four palettes](#the-four-palettes): [3400K Dark](#3400k-dark) · [3400K Light](#3400k-light) · [2000K Dark](#2000k-dark) · [1200K Dark](#1200k-dark)
 - [With and without redshift](#with-and-without-redshift): [terminal](#in-a-terminal) · [charts and heatmaps](#in-charts-and-heatmaps) · [why colors merge](#why-warm-filters-merge-colors)
+- [Choose a palette](#choose-a-palette)
+- [Install and use Ember](#install-and-use-ember): [get the files](#1-get-the-files) · [terminal themes](#2-import-a-terminal-theme) · [UI roles](#3-use-the-ui-surface-roles) · [Matplotlib](#matplotlib) · [CSS](#css)
 - [The science behind Ember](#the-science-behind-ember)
 - [Verification](#verification) · [References](#references) · [License](#license)
 
@@ -198,56 +249,6 @@ CSS exposes eleven representative 8-bit gradient stops. The
 [JSON manifest](palettes/ember.json) and Python package preserve all
 256 canonical float samples, along with surfaces, categorical colors, ANSI slots, gain
 profiles, and measured results.
-
-## The four palettes
-
-### 3400K Dark
-
-![3400K Dark — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-dark.svg)
-
-### 3400K Light
-
-![3400K Light — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-light.svg)
-
-3400K Dark and 3400K Light intentionally share the exact same 256-sample sequential map.
-Low values are dark and high values are bright in both interface modes, so changing the
-surrounding canvas and text does not change scalar meaning.
-
-### 2000K Dark
-
-![2000K Dark — six background surfaces, three foreground text roles, four categorical colors, four terminal accent identities with magenta=red and cyan=green aliases, and the 256-sample sequential map](docs/swatches/2000k-dark.svg)
-
-### 1200K Dark
-
-![1200K Dark — six background surfaces, three foreground text roles, three categorical colors, three terminal accent identities with blue=yellow, magenta=red, and cyan=green aliases, and the 256-sample sequential map](docs/swatches/1200k-dark.svg)
-
-These are the exact commanded sRGB values shipped in every export. Deeper filters
-leave fewer color identities available, so unsupported ANSI names intentionally
-share supported colors and are labeled as aliases.
-
-## With and without redshift
-
-### In a terminal
-
-![The same code and selection in all four palettes, rendered filter-off and with the modeled filter-on output](docs/samples/terminal-story.png)
-
-### In charts and heatmaps
-
-![The same heatmap, bar chart, and labeled line series in all four palettes, rendered filter-off and with the modeled filter-on output](docs/samples/data-story.png)
-
-### Why warm filters merge colors
-
-![RGB channel survival under the 3400 K, 2000 K, and 1200 K warm-filter models](docs/diagrams/channel-collapse.svg)
-
-A warm filter multiplies red, green, and blue by different gains. At Ember's 1200 K
-model the blue gain is zero, so colors that differ only in blue produce identical
-output. The deeper palettes therefore provide fewer semantic color identities, and
-unsupported ANSI names intentionally share supported colors.
-
-Filtered rows are deterministic signal simulations — commanded sRGB multiplied by
-each transform's published gains. They are not photographs, calibrated physical color
-temperatures, or predictions of every display pipeline. Turn off any active warm
-filter before judging them, or your screen applies the transform a second time.
 
 ## The science behind Ember
 
