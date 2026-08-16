@@ -731,15 +731,20 @@ code, pre, kbd{ font-family:var(--font-mono); }
   border:var(--rule); font-size:.72rem; overflow-x:auto; color:var(--ember-fg-0);
 }
 .copy-code{ position:relative; margin:.5rem 0; }
-.copy-code .use-copy-pre{ margin:0; padding-right:3.65rem; }
+.copy-code .use-copy-pre{ margin:0; padding-right:2.65rem; }
 .copy-code-button{
-  appearance:none; position:absolute; top:1px; right:1px; z-index:1;
+  appearance:none; position:absolute; top:1px; right:1px; z-index:1; isolation:isolate;
   width:44px; height:44px; padding:0; cursor:pointer;
-  display:grid; place-items:center; border:0; border-left:var(--rule); border-bottom:var(--rule);
-  background:var(--ember-bg-0); color:var(--ember-fg-2);
+  display:grid; place-items:center; border:0;
+  background:transparent; color:var(--ember-fg-2);
 }
-.copy-code-button:hover, .copy-code-button:focus-visible{
-  background:var(--ember-bg-3); color:var(--ember-fg-0);
+.copy-code-button::before{
+  content:""; position:absolute; inset:7px; z-index:-1;
+  border:var(--rule); background:var(--ember-bg-0);
+}
+.copy-code-button:hover, .copy-code-button:focus-visible{ color:var(--ember-fg-0); }
+.copy-code-button:hover::before, .copy-code-button:focus-visible::before{
+  background:var(--ember-bg-3);
 }
 .copy-code-button svg{
   width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.7;
