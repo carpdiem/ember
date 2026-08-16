@@ -194,20 +194,25 @@ def test_generated_swatch_rectangles_fit_their_canvas() -> None:
             assert y + rectangle_height <= height + 0.01, path
 
 
-def test_readme_visual_story_leads_before_setup() -> None:
+def test_readme_leads_with_product_choice_proof_and_setup() -> None:
     readme = (ROOT / "README.md").read_text()
     boards = [f"docs/swatches/{slug}.svg" for slug in SLUGS]
     hero = "docs/swatches/command-vs-simulated.png"
     terminal = "docs/samples/terminal-story.png"
     data = "docs/samples/data-story.png"
     mechanism = "docs/diagrams/channel-collapse.svg"
-    setup = readme.index("## Make Ember work")
-    positions = [readme.index(path) for path in (*boards, hero, terminal, data, mechanism)]
+    choice = readme.index("## Choose a palette")
+    setup = readme.index("## Install and use Ember")
+    palette_details = readme.index("## The four palettes")
+    science = readme.index("## The science behind Ember")
+    positions = [readme.index(path) for path in (*boards, terminal, data, mechanism)]
+    assert choice < readme.index(hero) < setup < palette_details
     assert positions == sorted(positions)
-    assert positions[-1] < setup
+    assert palette_details < positions[0] < positions[-1] < science
     assert readme.count(hero) == 1
     assert all(readme.count(board) == 1 for board in boards)
-    assert "<details>" not in readme[:setup]
+    assert "<details>" not in readme
+    assert "docs/validation.md" in readme
 
     for relative_path in (hero, terminal, data):
         with Image.open(ROOT / relative_path) as image:
@@ -215,13 +220,10 @@ def test_readme_visual_story_leads_before_setup() -> None:
             assert image.height > image.width
 
 
-def test_intro_palette_links_jump_to_their_overviews() -> None:
+def test_palette_choice_links_jump_to_their_overviews() -> None:
     readme = (ROOT / "README.md").read_text()
-    for slug, title in zip(
-        SLUGS,
-        ("3400K Dark", "3400K Light", "2000K Dark", "1200K Dark"),
-    ):
-        link = f"- [{title}](#{slug})"
+    for slug, title in zip(SLUGS, ("3400K Dark", "3400K Light", "2000K Dark", "1200K Dark")):
+        link = f"[`{slug}`](#{slug})"
         heading = f"### {title}"
         image = f"docs/swatches/{slug}.svg"
         assert link in readme
@@ -230,8 +232,8 @@ def test_intro_palette_links_jump_to_their_overviews() -> None:
 
 def test_readme_presents_the_finished_product_without_branch_history() -> None:
     readme = (ROOT / "README.md").read_text()
-    first_product_heading = readme.index("## The four palettes")
-    setup = readme.index("## Make Ember work")
+    first_product_heading = readme.index("## Choose a palette")
+    setup = readme.index("## Install and use Ember")
     assert first_product_heading < setup
     for stale_phrase in (
         "Experimental Pareto pass",
@@ -239,6 +241,9 @@ def test_readme_presents_the_finished_product_without_branch_history() -> None:
         "main...experiment",
         "deep experimental anchors",
         "bi-state minimax trade",
+        "Ember was created to solve",
+        "redshift-degenerate color channels",
+        "instead of pretending",
     ):
         assert stale_phrase not in readme
     assert "four ±5% green/blue gain corners" in readme

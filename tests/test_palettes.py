@@ -833,9 +833,9 @@ def test_readme_local_links_exist() -> None:
     assert not [target for target in local_targets if not (ROOT / target).exists()]
 
 
-def test_readme_bi_state_metrics_match_manifest() -> None:
+def test_validation_reference_bi_state_metrics_match_manifest() -> None:
     manifest = generate_manifest()
-    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    text = (ROOT / "docs/validation.md").read_text(encoding="utf-8")
     for family in manifest["families"].values():
         categorical = family["metrics"]["categorical"]
         expected = (
