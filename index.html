@@ -277,10 +277,19 @@ code, pre, kbd{ font-family:var(--font-mono); }
   padding:1.1rem 1.2rem 1.3rem; align-self:center;
   box-shadow:var(--plate-shadow);
 }
+.hero-board-header{
+  display:flex; align-items:flex-start; justify-content:space-between;
+  gap:.75rem; margin-bottom:.8rem;
+}
 .hero-board h2{
   font-family:var(--font-mono); font-size:.66rem; letter-spacing:.22em;
-  text-transform:uppercase; color:var(--ember-fg-2); margin:0 0 .8rem;
+  text-transform:uppercase; color:var(--ember-fg-2); margin:0;
 }
+.hero-board-control-host{ flex:0 0 auto; }
+.hero-board-control-host .redshift-control{
+  position:static; height:auto; padding:0; display:block;
+}
+.hero-board-control-host .redshift-toggle{ transform:none; }
 .board-row{ margin-bottom:1rem; }
 .board-row .lbl{
   display:flex; justify-content:space-between;
@@ -841,7 +850,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
 <main id="main">
 
 <!-- ================= HERO ================= -->
-<section class="hero information-plane" id="top" aria-label="Overview">
+<section class="hero information-plane" id="top" aria-label="Overview" data-redshift-label="selected palette contents">
   <div>
     <p class="kicker">Four palettes for terminals, apps, charts, and color maps</p>
     <h1>Color palettes for Night Shift, Redshift, and other warm screen filters.</h1>
@@ -879,7 +888,11 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     </noscript>
   </div>
   <aside class="hero-board" aria-labelledby="hero-board-title">
-    <h2 id="hero-board-title">What the selected palette contains</h2>
+    <div class="hero-board-header">
+      <h2 id="hero-board-title">What the selected palette contains</h2>
+      <div class="hero-board-control-host" data-redshift-control-host></div>
+    </div>
+    <div class="hero-board-demo demonstration-plane">
     <div class="board-row">
       <div class="lbl"><span>Surface ladder</span><span>bg-0 → bg-5</span></div>
       <div class="surf-row" role="img" aria-label="Six labeled background surfaces from base canvas to strongest selection state">
@@ -918,6 +931,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <div class="board-row">
       <div class="lbl"><span>Sequential map</span><span>256 samples · 11 CSS stops</span></div>
       <div class="seq-strip" role="img" aria-label="Authored sequential colormap of the selected profile, low value at left to high value at right"></div>
+    </div>
     </div>
   </aside>
 </section>
@@ -1453,6 +1467,8 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
   var compactSceneMQ = window.matchMedia("(max-width: 680px)");
   var colors = {};
   var redshiftSections = Array.from(document.querySelectorAll(".scene, #console"));
+  var heroRedshiftSection = document.getElementById("top");
+  if (heroRedshiftSection) redshiftSections.unshift(heroRedshiftSection);
 
   function updateRedshiftControls(){
     var slug = root.getAttribute("data-ember-palette");
@@ -1461,7 +1477,8 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
       var button = section.querySelector(".redshift-toggle");
       if (!button) return;
       var active = section.getAttribute("data-redshift-simulated") === "true";
-      var label = section.getAttribute("aria-label") || "example";
+      var label = section.getAttribute("data-redshift-label") ||
+        section.getAttribute("aria-label") || "example";
       section.setAttribute("data-redshift-profile", redshift.profile);
       button.setAttribute("aria-pressed", String(active));
       button.setAttribute("aria-label", (active ? "Deactivate" : "Activate") +
@@ -1477,6 +1494,7 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     redshiftSections.forEach(function(section){
       var demonstration = section.querySelector(".demonstration-plane");
       if (!demonstration) return;
+      var controlHost = section.querySelector("[data-redshift-control-host]");
       demonstration.id = section.id + "-demonstration";
       section.setAttribute("data-redshift-simulated", "false");
 
@@ -1497,7 +1515,8 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
       temperature.className = "redshift-toggle-temp";
       button.append(indicator, label, temperature);
       control.appendChild(button);
-      section.prepend(control);
+      if (controlHost) controlHost.appendChild(control);
+      else section.prepend(control);
 
       button.addEventListener("click", function(){
         var active = section.getAttribute("data-redshift-simulated") === "true";
