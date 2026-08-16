@@ -108,11 +108,20 @@ code, pre, kbd{ font-family:var(--font-mono); }
   font-family:var(--font-mono); font-size:.66rem; letter-spacing:.02em;
   background:transparent; color:var(--ember-fg-2);
   border:0; padding:.25rem .35rem; min-height:44px;
-  display:inline-flex; align-items:center; justify-content:center;
+  display:inline-flex; align-items:center; justify-content:center; gap:.35rem;
   text-decoration:underline; text-decoration-color:transparent;
   text-underline-offset:.24em; text-decoration-thickness:1px;
 }
 .pp:hover{ color:var(--ember-fg-1); text-decoration-color:currentColor; }
+.pp-dots{ display:inline-flex; align-items:center; gap:2px; opacity:.72; }
+.pp[aria-pressed="true"] .pp-dots{ opacity:1; }
+.pp-dot{ width:4px; height:4px; border-radius:50%; flex:0 0 auto; }
+.pp-dot[data-cat="1"]{ background:var(--ember-category-one); }
+.pp-dot[data-cat="2"]{ background:var(--ember-category-two); }
+.pp-dot[data-cat="3"]{ background:var(--ember-category-three); }
+.pp-dot[data-cat="4"]{ background:var(--ember-category-four); }
+.pp-dot[data-cat="5"]{ background:var(--ember-category-five); }
+.pp-dot[data-cat="6"]{ background:var(--ember-category-six); }
 .pp[aria-pressed="true"]{
   color:var(--ember-fg-0); text-decoration-color:currentColor;
 }
@@ -696,15 +705,19 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
   <div class="picker" role="group" aria-label="Palette profile selector">
     <span class="picker-label">Palette:</span>
     <button class="pp" type="button" data-palette="3400k-dark" data-ember-palette="3400k-dark" aria-label="Use 3400K Dark palette" aria-pressed="true">
+      <span class="pp-dots" aria-hidden="true"><i class="pp-dot" data-cat="1"></i><i class="pp-dot" data-cat="2"></i><i class="pp-dot" data-cat="3"></i><i class="pp-dot" data-cat="4"></i><i class="pp-dot" data-cat="5"></i><i class="pp-dot" data-cat="6"></i></span>
       <span class="pp-full">3400K Dark</span><span class="pp-abbr">3400 D</span>
     </button>
     <button class="pp" type="button" data-palette="3400k-light" data-ember-palette="3400k-light" aria-label="Use 3400K Light palette" aria-pressed="false">
+      <span class="pp-dots" aria-hidden="true"><i class="pp-dot" data-cat="1"></i><i class="pp-dot" data-cat="2"></i><i class="pp-dot" data-cat="3"></i><i class="pp-dot" data-cat="4"></i><i class="pp-dot" data-cat="5"></i><i class="pp-dot" data-cat="6"></i></span>
       <span class="pp-full">3400K Light</span><span class="pp-abbr">3400 L</span>
     </button>
     <button class="pp" type="button" data-palette="2000k-dark" data-ember-palette="2000k-dark" aria-label="Use 2000K Dark palette" aria-pressed="false">
+      <span class="pp-dots" aria-hidden="true"><i class="pp-dot" data-cat="1"></i><i class="pp-dot" data-cat="2"></i><i class="pp-dot" data-cat="3"></i><i class="pp-dot" data-cat="4"></i></span>
       <span class="pp-full">2000K Dark</span><span class="pp-abbr">2000</span>
     </button>
     <button class="pp" type="button" data-palette="1200k-dark" data-ember-palette="1200k-dark" aria-label="Use 1200K Dark palette" aria-pressed="false">
+      <span class="pp-dots" aria-hidden="true"><i class="pp-dot" data-cat="1"></i><i class="pp-dot" data-cat="2"></i><i class="pp-dot" data-cat="3"></i></span>
       <span class="pp-full">1200K Dark</span><span class="pp-abbr">1200</span>
     </button>
   </div>

@@ -472,6 +472,26 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert '<span class="picker-label">Palette:</span>' in landing
     for label in ("3400K Dark", "3400K Light", "2000K Dark", "1200K Dark"):
         assert f'aria-label="Use {label} palette"' in landing
+    for slug, expected_count in (
+        ("3400k-dark", 6),
+        ("3400k-light", 6),
+        ("2000k-dark", 4),
+        ("1200k-dark", 3),
+    ):
+        button = re.search(
+            rf'<button class="pp"[^>]*data-palette="{slug}"[^>]*>(.*?)</button>',
+            landing,
+            flags=re.DOTALL,
+        )
+        assert button
+        assert button.group(1).count('class="pp-dot"') == expected_count
+        assert re.findall(r'class="pp-dot" data-cat="(\d)"', button.group(1)) == [
+            str(index) for index in range(1, expected_count + 1)
+        ]
+    for index, role in enumerate(("one", "two", "three", "four", "five", "six"), 1):
+        assert (
+            f'.pp-dot[data-cat="{index}"]{{ background:var(--ember-category-{role}); }}' in landing
+        )
     assert "background:transparent" in palette_link_rule.group(1)
     assert "border:0" in palette_link_rule.group(1)
     assert "min-height:44px" in palette_link_rule.group(1)
