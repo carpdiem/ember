@@ -368,19 +368,24 @@ def test_candidate_rasters_are_fresh_exact_simulations_with_real_dimensions() ->
     assets = EXPERIMENT / "candidate-assets"
     for slug in PROFILES:
         gains = np.asarray(data["profiles"][slug]["gains"])
-        for lane in LANES:
-            record = data["profiles"][slug]["candidates"][lane]
-            generated = __import__("ember.generate", fromlist=["generate_family"]).generate_family(
-                expected_candidate_family(slug, record)
-            )
-            stem = f"{slug}-{lane}"
+        # Sequential anchors are profile-level and byte-identical across lanes,
+        # so render each expensive source derivative once per profile/subject.
+        representative = data["profiles"][slug]["candidates"]["current"]
+        generated = __import__("ember.generate", fromlist=["generate_family"]).generate_family(
+            expected_candidate_family(slug, representative)
+        )
+        expected_commanded_by_subject = {
+            subject: renderer[render_name](generated)
             for subject, render_name in (
                 ("mars", "_mars_topography_colormap_image"),
                 ("mona", "_mona_lisa_colormap_image"),
-            ):
+            )
+        }
+        for lane in LANES:
+            stem = f"{slug}-{lane}"
+            for subject, expected_commanded in expected_commanded_by_subject.items():
                 commanded_path = assets / f"{subject}-{stem}-commanded.png"
                 simulated_path = assets / f"{subject}-{stem}-simulated.png"
-                expected_commanded = renderer[render_name](generated)
                 assert commanded_path.read_bytes() == expected_commanded
                 with (
                     Image.open(commanded_path) as commanded_source,
