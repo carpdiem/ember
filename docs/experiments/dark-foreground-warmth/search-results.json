@@ -2,6 +2,7 @@
   "schema": 2,
   "method": "fresh two-seed bounded exact-Hex8 joint bg_0..bg_5 + fg_0..fg_2 search per profile/lane; dependent banks rerun with candidate surfaces and controlled same-profile seed pairs; bounded evidence only",
   "foreground_target": "unit direction of the Light Mid-Depth mean Oklab a/b vector at chroma multipliers [1.2,1.0,0.8]; lane interpolation from shipped a/b; soft target with free L",
+  "surface_target": "each background role's Oklab a/b interpolated toward its Light Mid-Depth counterpart at the same role; dark L retained; soft target within \u00b124-byte bounds",
   "lanes": {
     "current": 0.0,
     "halfway": 0.5,
@@ -98,6 +99,32 @@
             [
               0.006207748279189962,
               0.02933311640206332
+            ]
+          ],
+          "surface_target_ab": [
+            [
+              0.0011236542184219877,
+              0.003018478516343133
+            ],
+            [
+              0.0020387726108754877,
+              0.0049091909577820125
+            ],
+            [
+              0.0007903498008267622,
+              0.008332620744279704
+            ],
+            [
+              0.0022556755000843576,
+              0.008521792103619733
+            ],
+            [
+              0.0025523503708503614,
+              0.012079342955267048
+            ],
+            [
+              0.015675146423727523,
+              0.02160820768222553
             ]
           ],
           "full_foreground_target_ab": [
@@ -2025,7 +2052,7 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
@@ -2233,16 +2260,16 @@
           "weight": 0.5,
           "surfaces": {
             "bg_0": "#090807",
-            "bg_1": "#100E0C",
-            "bg_2": "#181612",
-            "bg_3": "#201D19",
-            "bg_4": "#29251F",
-            "bg_5": "#32241B"
+            "bg_1": "#100F0E",
+            "bg_2": "#171613",
+            "bg_3": "#1F1D1A",
+            "bg_4": "#272420",
+            "bg_5": "#2F261F"
           },
           "foregrounds": [
             "#E0D4C1",
-            "#BAAE9D",
-            "#948A7F"
+            "#B9AD9D",
+            "#92887D"
           ],
           "foreground_target_ab": [
             [
@@ -2256,6 +2283,32 @@
             [
               0.006065397257360725,
               0.019226649299437883
+            ]
+          ],
+          "surface_target_ab": [
+            [
+              0.00037521571124022896,
+              0.002142334067170036
+            ],
+            [
+              0.0008308624140311821,
+              0.0030941257530193744
+            ],
+            [
+              -0.00017743168530241814,
+              0.006101906009088292
+            ],
+            [
+              0.0016003472519328498,
+              0.006541710937720123
+            ],
+            [
+              0.002090869799398996,
+              0.009167050751740255
+            ],
+            [
+              0.008063776328295535,
+              0.0159509859714347
             ]
           ],
           "full_foreground_target_ab": [
@@ -2279,14 +2332,14 @@
           ],
           "foreground_lightness_deltas_vs_shipped": [
             0.014146745609275313,
-            -0.0001654680137664899,
-            0.020028670040613594
+            -0.0030932778208653255,
+            0.013374613205845431
           ],
-          "surface_movement_mean_delta_e_ok": 0.0,
-          "foreground_plus_b_reduction_vs_shipped": 0.01286887303753113,
+          "surface_movement_mean_delta_e_ok": 0.41059475167248655,
+          "foreground_plus_b_reduction_vs_shipped": 0.01328115226575978,
           "categorical": [
             "#6E96D7",
-            "#E6A766",
+            "#E2AA67",
             "#2E8B7E",
             "#67BE95",
             "#945D48",
@@ -2294,7 +2347,7 @@
           ],
           "categorical_transformed_targets": [
             "#6E6F72",
-            "#E67C36",
+            "#E27E37",
             "#2E6743",
             "#678D4F",
             "#944526",
@@ -3884,131 +3937,131 @@
             "surface": {
               "normal_relative_luminance": [
                 0.0024708310568809567,
-                0.004507793624869208,
-                0.008116814247489767,
-                0.012559929511916678,
-                0.018934815738905632,
-                0.020189941268682995
+                0.004835129695410319,
+                0.008029944084774202,
+                0.012446172551459082,
+                0.01797371986357447,
+                0.020894930951054606
               ],
               "shifted_relative_luminance": [
                 0.0019472002671037452,
-                0.0034901247248713524,
-                0.005940270740559103,
-                0.008901756916887353,
-                0.013115307674077613,
-                0.014781228647409954
+                0.003680657853173465,
+                0.005831568130420978,
+                0.008758102120249666,
+                0.012391393979157991,
+                0.014792575955543081
               ],
               "normal_adjacent_delta_e_ok": [
-                3.0175469586184014,
-                3.5783079456655744,
-                3.169613818749886,
-                3.429053945814163,
-                1.7850118737140228
+                3.3899725497039244,
+                3.120372870252452,
+                3.1718010791218916,
+                3.0374038737062055,
+                1.7756204930062154
               ],
               "shifted_adjacent_delta_e_ok": [
-                2.73669848214754,
-                3.005697905090711,
-                2.700481141815953,
-                2.9589184957857064,
-                1.9399680994148774
+                2.976793057038392,
+                2.623738375048228,
+                2.7011376205005084,
+                2.617110350523052,
+                1.8599293871423264
               ],
-              "normal_span_delta_e_ok": 14.091467508749375,
-              "shifted_span_delta_e_ok": 12.825932085766127,
+              "normal_span_delta_e_ok": 14.203968996675842,
+              "shifted_span_delta_e_ok": 12.58177425577486,
               "shifted_foreground_contrast": [
                 [
                   8.833146329484466,
-                  8.578353924701293,
-                  8.202627825926317,
-                  7.79021281171336,
-                  7.270141559570047,
-                  7.08318182515218
+                  8.547906074873772,
+                  8.218598128830706,
+                  7.809258720223828,
+                  7.354495421590426,
+                  7.081941327370642
                 ],
                 [
-                  6.103166946875023,
-                  5.927120889764338,
-                  5.667517004400472,
-                  5.382563309618149,
-                  5.023225701284174,
-                  4.894047894313297
+                  6.041833079971615,
+                  5.8467300055106035,
+                  5.621484824723858,
+                  5.341498476982532,
+                  5.030442389066387,
+                  4.844016592287483
                 ],
                 [
-                  4.087077973941179,
-                  3.9691860714782,
-                  3.7953384066419176,
-                  3.6045148588550906,
-                  3.36387899930639,
-                  3.2773731287987795
+                  3.993458327144985,
+                  3.864501438226502,
+                  3.7156215815743994,
+                  3.5305595652831845,
+                  3.324961444968396,
+                  3.2017399589248177
                 ]
               ]
             },
             "foreground": {
               "normal_adjacent_delta_e_ok": [
-                11.832125026948537,
-                11.748069124759509
+                12.127705501247824,
+                12.11189996472202
               ],
               "shifted_adjacent_delta_e_ok": [
-                9.990811524184116,
-                10.087054499067746
+                10.256305569041034,
+                10.37957836808212
               ],
               "normal_lightness": [
                 0.8745108396412421,
-                0.7562053254467027,
-                0.6389871815568043
+                0.7532775156396039,
+                0.6323331247220362
               ],
               "normal_chroma": [
                 0.02884396686976589,
-                0.027456036571093016,
-                0.020090535548032896
+                0.026311531836372675,
+                0.020141591037040378
               ],
-              "normal_mean_chroma": 0.02546351299629727,
-              "normal_mean_plus_b": 0.02465722560384569,
-              "chroma_reduction_vs_current_percent": 32.78111772233298,
-              "normal_lightness_gap_ratio": 0.9908087943994482,
-              "shifted_lightness_gap_ratio": 0.9953609096954802,
+              "normal_mean_chroma": 0.025099029914392983,
+              "normal_mean_plus_b": 0.02424494637561704,
+              "chroma_reduction_vs_current_percent": 33.74328446571549,
+              "normal_lightness_gap_ratio": 0.997616718947122,
+              "shifted_lightness_gap_ratio": 0.9915968254765638,
               "normal_lightness_share": [
-                0.9998670055048426,
-                0.9977651871562163
+                0.9996394123287745,
+                0.9985583704442648
               ],
               "shifted_lightness_share": [
-                0.9910328715530284,
-                0.9861520406891106
+                0.9904803285327065,
+                0.9870109392294759
               ],
-              "normal_hue_span_degrees": 9.355745822541223,
-              "shifted_hue_span_degrees": 1.7693380996249175,
-              "normal_chroma_vector_cosine": 0.9866980172005921,
-              "shifted_chroma_vector_cosine": 0.9995232267450209,
+              "normal_hue_span_degrees": 9.360514115432295,
+              "shifted_hue_span_degrees": 1.7929626656973028,
+              "normal_chroma_vector_cosine": 0.9866844848237202,
+              "shifted_chroma_vector_cosine": 0.9995104108421161,
               "shifted_chroma": [
                 0.1070468119104329,
-                0.09374261922536531,
-                0.07709967078391079
+                0.0930212433100821,
+                0.0763948396420935
               ],
               "worst_surface_shifted_contrast": [
-                7.08318182515218,
-                4.894047894313297,
-                3.2773731287987795
+                7.081941327370642,
+                4.844016592287483,
+                3.2017399589248177
               ]
             },
             "categorical": {
               "normal_pair_delta_e_ok": 15.179491467515248,
               "shifted_pair_delta_e_ok": 11.610030468217829,
               "normal_foreground_clearance_by_role": [
-                12.97816076751749,
-                8.590752405420034,
-                10.579386138665633
+                12.591327501803242,
+                8.4017753274484,
+                10.74410216284347
               ],
               "shifted_foreground_clearance_by_role": [
-                7.612136181708254,
-                7.633318751737971,
-                8.01272930422787
+                7.297523311060249,
+                7.209523715139469,
+                7.601172617364299
               ],
-              "normal_foreground_clearance_min": 8.590752405420034,
-              "shifted_foreground_clearance_min": 7.612136181708254,
-              "normal_background_contrast_min": 2.791351641478111,
+              "normal_foreground_clearance_min": 8.4017753274484,
+              "shifted_foreground_clearance_min": 7.209523715139469,
+              "normal_background_contrast_min": 2.763594027771262,
               "shifted_background_contrast_bg0_min": 3.013852751690427,
-              "shifted_background_contrast_all_surfaces_min": 2.4167681863484365,
+              "shifted_background_contrast_all_surfaces_min": 2.4163449308613316,
               "normal_hue_gap_degrees": 20.22514316519485,
-              "normal_mean_chroma": 0.09915612035648803,
-              "normal_max_chroma": 0.1106906032674853,
+              "normal_mean_chroma": 0.09854140638157316,
+              "normal_max_chroma": 0.10700231941799603,
               "normal_semantic_hue_error_max": null,
               "gain_corner_samples": [
                 {
@@ -4018,7 +4071,7 @@
                     0.5035
                   ],
                   "pair_delta_e_ok": 11.073966328494732,
-                  "foreground_clearance_delta_e_ok": 7.089361165543637,
+                  "foreground_clearance_delta_e_ok": 6.806201120247643,
                   "background_contrast": 2.819484882343969
                 },
                 {
@@ -4027,8 +4080,8 @@
                     0.703,
                     0.5565000000000001
                   ],
-                  "pair_delta_e_ok": 11.540219025895555,
-                  "foreground_clearance_delta_e_ok": 7.327765357187165,
+                  "pair_delta_e_ok": 11.531637288784871,
+                  "foreground_clearance_delta_e_ok": 7.072260429785684,
                   "background_contrast": 2.8344358529726468
                 },
                 {
@@ -4038,7 +4091,7 @@
                     0.5035
                   ],
                   "pair_delta_e_ok": 11.054721282553546,
-                  "foreground_clearance_delta_e_ok": 7.454782555058846,
+                  "foreground_clearance_delta_e_ok": 7.013264252180887,
                   "background_contrast": 3.094438900588032
                 },
                 {
@@ -4048,12 +4101,12 @@
                     0.5565000000000001
                   ],
                   "pair_delta_e_ok": 11.590538932437726,
-                  "foreground_clearance_delta_e_ok": 7.544354085811891,
+                  "foreground_clearance_delta_e_ok": 7.129178567406334,
                   "background_contrast": 3.0987122927106947
                 }
               ],
               "gain_corner_pair_min": 11.054721282553546,
-              "gain_corner_foreground_clearance_min": 7.089361165543637,
+              "gain_corner_foreground_clearance_min": 6.806201120247643,
               "gain_corner_background_contrast_min": 2.819484882343969
             },
             "terminal": {
@@ -4061,19 +4114,19 @@
               "shifted_pair_delta_e_ok": 7.797168828383867,
               "normal_foreground_clearance_by_role": [
                 9.54468422118603,
-                8.061300561967535,
-                11.242812962565779
+                8.014626994681242,
+                11.612520156500505
               ],
               "shifted_foreground_clearance_by_role": [
                 6.812148559499234,
-                5.537894242998727,
-                9.277983228746276
+                5.493770519673547,
+                9.578574913823456
               ],
-              "normal_foreground_clearance_min": 8.061300561967535,
-              "shifted_foreground_clearance_min": 5.537894242998727,
-              "normal_background_contrast_min": 5.493169118938909,
+              "normal_foreground_clearance_min": 8.014626994681242,
+              "shifted_foreground_clearance_min": 5.493770519673547,
+              "normal_background_contrast_min": 5.4385442324988915,
               "shifted_background_contrast_bg0_min": 5.287773571972956,
-              "shifted_background_contrast_all_surfaces_min": 4.240194859616327,
+              "shifted_background_contrast_all_surfaces_min": 4.239452262229096,
               "normal_hue_gap_degrees": 31.46867814935814,
               "normal_mean_chroma": 0.09367624370542815,
               "normal_max_chroma": 0.11458588658953332,
@@ -4086,7 +4139,7 @@
                     0.5035
                   ],
                   "pair_delta_e_ok": 7.468678139330147,
-                  "foreground_clearance_delta_e_ok": 5.235891260784604,
+                  "foreground_clearance_delta_e_ok": 5.209787529124879,
                   "background_contrast": 4.929376458206096
                 },
                 {
@@ -4096,7 +4149,7 @@
                     0.5565000000000001
                   ],
                   "pair_delta_e_ok": 7.605915864118701,
-                  "foreground_clearance_delta_e_ok": 5.585059718419036,
+                  "foreground_clearance_delta_e_ok": 5.569078382886111,
                   "background_contrast": 4.951753025840887
                 },
                 {
@@ -4106,7 +4159,7 @@
                     0.5035
                   ],
                   "pair_delta_e_ok": 7.2632177846178605,
-                  "foreground_clearance_delta_e_ok": 5.589571355825041,
+                  "foreground_clearance_delta_e_ok": 5.51726387096119,
                   "background_contrast": 5.646840206331009
                 },
                 {
@@ -4116,12 +4169,12 @@
                     0.5565000000000001
                   ],
                   "pair_delta_e_ok": 8.05337202841343,
-                  "foreground_clearance_delta_e_ok": 5.84302107183177,
+                  "foreground_clearance_delta_e_ok": 5.781889509145613,
                   "background_contrast": 5.669049345164124
                 }
               ],
               "gain_corner_pair_min": 7.2632177846178605,
-              "gain_corner_foreground_clearance_min": 5.235891260784604,
+              "gain_corner_foreground_clearance_min": 5.209787529124879,
               "gain_corner_background_contrast_min": 4.929376458206096
             },
             "sequential": {
@@ -4131,7 +4184,7 @@
               "shifted_max_to_min": 1.0001001995962027,
               "normal_lightness_range": 0.5949321884928973,
               "shifted_lightness_range": 0.5140092807445045,
-              "shifted_light_endpoint_background_contrast_min": 7.075569567803683,
+              "shifted_light_endpoint_background_contrast_min": 7.074330403178428,
               "normal_minimum_signed_lightness_step": 0.002216617553735034,
               "shifted_minimum_signed_lightness_step": 0.0019799935002553504,
               "gain_corner_samples": [
@@ -4183,27 +4236,27 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
                   "seed": 7000,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 3,
-                  "objective": -1.2003493705850887,
+                  "accepted_moves": 49,
+                  "objective": -0.48260054072506475,
                   "selected": {
                     "surfaces": [
                       "#090807",
-                      "#100E0C",
-                      "#181612",
-                      "#201D19",
-                      "#29251F",
-                      "#32241B"
+                      "#100F0E",
+                      "#171613",
+                      "#1F1D1A",
+                      "#272420",
+                      "#2F261F"
                     ],
                     "foregrounds": [
-                      "#E0D4C1",
-                      "#BAAE9D",
+                      "#DFD3C0",
+                      "#B6AA9A",
                       "#93897E"
                     ]
                   }
@@ -4212,21 +4265,21 @@
                   "seed": 7001,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 3,
-                  "objective": -1.2003493705850887,
+                  "accepted_moves": 52,
+                  "objective": -0.4691316211477521,
                   "selected": {
                     "surfaces": [
                       "#090807",
-                      "#100E0C",
-                      "#181612",
-                      "#201D19",
-                      "#29251F",
-                      "#32241B"
+                      "#0F0E0D",
+                      "#171613",
+                      "#1F1D1A",
+                      "#27241F",
+                      "#2F261F"
                     ],
                     "foregrounds": [
-                      "#E0D4C1",
-                      "#BAAE9D",
-                      "#93897E"
+                      "#DCD0BE",
+                      "#B8AC9C",
+                      "#968D82"
                     ]
                   }
                 }
@@ -4235,31 +4288,31 @@
               "selected": {
                 "surfaces": [
                   "#090807",
-                  "#100E0C",
-                  "#181612",
-                  "#201D19",
-                  "#29251F",
-                  "#32241B"
+                  "#100F0E",
+                  "#171613",
+                  "#1F1D1A",
+                  "#272420",
+                  "#2F261F"
                 ],
                 "foregrounds": [
-                  "#E0D4C1",
-                  "#BAAE9D",
+                  "#DFD3C0",
+                  "#B6AA9A",
                   "#93897E"
                 ]
               },
               "selected_after_coupled_refinement": {
                 "surfaces": [
                   "#090807",
-                  "#100E0C",
-                  "#181612",
-                  "#201D19",
-                  "#29251F",
-                  "#32241B"
+                  "#100F0E",
+                  "#171613",
+                  "#1F1D1A",
+                  "#272420",
+                  "#2F261F"
                 ],
                 "foregrounds": [
                   "#E0D4C1",
-                  "#BAAE9D",
-                  "#948A7F"
+                  "#B9AD9D",
+                  "#92887D"
                 ]
               },
               "changed_from_shipped": true
@@ -4272,11 +4325,11 @@
                   "seed": 17000,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 9,
-                  "objective": -1.797005725374961,
+                  "accepted_moves": 6,
+                  "objective": -1.7953861860601916,
                   "selected": [
                     "#6E96D7",
-                    "#E6A766",
+                    "#E2AA67",
                     "#2E8B7E",
                     "#67BE95",
                     "#945D48",
@@ -4287,11 +4340,11 @@
                   "seed": 17001,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 5,
-                  "objective": -1.788790853057989,
+                  "accepted_moves": 7,
+                  "objective": -1.7920397125897007,
                   "selected": [
                     "#6F96D5",
-                    "#E3AA66",
+                    "#E2AA67",
                     "#2E8B7E",
                     "#67BF95",
                     "#945D48",
@@ -4311,7 +4364,7 @@
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
                   "accepted_moves": 9,
-                  "objective": -1.8528969401286821,
+                  "objective": -1.8512040903348546,
                   "selected": [
                     "#F5AD9A",
                     "#7EB798",
@@ -4326,7 +4379,7 @@
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
                   "accepted_moves": 3,
-                  "objective": -1.833718057956472,
+                  "objective": -1.8320252081626445,
                   "selected": [
                     "#F5AD9A",
                     "#7EB798",
@@ -4349,7 +4402,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 3,
-                  "objective": -0.048248483359071725,
+                  "objective": -0.04823609171281919,
                   "selected": [
                     "#282527",
                     "#51404F",
@@ -4364,7 +4417,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 4,
-                  "objective": -0.04760885079703088,
+                  "objective": -0.04759656533210381,
                   "selected": [
                     "#282527",
                     "#51404F",
@@ -4377,7 +4430,7 @@
               ],
               "selected_seed": 37000,
               "changed_from_shipped": true,
-              "surface_dependency_fingerprint": "5591c25dfd2c0e890cc13d4b9ea7ddf5b6acf11907368c2e4da7ca33090a6289",
+              "surface_dependency_fingerprint": "d524f6bb53e54fa8d0e0546e20de6e5c76171c1e5d1b5fe57baff8cc3c1c42e5",
               "controlled_identical_input_invariance": true
             }
           },
@@ -4390,17 +4443,17 @@
         "full": {
           "weight": 1.0,
           "surfaces": {
-            "bg_0": "#090807",
-            "bg_1": "#100E0C",
-            "bg_2": "#181612",
-            "bg_3": "#201D19",
-            "bg_4": "#29251F",
-            "bg_5": "#32241B"
+            "bg_0": "#080807",
+            "bg_1": "#0E0E0D",
+            "bg_2": "#161614",
+            "bg_3": "#1F1D1B",
+            "bg_4": "#272522",
+            "bg_5": "#302520"
           },
           "foregrounds": [
-            "#DFD4CC",
+            "#E1D3C9",
             "#B7AEA8",
-            "#918A85"
+            "#908984"
           ],
           "foreground_target_ab": [
             [
@@ -4414,6 +4467,32 @@
             [
               0.005923046235531488,
               0.009120182196812442
+            ]
+          ],
+          "surface_target_ab": [
+            [
+              -0.0003732227959415298,
+              0.0012661896179969395
+            ],
+            [
+              -0.0003770477828131235,
+              0.0012790605482567363
+            ],
+            [
+              -0.0011452131714315985,
+              0.0038711912738968787
+            ],
+            [
+              0.0009450190037813421,
+              0.004561629771820513
+            ],
+            [
+              0.001629389227947631,
+              0.006254758548213461
+            ],
+            [
+              0.00045240623286354684,
+              0.01029376426064387
             ]
           ],
           "full_foreground_target_ab": [
@@ -4436,15 +4515,15 @@
             0.8386566787088534
           ],
           "foreground_lightness_deltas_vs_shipped": [
-            0.016189329665169172,
+            0.015068934267085665,
             0.00021361167144862137,
-            0.01903991874161426
+            0.015711700920183147
           ],
-          "surface_movement_mean_delta_e_ok": 0.0,
-          "foreground_plus_b_reduction_vs_shipped": 0.025982021673605082,
+          "surface_movement_mean_delta_e_ok": 0.5130650421587585,
+          "foreground_plus_b_reduction_vs_shipped": 0.02478322021708744,
           "categorical": [
             "#6E96D7",
-            "#E1AA67",
+            "#E0AA67",
             "#2E8B7E",
             "#67BE95",
             "#945D48",
@@ -4452,27 +4531,27 @@
           ],
           "categorical_transformed_targets": [
             "#6E6F72",
-            "#E17E37",
+            "#E07E37",
             "#2E6743",
             "#678D4F",
             "#944526",
             "#C45852"
           ],
           "terminal": [
-            "#F6AE9B",
-            "#80B797",
-            "#C89245",
-            "#B5C6F9",
+            "#F6AD99",
+            "#80B798",
+            "#C69243",
+            "#B4C6F9",
             "#D895D2",
-            "#60E0DC"
+            "#62E0DB"
           ],
           "terminal_transformed_targets": [
-            "#F68152",
-            "#808750",
-            "#C86C25",
-            "#B59384",
+            "#F68051",
+            "#808751",
+            "#C66C24",
+            "#B49384",
             "#D86E6F",
-            "#60A675"
+            "#62A674"
           ],
           "terminal_ansi_indices": [
             0,
@@ -6041,131 +6120,131 @@
           "metrics": {
             "surface": {
               "normal_relative_luminance": [
-                0.0024708310568809567,
-                0.004507793624869208,
-                0.008116814247489767,
-                0.012559929511916678,
-                0.018934815738905632,
-                0.020189941268682995
+                0.002406301220178474,
+                0.004364964491044704,
+                0.007948987067360759,
+                0.012491678115988468,
+                0.018699638322651254,
+                0.020557985944933188
               ],
               "shifted_relative_luminance": [
-                0.0019472002671037452,
-                0.0034901247248713524,
-                0.005940270740559103,
-                0.008901756916887353,
-                0.013115307674077613,
-                0.014781228647409954
+                0.0018826704304012623,
+                0.00333376961466012,
+                0.005727489379630901,
+                0.008772525431085814,
+                0.012764775708662204,
+                0.014701287718562732
               ],
               "normal_adjacent_delta_e_ok": [
-                3.0175469586184014,
-                3.5783079456655744,
-                3.169613818749886,
-                3.429053945814163,
-                1.7850118737140228
+                2.945123203787687,
+                3.6107619244795206,
+                3.2972080217182946,
+                3.335173003364934,
+                1.7378991627869163
               ],
               "shifted_adjacent_delta_e_ok": [
-                2.73669848214754,
-                3.005697905090711,
-                2.700481141815953,
-                2.9589184957857064,
-                1.9399680994148774
+                2.613868607296833,
+                3.014614360190526,
+                2.8699399654859326,
+                2.803716665223616,
+                1.9427453428567978
               ],
-              "normal_span_delta_e_ok": 14.091467508749375,
-              "shifted_span_delta_e_ok": 12.825932085766127,
+              "normal_span_delta_e_ok": 14.279785305658462,
+              "shifted_span_delta_e_ok": 12.81530863483665,
               "shifted_foreground_contrast": [
                 [
-                  8.825614576080241,
-                  8.571039424978885,
-                  8.1956336963436,
-                  7.783570335785116,
-                  7.263942532473924,
-                  7.077142212896889
+                  8.843640742557538,
+                  8.603023963355113,
+                  8.233489488918025,
+                  7.806907984394655,
+                  7.310337571837418,
+                  7.0915388894082785
                 ],
                 [
-                  6.049715560758007,
-                  5.875211310688636,
-                  5.6178810297722395,
-                  5.335422952445224,
-                  4.979232414053234,
-                  4.851185943140874
+                  6.057239983729949,
+                  5.8924352818917605,
+                  5.6393314913730554,
+                  5.34715470347118,
+                  5.007040688752721,
+                  4.8571797699097035
                 ],
                 [
-                  4.041507566697908,
-                  3.9249301441739406,
-                  3.753020859015118,
-                  3.5643249698733412,
-                  3.3263721700036792,
-                  3.2408308291118724
+                  3.999853949396541,
+                  3.891026374577444,
+                  3.723891144863453,
+                  3.5309543482117753,
+                  3.3063625557995775,
+                  3.2074029983601307
                 ]
               ]
             },
             "foreground": {
               "normal_adjacent_delta_e_ok": [
-                12.000744687221827,
-                11.860733620480989
+                11.907369193167867,
+                12.193470235197058
               ],
               "shifted_adjacent_delta_e_ok": [
-                10.24870340656923,
-                10.111943155820283
+                10.363112417747244,
+                10.391859652608629
               ],
               "normal_lightness": [
-                0.876553423697136,
+                0.8754330282990525,
                 0.7565844051319178,
-                0.637998430257805
+                0.6346702124363739
               ],
               "normal_chroma": [
-                0.01638085651706407,
+                0.020707352850978137,
                 0.013409332411548808,
-                0.011196521953045133
+                0.011211360702786846
               ],
-              "normal_mean_chroma": 0.013662236960552672,
-              "normal_mean_plus_b": 0.011544076967771738,
-              "chroma_reduction_vs_current_percent": 63.93426554951302,
-              "normal_lightness_gap_ratio": 0.9884716595363873,
-              "shifted_lightness_gap_ratio": 0.9869583647464193,
+              "normal_mean_chroma": 0.015109348655104597,
+              "normal_mean_plus_b": 0.012742878424289382,
+              "chroma_reduction_vs_current_percent": 60.114163010917274,
+              "normal_lightness_gap_ratio": 0.9748546952522177,
+              "shifted_lightness_gap_ratio": 0.9918611727279709,
               "normal_lightness_share": [
-                0.9996797839800636,
-                0.9998198987399888
+                0.9981098363467795,
+                0.9998317980359074
               ],
               "shifted_lightness_share": [
-                0.9886816608912417,
-                0.9889847982489918
+                0.9837369701583479,
+                0.9890654694902059
               ],
               "normal_hue_span_degrees": 0.0,
-              "shifted_hue_span_degrees": 0.2707470168622308,
-              "normal_chroma_vector_cosine": 0.9991078478346266,
-              "shifted_chroma_vector_cosine": 0.9999888351911566,
+              "shifted_hue_span_degrees": 0.8669764569158929,
+              "normal_chroma_vector_cosine": 0.9994340129820694,
+              "shifted_chroma_vector_cosine": 0.9998855196202504,
               "shifted_chroma": [
-                0.10199796120906741,
+                0.10520898980356921,
                 0.08662322199771477,
-                0.0716604457311653
+                0.07130160175075467
               ],
               "worst_surface_shifted_contrast": [
-                7.077142212896889,
-                4.851185943140874,
-                3.2408308291118724
+                7.0915388894082785,
+                4.8571797699097035,
+                3.2074029983601307
               ]
             },
             "categorical": {
               "normal_pair_delta_e_ok": 15.179491467515248,
               "shifted_pair_delta_e_ok": 11.610030468217829,
               "normal_foreground_clearance_by_role": [
-                13.581898830571726,
-                9.521693852378482,
-                10.423422895353571
+                13.264977019389141,
+                9.438631978842933,
+                10.504860984388307
               ],
               "shifted_foreground_clearance_by_role": [
-                7.53214268550644,
-                7.506823969247073,
-                7.58497462877501
+                7.421135591188179,
+                7.349129201814638,
+                7.5321242940142366
               ],
-              "normal_foreground_clearance_min": 9.521693852378482,
-              "shifted_foreground_clearance_min": 7.506823969247073,
-              "normal_background_contrast_min": 2.791351641478111,
-              "shifted_background_contrast_bg0_min": 3.013852751690427,
-              "shifted_background_contrast_all_surfaces_min": 2.4167681863484365,
+              "normal_foreground_clearance_min": 9.438631978842933,
+              "shifted_foreground_clearance_min": 7.349129201814638,
+              "normal_background_contrast_min": 2.776791388695527,
+              "shifted_background_contrast_bg0_min": 3.0176012755096244,
+              "shifted_background_contrast_all_surfaces_min": 2.419754196371382,
               "normal_hue_gap_degrees": 20.22514316519485,
-              "normal_mean_chroma": 0.09842672438644402,
+              "normal_mean_chroma": 0.09831363927869112,
               "normal_max_chroma": 0.10678538383883115,
               "normal_semantic_hue_error_max": null,
               "gain_corner_samples": [
@@ -6176,8 +6255,8 @@
                     0.5035
                   ],
                   "pair_delta_e_ok": 11.073966328494732,
-                  "foreground_clearance_delta_e_ok": 7.029616253500058,
-                  "background_contrast": 2.819484882343969
+                  "foreground_clearance_delta_e_ok": 6.933920944069396,
+                  "background_contrast": 2.822996282238081
                 },
                 {
                   "gains": [
@@ -6185,9 +6264,9 @@
                     0.703,
                     0.5565000000000001
                   ],
-                  "pair_delta_e_ok": 11.437428887387755,
-                  "foreground_clearance_delta_e_ok": 7.412603653540571,
-                  "background_contrast": 2.8344358529726468
+                  "pair_delta_e_ok": 11.34555174738769,
+                  "foreground_clearance_delta_e_ok": 7.297999585108647,
+                  "background_contrast": 2.8379653190583496
                 },
                 {
                   "gains": [
@@ -6196,8 +6275,8 @@
                     0.5035
                   ],
                   "pair_delta_e_ok": 11.054721282553546,
-                  "foreground_clearance_delta_e_ok": 7.08595743980382,
-                  "background_contrast": 3.094438900588032
+                  "foreground_clearance_delta_e_ok": 7.035675034866327,
+                  "background_contrast": 3.0982831946925877
                 },
                 {
                   "gains": [
@@ -6206,36 +6285,36 @@
                     0.5565000000000001
                   ],
                   "pair_delta_e_ok": 11.590538932437726,
-                  "foreground_clearance_delta_e_ok": 7.446060292719412,
-                  "background_contrast": 3.0987122927106947
+                  "foreground_clearance_delta_e_ok": 7.293102620639883,
+                  "background_contrast": 3.1025612932874354
                 }
               ],
               "gain_corner_pair_min": 11.054721282553546,
-              "gain_corner_foreground_clearance_min": 7.029616253500058,
-              "gain_corner_background_contrast_min": 2.819484882343969
+              "gain_corner_foreground_clearance_min": 6.933920944069396,
+              "gain_corner_background_contrast_min": 2.822996282238081
             },
             "terminal": {
-              "normal_pair_delta_e_ok": 12.150524780673566,
-              "shifted_pair_delta_e_ok": 8.583540516539939,
+              "normal_pair_delta_e_ok": 12.055917615551966,
+              "shifted_pair_delta_e_ok": 8.530959738108857,
               "normal_foreground_clearance_by_role": [
-                9.703243601674084,
-                8.185717046624513,
-                11.921182180661066
+                9.595141902984434,
+                8.111404299083501,
+                11.993353388794912
               ],
               "shifted_foreground_clearance_by_role": [
-                6.779788765835691,
-                5.936155281752026,
-                9.240883887187836
+                6.625474320162383,
+                5.907899153819978,
+                9.387396674006732
               ],
-              "normal_foreground_clearance_min": 8.185717046624513,
-              "shifted_foreground_clearance_min": 5.936155281752026,
-              "normal_background_contrast_min": 5.451892297618138,
-              "shifted_background_contrast_bg0_min": 5.315822148527977,
-              "shifted_background_contrast_all_surfaces_min": 4.262686637773875,
-              "normal_hue_gap_degrees": 33.96832595813126,
-              "normal_mean_chroma": 0.0962652310722353,
-              "normal_max_chroma": 0.11403169378998047,
-              "normal_semantic_hue_error_max": 18.404914102481882,
+              "normal_foreground_clearance_min": 8.111404299083501,
+              "shifted_foreground_clearance_min": 5.907899153819978,
+              "normal_background_contrast_min": 5.381216954421954,
+              "shifted_background_contrast_bg0_min": 5.32395063997817,
+              "shifted_background_contrast_all_surfaces_min": 4.269169690149209,
+              "normal_hue_gap_degrees": 32.418632024035105,
+              "normal_mean_chroma": 0.0963116242633752,
+              "normal_max_chroma": 0.11426704780002214,
+              "normal_semantic_hue_error_max": 19.231088123543287,
               "gain_corner_samples": [
                 {
                   "gains": [
@@ -6243,9 +6322,9 @@
                     0.703,
                     0.5035
                   ],
-                  "pair_delta_e_ok": 8.113934004965211,
-                  "foreground_clearance_delta_e_ok": 5.598863119001288,
-                  "background_contrast": 4.957622962561217
+                  "pair_delta_e_ok": 8.23076501241463,
+                  "foreground_clearance_delta_e_ok": 5.573779865725233,
+                  "background_contrast": 4.965154879253591
                 },
                 {
                   "gains": [
@@ -6253,9 +6332,9 @@
                     0.703,
                     0.5565000000000001
                   ],
-                  "pair_delta_e_ok": 8.43380525528691,
-                  "foreground_clearance_delta_e_ok": 6.125533043843536,
-                  "background_contrast": 4.979662598975622
+                  "pair_delta_e_ok": 8.347029193133364,
+                  "foreground_clearance_delta_e_ok": 6.09412498645511,
+                  "background_contrast": 4.987553697188697
                 },
                 {
                   "gains": [
@@ -6263,9 +6342,9 @@
                     0.777,
                     0.5035
                   ],
-                  "pair_delta_e_ok": 7.864812233437929,
-                  "foreground_clearance_delta_e_ok": 5.744388484852388,
-                  "background_contrast": 5.6354110891165
+                  "pair_delta_e_ok": 8.110736933542888,
+                  "foreground_clearance_delta_e_ok": 5.7272957149487524,
+                  "background_contrast": 5.588613356029689
                 },
                 {
                   "gains": [
@@ -6273,14 +6352,14 @@
                     0.777,
                     0.5565000000000001
                   ],
-                  "pair_delta_e_ok": 8.865132376224958,
-                  "foreground_clearance_delta_e_ok": 6.268471707921891,
-                  "background_contrast": 5.638895818276976
+                  "pair_delta_e_ok": 8.801177701606033,
+                  "foreground_clearance_delta_e_ok": 6.243840377125178,
+                  "background_contrast": 5.591859067968317
                 }
               ],
-              "gain_corner_pair_min": 7.864812233437929,
-              "gain_corner_foreground_clearance_min": 5.598863119001288,
-              "gain_corner_background_contrast_min": 4.957622962561217
+              "gain_corner_pair_min": 8.110736933542888,
+              "gain_corner_foreground_clearance_min": 5.573779865725233,
+              "gain_corner_background_contrast_min": 4.965154879253591
             },
             "sequential": {
               "normal_cv": 0.040851110621169806,
@@ -6289,7 +6368,7 @@
               "shifted_max_to_min": 1.0001001995962027,
               "normal_lightness_range": 0.5949321884928973,
               "shifted_lightness_range": 0.5140092807445045,
-              "shifted_light_endpoint_background_contrast_min": 7.075569567803683,
+              "shifted_light_endpoint_background_contrast_min": 7.0843117060719925,
               "normal_minimum_signed_lightness_step": 0.002216617553735034,
               "shifted_minimum_signed_lightness_step": 0.0019799935002553504,
               "gain_corner_samples": [
@@ -6341,28 +6420,28 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
                   "seed": 7000,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 0,
-                  "objective": -1.1510784378756642,
+                  "accepted_moves": 69,
+                  "objective": 1.5582095253298525,
                   "selected": {
                     "surfaces": [
-                      "#090807",
-                      "#100E0C",
-                      "#181612",
-                      "#201D19",
-                      "#29251F",
-                      "#32241B"
+                      "#080807",
+                      "#0E0E0D",
+                      "#161614",
+                      "#1F1D1B",
+                      "#272522",
+                      "#302520"
                     ],
                     "foregrounds": [
-                      "#DFD4CC",
-                      "#B7AEA8",
-                      "#908984"
+                      "#DED0C6",
+                      "#B3AAA4",
+                      "#8E8681"
                     ]
                   }
                 },
@@ -6370,21 +6449,21 @@
                   "seed": 7001,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 0,
-                  "objective": -1.1510784378756642,
+                  "accepted_moves": 62,
+                  "objective": 1.5724433256840415,
                   "selected": {
                     "surfaces": [
-                      "#090807",
-                      "#100E0C",
-                      "#181612",
-                      "#201D19",
-                      "#29251F",
-                      "#32241B"
+                      "#080807",
+                      "#0E0E0D",
+                      "#161614",
+                      "#1F1E1B",
+                      "#252320",
+                      "#2E241F"
                     ],
                     "foregrounds": [
-                      "#DFD4CC",
-                      "#B7AEA8",
-                      "#908984"
+                      "#DACEC4",
+                      "#B9ADA6",
+                      "#938A84"
                     ]
                   }
                 }
@@ -6392,32 +6471,32 @@
               "selected_seed": 7000,
               "selected": {
                 "surfaces": [
-                  "#090807",
-                  "#100E0C",
-                  "#181612",
-                  "#201D19",
-                  "#29251F",
-                  "#32241B"
+                  "#080807",
+                  "#0E0E0D",
+                  "#161614",
+                  "#1F1D1B",
+                  "#272522",
+                  "#302520"
                 ],
                 "foregrounds": [
-                  "#DFD4CC",
-                  "#B7AEA8",
-                  "#908984"
+                  "#DED0C6",
+                  "#B3AAA4",
+                  "#8E8681"
                 ]
               },
               "selected_after_coupled_refinement": {
                 "surfaces": [
-                  "#090807",
-                  "#100E0C",
-                  "#181612",
-                  "#201D19",
-                  "#29251F",
-                  "#32241B"
+                  "#080807",
+                  "#0E0E0D",
+                  "#161614",
+                  "#1F1D1B",
+                  "#272522",
+                  "#302520"
                 ],
                 "foregrounds": [
-                  "#DFD4CC",
+                  "#E1D3C9",
                   "#B7AEA8",
-                  "#918A85"
+                  "#908984"
                 ]
               },
               "changed_from_shipped": true
@@ -6430,11 +6509,11 @@
                   "seed": 17000,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 8,
-                  "objective": -1.8066618023553038,
+                  "accepted_moves": 5,
+                  "objective": -1.8046743630000945,
                   "selected": [
                     "#6E96D7",
-                    "#E1AA67",
+                    "#E0AA67",
                     "#2E8B7E",
                     "#67BE95",
                     "#945D48",
@@ -6445,14 +6524,14 @@
                   "seed": 17001,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 10,
-                  "objective": -1.8054987640269609,
+                  "accepted_moves": 8,
+                  "objective": -1.802714334894951,
                   "selected": [
-                    "#6E96D7",
-                    "#E2A967",
-                    "#2D8B7E",
+                    "#6E96D6",
+                    "#E1A967",
+                    "#2E8B7E",
                     "#67BE94",
-                    "#945D47",
+                    "#945D48",
                     "#C4779A"
                   ]
                 }
@@ -6468,15 +6547,15 @@
                   "seed": 27000,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 24,
-                  "objective": -1.8901197891760373,
+                  "accepted_moves": 21,
+                  "objective": -1.8873551919609417,
                   "selected": [
-                    "#F6AE9B",
-                    "#80B797",
-                    "#C89245",
-                    "#B5C6F9",
+                    "#F6AD99",
+                    "#80B798",
+                    "#C69243",
+                    "#B4C6F9",
                     "#D895D2",
-                    "#60E0DC"
+                    "#62E0DB"
                   ]
                 },
                 {
@@ -6484,7 +6563,7 @@
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
                   "accepted_moves": 5,
-                  "objective": -1.8459142039624883,
+                  "objective": -1.8469708195499657,
                   "selected": [
                     "#F5AD9A",
                     "#81B798",
@@ -6507,7 +6586,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 3,
-                  "objective": -0.048248483359071725,
+                  "objective": -0.04833590474175482,
                   "selected": [
                     "#282527",
                     "#51404F",
@@ -6522,7 +6601,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 4,
-                  "objective": -0.04760885079703088,
+                  "objective": -0.047695523084872266,
                   "selected": [
                     "#282527",
                     "#51404F",
@@ -6535,7 +6614,7 @@
               ],
               "selected_seed": 37000,
               "changed_from_shipped": true,
-              "surface_dependency_fingerprint": "5591c25dfd2c0e890cc13d4b9ea7ddf5b6acf11907368c2e4da7ca33090a6289",
+              "surface_dependency_fingerprint": "940599d32988936c7e085d7f78b530a5f0cb4239b2cb116d998f73f04f3fe5f0",
               "controlled_identical_input_invariance": true
             }
           },
@@ -6631,6 +6710,32 @@
             [
               0.0071425118065276405,
               0.02886305769383113
+            ]
+          ],
+          "surface_target_ab": [
+            [
+              0.00377523561503754,
+              0.004903253774155277
+            ],
+            [
+              0.0043791183932645195,
+              0.003668264477750761
+            ],
+            [
+              0.004614245199344411,
+              0.0076910003661032605
+            ],
+            [
+              0.006947853936527075,
+              0.010162232782134278
+            ],
+            [
+              0.009692611605720465,
+              0.010806991035892421
+            ],
+            [
+              0.016862856647706866,
+              0.018570128851618125
             ]
           ],
           "full_foreground_target_ab": [
@@ -8548,7 +8653,7 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
@@ -8747,15 +8852,15 @@
         "halfway": {
           "weight": 0.5,
           "surfaces": {
-            "bg_0": "#070504",
-            "bg_1": "#0D0A09",
-            "bg_2": "#15110E",
-            "bg_3": "#1E1814",
-            "bg_4": "#271F1B",
-            "bg_5": "#30221B"
+            "bg_0": "#060504",
+            "bg_1": "#0D0B0A",
+            "bg_2": "#14120F",
+            "bg_3": "#1D1916",
+            "bg_4": "#25201C",
+            "bg_5": "#2C241E"
           },
           "foregrounds": [
-            "#F3E1CA",
+            "#F5E3CC",
             "#D0BFAB",
             "#AAA095"
           ],
@@ -8771,6 +8876,32 @@
             [
               0.006532779021029564,
               0.018991619945321787
+            ]
+          ],
+          "surface_target_ab": [
+            [
+              0.001701006409548005,
+              0.003084721696076108
+            ],
+            [
+              0.002001035305225698,
+              0.0024736625130037486
+            ],
+            [
+              0.0017345160139564065,
+              0.0057810958200000696
+            ],
+            [
+              0.003946436470154208,
+              0.007361931276977395
+            ],
+            [
+              0.005661000416834048,
+              0.008530874792052941
+            ],
+            [
+              0.008657631440285207,
+              0.014431946556130996
             ]
           ],
           "full_foreground_target_ab": [
@@ -8793,12 +8924,12 @@
             0.8386566787088534
           ],
           "foreground_lightness_deltas_vs_shipped": [
-            0.03419315282275093,
+            0.04025499431836088,
             0.00957780533161956,
             0.008906916258644149
           ],
-          "surface_movement_mean_delta_e_ok": 0.0,
-          "foreground_plus_b_reduction_vs_shipped": 0.01759935589309458,
+          "surface_movement_mean_delta_e_ok": 0.4942658697427572,
+          "foreground_plus_b_reduction_vs_shipped": 0.01761719082359341,
           "categorical": [
             "#66B0D4",
             "#E99096",
@@ -10388,129 +10519,129 @@
           "metrics": {
             "surface": {
               "normal_relative_luminance": [
-                0.0016247799429369271,
-                0.003223711658383635,
-                0.005920332417120695,
-                0.00979794007529485,
-                0.014904397088534334,
-                0.01851565080375909
+                0.0015602501062344442,
+                0.0034682436985952548,
+                0.006158245625066072,
+                0.01014399658565922,
+                0.01510178784119642,
+                0.018909627141974264
               ],
               "shifted_relative_luminance": [
-                0.0010493486559800885,
-                0.0020528366165460826,
-                0.003627030401318435,
-                0.005688594087237818,
-                0.008327822766959607,
-                0.010819325453973693
+                0.0009848188192776058,
+                0.002172745012416295,
+                0.003639868790611383,
+                0.005685570199438384,
+                0.008119046810443141,
+                0.01026437261005479
               ],
               "normal_adjacent_delta_e_ok": [
-                3.0273588815288575,
-                3.3429485864001047,
-                3.353584648748685,
-                3.257810582305077,
-                2.206975589531213
+                3.5585411702804577,
+                3.19683269880372,
+                3.3691827096965064,
+                3.0865480646517827,
+                2.0426733039801133
               ],
               "shifted_adjacent_delta_e_ok": [
-                2.5967519260868244,
-                2.7863758864409656,
-                2.7204416327209056,
-                2.637520939024953,
-                2.279539880393737
+                3.0735057128443986,
+                2.526754139006138,
+                2.7057739928055624,
+                2.4194360901328893,
+                1.8763187599178375
               ],
-              "normal_span_delta_e_ok": 14.982202998090838,
-              "shifted_span_delta_e_ok": 12.897881783311302,
+              "normal_span_delta_e_ok": 15.173595145105775,
+              "shifted_span_delta_e_ok": 12.532402685094338,
               "shifted_foreground_contrast": [
                 [
-                  7.461840788934888,
-                  7.317989504700049,
-                  7.103173701752942,
-                  6.84021779133129,
-                  6.530710285067041,
-                  6.263175548338191
+                  7.594400093950721,
+                  7.421482475937101,
+                  7.21849477937116,
+                  6.953311449347203,
+                  6.6621724560287925,
+                  6.42500860892693
                 ],
                 [
-                  5.5455997216707225,
-                  5.438690225156449,
-                  5.279040282102117,
-                  5.0836128715081506,
-                  4.853588566628949,
-                  4.6547581970851715
+                  5.552618607934205,
+                  5.426190506761753,
+                  5.277776774644644,
+                  5.083888926415807,
+                  4.871023687319078,
+                  4.697622184335845
                 ],
                 [
-                  3.9936764659862374,
-                  3.9166853448003645,
-                  3.8017130690552188,
-                  3.660975567311653,
-                  3.495323032129371,
-                  3.35213488162739
+                  3.9987311331628757,
+                  3.9076836436878084,
+                  3.8008031512373517,
+                  3.6611743688918894,
+                  3.507878974620082,
+                  3.3830034811861367
                 ]
               ]
             },
             "foreground": {
               "normal_adjacent_delta_e_ok": [
-                10.482970196863752,
+                11.088742487420273,
                 10.327778814916677
               ],
               "shifted_adjacent_delta_e_ok": [
-                8.043880980708662,
+                8.500747758395697,
                 8.585346577818044
               ],
               "normal_lightness": [
-                0.9182190410008102,
+                0.9242808824964202,
                 0.8134382389934802,
                 0.7111061803959707
               ],
               "normal_chroma": [
-                0.03639990907320641,
+                0.03634366938965007,
                 0.033499073457091674,
                 0.019574640159900673
               ],
-              "normal_mean_chroma": 0.02982454089673292,
-              "normal_mean_plus_b": 0.028412523146802066,
-              "chroma_reduction_vs_current_percent": 36.76865014750639,
-              "normal_lightness_gap_ratio": 0.9766298466617083,
-              "shifted_lightness_gap_ratio": 0.9491139909331961,
+              "normal_mean_chroma": 0.029805794335547475,
+              "normal_mean_plus_b": 0.028394688216303237,
+              "chroma_reduction_vs_current_percent": 36.80839494602492,
+              "normal_lightness_gap_ratio": 0.9232192174737811,
+              "shifted_lightness_gap_ratio": 0.9968876644966242,
               "normal_lightness_share": [
-                0.9995335295208397,
+                0.9995961546468087,
                 0.9908428562558743
               ],
               "shifted_lightness_share": [
-                0.9691000373046629,
+                0.9691980222914868,
                 0.9566609332979353
               ],
-              "normal_hue_span_degrees": 2.2228644712262735,
+              "normal_hue_span_degrees": 2.226130515941861,
               "shifted_hue_span_degrees": 1.7536838979517029,
-              "normal_chroma_vector_cosine": 0.9976848827811327,
+              "normal_chroma_vector_cosine": 0.9976810045737202,
               "shifted_chroma_vector_cosine": 0.9995316252618989,
               "shifted_chroma": [
-                0.17684651458394937,
+                0.17794002531780304,
                 0.1570071836916813,
                 0.13239882030951125
               ],
               "worst_surface_shifted_contrast": [
-                6.263175548338191,
-                4.6547581970851715,
-                3.35213488162739
+                6.42500860892693,
+                4.697622184335845,
+                3.3830034811861367
               ]
             },
             "categorical": {
               "normal_pair_delta_e_ok": 18.588710411260188,
               "shifted_pair_delta_e_ok": 14.152167946977329,
               "normal_foreground_clearance_by_role": [
-                10.977324184269134,
+                11.317784562622043,
                 10.36484525489689,
                 10.43710342993559
               ],
               "shifted_foreground_clearance_by_role": [
-                9.02441542259483,
+                9.373045527038641,
                 6.160577162018532,
                 7.142675066596765
               ],
               "normal_foreground_clearance_min": 10.36484525489689,
               "shifted_foreground_clearance_min": 6.160577162018532,
-              "normal_background_contrast_min": 3.282154515769726,
-              "shifted_background_contrast_bg0_min": 3.0516303305360735,
-              "shifted_background_contrast_all_surfaces_min": 2.5614184233363853,
+              "normal_background_contrast_min": 3.2633894858136765,
+              "shifted_background_contrast_bg0_min": 3.055492680377972,
+              "shifted_background_contrast_all_surfaces_min": 2.5850056005844504,
               "normal_hue_gap_degrees": 27.763695248815708,
               "normal_mean_chroma": 0.09695993335593339,
               "normal_max_chroma": 0.10815898738523828,
@@ -10524,7 +10655,7 @@
                   ],
                   "pair_delta_e_ok": 13.851568403273989,
                   "foreground_clearance_delta_e_ok": 5.885437081523667,
-                  "background_contrast": 3.004707055725043
+                  "background_contrast": 3.0085122465016343
                 },
                 {
                   "gains": [
@@ -10534,7 +10665,7 @@
                   ],
                   "pair_delta_e_ok": 13.847016423346407,
                   "foreground_clearance_delta_e_ok": 5.881895583314889,
-                  "background_contrast": 3.0049344110084517
+                  "background_contrast": 3.0087398328864956
                 },
                 {
                   "gains": [
@@ -10544,7 +10675,7 @@
                   ],
                   "pair_delta_e_ok": 14.185443240068048,
                   "foreground_clearance_delta_e_ok": 6.460664808062219,
-                  "background_contrast": 3.1010495041144672
+                  "background_contrast": 3.104972161693033
                 },
                 {
                   "gains": [
@@ -10554,31 +10685,31 @@
                   ],
                   "pair_delta_e_ok": 14.184926242740175,
                   "foreground_clearance_delta_e_ok": 6.45742882213579,
-                  "background_contrast": 3.1012751616637924
+                  "background_contrast": 3.105198046177023
                 }
               ],
               "gain_corner_pair_min": 13.847016423346407,
               "gain_corner_foreground_clearance_min": 5.881895583314889,
-              "gain_corner_background_contrast_min": 3.004707055725043
+              "gain_corner_background_contrast_min": 3.0085122465016343
             },
             "terminal": {
               "normal_pair_delta_e_ok": 12.618702455279957,
               "shifted_pair_delta_e_ok": 7.748140535375707,
               "normal_foreground_clearance_by_role": [
-                13.214805182647712,
+                13.554391118540842,
                 11.195783848007517,
                 9.22904706362103
               ],
               "shifted_foreground_clearance_by_role": [
-                9.21114742941914,
+                9.539471163332367,
                 5.0638676713364275,
                 4.701444635517807
               ],
               "normal_foreground_clearance_min": 9.22904706362103,
               "shifted_foreground_clearance_min": 4.701444635517807,
-              "normal_background_contrast_min": 5.963611923098769,
-              "shifted_background_contrast_bg0_min": 4.521469902584015,
-              "shifted_background_contrast_all_surfaces_min": 3.7951439245936425,
+              "normal_background_contrast_min": 5.92951622289772,
+              "shifted_background_contrast_bg0_min": 4.527192580848366,
+              "shifted_background_contrast_all_surfaces_min": 3.8300920344439287,
               "normal_hue_gap_degrees": 70.90775795304845,
               "normal_mean_chroma": 0.10521099049289093,
               "normal_max_chroma": 0.11845391330678093,
@@ -10592,7 +10723,7 @@
                   ],
                   "pair_delta_e_ok": 7.450560819537892,
                   "foreground_clearance_delta_e_ok": 4.742920982181801,
-                  "background_contrast": 4.266643471918401
+                  "background_contrast": 4.27204679147177
                 },
                 {
                   "gains": [
@@ -10602,7 +10733,7 @@
                   ],
                   "pair_delta_e_ok": 7.423687734772059,
                   "foreground_clearance_delta_e_ok": 4.738923821155602,
-                  "background_contrast": 4.267587139944497
+                  "background_contrast": 4.2729915738680155
                 },
                 {
                   "gains": [
@@ -10612,7 +10743,7 @@
                   ],
                   "pair_delta_e_ok": 7.7210600464448635,
                   "foreground_clearance_delta_e_ok": 4.664062946093747,
-                  "background_contrast": 4.653038991472253
+                  "background_contrast": 4.658924830649939
                 },
                 {
                   "gains": [
@@ -10622,12 +10753,12 @@
                   ],
                   "pair_delta_e_ok": 7.725113236366747,
                   "foreground_clearance_delta_e_ok": 4.6596458123367315,
-                  "background_contrast": 4.653241530710882
+                  "background_contrast": 4.659127538299887
                 }
               ],
               "gain_corner_pair_min": 7.423687734772059,
               "gain_corner_foreground_clearance_min": 4.6596458123367315,
-              "gain_corner_background_contrast_min": 4.266643471918401
+              "gain_corner_background_contrast_min": 4.27204679147177
             },
             "sequential": {
               "normal_cv": 0.048941102837155456,
@@ -10636,7 +10767,7 @@
               "shifted_max_to_min": 1.000025450122338,
               "normal_lightness_range": 0.7123874983791056,
               "shifted_lightness_range": 0.5499518980788196,
-              "shifted_light_endpoint_background_contrast_min": 6.296785076961242,
+              "shifted_light_endpoint_background_contrast_min": 6.354769896758781,
               "normal_minimum_signed_lightness_step": 0.002620033942487776,
               "shifted_minimum_signed_lightness_step": 0.0021169620790149057,
               "gain_corner_samples": [
@@ -10688,23 +10819,23 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
                   "seed": 7100,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 3,
-                  "objective": -1.130081538377987,
+                  "accepted_moves": 7,
+                  "objective": -0.3601081226165057,
                   "selected": {
                     "surfaces": [
-                      "#070504",
-                      "#0D0A09",
-                      "#15110E",
-                      "#1E1814",
-                      "#271F1B",
-                      "#30221B"
+                      "#060504",
+                      "#0C0A09",
+                      "#14120F",
+                      "#1D1916",
+                      "#241F1C",
+                      "#2C241E"
                     ],
                     "foregrounds": [
                       "#ECDAC3",
@@ -10717,16 +10848,16 @@
                   "seed": 7101,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 2,
-                  "objective": -1.1314911282399773,
+                  "accepted_moves": 6,
+                  "objective": -0.36499069736295875,
                   "selected": {
                     "surfaces": [
-                      "#070504",
-                      "#0D0A09",
-                      "#15110E",
-                      "#1E1814",
-                      "#271F1B",
-                      "#30221B"
+                      "#060504",
+                      "#0D0B0A",
+                      "#14120F",
+                      "#1D1916",
+                      "#25201C",
+                      "#2C241E"
                     ],
                     "foregrounds": [
                       "#EDDBC4",
@@ -10739,12 +10870,12 @@
               "selected_seed": 7101,
               "selected": {
                 "surfaces": [
-                  "#070504",
-                  "#0D0A09",
-                  "#15110E",
-                  "#1E1814",
-                  "#271F1B",
-                  "#30221B"
+                  "#060504",
+                  "#0D0B0A",
+                  "#14120F",
+                  "#1D1916",
+                  "#25201C",
+                  "#2C241E"
                 ],
                 "foregrounds": [
                   "#EDDBC4",
@@ -10754,15 +10885,15 @@
               },
               "selected_after_coupled_refinement": {
                 "surfaces": [
-                  "#070504",
-                  "#0D0A09",
-                  "#15110E",
-                  "#1E1814",
-                  "#271F1B",
-                  "#30221B"
+                  "#060504",
+                  "#0D0B0A",
+                  "#14120F",
+                  "#1D1916",
+                  "#25201C",
+                  "#2C241E"
                 ],
                 "foregrounds": [
-                  "#F3E1CA",
+                  "#F5E3CC",
                   "#D0BFAB",
                   "#AAA095"
                 ]
@@ -10778,7 +10909,7 @@
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
                   "accepted_moves": 6,
-                  "objective": -2.032901232923559,
+                  "objective": -2.0371469248282104,
                   "selected": [
                     "#66B0D4",
                     "#E99096",
@@ -10790,13 +10921,13 @@
                   "seed": 17101,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 11,
-                  "objective": -2.03046072896652,
+                  "accepted_moves": 22,
+                  "objective": -2.0309750779912648,
                   "selected": [
                     "#66B0D4",
                     "#E99096",
-                    "#A46449",
-                    "#A8E1A7"
+                    "#A66447",
+                    "#A8E2AC"
                   ]
                 }
               ],
@@ -10812,7 +10943,7 @@
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 903,
                   "accepted_moves": 0,
-                  "objective": -1.7893155830854344,
+                  "objective": -1.7963052050554917,
                   "selected": [
                     "#EC8B96",
                     "#74E5C0",
@@ -10825,7 +10956,7 @@
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 903,
                   "accepted_moves": 0,
-                  "objective": -1.7893155830854344,
+                  "objective": -1.7963052050554917,
                   "selected": [
                     "#EC8B96",
                     "#74E5C0",
@@ -10846,7 +10977,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 9,
-                  "objective": -0.020188573746903152,
+                  "objective": -0.020768421944878546,
                   "selected": [
                     "#18110E",
                     "#4B343E",
@@ -10861,7 +10992,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 9,
-                  "objective": -0.013935015793858023,
+                  "objective": -0.014520638451654473,
                   "selected": [
                     "#17110F",
                     "#4B343E",
@@ -10874,7 +11005,7 @@
               ],
               "selected_seed": 37100,
               "changed_from_shipped": true,
-              "surface_dependency_fingerprint": "2ec62cf6e0a71a6dd18a582403647612a9b4d16c27062b90c257973e44e33034",
+              "surface_dependency_fingerprint": "184728df0e2015490a9545129bacc5fccb7fd63dd07374a704f1f4db246042a1",
               "controlled_identical_input_invariance": true
             }
           },
@@ -10887,12 +11018,12 @@
         "full": {
           "weight": 1.0,
           "surfaces": {
-            "bg_0": "#070504",
-            "bg_1": "#0D0A09",
-            "bg_2": "#15110E",
-            "bg_3": "#1E1814",
-            "bg_4": "#271F1B",
-            "bg_5": "#30221B"
+            "bg_0": "#060606",
+            "bg_1": "#0B0B0A",
+            "bg_2": "#121210",
+            "bg_3": "#1A1917",
+            "bg_4": "#23211E",
+            "bg_5": "#292722"
           },
           "foregrounds": [
             "#EFE4DC",
@@ -10911,6 +11042,32 @@
             [
               0.005923046235531488,
               0.009120182196812442
+            ]
+          ],
+          "surface_target_ab": [
+            [
+              -0.00037322279594153,
+              0.0012661896179969392
+            ],
+            [
+              -0.0003770477828131235,
+              0.0012790605482567363
+            ],
+            [
+              -0.001145213171431598,
+              0.0038711912738968782
+            ],
+            [
+              0.0009450190037813416,
+              0.004561629771820513
+            ],
+            [
+              0.0016293892279476314,
+              0.006254758548213461
+            ],
+            [
+              0.00045240623286354684,
+              0.01029376426064387
             ]
           ],
           "full_foreground_target_ab": [
@@ -10937,7 +11094,7 @@
             0.01582612094686353,
             0.011219018582715456
           ],
-          "surface_movement_mean_delta_e_ok": 0.0,
+          "surface_movement_mean_delta_e_ok": 0.9738277352788247,
           "foreground_plus_b_reduction_vs_shipped": 0.03469159184068801,
           "categorical": [
             "#66B0D4",
@@ -10954,14 +11111,14 @@
           "terminal": [
             "#EC8B96",
             "#74E5C0",
-            "#C39B48",
-            "#A5D0FF"
+            "#C39B50",
+            "#A4D0FC"
           ],
           "terminal_transformed_targets": [
             "#EC4C0D",
             "#747C11",
-            "#C35406",
-            "#A57116"
+            "#C35407",
+            "#A47116"
           ],
           "terminal_ansi_indices": [
             0,
@@ -12528,61 +12685,61 @@
           "metrics": {
             "surface": {
               "normal_relative_luminance": [
-                0.0016247799429369271,
-                0.003223711658383635,
-                0.005920332417120695,
-                0.00979794007529485,
-                0.014904397088534334,
-                0.01851565080375909
+                0.0018211619012930248,
+                0.003324062363867902,
+                0.005986212784515606,
+                0.009767353673157399,
+                0.015387752535435919,
+                0.02037948058618175
               ],
               "shifted_relative_luminance": [
-                0.0010493486559800885,
-                0.0020528366165460826,
-                0.003627030401318435,
-                0.005688594087237818,
-                0.008327822766959607,
-                0.010819325453973693
+                0.0011066293954361682,
+                0.002028563677688941,
+                0.0034405286657465217,
+                0.005271485331145107,
+                0.007936632315226906,
+                0.010216104656748663
               ],
               "normal_adjacent_delta_e_ok": [
-                3.0273588815288575,
-                3.3429485864001047,
-                3.353584648748685,
-                3.257810582305077,
-                2.206975589531213
+                2.7105038786332676,
+                3.2299657545022216,
+                3.241825025304452,
+                3.5137379605762256,
+                2.4501204138333583
               ],
               "shifted_adjacent_delta_e_ok": [
-                2.5967519260868244,
-                2.7863758864409656,
-                2.7204416327209056,
-                2.637520939024953,
-                2.279539880393737
+                2.3653710158643237,
+                2.5346722517979585,
+                2.4917588292294854,
+                2.735825475154557,
+                1.8535629615025844
               ],
-              "normal_span_delta_e_ok": 14.982202998090838,
-              "shifted_span_delta_e_ok": 12.897881783311302,
+              "normal_span_delta_e_ok": 15.12675872066373,
+              "shifted_span_delta_e_ok": 11.946694030341227,
               "shifted_foreground_contrast": [
                 [
-                  7.404321978372073,
-                  7.2615795565481545,
-                  7.048419638499307,
-                  6.78749069590312,
-                  6.480368995517627,
-                  6.2148965220125785
+                  7.396023152111972,
+                  7.264967308662055,
+                  7.073017869999623,
+                  6.838712800469283,
+                  6.524124705393171,
+                  6.27715486396362
                 ],
                 [
-                  5.471509062227846,
-                  5.366027904485751,
-                  5.208510926332346,
-                  5.015694476942006,
-                  4.788743356802372,
-                  4.592569412881814
+                  5.465376548917292,
+                  5.368531322954848,
+                  5.226688072999102,
+                  5.053545641456297,
+                  4.82107714290832,
+                  4.638575932206531
                 ],
                 [
-                  3.967956328519111,
-                  3.8914610467527595,
-                  3.7772292172511337,
-                  3.637398095361432,
-                  3.4728123982199772,
-                  3.3305464102782185
+                  3.963509009740399,
+                  3.893276534042355,
+                  3.7904113436682665,
+                  3.6648478840884833,
+                  3.4962609660181703,
+                  3.3639104890783216
                 ]
               ]
             },
@@ -12628,9 +12785,9 @@
                 0.13004891640653357
               ],
               "worst_surface_shifted_contrast": [
-                6.2148965220125785,
-                4.592569412881814,
-                3.3305464102782185
+                6.27715486396362,
+                4.638575932206531,
+                3.3639104890783216
               ]
             },
             "categorical": {
@@ -12648,9 +12805,9 @@
               ],
               "normal_foreground_clearance_min": 10.17792528564862,
               "shifted_foreground_clearance_min": 7.0102152609752615,
-              "normal_background_contrast_min": 3.282154515769726,
-              "shifted_background_contrast_bg0_min": 3.0516303305360735,
-              "shifted_background_contrast_all_surfaces_min": 2.5614184233363853,
+              "normal_background_contrast_min": 3.195234616872295,
+              "shifted_background_contrast_bg0_min": 3.0482100376318555,
+              "shifted_background_contrast_all_surfaces_min": 2.587077686288704,
               "normal_hue_gap_degrees": 27.763695248815708,
               "normal_mean_chroma": 0.09695993335593339,
               "normal_max_chroma": 0.10815898738523828,
@@ -12664,7 +12821,7 @@
                   ],
                   "pair_delta_e_ok": 13.851568403273989,
                   "foreground_clearance_delta_e_ok": 6.632740260094849,
-                  "background_contrast": 3.004707055725043
+                  "background_contrast": 3.001695314805204
                 },
                 {
                   "gains": [
@@ -12674,7 +12831,7 @@
                   ],
                   "pair_delta_e_ok": 13.847016423346407,
                   "foreground_clearance_delta_e_ok": 6.625364893606362,
-                  "background_contrast": 3.0049344110084517
+                  "background_contrast": 3.0019001256221527
                 },
                 {
                   "gains": [
@@ -12684,7 +12841,7 @@
                   ],
                   "pair_delta_e_ok": 14.185443240068048,
                   "foreground_clearance_delta_e_ok": 7.303490158371721,
-                  "background_contrast": 3.1010495041144672
+                  "background_contrast": 3.0972299477963157
                 },
                 {
                   "gains": [
@@ -12694,33 +12851,33 @@
                   ],
                   "pair_delta_e_ok": 14.184926242740175,
                   "foreground_clearance_delta_e_ok": 7.302310099632099,
-                  "background_contrast": 3.1012751616637924
+                  "background_contrast": 3.097432343096211
                 }
               ],
               "gain_corner_pair_min": 13.847016423346407,
               "gain_corner_foreground_clearance_min": 6.625364893606362,
-              "gain_corner_background_contrast_min": 3.004707055725043
+              "gain_corner_background_contrast_min": 3.001695314805204
             },
             "terminal": {
-              "normal_pair_delta_e_ok": 13.18184141765062,
-              "shifted_pair_delta_e_ok": 7.7503935232644805,
+              "normal_pair_delta_e_ok": 12.777311318027436,
+              "shifted_pair_delta_e_ok": 7.746267867861263,
               "normal_foreground_clearance_by_role": [
-                12.627979735166289,
-                9.604437177631304,
-                10.185225419637135
+                12.535480652185809,
+                9.292583485422494,
+                9.495089101360223
               ],
               "shifted_foreground_clearance_by_role": [
                 9.398488159774157,
-                5.017808615434911,
-                5.064763374924071
+                5.021764720263865,
+                5.067805024202006
               ],
-              "normal_foreground_clearance_min": 9.604437177631304,
-              "shifted_foreground_clearance_min": 5.017808615434911,
-              "normal_background_contrast_min": 5.912907595856058,
-              "shifted_background_contrast_bg0_min": 4.504776429473059,
-              "shifted_background_contrast_all_surfaces_min": 3.7811320801221777,
-              "normal_hue_gap_degrees": 70.28139711633975,
-              "normal_mean_chroma": 0.10690714513975796,
+              "normal_foreground_clearance_min": 9.292583485422494,
+              "shifted_foreground_clearance_min": 5.021764720263865,
+              "normal_background_contrast_min": 5.772133921144709,
+              "shifted_background_contrast_bg0_min": 4.500025196892665,
+              "shifted_background_contrast_all_surfaces_min": 3.8192626593613968,
+              "normal_hue_gap_degrees": 68.35613975974334,
+              "normal_mean_chroma": 0.1045072624998448,
               "normal_max_chroma": 0.11845391330678093,
               "normal_semantic_hue_error_max": 29.70074433167997,
               "gain_corner_samples": [
@@ -12730,9 +12887,9 @@
                     0.516420741,
                     0.0824595155
                   ],
-                  "pair_delta_e_ok": 7.669969039018784,
-                  "foreground_clearance_delta_e_ok": 4.7059109130190295,
-                  "background_contrast": 4.266643471918401
+                  "pair_delta_e_ok": 7.7774498621190515,
+                  "foreground_clearance_delta_e_ok": 4.709654701351744,
+                  "background_contrast": 4.2623668404543595
                 },
                 {
                   "gains": [
@@ -12740,9 +12897,9 @@
                     0.516420741,
                     0.09113946450000002
                   ],
-                  "pair_delta_e_ok": 7.6420578303878,
-                  "foreground_clearance_delta_e_ok": 4.698855661549647,
-                  "background_contrast": 4.267587139944497
+                  "pair_delta_e_ok": 7.7755593306773365,
+                  "foreground_clearance_delta_e_ok": 4.702825440540803,
+                  "background_contrast": 4.263277868751737
                 },
                 {
                   "gains": [
@@ -12750,9 +12907,9 @@
                     0.570780819,
                     0.0824595155
                   ],
-                  "pair_delta_e_ok": 7.720132539099161,
-                  "foreground_clearance_delta_e_ok": 5.027977138458088,
-                  "background_contrast": 4.634466220047284
+                  "pair_delta_e_ok": 7.716095916444372,
+                  "foreground_clearance_delta_e_ok": 5.031080823252849,
+                  "background_contrast": 4.6290406355889315
                 },
                 {
                   "gains": [
@@ -12760,14 +12917,14 @@
                     0.570780819,
                     0.09113946450000002
                   ],
-                  "pair_delta_e_ok": 7.724141141712238,
-                  "foreground_clearance_delta_e_ok": 5.022482391205191,
-                  "background_contrast": 4.634665311964512
+                  "pair_delta_e_ok": 7.719641369069739,
+                  "foreground_clearance_delta_e_ok": 5.025784279809122,
+                  "background_contrast": 4.629234882264392
                 }
               ],
-              "gain_corner_pair_min": 7.6420578303878,
-              "gain_corner_foreground_clearance_min": 4.698855661549647,
-              "gain_corner_background_contrast_min": 4.266643471918401
+              "gain_corner_pair_min": 7.716095916444372,
+              "gain_corner_foreground_clearance_min": 4.702825440540803,
+              "gain_corner_background_contrast_min": 4.2623668404543595
             },
             "sequential": {
               "normal_cv": 0.048941102837155456,
@@ -12776,7 +12933,7 @@
               "shifted_max_to_min": 1.000025450122338,
               "normal_lightness_range": 0.7123874983791056,
               "shifted_lightness_range": 0.5499518980788196,
-              "shifted_light_endpoint_background_contrast_min": 6.296785076961242,
+              "shifted_light_endpoint_background_contrast_min": 6.359863745628555,
               "normal_minimum_signed_lightness_step": 0.002620033942487776,
               "shifted_minimum_signed_lightness_step": 0.0021169620790149057,
               "gain_corner_samples": [
@@ -12828,28 +12985,28 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
                   "seed": 7100,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 0,
-                  "objective": -1.0088153094784065,
+                  "accepted_moves": 48,
+                  "objective": -0.21866220099641398,
                   "selected": {
                     "surfaces": [
-                      "#070504",
-                      "#0D0A09",
-                      "#15110E",
-                      "#1E1814",
-                      "#271F1B",
-                      "#30221B"
+                      "#050505",
+                      "#0B0B0A",
+                      "#121210",
+                      "#181715",
+                      "#22201D",
+                      "#292722"
                     ],
                     "foregrounds": [
-                      "#EBE0D8",
-                      "#C6BDB7",
-                      "#A59E99"
+                      "#E8D9CF",
+                      "#C7BEB8",
+                      "#A9A29D"
                     ]
                   }
                 },
@@ -12857,49 +13014,49 @@
                   "seed": 7101,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 0,
-                  "objective": -1.0088153094784065,
+                  "accepted_moves": 48,
+                  "objective": -0.33287838051949736,
                   "selected": {
                     "surfaces": [
-                      "#070504",
-                      "#0D0A09",
-                      "#15110E",
-                      "#1E1814",
-                      "#271F1B",
-                      "#30221B"
+                      "#060606",
+                      "#0B0B0A",
+                      "#121210",
+                      "#1A1917",
+                      "#23211E",
+                      "#292722"
                     ],
                     "foregrounds": [
-                      "#EBE0D8",
+                      "#E3D8D0",
                       "#C6BDB7",
-                      "#A59E99"
+                      "#ABA49F"
                     ]
                   }
                 }
               ],
-              "selected_seed": 7100,
+              "selected_seed": 7101,
               "selected": {
                 "surfaces": [
-                  "#070504",
-                  "#0D0A09",
-                  "#15110E",
-                  "#1E1814",
-                  "#271F1B",
-                  "#30221B"
+                  "#060606",
+                  "#0B0B0A",
+                  "#121210",
+                  "#1A1917",
+                  "#23211E",
+                  "#292722"
                 ],
                 "foregrounds": [
-                  "#EBE0D8",
+                  "#E3D8D0",
                   "#C6BDB7",
-                  "#A59E99"
+                  "#ABA49F"
                 ]
               },
               "selected_after_coupled_refinement": {
                 "surfaces": [
-                  "#070504",
-                  "#0D0A09",
-                  "#15110E",
-                  "#1E1814",
-                  "#271F1B",
-                  "#30221B"
+                  "#060606",
+                  "#0B0B0A",
+                  "#121210",
+                  "#1A1917",
+                  "#23211E",
+                  "#292722"
                 ],
                 "foregrounds": [
                   "#EFE4DC",
@@ -12918,7 +13075,7 @@
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
                   "accepted_moves": 6,
-                  "objective": -2.0583903758922606,
+                  "objective": -2.063009043223678,
                   "selected": [
                     "#66B0D4",
                     "#E99096",
@@ -12931,7 +13088,7 @@
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
                   "accepted_moves": 9,
-                  "objective": -2.055949871935222,
+                  "objective": -2.0605685392666393,
                   "selected": [
                     "#66B0D4",
                     "#E99096",
@@ -12951,26 +13108,26 @@
                   "seed": 27100,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 903,
-                  "accepted_moves": 13,
-                  "objective": -1.788803407310165,
+                  "accepted_moves": 9,
+                  "objective": -1.7816608396048097,
                   "selected": [
                     "#EC8B96",
                     "#74E5C0",
-                    "#C39B48",
-                    "#A5D0FF"
+                    "#C39B50",
+                    "#A4D0FC"
                   ]
                 },
                 {
                   "seed": 27101,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 903,
-                  "accepted_moves": 9,
-                  "objective": -1.7880742218476955,
+                  "accepted_moves": 10,
+                  "objective": -1.7733894384815445,
                   "selected": [
                     "#EC8B96",
                     "#74E5C0",
-                    "#C39B49",
-                    "#A4D1FF"
+                    "#C39B51",
+                    "#A4CFFA"
                   ]
                 }
               ],
@@ -12986,7 +13143,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 9,
-                  "objective": -0.020188573746903152,
+                  "objective": -0.02081936043357628,
                   "selected": [
                     "#18110E",
                     "#4B343E",
@@ -13001,7 +13158,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 9,
-                  "objective": -0.013935015793858023,
+                  "objective": -0.014572084214941237,
                   "selected": [
                     "#17110F",
                     "#4B343E",
@@ -13014,7 +13171,7 @@
               ],
               "selected_seed": 37100,
               "changed_from_shipped": true,
-              "surface_dependency_fingerprint": "2ec62cf6e0a71a6dd18a582403647612a9b4d16c27062b90c257973e44e33034",
+              "surface_dependency_fingerprint": "50ee83d5b5ddfb286449cd436252a0e2571140a31c2d91cd7abf0006d82546ef",
               "controlled_identical_input_invariance": true
             }
           },
@@ -13107,6 +13264,32 @@
             [
               0.013648527196029825,
               0.04150743886394531
+            ]
+          ],
+          "surface_target_ab": [
+            [
+              0.007576401754875561,
+              0.00782780541866311
+            ],
+            [
+              0.005532968220667527,
+              0.007244133613382614
+            ],
+            [
+              0.0063649374462375705,
+              0.008363858353909528
+            ],
+            [
+              0.008651459163561031,
+              0.01082696640277268
+            ],
+            [
+              0.010815018832690438,
+              0.013166150572479043
+            ],
+            [
+              0.020175277855486097,
+              0.01987675903593824
             ]
           ],
           "full_foreground_target_ab": [
@@ -15019,7 +15202,7 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
@@ -15214,17 +15397,17 @@
         "halfway": {
           "weight": 0.5,
           "surfaces": {
-            "bg_0": "#060302",
-            "bg_1": "#0C0806",
-            "bg_2": "#130E0B",
-            "bg_3": "#1C1511",
-            "bg_4": "#251C17",
-            "bg_5": "#2E1E17"
+            "bg_0": "#060403",
+            "bg_1": "#0A0807",
+            "bg_2": "#110E0C",
+            "bg_3": "#191512",
+            "bg_4": "#231D19",
+            "bg_5": "#2A211B"
           },
           "foregrounds": [
-            "#FEEAD2",
-            "#C9B6A0",
-            "#9D8F80"
+            "#FCE9D1",
+            "#C8B59F",
+            "#9B8D7E"
           ],
           "foreground_target_ab": [
             [
@@ -15240,6 +15423,32 @@
               0.02531381053037888
             ]
           ],
+          "surface_target_ab": [
+            [
+              0.003601589479467016,
+              0.004546997518330024
+            ],
+            [
+              0.0025779602189272017,
+              0.0042615970808196745
+            ],
+            [
+              0.002609862137402986,
+              0.0061175248139032036
+            ],
+            [
+              0.0047982390836711864,
+              0.007694298087296597
+            ],
+            [
+              0.006222204030319035,
+              0.009710454560346252
+            ],
+            [
+              0.010313842044174822,
+              0.015085261648291055
+            ]
+          ],
           "full_foreground_target_ab": [
             [
               0.008884569353297232,
@@ -15260,31 +15469,31 @@
             0.8386566787088534
           ],
           "foreground_lightness_deltas_vs_shipped": [
-            0.0136056083100633,
-            0.01747885599805099,
-            0.0057506098064799005
+            0.0097584271941199,
+            0.014326514805385604,
+            -0.0008490451123726039
           ],
-          "surface_movement_mean_delta_e_ok": 0.0,
-          "foreground_plus_b_reduction_vs_shipped": 0.020238445307868176,
+          "surface_movement_mean_delta_e_ok": 0.6833848489818553,
+          "foreground_plus_b_reduction_vs_shipped": 0.020306312844431205,
           "categorical": [
-            "#BA6572",
+            "#B96572",
             "#8EF0FF",
-            "#E9B76C"
+            "#E8B76C"
           ],
           "categorical_transformed_targets": [
-            "#BA1F00",
+            "#B91F00",
             "#8E4A00",
-            "#E93900"
+            "#E83900"
           ],
           "terminal": [
-            "#F39399",
-            "#CCFFB4",
-            "#DEC77B"
+            "#F29298",
+            "#C9FFB4",
+            "#DDCD81"
           ],
           "terminal_transformed_targets": [
-            "#F32D00",
-            "#CC4F00",
-            "#DE3E00"
+            "#F22D00",
+            "#C94F00",
+            "#DD3F00"
           ],
           "terminal_ansi_indices": [
             0,
@@ -16850,132 +17059,132 @@
           "metrics": {
             "surface": {
               "normal_relative_luminance": [
-                0.001082255812541735,
-                0.00264977333543887,
-                0.004766849729814947,
-                0.008236780317796347,
-                0.012856843221470954,
-                0.015712504963214063
+                0.0013212529593880896,
+                0.0025353608935834394,
+                0.004597909433257566,
+                0.007866764263848207,
+                0.01306241644845126,
+                0.016590853952001893
               ],
               "shifted_relative_luminance": [
-                0.0005886886651320343,
-                0.0013189845102048506,
-                0.0023248488454522256,
-                0.00387933083963351,
-                0.0058139034851868035,
-                0.007823518011638695
+                0.00065585854677108,
+                0.0011826574201371943,
+                0.002132084602252139,
+                0.003477298316702527,
+                0.005521174652596184,
+                0.007139011743554783
               ],
               "normal_adjacent_delta_e_ok": [
-                3.5490546185660916,
-                3.004696920711044,
-                3.4103036462387077,
-                3.273422567901066,
-                2.087913941578025
+                2.6576482110912982,
+                3.008062606414332,
+                3.2766778999120207,
+                3.7048798759396337,
+                2.073369240075014
               ],
               "shifted_adjacent_delta_e_ok": [
-                2.660683338347572,
-                2.416882350930623,
-                2.7360186103162834,
-                2.5690172059943355,
-                2.339543876412059
+                1.9329098219744194,
+                2.43735065403796,
+                2.499711960373833,
+                2.868858733707059,
+                1.8790626797438779
               ],
-              "normal_span_delta_e_ok": 15.0386358178796,
-              "shifted_span_delta_e_ok": 12.578048447534504,
+              "normal_span_delta_e_ok": 14.638584511145977,
+              "shifted_span_delta_e_ok": 11.52004014805911,
               "shifted_foreground_contrast": [
                 [
-                  6.080022661088049,
-                  5.993500775869173,
-                  5.8782849882129,
-                  5.708689560273371,
-                  5.510819961917979,
-                  5.319295401860905
+                  5.989925443845225,
+                  5.928273975664068,
+                  5.820308516418325,
+                  5.673899496421648,
+                  5.465028755023657,
+                  5.310291633165229
                 ],
                 [
-                  4.008099210406619,
-                  3.951061873679554,
-                  3.8751088167136696,
-                  3.763307374728361,
-                  3.6328669100887447,
-                  3.506609249430477
+                  3.9695726237527396,
+                  3.9287156911247134,
+                  3.8571660975027817,
+                  3.7601396414812878,
+                  3.621719291390228,
+                  3.5191737340930747
                 ],
                 [
-                  2.765032313307807,
-                  2.7256844651542798,
-                  2.673287394677605,
-                  2.596159912662901,
-                  2.506174091265323,
-                  2.4190738242319263
+                  2.7128867520726976,
+                  2.684964292462395,
+                  2.6360658434224025,
+                  2.569755987906412,
+                  2.4751567023983676,
+                  2.405074980700993
                 ]
               ]
             },
             "foreground": {
               "normal_adjacent_delta_e_ok": [
-                16.039255072184094,
-                12.872569789139835
+                15.970091345144176,
+                13.216065664166956
               ],
               "shifted_adjacent_delta_e_ok": [
-                11.230888512102052,
-                9.655088284581288
+                11.051782138337973,
+                9.892379554986121
               ],
               "normal_lightness": [
-                0.9468469192210517,
-                0.7864599533187961,
-                0.6581201417063549
+                0.9429997381051083,
+                0.7833076121261308,
+                0.6515204867875024
               ],
               "normal_chroma": [
-                0.03844795115294713,
-                0.03730385519400993,
-                0.027410889227605328
+                0.037859129598862694,
+                0.03733881878474806,
+                0.027476967599118756
               ],
-              "normal_mean_chroma": 0.034387565191520794,
-              "normal_mean_plus_b": 0.032537507914822954,
-              "chroma_reduction_vs_current_percent": 36.99384904595886,
-              "normal_lightness_gap_ratio": 0.8001885370825909,
-              "shifted_lightness_gap_ratio": 0.8546327810776875,
+              "normal_mean_chroma": 0.034224971994243174,
+              "normal_mean_plus_b": 0.032469640378259924,
+              "chroma_reduction_vs_current_percent": 37.291758231291354,
+              "normal_lightness_gap_ratio": 0.8252575042803132,
+              "shifted_lightness_gap_ratio": 0.8890878461047275,
               "normal_lightness_share": [
-                0.999965180305692,
-                0.9970022591815143
+                0.999944975440188,
+                0.9971736573309107
               ],
               "shifted_lightness_share": [
-                0.9432442137386059,
-                0.9376949207368972
+                0.9441586664037264,
+                0.9378236947358428
               ],
-              "normal_hue_span_degrees": 3.1153245965826386,
-              "shifted_hue_span_degrees": 1.0100554065774645,
-              "normal_chroma_vector_cosine": 0.9985221704383501,
-              "shifted_chroma_vector_cosine": 0.9998446168621365,
+              "normal_hue_span_degrees": 4.49512674401069,
+              "shifted_hue_span_degrees": 0.9644277223637232,
+              "normal_chroma_vector_cosine": 0.9969240034155021,
+              "shifted_chroma_vector_cosine": 0.9998583378409054,
               "shifted_chroma": [
-                0.22601470414124028,
-                0.18872776694243626,
-                0.1552572904970104
+                0.22442019927454795,
+                0.1880117171658242,
+                0.15375169900620506
               ],
               "worst_surface_shifted_contrast": [
-                5.319295401860905,
-                3.506609249430477,
-                2.4190738242319263
+                5.310291633165229,
+                3.5191737340930747,
+                2.405074980700993
               ]
             },
             "categorical": {
-              "normal_pair_delta_e_ok": 20.749237383958867,
-              "shifted_pair_delta_e_ok": 10.285988246999283,
+              "normal_pair_delta_e_ok": 20.71195639403651,
+              "shifted_pair_delta_e_ok": 10.161599493162822,
               "normal_foreground_clearance_by_role": [
-                13.351374604553987,
-                7.588570243249452,
-                11.003585649630471
+                13.128206577865049,
+                7.603517736861348,
+                10.67111454405288
               ],
               "shifted_foreground_clearance_by_role": [
-                5.085471647034642,
-                4.9964472141656024,
-                5.823193340418899
+                4.890006047525203,
+                4.975032063071977,
+                6.035223014234714
               ],
-              "normal_foreground_clearance_min": 7.588570243249452,
-              "shifted_foreground_clearance_min": 4.9964472141656024,
-              "normal_background_contrast_min": 3.9507501904793627,
-              "shifted_background_contrast_bg0_min": 3.1001536859527583,
-              "shifted_background_contrast_all_surfaces_min": 2.7122650960316594,
-              "normal_hue_gap_degrees": 65.19621785437634,
-              "normal_mean_chroma": 0.10452901289021421,
-              "normal_max_chroma": 0.10952945311867959,
+              "normal_foreground_clearance_min": 7.603517736861348,
+              "shifted_foreground_clearance_min": 4.890006047525203,
+              "normal_background_contrast_min": 3.879895222019414,
+              "shifted_background_contrast_bg0_min": 3.0960428691169124,
+              "shifted_background_contrast_all_surfaces_min": 2.7447571255975767,
+              "normal_hue_gap_degrees": 65.90741039159016,
+              "normal_mean_chroma": 0.10394128357499872,
+              "normal_max_chroma": 0.10896925314951335,
               "normal_semantic_hue_error_max": null,
               "gain_corner_samples": [
                 {
@@ -16984,9 +17193,9 @@
                     0.2939499405,
                     0.0
                   ],
-                  "pair_delta_e_ok": 9.96031404953113,
-                  "foreground_clearance_delta_e_ok": 4.784741777912564,
-                  "background_contrast": 3.0052178607674525
+                  "pair_delta_e_ok": 9.825536150142177,
+                  "foreground_clearance_delta_e_ok": 4.7662257655204385,
+                  "background_contrast": 3.001431171578822
                 },
                 {
                   "gains": [
@@ -16994,9 +17203,9 @@
                     0.2939499405,
                     0.0
                   ],
-                  "pair_delta_e_ok": 9.96031404953113,
-                  "foreground_clearance_delta_e_ok": 4.784741777912564,
-                  "background_contrast": 3.0052178607674525
+                  "pair_delta_e_ok": 9.825536150142177,
+                  "foreground_clearance_delta_e_ok": 4.7662257655204385,
+                  "background_contrast": 3.001431171578822
                 },
                 {
                   "gains": [
@@ -17004,9 +17213,9 @@
                     0.3248920395,
                     0.0
                   ],
-                  "pair_delta_e_ok": 10.652457766871636,
-                  "foreground_clearance_delta_e_ok": 5.190109099487461,
-                  "background_contrast": 3.2008450295626263
+                  "pair_delta_e_ok": 10.53835514157015,
+                  "foreground_clearance_delta_e_ok": 4.995074609859341,
+                  "background_contrast": 3.196389660449928
                 },
                 {
                   "gains": [
@@ -17014,37 +17223,37 @@
                     0.3248920395,
                     0.0
                   ],
-                  "pair_delta_e_ok": 10.652457766871636,
-                  "foreground_clearance_delta_e_ok": 5.190109099487461,
-                  "background_contrast": 3.2008450295626263
+                  "pair_delta_e_ok": 10.53835514157015,
+                  "foreground_clearance_delta_e_ok": 4.995074609859341,
+                  "background_contrast": 3.196389660449928
                 }
               ],
-              "gain_corner_pair_min": 9.96031404953113,
-              "gain_corner_foreground_clearance_min": 4.784741777912564,
-              "gain_corner_background_contrast_min": 3.0052178607674525
+              "gain_corner_pair_min": 9.825536150142177,
+              "gain_corner_foreground_clearance_min": 4.7662257655204385,
+              "gain_corner_background_contrast_min": 3.001431171578822
             },
             "terminal": {
-              "normal_pair_delta_e_ok": 13.805461889551369,
-              "shifted_pair_delta_e_ok": 4.014247779634076,
+              "normal_pair_delta_e_ok": 12.348784603515732,
+              "shifted_pair_delta_e_ok": 4.128561459224938,
               "normal_foreground_clearance_by_role": [
-                10.010838901592495,
-                8.048714462316537,
-                14.727153549397704
+                10.159261868354664,
+                9.050191573596173,
+                14.988984724296687
               ],
               "shifted_foreground_clearance_by_role": [
-                4.367701567163327,
-                4.0495104213193756,
-                12.40638378087673
+                4.242117186936723,
+                4.009293595678934,
+                12.352879290390112
               ],
-              "normal_foreground_clearance_min": 8.048714462316537,
-              "shifted_foreground_clearance_min": 4.0495104213193756,
-              "normal_background_contrast_min": 7.1861559823636565,
-              "shifted_background_contrast_bg0_min": 4.628555708709924,
-              "shifted_background_contrast_all_surfaces_min": 4.049434758881599,
-              "normal_hue_gap_degrees": 42.76056499477255,
-              "normal_mean_chroma": 0.10882755113165972,
-              "normal_max_chroma": 0.11607521326900412,
-              "normal_semantic_hue_error_max": 11.140269204584058,
+              "normal_foreground_clearance_min": 9.050191573596173,
+              "shifted_foreground_clearance_min": 4.009293595678934,
+              "normal_background_contrast_min": 7.013277340554128,
+              "shifted_background_contrast_bg0_min": 4.539533031659975,
+              "shifted_background_contrast_all_surfaces_min": 4.024464828902141,
+              "normal_hue_gap_degrees": 39.371332958800906,
+              "normal_mean_chroma": 0.10893597463284138,
+              "normal_max_chroma": 0.11620175024490995,
+              "normal_semantic_hue_error_max": 15.758081260750288,
               "gain_corner_samples": [
                 {
                   "gains": [
@@ -17052,9 +17261,9 @@
                     0.2939499405,
                     0.0
                   ],
-                  "pair_delta_e_ok": 3.8801003618116323,
-                  "foreground_clearance_delta_e_ok": 3.7242010885783765,
-                  "background_contrast": 4.520433091881007
+                  "pair_delta_e_ok": 4.079153540346169,
+                  "foreground_clearance_delta_e_ok": 3.670257607688692,
+                  "background_contrast": 4.431829993925186
                 },
                 {
                   "gains": [
@@ -17062,9 +17271,9 @@
                     0.2939499405,
                     0.0
                   ],
-                  "pair_delta_e_ok": 3.8801003618116323,
-                  "foreground_clearance_delta_e_ok": 3.7242010885783765,
-                  "background_contrast": 4.520433091881007
+                  "pair_delta_e_ok": 4.079153540346169,
+                  "foreground_clearance_delta_e_ok": 3.670257607688692,
+                  "background_contrast": 4.431829993925186
                 },
                 {
                   "gains": [
@@ -17072,9 +17281,9 @@
                     0.3248920395,
                     0.0
                   ],
-                  "pair_delta_e_ok": 4.098805243327484,
-                  "foreground_clearance_delta_e_ok": 4.3835893873575085,
-                  "background_contrast": 4.743310802830051
+                  "pair_delta_e_ok": 4.19302899453763,
+                  "foreground_clearance_delta_e_ok": 4.356591813798492,
+                  "background_contrast": 4.653845203890017
                 },
                 {
                   "gains": [
@@ -17082,14 +17291,14 @@
                     0.3248920395,
                     0.0
                   ],
-                  "pair_delta_e_ok": 4.098805243327484,
-                  "foreground_clearance_delta_e_ok": 4.3835893873575085,
-                  "background_contrast": 4.743310802830051
+                  "pair_delta_e_ok": 4.19302899453763,
+                  "foreground_clearance_delta_e_ok": 4.356591813798492,
+                  "background_contrast": 4.653845203890017
                 }
               ],
-              "gain_corner_pair_min": 3.8801003618116323,
-              "gain_corner_foreground_clearance_min": 3.7242010885783765,
-              "gain_corner_background_contrast_min": 4.520433091881007
+              "gain_corner_pair_min": 4.079153540346169,
+              "gain_corner_foreground_clearance_min": 3.670257607688692,
+              "gain_corner_background_contrast_min": 4.431829993925186
             },
             "sequential": {
               "normal_cv": 0.06319227756383543,
@@ -17098,7 +17307,7 @@
               "shifted_max_to_min": 1.0000025745798153,
               "normal_lightness_range": 0.7617199980984637,
               "shifted_lightness_range": 0.5200913950819938,
-              "shifted_light_endpoint_background_contrast_min": 5.304109131441659,
+              "shifted_light_endpoint_background_contrast_min": 5.367650586505107,
               "normal_minimum_signed_lightness_step": 0.002634281279989409,
               "shifted_minimum_signed_lightness_step": 0.002002355707679454,
               "gain_corner_samples": [
@@ -17150,28 +17359,28 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
                   "seed": 7200,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 11,
-                  "objective": -0.8290605091870147,
+                  "accepted_moves": 23,
+                  "objective": -0.09912055142284922,
                   "selected": {
                     "surfaces": [
-                      "#060302",
-                      "#0C0806",
-                      "#130E0B",
-                      "#1C1511",
-                      "#251C17",
-                      "#2E1E17"
+                      "#060403",
+                      "#0A0807",
+                      "#110E0C",
+                      "#191512",
+                      "#231D19",
+                      "#2A211B"
                     ],
                     "foregrounds": [
-                      "#FEEAD2",
-                      "#CDBAA4",
-                      "#9F9183"
+                      "#FDEAD2",
+                      "#C8B59F",
+                      "#9B8D7E"
                     ]
                   }
                 },
@@ -17179,54 +17388,54 @@
                   "seed": 7201,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 10,
-                  "objective": -0.8448016111139899,
+                  "accepted_moves": 16,
+                  "objective": 0.01957520771465912,
                   "selected": {
                     "surfaces": [
-                      "#060302",
-                      "#0C0806",
-                      "#130E0B",
-                      "#1C1511",
-                      "#251C17",
-                      "#2E1E17"
+                      "#040302",
+                      "#0A0807",
+                      "#120F0C",
+                      "#191512",
+                      "#231D19",
+                      "#2A211B"
                     ],
                     "foregrounds": [
-                      "#FFEBD3",
-                      "#CCB9A3",
-                      "#A09283"
+                      "#FEEBD3",
+                      "#CAB7A1",
+                      "#9B8D7E"
                     ]
                   }
                 }
               ],
-              "selected_seed": 7201,
+              "selected_seed": 7200,
               "selected": {
                 "surfaces": [
-                  "#060302",
-                  "#0C0806",
-                  "#130E0B",
-                  "#1C1511",
-                  "#251C17",
-                  "#2E1E17"
+                  "#060403",
+                  "#0A0807",
+                  "#110E0C",
+                  "#191512",
+                  "#231D19",
+                  "#2A211B"
                 ],
                 "foregrounds": [
-                  "#FFEBD3",
-                  "#CCB9A3",
-                  "#A09283"
+                  "#FDEAD2",
+                  "#C8B59F",
+                  "#9B8D7E"
                 ]
               },
               "selected_after_coupled_refinement": {
                 "surfaces": [
-                  "#060302",
-                  "#0C0806",
-                  "#130E0B",
-                  "#1C1511",
-                  "#251C17",
-                  "#2E1E17"
+                  "#060403",
+                  "#0A0807",
+                  "#110E0C",
+                  "#191512",
+                  "#231D19",
+                  "#2A211B"
                 ],
                 "foregrounds": [
-                  "#FEEAD2",
-                  "#C9B6A0",
-                  "#9D8F80"
+                  "#FCE9D1",
+                  "#C8B59F",
+                  "#9B8D7E"
                 ]
               },
               "changed_from_shipped": true
@@ -17239,24 +17448,24 @@
                   "seed": 17200,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 2,
-                  "objective": -1.809908868480282,
+                  "accepted_moves": 19,
+                  "objective": -1.7921567104142422,
                   "selected": [
-                    "#BA6572",
+                    "#B96572",
                     "#8EF0FF",
-                    "#E9B76C"
+                    "#E8B76C"
                   ]
                 },
                 {
                   "seed": 17201,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 14,
-                  "objective": -1.8044914688595026,
+                  "accepted_moves": 23,
+                  "objective": -1.7898037503891147,
                   "selected": [
-                    "#BA6572",
+                    "#B96572",
                     "#8EF0FF",
-                    "#E8B76C"
+                    "#E7B66A"
                   ]
                 }
               ],
@@ -17271,29 +17480,29 @@
                   "seed": 27200,
                   "iterations": 4000,
                   "evaluated_exact_hex8_candidates": 4003,
-                  "accepted_moves": 9,
-                  "objective": -1.4755296830911504,
+                  "accepted_moves": 0,
+                  "objective": -1.5214906920599252,
                   "selected": [
-                    "#F39399",
-                    "#CCFFB4",
-                    "#DEC77B"
+                    "#F29298",
+                    "#C9FFB4",
+                    "#DDCD81"
                   ]
                 },
                 {
                   "seed": 27201,
                   "iterations": 4000,
                   "evaluated_exact_hex8_candidates": 4003,
-                  "accepted_moves": 6,
-                  "objective": -1.4755296830911504,
+                  "accepted_moves": 0,
+                  "objective": -1.5214906920599252,
                   "selected": [
-                    "#F39399",
-                    "#CCFFB4",
-                    "#DEC77B"
+                    "#F29298",
+                    "#C9FFB4",
+                    "#DDCD81"
                   ]
                 }
               ],
               "selected_seed": 27200,
-              "changed_from_shipped": true
+              "changed_from_shipped": false
             },
             "sequential": {
               "bounds": "each shipped anchor sRGB byte \u00b110, clipped to [0,255]",
@@ -17304,7 +17513,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 19,
-                  "objective": 0.020468956894630755,
+                  "objective": 0.01983354234399627,
                   "selected": [
                     "#170B09",
                     "#4B3042",
@@ -17319,7 +17528,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 1,
-                  "objective": 0.03214605419751832,
+                  "objective": 0.03150902089147084,
                   "selected": [
                     "#100C0B",
                     "#4B3042",
@@ -17332,7 +17541,7 @@
               ],
               "selected_seed": 37200,
               "changed_from_shipped": true,
-              "surface_dependency_fingerprint": "7a82961a7fdf1820b23626d81c5b53df1e2ea290aa12782ea9a1e8b18b8687cf",
+              "surface_dependency_fingerprint": "1dc8277ec11c14833536fc872c77ffc55f4e02e27c886726362cb9e04b4285b9",
               "controlled_identical_input_invariance": true
             }
           },
@@ -17345,17 +17554,17 @@
         "full": {
           "weight": 1.0,
           "surfaces": {
-            "bg_0": "#060302",
-            "bg_1": "#0C0806",
-            "bg_2": "#130E0B",
-            "bg_3": "#1C1511",
-            "bg_4": "#251C17",
-            "bg_5": "#2E1E17"
+            "bg_0": "#030303",
+            "bg_1": "#0B0B0A",
+            "bg_2": "#121210",
+            "bg_3": "#181715",
+            "bg_4": "#22201D",
+            "bg_5": "#292621"
           },
           "foregrounds": [
-            "#FFF4EC",
-            "#C8BFB9",
-            "#9B948F"
+            "#FDE5D5",
+            "#C8B6AA",
+            "#9A928D"
           ],
           "foreground_target_ab": [
             [
@@ -17371,6 +17580,32 @@
               0.009120182196812446
             ]
           ],
+          "surface_target_ab": [
+            [
+              -0.00037322279594152914,
+              0.0012661896179969392
+            ],
+            [
+              -0.0003770477828131235,
+              0.0012790605482567363
+            ],
+            [
+              -0.001145213171431599,
+              0.0038711912738968787
+            ],
+            [
+              0.0009450190037813416,
+              0.004561629771820513
+            ],
+            [
+              0.0016293892279476314,
+              0.006254758548213461
+            ],
+            [
+              0.00045240623286354684,
+              0.01029376426064387
+            ]
+          ],
           "full_foreground_target_ab": [
             [
               0.008884569353297232,
@@ -17391,31 +17626,31 @@
             0.8386566787088534
           ],
           "foreground_lightness_deltas_vs_shipped": [
-            0.04031432967270043,
-            0.041319285060661515,
-            0.018678894344488106
+            0.0038700590924465317,
+            0.01913309133461949,
+            0.012982202148621669
           ],
-          "surface_movement_mean_delta_e_ok": 0.0,
-          "foreground_plus_b_reduction_vs_shipped": 0.04145552494739827,
+          "surface_movement_mean_delta_e_ok": 1.560002038382785,
+          "foreground_plus_b_reduction_vs_shipped": 0.032778732227445456,
           "categorical": [
-            "#BB6572",
+            "#B96572",
             "#8EF0FF",
-            "#E9B76C"
+            "#E8B76C"
           ],
           "categorical_transformed_targets": [
-            "#BB1F00",
+            "#B91F00",
             "#8E4A00",
-            "#E93900"
+            "#E83900"
           ],
           "terminal": [
-            "#F29298",
-            "#E9FFB0",
-            "#DBCE82"
+            "#F39399",
+            "#CAFFB4",
+            "#DECC80"
           ],
           "terminal_transformed_targets": [
-            "#F22D00",
-            "#E94F00",
-            "#DB4000"
+            "#F32D00",
+            "#CA4F00",
+            "#DE3F00"
           ],
           "terminal_ansi_indices": [
             0,
@@ -18981,132 +19216,132 @@
           "metrics": {
             "surface": {
               "normal_relative_luminance": [
-                0.001082255812541735,
-                0.00264977333543887,
-                0.004766849729814947,
-                0.008236780317796347,
-                0.012856843221470954,
-                0.015712504963214063
+                0.0009105809506465124,
+                0.003324062363867902,
+                0.005986212784515606,
+                0.008611254435656237,
+                0.01461813336880206,
+                0.019674487204808883
               ],
               "shifted_relative_luminance": [
-                0.0005886886651320343,
-                0.0013189845102048506,
-                0.0023248488454522256,
-                0.00387933083963351,
-                0.0058139034851868035,
-                0.007823518011638695
+                0.0003950991550245857,
+                0.0014503422014344645,
+                0.0024950397701622327,
+                0.0034868081577901907,
+                0.0055502481819568105,
+                0.007285305688271912
               ],
               "normal_adjacent_delta_e_ok": [
-                3.5490546185660916,
-                3.004696920711044,
-                3.4103036462387077,
-                3.273422567901066,
-                2.087913941578025
+                5.225880213860978,
+                3.2299657545022216,
+                2.364365816339352,
+                3.9701070746336735,
+                2.5739681472421516
               ],
               "shifted_adjacent_delta_e_ok": [
-                2.660683338347572,
-                2.416882350930623,
-                2.7360186103162834,
-                2.5690172059943355,
-                2.339543876412059
+                4.145860798251933,
+                2.392021148982147,
+                1.8028670425935585,
+                2.880488288606233,
+                1.928925377685824
               ],
-              "normal_span_delta_e_ok": 15.0386358178796,
-              "shifted_span_delta_e_ok": 12.578048447534504,
+              "normal_span_delta_e_ok": 17.34506762147263,
+              "shifted_span_delta_e_ok": 13.074974928708812,
               "shifted_foreground_contrast": [
                 [
-                  6.199029301162689,
-                  6.11081388954979,
-                  5.99334293862574,
-                  5.820427953642407,
-                  5.618685376947,
-                  5.423412032443769
+                  6.026579267565891,
+                  5.902974533493596,
+                  5.785500136476227,
+                  5.6782236632747,
+                  5.467303381972037,
+                  5.301709681140402
                 ],
                 [
-                  4.03598493480964,
-                  3.978550769718516,
-                  3.9020692812186466,
-                  3.789489998158205,
-                  3.658142014353769,
-                  3.5310059357362484
+                  3.996083279177863,
+                  3.914123880798786,
+                  3.836229365052672,
+                  3.765096853261628,
+                  3.625240564655391,
+                  3.5154392678249007
                 ],
                 [
-                  2.7489387859265233,
-                  2.7098199570392825,
-                  2.6577278572077456,
-                  2.581049286128975,
-                  2.4915872160357195,
-                  2.404993905295626
+                  2.730466808171571,
+                  2.674465118202331,
+                  2.621240904660135,
+                  2.572637072142591,
+                  2.477075261420779,
+                  2.402049598654429
                 ]
               ]
             },
             "foreground": {
               "normal_adjacent_delta_e_ok": [
-                16.327998643327017,
-                13.926873285195649
+                14.917988703957901,
+                12.362932958498808
               ],
               "shifted_adjacent_delta_e_ok": [
-                11.621610354585107,
-                9.940318349802856
+                11.143658533118472,
+                10.007865007659083
               ],
               "normal_lightness": [
-                0.9735556405836888,
-                0.8103003823814067,
-                0.6710484262443631
+                0.9371113700034349,
+                0.7881141886553646,
+                0.6653517340484967
               ],
               "normal_chroma": [
-                0.01595172093140086,
-                0.013177574790419885,
-                0.011054280606645192
+                0.03399912623198434,
+                0.026618183180435344,
+                0.012011564413670014
               ],
-              "normal_mean_chroma": 0.013394525442821978,
-              "normal_mean_plus_b": 0.01132042827529286,
-              "chroma_reduction_vs_current_percent": 75.45806202597088,
-              "normal_lightness_gap_ratio": 0.852970726152678,
-              "shifted_lightness_gap_ratio": 0.8543813958183071,
+              "normal_mean_chroma": 0.024209624608696564,
+              "normal_mean_plus_b": 0.01999722099524567,
+              "chroma_reduction_vs_current_percent": 55.64224294041256,
+              "normal_lightness_gap_ratio": 0.8239246776090635,
+              "shifted_lightness_gap_ratio": 0.8909714492463177,
               "normal_lightness_share": [
-                0.9998485532028255,
-                0.999879537103775
+                0.9987752659213351,
+                0.9929881122786144
               ],
               "shifted_lightness_share": [
-                0.9417409702335469,
-                0.9406959295516828
+                0.9384012518048619,
+                0.930976509841165
               ],
-              "normal_hue_span_degrees": 0.0,
-              "shifted_hue_span_degrees": 1.234656546358849,
-              "normal_chroma_vector_cosine": 0.9990990886242959,
-              "shifted_chroma_vector_cosine": 0.9997678331222424,
+              "normal_hue_span_degrees": 0.034448272348470255,
+              "shifted_hue_span_degrees": 1.9381822737913694,
+              "normal_chroma_vector_cosine": 0.9996284932779329,
+              "shifted_chroma_vector_cosine": 0.9994278991938812,
               "shifted_chroma": [
-                0.22465915107625606,
-                0.18561259288908413,
-                0.1519578701464086
+                0.22622582528877253,
+                0.1877743525271526,
+                0.1514594223232198
               ],
               "worst_surface_shifted_contrast": [
-                5.423412032443769,
-                3.5310059357362484,
-                2.404993905295626
+                5.301709681140402,
+                3.5154392678249007,
+                2.402049598654429
               ]
             },
             "categorical": {
-              "normal_pair_delta_e_ok": 20.749237383958867,
-              "shifted_pair_delta_e_ok": 10.412877553467824,
+              "normal_pair_delta_e_ok": 20.71195639403651,
+              "shifted_pair_delta_e_ok": 10.161599493162822,
               "normal_foreground_clearance_by_role": [
-                13.114365747139683,
-                9.726866609464595,
-                12.059002884368375
+                13.100675405089241,
+                8.695247556127352,
+                11.599583784673582
               ],
               "shifted_foreground_clearance_by_role": [
-                5.549149079898904,
-                5.045749018958857,
-                6.094568545660051
+                4.9569746120564435,
+                5.0129438414103245,
+                6.164244741877808
               ],
-              "normal_foreground_clearance_min": 9.726866609464595,
-              "shifted_foreground_clearance_min": 5.045749018958857,
-              "normal_background_contrast_min": 3.9698777838193955,
-              "shifted_background_contrast_bg0_min": 3.1001536859527583,
-              "shifted_background_contrast_all_surfaces_min": 2.7122650960316594,
-              "normal_hue_gap_degrees": 65.03416246741412,
-              "normal_mean_chroma": 0.1049294121694796,
-              "normal_max_chroma": 0.11069245694036287,
+              "normal_foreground_clearance_min": 8.695247556127352,
+              "shifted_foreground_clearance_min": 4.9569746120564435,
+              "normal_background_contrast_min": 3.7081799442469747,
+              "shifted_background_contrast_bg0_min": 3.1120627255892357,
+              "shifted_background_contrast_all_surfaces_min": 2.737747625650432,
+              "normal_hue_gap_degrees": 65.90741039159016,
+              "normal_mean_chroma": 0.10394128357499872,
+              "normal_max_chroma": 0.10896925314951335,
               "normal_semantic_hue_error_max": null,
               "gain_corner_samples": [
                 {
@@ -19115,9 +19350,9 @@
                     0.2939499405,
                     0.0
                   ],
-                  "pair_delta_e_ok": 10.097429828709128,
-                  "foreground_clearance_delta_e_ok": 4.783274063591656,
-                  "background_contrast": 3.0052178607674525
+                  "pair_delta_e_ok": 9.825536150142177,
+                  "foreground_clearance_delta_e_ok": 4.799865869805001,
+                  "background_contrast": 3.0167645191001036
                 },
                 {
                   "gains": [
@@ -19125,9 +19360,9 @@
                     0.2939499405,
                     0.0
                   ],
-                  "pair_delta_e_ok": 10.097429828709128,
-                  "foreground_clearance_delta_e_ok": 4.783274063591656,
-                  "background_contrast": 3.0052178607674525
+                  "pair_delta_e_ok": 9.825536150142177,
+                  "foreground_clearance_delta_e_ok": 4.799865869805001,
+                  "background_contrast": 3.0167645191001036
                 },
                 {
                   "gains": [
@@ -19135,9 +19370,9 @@
                     0.3248920395,
                     0.0
                   ],
-                  "pair_delta_e_ok": 10.66761622674024,
-                  "foreground_clearance_delta_e_ok": 5.324016156685472,
-                  "background_contrast": 3.2008450295626263
+                  "pair_delta_e_ok": 10.53835514157015,
+                  "foreground_clearance_delta_e_ok": 5.0443621253470745,
+                  "background_contrast": 3.2131384106621272
                 },
                 {
                   "gains": [
@@ -19145,37 +19380,37 @@
                     0.3248920395,
                     0.0
                   ],
-                  "pair_delta_e_ok": 10.66761622674024,
-                  "foreground_clearance_delta_e_ok": 5.324016156685472,
-                  "background_contrast": 3.2008450295626263
+                  "pair_delta_e_ok": 10.53835514157015,
+                  "foreground_clearance_delta_e_ok": 5.0443621253470745,
+                  "background_contrast": 3.2131384106621272
                 }
               ],
-              "gain_corner_pair_min": 10.097429828709128,
-              "gain_corner_foreground_clearance_min": 4.783274063591656,
-              "gain_corner_background_contrast_min": 3.0052178607674525
+              "gain_corner_pair_min": 9.825536150142177,
+              "gain_corner_foreground_clearance_min": 4.799865869805001,
+              "gain_corner_background_contrast_min": 3.0167645191001036
             },
             "terminal": {
-              "normal_pair_delta_e_ok": 12.610958876383963,
-              "shifted_pair_delta_e_ok": 4.049729584467782,
+              "normal_pair_delta_e_ok": 12.584414338857192,
+              "shifted_pair_delta_e_ok": 4.103840415069764,
               "normal_foreground_clearance_by_role": [
-                9.722881143069541,
-                9.504881901667458,
-                14.090609483159353
+                11.220915969631108,
+                9.705132614679679,
+                14.569798424531012
               ],
               "shifted_foreground_clearance_by_role": [
-                4.123857763025404,
-                4.007777817724318,
-                13.946681292241214
+                4.045006372656757,
+                4.011282447935581,
+                12.533503762731218
               ],
-              "normal_foreground_clearance_min": 9.504881901667458,
-              "shifted_foreground_clearance_min": 4.007777817724318,
-              "normal_background_contrast_min": 7.107020610021831,
-              "shifted_background_contrast_bg0_min": 4.684384212894561,
-              "shifted_background_contrast_all_surfaces_min": 4.098278048151341,
-              "normal_hue_gap_degrees": 21.258889430955463,
-              "normal_mean_chroma": 0.10566443180817164,
-              "normal_max_chroma": 0.11620175024490995,
-              "normal_semantic_hue_error_max": 18.994193058887646,
+              "normal_foreground_clearance_min": 9.705132614679679,
+              "shifted_foreground_clearance_min": 4.011282447935581,
+              "normal_background_contrast_min": 6.777521150165135,
+              "shifted_background_contrast_bg0_min": 4.5906137885411065,
+              "shifted_background_contrast_all_surfaces_min": 4.038460374373381,
+              "normal_hue_gap_degrees": 40.28965989733888,
+              "normal_mean_chroma": 0.10881846300063928,
+              "normal_max_chroma": 0.11607521326900412,
+              "normal_semantic_hue_error_max": 14.435427200575248,
               "gain_corner_samples": [
                 {
                   "gains": [
@@ -19183,9 +19418,9 @@
                     0.2939499405,
                     0.0
                   ],
-                  "pair_delta_e_ok": 3.9132487057889396,
-                  "foreground_clearance_delta_e_ok": 4.002246836472296,
-                  "background_contrast": 4.616596377962995
+                  "pair_delta_e_ok": 4.0607164462232985,
+                  "foreground_clearance_delta_e_ok": 3.6802558483236734,
+                  "background_contrast": 4.482068155386845
                 },
                 {
                   "gains": [
@@ -19193,9 +19428,9 @@
                     0.2939499405,
                     0.0
                   ],
-                  "pair_delta_e_ok": 3.9132487057889396,
-                  "foreground_clearance_delta_e_ok": 4.002246836472296,
-                  "background_contrast": 4.616596377962995
+                  "pair_delta_e_ok": 4.0607164462232985,
+                  "foreground_clearance_delta_e_ok": 3.6802558483236734,
+                  "background_contrast": 4.482068155386845
                 },
                 {
                   "gains": [
@@ -19203,9 +19438,9 @@
                     0.3248920395,
                     0.0
                   ],
-                  "pair_delta_e_ok": 4.194793600069657,
-                  "foreground_clearance_delta_e_ok": 4.013862186661929,
-                  "background_contrast": 4.756201997293605
+                  "pair_delta_e_ok": 4.161097174642591,
+                  "foreground_clearance_delta_e_ok": 4.295957052737521,
+                  "background_contrast": 4.70581720301244
                 },
                 {
                   "gains": [
@@ -19213,14 +19448,14 @@
                     0.3248920395,
                     0.0
                   ],
-                  "pair_delta_e_ok": 4.194793600069657,
-                  "foreground_clearance_delta_e_ok": 4.013862186661929,
-                  "background_contrast": 4.756201997293605
+                  "pair_delta_e_ok": 4.161097174642591,
+                  "foreground_clearance_delta_e_ok": 4.295957052737521,
+                  "background_contrast": 4.70581720301244
                 }
               ],
-              "gain_corner_pair_min": 3.9132487057889396,
-              "gain_corner_foreground_clearance_min": 4.002246836472296,
-              "gain_corner_background_contrast_min": 4.616596377962995
+              "gain_corner_pair_min": 4.0607164462232985,
+              "gain_corner_foreground_clearance_min": 3.6802558483236734,
+              "gain_corner_background_contrast_min": 4.482068155386845
             },
             "sequential": {
               "normal_cv": 0.06319227756383543,
@@ -19229,7 +19464,7 @@
               "shifted_max_to_min": 1.0000025745798153,
               "normal_lightness_range": 0.7617199980984637,
               "shifted_lightness_range": 0.5200913950819938,
-              "shifted_light_endpoint_background_contrast_min": 5.304109131441659,
+              "shifted_light_endpoint_background_contrast_min": 5.3539427993382525,
               "normal_minimum_signed_lightness_step": 0.002634281279989409,
               "shifted_minimum_signed_lightness_step": 0.002002355707679454,
               "gain_corner_samples": [
@@ -19281,28 +19516,28 @@
           },
           "search": {
             "full_system": {
-              "bounds": "surface shipped bytes \u00b13; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
+              "bounds": "surface shipped bytes \u00b124; foreground shipped bytes \u00b148; foreground Oklab L within shipped L \u00b10.06",
               "objective": "huge exact hard gates; transformed clarity/hierarchy and movement; then commanded warmth/chroma/soft target; terminal-coupled L repair",
               "runs": [
                 {
                   "seed": 7200,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 10,
-                  "objective": -0.6972529988610909,
+                  "accepted_moves": 82,
+                  "objective": 0.8824880303928171,
                   "selected": {
                     "surfaces": [
-                      "#060302",
-                      "#0C0806",
-                      "#130E0B",
-                      "#1C1511",
-                      "#251C17",
-                      "#2E1E17"
+                      "#030303",
+                      "#0B0B0A",
+                      "#121210",
+                      "#181715",
+                      "#22201D",
+                      "#292621"
                     ],
                     "foregrounds": [
-                      "#FFF4EC",
-                      "#C8BFB9",
-                      "#9B948F"
+                      "#FDE5D5",
+                      "#C8B6AA",
+                      "#9C948F"
                     ]
                   }
                 },
@@ -19310,21 +19545,21 @@
                   "seed": 7201,
                   "iterations": 2400,
                   "evaluated_exact_hex8_candidates": 2401,
-                  "accepted_moves": 10,
-                  "objective": -0.654961115059766,
+                  "accepted_moves": 82,
+                  "objective": 1.6487597657833397,
                   "selected": {
                     "surfaces": [
-                      "#060302",
-                      "#0C0806",
-                      "#130E0B",
-                      "#1C1511",
-                      "#251C17",
-                      "#2E1E17"
+                      "#030303",
+                      "#080807",
+                      "#0E0E0C",
+                      "#161513",
+                      "#23211E",
+                      "#2A2722"
                     ],
                     "foregrounds": [
-                      "#FEF2E9",
-                      "#C8BFB9",
-                      "#9B938E"
+                      "#FEE5D1",
+                      "#C9B2A1",
+                      "#9D8F83"
                     ]
                   }
                 }
@@ -19332,32 +19567,32 @@
               "selected_seed": 7200,
               "selected": {
                 "surfaces": [
-                  "#060302",
-                  "#0C0806",
-                  "#130E0B",
-                  "#1C1511",
-                  "#251C17",
-                  "#2E1E17"
+                  "#030303",
+                  "#0B0B0A",
+                  "#121210",
+                  "#181715",
+                  "#22201D",
+                  "#292621"
                 ],
                 "foregrounds": [
-                  "#FFF4EC",
-                  "#C8BFB9",
-                  "#9B948F"
+                  "#FDE5D5",
+                  "#C8B6AA",
+                  "#9C948F"
                 ]
               },
               "selected_after_coupled_refinement": {
                 "surfaces": [
-                  "#060302",
-                  "#0C0806",
-                  "#130E0B",
-                  "#1C1511",
-                  "#251C17",
-                  "#2E1E17"
+                  "#030303",
+                  "#0B0B0A",
+                  "#121210",
+                  "#181715",
+                  "#22201D",
+                  "#292621"
                 ],
                 "foregrounds": [
-                  "#FFF4EC",
-                  "#C8BFB9",
-                  "#9B948F"
+                  "#FDE5D5",
+                  "#C8B6AA",
+                  "#9A928D"
                 ]
               },
               "changed_from_shipped": true
@@ -19370,24 +19605,24 @@
                   "seed": 17200,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 1,
-                  "objective": -1.82656488445761,
+                  "accepted_moves": 19,
+                  "objective": -1.7929040573596933,
                   "selected": [
-                    "#BB6572",
+                    "#B96572",
                     "#8EF0FF",
-                    "#E9B76C"
+                    "#E8B76C"
                   ]
                 },
                 {
                   "seed": 17201,
                   "iterations": 900,
                   "evaluated_exact_hex8_candidates": 901,
-                  "accepted_moves": 1,
-                  "objective": -1.82656488445761,
+                  "accepted_moves": 24,
+                  "objective": -1.7926036039041682,
                   "selected": [
-                    "#BB6572",
+                    "#B96572",
                     "#8EF0FF",
-                    "#E9B76C"
+                    "#E8B66B"
                   ]
                 }
               ],
@@ -19402,24 +19637,24 @@
                   "seed": 27200,
                   "iterations": 4000,
                   "evaluated_exact_hex8_candidates": 4003,
-                  "accepted_moves": 18,
-                  "objective": -1.3955410129069146,
+                  "accepted_moves": 15,
+                  "objective": -1.5043478923491014,
                   "selected": [
-                    "#F29298",
-                    "#E9FFB0",
-                    "#DBCE82"
+                    "#F39399",
+                    "#CAFFB4",
+                    "#DECC80"
                   ]
                 },
                 {
                   "seed": 27201,
                   "iterations": 4000,
                   "evaluated_exact_hex8_candidates": 4003,
-                  "accepted_moves": 23,
-                  "objective": -1.3955410129069146,
+                  "accepted_moves": 8,
+                  "objective": -1.5043478923491014,
                   "selected": [
-                    "#F29298",
-                    "#E9FFB0",
-                    "#DBCE82"
+                    "#F39399",
+                    "#CAFFB4",
+                    "#DECC80"
                   ]
                 }
               ],
@@ -19435,7 +19670,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 19,
-                  "objective": 0.020468956894630755,
+                  "objective": 0.01997062021566482,
                   "selected": [
                     "#170B09",
                     "#4B3042",
@@ -19450,7 +19685,7 @@
                   "iterations": 180,
                   "evaluated_exact_hex8_candidates": 181,
                   "accepted_moves": 1,
-                  "objective": 0.03214605419751832,
+                  "objective": 0.031646447976966086,
                   "selected": [
                     "#100C0B",
                     "#4B3042",
@@ -19463,7 +19698,7 @@
               ],
               "selected_seed": 37200,
               "changed_from_shipped": true,
-              "surface_dependency_fingerprint": "7a82961a7fdf1820b23626d81c5b53df1e2ea290aa12782ea9a1e8b18b8687cf",
+              "surface_dependency_fingerprint": "78cbf91c15c316c13b88b53c576b7debc282e62c8eb34b5ec4aab5a6518060e1",
               "controlled_identical_input_invariance": true
             }
           },

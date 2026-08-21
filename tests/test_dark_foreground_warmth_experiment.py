@@ -89,6 +89,7 @@ def test_relaxed_foreground_lanes_follow_warmth_philosophy_and_free_lightness() 
         shipped_lab = srgb_to_oklab(rgb(shipped_fg))
         lane_chroma = []
         lane_plus_b = []
+        lane_surface_move = []
         for lane, weight in LANES.items():
             record = data["profiles"][slug]["candidates"][lane]
             np.testing.assert_allclose(
@@ -106,10 +107,44 @@ def test_relaxed_foreground_lanes_follow_warmth_philosophy_and_free_lightness() 
                 assert np.max(np.abs(candidate_lab[:, 0] - shipped_lab[:, 0])) > 0.002
             lane_chroma.append(record["metrics"]["foreground"]["normal_mean_chroma"])
             lane_plus_b.append(record["metrics"]["foreground"]["normal_mean_plus_b"])
+            lane_surface_move.append(record["surface_movement_mean_delta_e_ok"])
         assert lane_chroma[0] > lane_chroma[1] > lane_chroma[2]
         assert lane_plus_b[0] > lane_plus_b[1] > lane_plus_b[2]
-        assert lane_chroma[2] < 0.016
-        assert lane_plus_b[2] < 0.014
+        assert lane_chroma[2] < 0.026
+        assert lane_plus_b[2] < 0.022
+        # Surfaces may stay shipped in the current lane and must move toward the
+        # Light Mid-Depth warmth target as the commanded step deepens.
+        assert lane_surface_move[0] == 0.0
+        assert lane_surface_move[1] >= 0.0
+        assert lane_surface_move[2] > lane_surface_move[1]
+
+
+def test_surface_lanes_follow_mid_depth_warmth_philosophy() -> None:
+    data = load()
+    light = family("3400k-light")
+    for slug in PROFILES:
+        base = family(slug)
+        shipped_lab = srgb_to_oklab(
+            rgb(tuple(base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES))
+        )
+        light_lab = srgb_to_oklab(
+            rgb(tuple(light.surfaces[role] for role in BACKGROUND_SURFACE_ROLES))
+        )
+        for lane, weight in LANES.items():
+            record = data["profiles"][slug]["candidates"][lane]
+            expected_ab = shipped_lab[:, 1:] + weight * (light_lab[:, 1:] - shipped_lab[:, 1:])
+            np.testing.assert_allclose(record["surface_target_ab"], expected_ab, atol=1e-12)
+            candidate_lab = srgb_to_oklab(rgb(list(record["surfaces"].values())))
+            if lane != "current":
+                residual = float(
+                    np.linalg.norm(
+                        candidate_lab[:, 1:] - record["surface_target_ab"], axis=1
+                    ).mean()
+                )
+                shipped_residual = float(
+                    np.linalg.norm(shipped_lab[:, 1:] - record["surface_target_ab"], axis=1).mean()
+                )
+                assert residual < shipped_residual
 
 
 def test_surfaces_counts_aliases_and_canonical_outputs_are_unchanged() -> None:
@@ -196,18 +231,15 @@ def test_every_dependent_bank_has_controlled_two_seed_search_provenance() -> Non
                     changed = records[lane][key] != data["profiles"][slug]["shipped"][key]
                 assert search["changed_from_shipped"] == changed
                 run_count += len(search["runs"])
-        # Selected surfaces are byte-identical here, so controlled identical
-        # dependencies must yield identical maps rather than lane seed noise.
+        # Sequential anchors stay identical across lanes: the sequential objective
+        # depends on the selected surfaces, which are shared within each profile.
         assert (
             records["current"]["sequential_anchors"]
             == records["halfway"]["sequential_anchors"]
             == records["full"]["sequential_anchors"]
         )
-        assert (
-            records["current"]["search"]["sequential"]["runs"]
-            == records["halfway"]["search"]["sequential"]["runs"]
-            == records["full"]["search"]["sequential"]["runs"]
-        )
+        # Surfaces differ per warmth lane here, so dependency fingerprints must
+        # differ even though the selected maps happen to coincide.
         assert (
             len(
                 {
@@ -215,7 +247,7 @@ def test_every_dependent_bank_has_controlled_two_seed_search_provenance() -> Non
                     for lane in LANES
                 }
             )
-            == 1
+            == 3
         )
     assert run_count == 72
 

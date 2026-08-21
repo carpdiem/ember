@@ -63,11 +63,11 @@ SEED_BASES = {
     "terminal": 27000,
     "sequential": 37000,
 }
-FULL_TARGET_CHROMA_SCALES = np.asarray((1.2, 1.0, 0.8))
-SURFACE_BYTE_RADIUS = 3
+SURFACE_BYTE_RADIUS = 24
 FOREGROUND_BYTE_RADIUS = 48
 FOREGROUND_LIGHTNESS_RADIUS = 0.06
 TERMINAL_HUE_CENTERS = np.asarray((20.0, 140.0, 82.0, 275.0, 335.0, 185.0))
+FULL_TARGET_CHROMA_SCALES = np.asarray((1.2, 1.0, 0.8))
 TERMINAL_INITIAL_PROPOSALS = {
     # Deterministic feasible fronts discovered in the bounded deep-profile
     # probe. They are proposals only: every lane/seed still scores them from
@@ -133,6 +133,18 @@ def foreground_target(base: FamilyDefinition, weight: float) -> np.ndarray:
     current = srgb_to_oklab(hex_array(tuple(base.surfaces[f"fg_{index}"] for index in range(3))))
     full_ab, _, _ = full_foreground_pattern()
     return current[:, 1:] + weight * (full_ab - current[:, 1:])
+
+
+def surface_target(base: FamilyDefinition, weight: float) -> np.ndarray:
+    """Interpolate each background role's a/b toward its Light Mid-Depth counterpart; L stays dark."""
+
+    shipped = srgb_to_oklab(
+        hex_array(tuple(base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES))
+    )
+    light_lab = srgb_to_oklab(
+        hex_array(tuple(LIGHT_TARGET.surfaces[role] for role in BACKGROUND_SURFACE_ROLES))
+    )
+    return shipped[:, 1:] + weight * (light_lab[:, 1:] - shipped[:, 1:])
 
 
 def candidate_family(
@@ -973,6 +985,7 @@ def full_system_violations(
 def full_system_objective(
     base: FamilyDefinition,
     target_ab: np.ndarray,
+    surface_target_ab: np.ndarray,
     values: tuple[str, ...],
     terminal_values: tuple[str, ...] | None,
 ) -> float:
@@ -997,13 +1010,17 @@ def full_system_objective(
     surface_move = float(np.linalg.norm(proposed_surface - shipped_surface, axis=1).mean())
     foreground_move = float(np.linalg.norm(proposed_fg - shipped_fg, axis=1).mean())
     target_error = float(np.linalg.norm(proposed_fg[:, 1:] - target_ab, axis=1).mean())
+    surface_target_error = float(
+        np.linalg.norm(proposed_surface[:, 1:] - surface_target_ab, axis=1).mean()
+    )
     return (
         -0.30 * min(foreground["worst_surface_shifted_contrast"])
         - 0.035 * min(foreground["shifted_adjacent_delta_e_ok"])
         - 0.020 * terminal_clearance
-        + 600.0 * surface_move
+        + 8.0 * surface_move
         + 8.0 * foreground_move
         + 90.0 * target_error
+        + 900.0 * surface_target_error
         + 2.0 * foreground["normal_mean_chroma"]
         - 0.01 * surface["shifted_span_delta_e_ok"]
     )
@@ -1012,32 +1029,44 @@ def full_system_objective(
 def system_initialization(
     base: FamilyDefinition,
     target_ab: np.ndarray,
+    surface_target_ab: np.ndarray,
     terminal_values: tuple[str, ...] | None,
 ) -> tuple[str, ...]:
     """Choose a feasible exact-Hex8 L-grid point before stochastic refinement."""
 
-    surfaces = tuple(base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES)
+    shipped_surfaces = tuple(base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES)
     shipped_fg = tuple(base.surfaces[f"fg_{index}"] for index in range(3))
+    shipped_surface_lab = srgb_to_oklab(hex_array(shipped_surfaces))
     shipped_lab = srgb_to_oklab(hex_array(shipped_fg))
-    candidates = [surfaces + shipped_fg]
-    if np.allclose(target_ab, shipped_lab[:, 1:], rtol=0.0, atol=1e-12):
+    candidates: list[tuple[str, ...]] = [shipped_surfaces + shipped_fg]
+    if np.allclose(target_ab, shipped_lab[:, 1:], rtol=0.0, atol=1e-12) and np.allclose(
+        surface_target_ab, shipped_surface_lab[:, 1:], rtol=0.0, atol=1e-12
+    ):
         return candidates[0]
     offsets = np.linspace(-FOREGROUND_LIGHTNESS_RADIUS, FOREGROUND_LIGHTNESS_RADIUS, 9)
     mixes = (1.0, 0.875, 0.75, 0.625, 0.5, 0.25, 0.0)
     for mix in mixes:
-        ab = shipped_lab[:, 1:] + mix * (target_ab - shipped_lab[:, 1:])
+        fg_ab = shipped_lab[:, 1:] + mix * (target_ab - shipped_lab[:, 1:])
+        bg_ab = shipped_surface_lab[:, 1:] + mix * (surface_target_ab - shipped_surface_lab[:, 1:])
         for first in offsets:
             for second in offsets:
                 for third in offsets:
-                    lab = np.column_stack((shipped_lab[:, 0] + (first, second, third), ab))
-                    rgb = oklab_to_srgb(lab)
+                    fg_lab = np.column_stack((shipped_lab[:, 0] + (first, second, third), fg_ab))
+                    rgb = oklab_to_srgb(fg_lab)
                     if np.any((rgb < 0.0) | (rgb > 1.0)):
                         continue
-                    candidates.append(surfaces + tuple(srgb_to_hex(value) for value in rgb))
+                    surface_lab = np.column_stack((shipped_surface_lab[:, 0], bg_ab))
+                    surface_rgb = oklab_to_srgb(surface_lab)
+                    if np.any((surface_rgb < 0.0) | (surface_rgb > 1.0)):
+                        continue
+                    candidates.append(
+                        tuple(srgb_to_hex(value) for value in surface_rgb)
+                        + tuple(srgb_to_hex(value) for value in rgb)
+                    )
     return min(
         candidates,
         key=lambda values: (
-            full_system_objective(base, target_ab, values, terminal_values),
+            full_system_objective(base, target_ab, surface_target_ab, values, terminal_values),
             values,
         ),
     )
@@ -1046,6 +1075,7 @@ def system_initialization(
 def bounded_system_search(
     base: FamilyDefinition,
     target_ab: np.ndarray,
+    surface_target_ab: np.ndarray,
     terminal_values: tuple[str, ...] | None,
     *,
     seed: int,
@@ -1064,9 +1094,11 @@ def bounded_system_search(
             np.full((3, 3), FOREGROUND_BYTE_RADIUS, dtype=np.int16),
         )
     )
-    best_values = system_initialization(base, target_ab, terminal_values)
+    best_values = system_initialization(base, target_ab, surface_target_ab, terminal_values)
     best = bytes_from_hex(best_values)
-    best_score = full_system_objective(base, target_ab, best_values, terminal_values)
+    best_score = full_system_objective(
+        base, target_ab, surface_target_ab, best_values, terminal_values
+    )
     accepted = 0
     evaluated = 1
     for iteration in range(iterations):
@@ -1079,7 +1111,7 @@ def bounded_system_search(
         flat[indices] += rng.integers(-step, step + 1, size=edits, dtype=np.int16)
         proposal = np.minimum(np.maximum(proposal, origin - radius), origin + radius)
         values = hex_from_bytes(proposal)
-        score = full_system_objective(base, target_ab, values, terminal_values)
+        score = full_system_objective(base, target_ab, surface_target_ab, values, terminal_values)
         evaluated += 1
         if score < best_score - 1e-12 or (
             abs(score - best_score) <= 1e-12 and values < best_values
@@ -1124,6 +1156,7 @@ def coupled_lightness_repair(
     surfaces: tuple[str, ...],
     foregrounds: tuple[str, ...],
     target_ab: np.ndarray,
+    surface_target_ab: np.ndarray,
     terminal_values: tuple[str, ...],
 ) -> tuple[str, ...]:
     """Deterministically feed terminal clearance back into the three free FG L values."""
@@ -1150,7 +1183,9 @@ def coupled_lightness_repair(
     return min(
         candidates,
         key=lambda candidate: (
-            full_system_objective(base, target_ab, surfaces + candidate, terminal_values),
+            full_system_objective(
+                base, target_ab, surface_target_ab, surfaces + candidate, terminal_values
+            ),
             candidate,
         ),
     )
@@ -1351,6 +1386,10 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
             "unit direction of the Light Mid-Depth mean Oklab a/b vector at chroma multipliers "
             "[1.2,1.0,0.8]; lane interpolation from shipped a/b; soft target with free L"
         ),
+        "surface_target": (
+            "each background role's Oklab a/b interpolated toward its Light Mid-Depth "
+            "counterpart at the same role; dark L retained; soft target within ±24-byte bounds"
+        ),
         "lanes": {name: weight for name, weight in LANES.items()},
         "profiles": {},
     }
@@ -1375,10 +1414,12 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
         for lane, weight in LANES.items():
             print(f"{slug} / {lane}", flush=True)
             target_ab = foreground_target(base, weight)
+            surface_target_ab = surface_target(base, weight)
             system_runs = [
                 bounded_system_search(
                     base,
                     target_ab,
+                    surface_target_ab,
                     None,
                     seed=SEED_BASES["full_system"] + controlled_seed_offset + seed_add,
                     iterations=iterations["full_system"],
@@ -1422,10 +1463,12 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                 )
             categorical, selected_cat_run = select_two_seed_runs(cat_runs)
             terminal, selected_term_run = select_two_seed_runs(term_runs)
-            repaired_foregrounds = coupled_lightness_repair(
-                base, surfaces, foregrounds, target_ab, terminal
-            )
-            if repaired_foregrounds != foregrounds:
+            for _repair_pass in range(4):
+                repaired_foregrounds = coupled_lightness_repair(
+                    base, surfaces, foregrounds, target_ab, surface_target_ab, terminal
+                )
+                if repaired_foregrounds == foregrounds:
+                    break
                 foregrounds = repaired_foregrounds
                 lane_base = candidate_family(base, surfaces, foregrounds)
                 foreground = foreground_metrics(base, surfaces, foregrounds)
@@ -1460,6 +1503,11 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                 ]
                 categorical, selected_cat_run = select_two_seed_runs(cat_runs)
                 terminal, selected_term_run = select_two_seed_runs(term_runs)
+            else:
+                raise RuntimeError(
+                    "coupled lightness repair did not converge within four passes; "
+                    "extend the refinement loop before trusting these results"
+                )
             seq_runs = [
                 bounded_exact_search(
                     base.sequential_anchors,
@@ -1517,6 +1565,7 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                 "surfaces": dict(zip(BACKGROUND_SURFACE_ROLES, surfaces, strict=True)),
                 "foregrounds": list(foregrounds),
                 "foreground_target_ab": target_ab.tolist(),
+                "surface_target_ab": surface_target_ab.tolist(),
                 "full_foreground_target_ab": full_ab.tolist(),
                 "light_mid_depth_mean_chroma": light_mean_chroma,
                 "light_mid_depth_mean_ab_direction": light_direction.tolist(),
@@ -1549,7 +1598,7 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                 "search": {
                     "full_system": {
                         "bounds": (
-                            "surface shipped bytes ±3; foreground shipped bytes ±48; "
+                            "surface shipped bytes ±24; foreground shipped bytes ±48; "
                             "foreground Oklab L within shipped L ±0.06"
                         ),
                         "objective": (
