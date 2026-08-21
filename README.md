@@ -2,6 +2,8 @@
 
 [See it live](https://www.usuallypragmatic.com/ember/)
 
+> **Branch experiment:** [compare dark foreground warmth constraints](docs/experiments/dark-foreground-warmth/README.md) across 3400K, 2000K, and 1200K profiles. This comparison is exploratory and does not change the canonical palettes.
+
 **Color palettes for terminals, interfaces, charts, and heatmaps that keep text
 readable and semantic colors distinct through aggressive warm-screen filtering.**
 
