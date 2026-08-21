@@ -27,28 +27,28 @@
 }
 
 [data-ember-palette="3400k-light"] {
-  --ember-bg-0: #FFF7D6;
-  --ember-bg-1: #F4EAC7;
-  --ember-bg-2: #E9DCB9;
-  --ember-bg-3: #DFCFAA;
-  --ember-bg-4: #D4C29C;
-  --ember-bg-5: #C9B796;
+  --ember-bg-0: #F9F9F8;
+  --ember-bg-1: #ECECEB;
+  --ember-bg-2: #E0E0DD;
+  --ember-bg-3: #D5D3D0;
+  --ember-bg-4: #CAC7C3;
+  --ember-bg-5: #BFBCB5;
   --ember-fg-0: #342F2C;
   --ember-fg-1: #4D4540;
   --ember-fg-2: #665C54;
-  --ember-category-one: #2C9A84;
-  --ember-category-two: #321853;
-  --ember-category-three: #B36875;
-  --ember-category-four: #5B2A07;
-  --ember-category-five: #2A632D;
-  --ember-category-six: #556BAA;
-  --ember-terminal-red: #470D05;
-  --ember-terminal-green: #174213;
-  --ember-terminal-yellow: #894C03;
-  --ember-terminal-blue: #162252;
-  --ember-terminal-magenta: #643563;
-  --ember-terminal-cyan: #00766E;
-  --ember-sequential: linear-gradient(90deg, #282527 0%, #3B3139 10%, #4D3E4A 20%, #614A58 30%, #765863 40%, #8A686A 50%, #9D796C 60%, #B08A6E 70%, #C39E75 80%, #D3B589 90%, #E2CDA1 100%);
+  --ember-category-one: #359984;
+  --ember-category-two: #281144;
+  --ember-category-three: #A76282;
+  --ember-category-four: #6A2600;
+  --ember-category-five: #185823;
+  --ember-category-six: #445D9B;
+  --ember-terminal-red: #430000;
+  --ember-terminal-green: #10420E;
+  --ember-terminal-yellow: #8A4805;
+  --ember-terminal-blue: #131851;
+  --ember-terminal-magenta: #5D3777;
+  --ember-terminal-cyan: #007672;
+  --ember-sequential: linear-gradient(90deg, #2A2424 0%, #3C3138 10%, #4E3E4A 20%, #604C59 30%, #745C66 40%, #876D6E 50%, #9A7E72 60%, #AD8F73 70%, #C1A27A 80%, #D5B68A 90%, #E8CA9C 100%);
 }
 
 [data-ember-palette="2000k-dark"] {

@@ -732,8 +732,13 @@ def test_mars_topography_colormaps_preserve_real_scalar_indices() -> None:
         assert np.array_equal(rendered_palette, authored_palette)
 
 
-def test_3400k_scalar_assets_are_identical_across_interface_modes() -> None:
+def test_3400k_scalar_assets_keep_indices_with_mode_specific_colors() -> None:
     for stem in ("mars-topography", "mona-lisa"):
-        dark = ROOT / f"assets/{stem}-3400k-dark.png"
-        light = ROOT / f"assets/{stem}-3400k-light.png"
-        assert dark.read_bytes() == light.read_bytes()
+        dark_path = ROOT / f"assets/{stem}-3400k-dark.png"
+        light_path = ROOT / f"assets/{stem}-3400k-light.png"
+        assert dark_path.read_bytes() != light_path.read_bytes()
+        with Image.open(dark_path) as dark, Image.open(light_path) as light:
+            assert dark.mode == light.mode == "P"
+            assert dark.size == light.size
+            assert np.array_equal(np.asarray(dark), np.asarray(light))
+            assert dark.getpalette() != light.getpalette()

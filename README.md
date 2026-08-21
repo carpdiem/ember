@@ -6,7 +6,7 @@
 readable and semantic colors distinct through aggressive warm-screen filtering.**
 
 Warm-screen filters change each RGB channel by a different amount, causing ordinary
-colors to collide. Ember provides four palettes with warm-neutral text and surfaces,
+colors to collide. Ember provides four palettes with neutral or warm-neutral text and surfaces,
 distinct categorical and terminal colors, and 256-sample sequential maps. Each palette
 maintains its specified contrast, perceptual separation, and ordered lightness in
 unfiltered output and after its modeled 3400 K, 2000 K, or 1200 K transform.
@@ -28,9 +28,9 @@ you already have.
 
 ![3400K Light — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-light.svg)
 
-3400K Dark and 3400K Light intentionally share the exact same 256-sample sequential map.
-Low values are dark and high values are bright in both interface modes, so changing the
-surrounding canvas and text does not change scalar meaning.
+3400K Dark and 3400K Light use mode-specific 256-sample sequential maps while preserving
+one scalar polarity: low values are dark and high values are bright in both modes. The light
+map is tuned for even daytime progression against its neutral surface system.
 
 ### 2000K Dark
 
@@ -78,7 +78,7 @@ filter before judging them, or your screen applies the transform a second time.
 | Palette | Choose it for | Categories |
 |---|---|---:|
 | [`3400k-dark`](#3400k-dark) | general-purpose dark interfaces | 6 |
-| [`3400k-light`](#3400k-light) | general-purpose light interfaces | 6 |
+| [`3400k-light`](#3400k-light) | neutral daytime light interfaces | 6 |
 | [`2000k-dark`](#2000k-dark) | Redshift near 2000 K | 4 |
 | [`1200k-dark`](#1200k-dark) | extreme 1200 K filtering | 3 |
 
@@ -309,8 +309,8 @@ dark gray becomes a much larger rust-colored signal than Ember's near-black canv
 
 ![Wrong palette choices compared with Ember under exact warm transforms](docs/diagrams/failure-modes.svg)
 
-Ember puts most pixels in warm-neutral surfaces, uses cream rather than pure white for body
-text, and reserves higher chroma for semantic accents. Every foreground-capable terminal
+Ember puts most pixels in neutral or warm-neutral surfaces, avoids unnecessary pure-white
+body text, and reserves higher chroma for semantic accents. Every foreground-capable terminal
 accent still clears 4.5:1 contrast against the terminal base background (`bg_0`) after its
 target transform. `fg_1` and `fg_2` remain available for larger supporting text and
 nonessential metadata.
@@ -334,8 +334,9 @@ position, dash pattern, marker shape, or texture:
 
 Each sequential map begins with a human-chosen earth-tone path. The generator smooths that
 path in Oklab, measures cumulative distance after the target transform, and resamples it at
-equal transformed-distance intervals. The 2000 K and 1200 K maps use restrained interior
-blue-channel adjustments to improve commanded spacing without giving up transformed
+equal transformed-distance intervals. The 3400 K Light map uses its own restrained path to
+improve daytime progression on a neutral canvas. The 2000 K and 1200 K maps use restrained
+interior blue-channel adjustments to improve commanded spacing without giving up transformed
 equidistance, endpoints, or monotonic lightness.
 
 The result is a 256-sample map with strictly monotonic transformed lightness and nearly equal

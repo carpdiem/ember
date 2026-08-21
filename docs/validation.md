@@ -14,7 +14,7 @@ formula.
 | Family | Categories | Day min ΔEOK | Transformed min ΔEOK | Mean / max raw chroma | Transformed L range | Min ANSI contrast |
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 15.00 | 11.45 | 0.0971 / 0.1045 | 0.2206 | 5.29:1 |
-| 3400K Light | 6 | 16.73 | 12.41 | 0.0988 / 0.1037 | 0.3068 | 4.65:1 |
+| 3400K Light | 6 | 16.64 | 12.15 | 0.1006 / 0.1069 | 0.3137 | 4.71:1 |
 | 2000K Dark | 4 | 17.00 | 12.91 | 0.0956 / 0.1082 | 0.1538 | 4.52:1 |
 | 1200K Dark | 3 | 20.72 | 10.25 | 0.1047 / 0.1107 | 0.1268 | 4.55:1 |
 
@@ -24,7 +24,7 @@ Contrast here is for graphical category marks, not small text.
 | Family | Day minimum hue gap | Target | Transformed category / `bg_0` | Target |
 |---|---:|---:|---:|---:|
 | 3400K Dark | 20.23° | ≥ 20° | 3.01:1 | ≥ 3:1 |
-| 3400K Light | 31.75° | ≥ 30° | 3.03:1 | ≥ 3:1 |
+| 3400K Light | 30.07° | ≥ 30° | 3.33:1 | ≥ 3:1 |
 | 2000K Dark | 27.76° | ≥ 20° | 3.05:1 | ≥ 3:1 |
 | 1200K Dark | 65.03° | ≥ 45° | 3.12:1 | ≥ 3:1 |
 
@@ -34,7 +34,7 @@ comparisons:
 | Family | Day accent min | Day → `fg_0` | Day → `fg_1` | Day → `fg_2` | Transformed accent min | Transformed → `fg_0` | Transformed → `fg_1` | Transformed → `fg_2` |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 10.76 | 8.67 | 8.13 | 11.72 | 7.31 | 6.58 | 5.16 | 10.18 |
-| 3400K Light | 15.64 | 9.25 | 9.47 | 9.22 | 11.07 | 6.47 | 6.70 | 7.13 |
+| 3400K Light | 17.17 | 9.98 | 11.52 | 9.51 | 12.74 | 7.73 | 7.09 | 7.42 |
 | 2000K Dark | 12.62 | 13.73 | 10.86 | 8.25 | 7.75 | 7.64 | 5.03 | 4.75 |
 | 1200K Dark | 12.35 | 9.69 | 8.96 | 14.68 | 4.13 | 4.49 | 4.13 | 11.29 |
 

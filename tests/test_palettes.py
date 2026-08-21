@@ -76,20 +76,36 @@ def test_honest_temperature_families() -> None:
         assert len(family["surfaces"]) == 9
 
 
-def test_3400k_palettes_share_one_dark_to_bright_sequential_map() -> None:
+def test_3400k_palettes_keep_scalar_polarity_with_mode_specific_maps() -> None:
     definitions = {family.slug: family for family in FAMILIES}
-    assert (
-        definitions["3400k-dark"].sequential_anchors
-        is definitions["3400k-light"].sequential_anchors
+    assert definitions["3400k-dark"].sequential_anchors == (
+        "#282527",
+        "#51404F",
+        "#7F5E69",
+        "#A17C6C",
+        "#C49D70",
+        "#E2CDA1",
+    )
+    assert definitions["3400k-light"].sequential_anchors == (
+        "#2A2424",
+        "#524150",
+        "#7B616B",
+        "#9B7F73",
+        "#BC9D73",
+        "#E8CA9C",
     )
 
     families = generate_manifest()["families"]
     dark = families["3400k-dark"]
     light = families["3400k-light"]
-    assert dark["continuous_rgb"] == light["continuous_rgb"]
-    assert dark["continuous_hex8"] == light["continuous_hex8"]
-    assert dark["metrics"]["continuous"] == light["metrics"]["continuous"]
+    assert dark["continuous_rgb"] != light["continuous_rgb"]
+    assert dark["continuous_hex8"] != light["continuous_hex8"]
     assert dark["metrics"]["continuous"]["shifted_lightness_direction"] == "increasing"
+    assert light["metrics"]["continuous"]["shifted_lightness_direction"] == "increasing"
+    assert (
+        light["metrics"]["continuous"]["normal_delta_e_ok_cv"]
+        < dark["metrics"]["continuous"]["normal_delta_e_ok_cv"]
+    )
 
 
 def test_numbered_surface_roles_have_locked_values() -> None:
@@ -98,7 +114,7 @@ def test_numbered_surface_roles_have_locked_values() -> None:
     assert manifest["quality_targets"]["bg_roles_low_to_high"] == roles
     expected = {
         "3400k-dark": ["#090807", "#100E0C", "#181612", "#201D19", "#29251F", "#32241B"],
-        "3400k-light": ["#FFF7D6", "#F4EAC7", "#E9DCB9", "#DFCFAA", "#D4C29C", "#C9B796"],
+        "3400k-light": ["#F9F9F8", "#ECECEB", "#E0E0DD", "#D5D3D0", "#CAC7C3", "#BFBCB5"],
         "2000k-dark": ["#070504", "#0D0A09", "#15110E", "#1E1814", "#271F1B", "#30221B"],
         "1200k-dark": ["#060302", "#0C0806", "#130E0B", "#1C1511", "#251C17", "#2E1E17"],
     }
@@ -158,23 +174,23 @@ def test_accent_selections_have_locked_two_stage_values() -> None:
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
         "3400k-light": {
-            "categorical": ["#2C9A84", "#321853", "#B36875", "#5B2A07", "#2A632D", "#556BAA"],
+            "categorical": ["#359984", "#281144", "#A76282", "#6A2600", "#185823", "#445D9B"],
             "categorical_transformed_targets": [
-                "#2C7246",
-                "#32122C",
-                "#B34D3E",
-                "#5B1F04",
-                "#2A4918",
-                "#554F5A",
+                "#357146",
+                "#280D24",
+                "#A74945",
+                "#6A1C00",
+                "#184112",
+                "#444552",
             ],
-            "terminal": ["#470D05", "#174213", "#894C03", "#162252", "#643563", "#00766E"],
+            "terminal": ["#430000", "#10420E", "#8A4805", "#131851", "#5D3777", "#007672"],
             "terminal_transformed_targets": [
-                "#470A03",
-                "#17310A",
-                "#893801",
-                "#16192B",
-                "#642734",
-                "#01573A",
+                "#430000",
+                "#103108",
+                "#8A3502",
+                "#13122B",
+                "#5D293F",
+                "#01573C",
             ],
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
@@ -214,7 +230,7 @@ def test_terminal_ansi_roles_have_semantic_commanded_hues() -> None:
     semantic_names = ("red", "green", "yellow", "blue", "magenta", "cyan")
     expected = {
         "3400k-dark": ["#F5AD9A", "#7EB798", "#CA9246", "#B4C6F7", "#D895C2", "#70DBD8"],
-        "3400k-light": ["#470D05", "#174213", "#894C03", "#162252", "#643563", "#00766E"],
+        "3400k-light": ["#430000", "#10420E", "#8A4805", "#131851", "#5D3777", "#007672"],
         "2000k-dark": ["#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB", "#EC8B96", "#74E5C0"],
         "1200k-dark": ["#F29298", "#C9FFB4", "#DDCD81", "#DDCD81", "#F29298", "#C9FFB4"],
     }
