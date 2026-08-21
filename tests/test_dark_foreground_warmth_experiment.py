@@ -472,6 +472,8 @@ def test_static_review_captures_cover_profiles_domains_and_phone() -> None:
             for state in ("commanded", "simulated")
         ),
         "phone-2000k-full-simulated.png",
+        "metrics-table.png",
+        "phone-metrics.png",
     ]
     assert sorted(path.name for path in captures.glob("*.png")) == sorted(expected)
     for name in expected:
