@@ -105,12 +105,13 @@ def test_surfaces_counts_aliases_and_canonical_outputs_are_unchanged() -> None:
             "palettes/ember.css",
         )
     }
-    # Baseline hashes are pinned to exact origin/main 6d86f44 in this experiment.
+    # Pinned from the exact origin/main baseline 6d86f44. Constants avoid a
+    # runtime dependency on parent history in GitHub Actions' shallow checkout.
     expected_hashes = {
-        path: hashlib.sha256(
-            __import__("subprocess").check_output(["git", "show", f"6d86f44:{path}"], cwd=ROOT)
-        ).hexdigest()
-        for path in canonical_hashes
+        "src/ember/definitions.py": "a4bba1a88c778f6bee728cdf0bc8d63d2921c4e069061b117aebecbe81f207fd",
+        "src/ember/palettes.json": "2e4d0f1f08ea1a34f9c45cff458d14e4d306e0aa920e20fc706445686f87ae54",
+        "palettes/ember.json": "2e4d0f1f08ea1a34f9c45cff458d14e4d306e0aa920e20fc706445686f87ae54",
+        "palettes/ember.css": "9e03c7b92a4eca7865ce1a2d74d9173c1d628d203c0ad93f8443f23174084be0",
     }
     assert canonical_hashes == expected_hashes
     for slug in PROFILES:
