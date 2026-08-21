@@ -34,14 +34,21 @@ ASSETS = OUT / "candidate-assets"
 PROFILE_SLUGS = ("3400k-dark", "2000k-dark", "1200k-dark")
 LANES = ("current", "halfway", "full")
 LANE_LABELS = {
-    "current": ("Current warmth", "0% toward Light Mid-Depth ink"),
-    "halfway": ("Halfway", "50% Oklab chroma-vector interpolation"),
-    "full": ("Full step", "Light Mid-Depth a/b at the dark role's current L"),
+    "current": ("Current warmth", "Shipped dark chroma-vector target; relaxed lightness"),
+    "halfway": ("Halfway", "50% toward the restrained Light Mid-Depth warmth pattern"),
+    "full": ("Full step", "Light Mid-Depth mean warmth with dark decreasing-chroma hierarchy"),
 }
 TERM_NAMES = ("red", "green", "yellow", "blue", "magenta", "cyan")
 UNIVERSAL_FOREGROUND_FLOORS = (4.5, 3.5, 2.4)
 
 METRICS = (
+    (
+        "Strict release status",
+        "strict_status",
+        "higher",
+        lambda c: 1.0 if c["release_status"] == "PASS" else 0.0,
+        ".0f",
+    ),
     (
         "Foreground mean chroma",
         "fg_mean_chroma",
@@ -62,6 +69,26 @@ METRICS = (
         "higher",
         lambda c: c["metrics"]["foreground"]["chroma_reduction_vs_current_percent"],
         ".1f",
+    ),
+    *(
+        (
+            f"FG-{index} commanded Oklab L",
+            f"fg{index}_l",
+            "higher",
+            lambda c, index=index: c["metrics"]["foreground"]["normal_lightness"][index],
+            ".4f",
+        )
+        for index in range(3)
+    ),
+    *(
+        (
+            f"FG-{index} absolute L movement from shipped",
+            f"fg{index}_dl",
+            "lower",
+            lambda c, index=index: abs(c["foreground_lightness_deltas_vs_shipped"][index]),
+            ".4f",
+        )
+        for index in range(3)
     ),
     (
         "Foreground adjacent ΔEOK, day minimum",
@@ -96,6 +123,27 @@ METRICS = (
         "fg2_contrast",
         "higher",
         lambda c: c["metrics"]["foreground"]["worst_surface_shifted_contrast"][2],
+        ".2f",
+    ),
+    (
+        "Surface mean movement ΔEOK",
+        "surface_move",
+        "lower",
+        lambda c: c["surface_movement_mean_delta_e_ok"],
+        ".3f",
+    ),
+    (
+        "Surface transformed span ΔEOK",
+        "surface_span",
+        "higher",
+        lambda c: c["metrics"]["surface"]["shifted_span_delta_e_ok"],
+        ".2f",
+    ),
+    (
+        "Surface transformed adjacent ΔEOK minimum",
+        "surface_step",
+        "higher",
+        lambda c: min(c["metrics"]["surface"]["shifted_adjacent_delta_e_ok"]),
         ".2f",
     ),
     (
@@ -245,6 +293,7 @@ def load_data() -> dict[str, Any]:
 def candidate_definition(slug: str, record: dict[str, Any]):
     base = family(slug)
     surfaces = dict(base.surfaces)
+    surfaces.update(record["surfaces"])
     surfaces.update({f"fg_{index}": value for index, value in enumerate(record["foregrounds"])})
     return replace(
         base,
@@ -336,6 +385,8 @@ def best_lanes(profile_record: dict[str, Any], extractor, direction: str) -> set
 
 
 def format_metric(value: float, spec: str, key: str) -> str:
+    if key == "strict_status":
+        return "PASS" if value >= 1.0 else "FAIL"
     text = format(value, spec)
     return f"{text}%" if key == "fg_reduction" else text
 
@@ -413,14 +464,14 @@ def anatomy(profile: str, lane: str, record: dict[str, Any]) -> str:
     failures = "".join(f"<li>{escape(item)}</li>" for item in record["release_failures"])
     search_summary = ", ".join(
         f"{bank}: {'changed' if record['search'][bank]['changed_from_shipped'] else 'reselected shipped exact'}"
-        for bank in ("categorical", "terminal", "sequential")
+        for bank in ("full_system", "categorical", "terminal", "sequential")
     )
     return f"""
 <header class="card-head"><div><p>{LANE_LABELS[lane][1]}</p><h3>{LANE_LABELS[lane][0]}</h3></div><div class="status"><span class="status-{strict.lower()}">Strict {strict}</span><span class="status-{universal.lower()}">Universal text {universal}</span></div></header>
 <div class="surface-strip">{surfaces}</div><div class="foregrounds">{foregrounds}</div>
 <div class="bank"><b>Categorical · {len(record["categorical"])}</b><div class="swatches">{swatches(record["categorical"], "cat")}</div></div>
 <div class="bank"><b>Terminal authored · {len(record["terminal"])}</b><div class="swatches">{swatches(record["terminal"], "term")}</div></div>
-<div class="gradient"></div><p class="search-summary">Fresh controlled search: {search_summary}. Categorical/terminal use the same seed pair in every lane; the foreground-invariant sequential result is searched once per profile and reused byte-identically.</p>
+<div class="gradient"></div><p class="search-summary">Fresh controlled search: {search_summary}. Every bank uses the same profile-specific seed pair in every lane. Sequential dependencies are recorded from the selected exact surfaces, so identical maps are evidence of identical inputs rather than seed noise.</p>
 <details><summary>{len(record["release_failures"])} strict release-contract failure(s)</summary><ul>{failures or "<li>None.</li>"}</ul></details>
 """
 
@@ -438,7 +489,7 @@ def terminal(record: dict[str, Any]) -> str:
 <div class="terminal"><header><i></i><i></i><i></i><b>ember-audit / {len(record["terminal"])} authored semantic identities</b></header><pre><code><span class="prompt">$</span> ember compare <span class="string">--state exact-simulated</span>
 <span class="keyword">from</span> ember.audit <span class="keyword">import</span> <span class="function">measure</span>
 profile = <span class="string">"{record["weight"]:.1f}-warmth"</span>
-<span class="selection">result = measure(profile, preserve_surface=True)</span>
+<span class="selection">result = measure(profile, optimize_system=True)</span>
 <span class="comment"># comments use bright-black / FG-0 mapping</span>
 <span class="term-red">error:</span> strict floor miss
 <span class="term-green">ok:</span> serialized Hex8 verified
@@ -520,7 +571,7 @@ def render_html(data: dict[str, Any]) -> str:
         (
             "anatomy",
             "01 · Complete anatomy",
-            "Surfaces are byte-identical; every foreground and dependent bank is exact Hex8.",
+            "Surfaces and foregrounds are jointly selected at exact Hex8 before dependent banks.",
             "anatomy",
         ),
         (
@@ -583,8 +634,8 @@ def render_html(data: dict[str, Any]) -> str:
 @media(max-width:680px){{.topbar{{position:static;display:flex;flex-direction:column;align-items:stretch}}.control{{display:grid;overflow:visible}}.control[aria-label="Profile"]{{grid-template-columns:repeat(3,1fr)}}.control[aria-label="Display state"]{{grid-template-columns:repeat(2,1fr)}}.control[aria-label="Candidate focus"]{{grid-template-columns:repeat(2,1fr)}}.control button{{min-width:0;white-space:normal}}.truth-grid,.candidate-grid{{grid-template-columns:1fr}}.intro h2{{font-size:2.4rem}}.proof{{padding:.9rem .55rem}}.metrics-section{{padding:1rem .55rem}}.card-head{{align-items:start;flex-direction:column}}.status{{justify-content:flex-start}}.surface{{height:56px}}.surface code{{font-size:.38rem}}.bank{{grid-template-columns:1fr}}.editorial,.terminal,.dashboard,.sequence-proof,figure{{margin:.45rem}}.dash-grid{{grid-template-columns:1fr}}.chart,.events,.controls{{grid-column:auto}}form{{grid-template-columns:1fr}}form button{{grid-column:auto}}.status-table{{width:100%;font-size:.58rem}}.status-table th,.status-table td{{padding:.3rem}}}}
 @media(prefers-reduced-motion:reduce){{*{{animation:none!important;scroll-behavior:auto!important}}}}
 </style></head><body data-profile="3400k-dark" data-state="commanded" data-focus="all">
-<header class="topbar"><div class="brand"><h1>EMBER · DARK FOREGROUND WARMTH</h1><p>Fixed ink hypotheses · freshly searched dependent systems</p></div><div class="control" role="group" aria-label="Profile">{profile_buttons}</div><div class="control" role="group" aria-label="Display state"><button type="button" data-state-button="commanded" aria-pressed="true">Commanded</button><button type="button" data-state-button="simulated" aria-pressed="false">Exact simulated</button></div><div class="control" role="group" aria-label="Candidate focus">{focus_buttons}</div></header>
-<main><section class="intro"><p class="eyebrow">BRANCH EXPERIMENT · NOT CANONICAL · NO SINGLE SCALAR WINNER</p><h2>How neutral can Ember's dark ink become?</h2><p>Each dark profile keeps all six shipped surfaces byte-identical. Its three foreground roles retain their shipped Oklab lightness while their chroma vectors move 0%, 50%, or 100% toward the corresponding 3400K Light Mid-Depth foreground. Categorical and terminal banks receive fresh two-seed bounded exact-Hex8 searches in every lane with the same controlled seed pair. Sequential anchors are freshly recomputed once per profile and reused byte-identically across lanes because their objective does not depend on foreground warmth.</p><div class="truth-grid"><article class="truth-card"><h3>Fixed hypothesis, not repaired</h3><p>Full-step foregrounds are not moved back toward warmth when they miss current release floors. Infeasibility is evidence.</p></article><article class="truth-card"><h3>Two status lenses</h3><p><b>Strict</b> applies every current family contract. <b>Universal text</b> isolates the 4.5 / 3.5 / 2.4 role floors so tiny family-margin misses stay in proportion.</p></article><article class="truth-card"><h3>Controlled invariance</h3><p>Simulation uses exact encoded-sRGB gains. Sequential search is one profile-level result, not nine random-seed variants; Mars and Mona remain candidate-specific rasters.</p></article></div><table class="status-table"><thead><tr><th>Profile</th><th>Current</th><th>Halfway</th><th>Full</th></tr></thead><tbody>{statuses}</tbody></table></section>
+<header class="topbar"><div class="brand"><h1>EMBER · DARK FOREGROUND WARMTH</h1><p>Transformed-first relaxed-L · full-system exact search</p></div><div class="control" role="group" aria-label="Profile">{profile_buttons}</div><div class="control" role="group" aria-label="Display state"><button type="button" data-state-button="commanded" aria-pressed="true">Commanded</button><button type="button" data-state-button="simulated" aria-pressed="false">Exact simulated</button></div><div class="control" role="group" aria-label="Candidate focus">{focus_buttons}</div></header>
+<main><section class="intro"><p class="eyebrow">BRANCH EXPERIMENT · NOT CANONICAL · NO SINGLE SCALAR WINNER</p><h2>How neutral can Ember's dark ink become?</h2><p>This second pass chooses a usable transformed foreground system first. Foreground lightness may recover contrast, and all six dark surfaces may move inside restrained bounds with a strong movement penalty. Current, halfway, and full remain commanded warmth philosophies: full uses the 3400K Light Mid-Depth mean warmth and chroma while preserving the connected decreasing-chroma hierarchy required by every dark family. Every bank is scored only after exact Hex8 quantization.</p><div class="truth-grid"><article class="truth-card"><h3>Transformed usability first</h3><p>Current release floors are hard penalties. Warmth, chroma, target closeness, and movement are softer competing objectives after usability.</p></article><article class="truth-card"><h3>Relaxed, not unconstrained</h3><p>Foreground L has an explicit bound. Surface ladders keep dark luminance ceilings, monotonicity, adjacent spacing, span, and all-surface text contrast.</p></article><article class="truth-card"><h3>Controlled dependencies</h3><p>Identical seed pairs are reused across lanes. Sequential searches record a surface dependency fingerprint, so map invariance or change follows actual inputs rather than seed noise.</p></article></div><table class="status-table"><thead><tr><th>Profile</th><th>Current</th><th>Halfway</th><th>Full</th></tr></thead><tbody>{statuses}</tbody></table></section>
 <section class="metrics-section" id="metrics"><p class="eyebrow">COMBINED METRICS · BEST WITHIN EACH PROFILE ONLY</p><h2>Competing directions, no scalar winner</h2><p class="metrics-note">Bold marks only the best-performing lane(s) per profile for that metric. Passing a floor alone is never bolded. Gain-corner extrema are observations at four sampled ±5% G/B corners, not box-wide guarantees.</p>{metrics_html(data)}</section>{"".join(sections)}</main><footer class="footer">Exact values: search-results.json · Reproducible search: search_full_palette.py · Promotion requires a separate canonical pass.</footer>
 <script>
 const body=document.body,params=new URLSearchParams(location.search);
@@ -637,7 +688,7 @@ def current_lane_summary(data: dict[str, Any]) -> str:
     for profile in PROFILE_SLUGS:
         record = data["profiles"][profile]["candidates"]["current"]
         outcomes = []
-        for bank in ("categorical", "terminal", "sequential"):
+        for bank in ("full_system", "categorical", "terminal", "sequential"):
             changed = record["search"][bank]["changed_from_shipped"]
             outcomes.append(f"{bank} {'changed' if changed else 'reselected shipped exact values'}")
         lines.append(f"- **{data['profiles'][profile]['name']}:** " + "; ".join(outcomes) + ".")
@@ -653,28 +704,33 @@ def render_readme(data: dict[str, Any]) -> str:
 
 ## Bottom line
 
-This experiment compares all three shipped dark profiles under three fixed foreground-warmth constraints: current, halfway, and a full step toward the corresponding **3400K Light Mid-Depth** foreground chroma vector. Every dark role keeps its current Oklab `L`; only `a/b` move, and every result is quantized to exact Hex8 before use.
+This second pass compares all three shipped dark profiles under three commanded warmth philosophies: current, halfway, and full. The full target uses the **3400K Light Mid-Depth** mean foreground chroma and mean `a/b` direction, redistributed as a decreasing `1.2 / 1.0 / 0.8` dark-role pattern. Halfway interpolates each shipped dark chroma vector toward that pattern. These are aesthetic penalties, not fixed colors.
 
-The manipulation works: full-step mean foreground chroma falls by roughly 65–75%, and mean Oklab `+b` converges near the neutral Light Mid-Depth direction. The cost is not uniform. Small strict-margin misses appear in 3400K, 2000K loses ladder or primary margin as warmth falls, and 1200K loses several transformed text floors. Those failures are retained rather than “fixed,” because the fixed foreground constraint is the question being tested.
+The optimizer chooses a usable transformed foreground hierarchy first. Foreground Oklab `L` may move inside an explicit bound, and `bg_0`…`bg_5` may move inside restrained exact-byte bounds with a strong movement penalty. Dependent categorical, terminal, and sequential banks are then rerun against the selected exact surfaces and foregrounds, including a deterministic terminal/foreground lightness feedback pass where needed.
 
 There is **no single scalar winner**. Lower warmth/chroma competes with transformed contrast, hierarchy, semantic clearance, and sequential regularity.
 
-## What was held fixed
+## Why this pass exists
 
-- Every `bg_0`…`bg_5` is byte-identical to its shipped family in all three lanes.
-- Foreground Oklab lightness is inherited from the shipped dark role before Hex8 quantization.
+The [first fixed-lightness diagnostic](https://github.com/carpdiem/ember/tree/e99f9db7daa84e678d00d6796e2ffc2eff543f90/docs/experiments/dark-foreground-warmth) found transformed contrast breaches as warmth fell. Those breaches described the imposed fixed-`L` substitution, not the best achievable cooler system. This pass follows the transformed-first correction: allow foreground lightness and restrained surfaces to earn back usability, then judge how little commanded orange/yellow cast is needed.
+
+## What remains controlled
+
+- Surface and foreground bounds, seeds, objectives, selected exact values, movement, and failed gates are serialized for every lane.
+- Surface movement is optional: the optimizer can retain shipped backgrounds byte-for-byte when foreground L alone solves usability.
 - Semantic counts, `terminal_ansi_indices`, and `terminal_night_groups` are preserved per family.
 - Canonical definitions, public manifests, CSS, package exports, and generated release themes are untouched.
 
 ## Fresh dependent searches
 
-For **each profile × lane**, categorical and terminal accents were freshly searched with two deterministic seeds. Every lane within a profile uses the same controlled seed pair, so differences come from the fixed foreground constraint rather than random-seed assignment. Sequential anchors were freshly recomputed once per profile with two seeds and reused byte-identically across all three lanes because the sequential objective is invariant to foreground warmth. The search is a bounded stochastic hill-climb over exact Hex8 byte proposals, not a continuous-float optimization and not a global-optimum claim.
+For **each profile × lane**, the joint surface/foreground system and every dependent bank receive fresh bounded exact-Hex8 searches with two deterministic seeds. Every lane within a profile uses the same controlled pair. Sequential search includes the selected surface system in its dependency fingerprint; byte-identical dependencies should produce byte-identical maps, while changed dependencies are recomputed rather than explained by seed noise. This is bounded-search evidence, not a global-optimum or infeasibility claim.
 
+- full system: restrained surface bytes plus relaxed foreground bytes and explicit Oklab-L bounds;
 - categorical: each shipped byte ±18;
-- terminal: each shipped byte ±16;
+- terminal: profile-recorded exact byte bounds, broadened where required by the severe transform;
 - sequential anchors: each shipped byte ±10;
-- hard penalties: current pair-separation, hue-recognition, foreground-collision, transformed-background-contrast, sequential monotonicity/range/uniformity contracts;
-- soft objective: separation, foreground clearance, realistic all-surface contrast, four sampled ±5% gain-corner evidence, and restrained movement from the mature shipped bank.
+- hard penalties: the complete current surface, foreground, categorical, terminal, sequential, maturity, contrast, and sampled-corner release contracts;
+- soft objective: transformed clarity and hierarchy, restrained movement, then commanded warmth/chroma and lane-target closeness.
 
 ### Current-lane result
 
@@ -684,7 +740,7 @@ The current lane was not copied. It went through the same fresh two-seed searche
 
 ## Strict release status vs universal text usability
 
-“Strict” means every current family-specific gate. “Universal text” isolates transformed `fg_0 / fg_1 / fg_2` floors of `4.5 / 3.5 / 2.4`. This prevents a small `6.78 < 6.80` family-margin miss from being narrated as a usability cliff while still recording the contract failure exactly.
+“Strict” means every current family-specific surface, foreground, categorical, terminal, sequential, maturity, contrast, and sampled-corner gate. “Universal text” separately isolates transformed `fg_0 / fg_1 / fg_2` floors of `4.5 / 3.5 / 2.4`. All nine relaxed candidates clear both lenses; the distinction remains visible so later experiments cannot hide a family-specific miss behind the universal floor.
 
 {failures_markdown(data)}
 

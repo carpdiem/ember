@@ -68,6 +68,19 @@ SURFACE_BYTE_RADIUS = 3
 FOREGROUND_BYTE_RADIUS = 48
 FOREGROUND_LIGHTNESS_RADIUS = 0.06
 TERMINAL_HUE_CENTERS = np.asarray((20.0, 140.0, 82.0, 275.0, 335.0, 185.0))
+TERMINAL_INITIAL_PROPOSALS = {
+    # Deterministic feasible fronts discovered in the bounded deep-profile
+    # probe. They are proposals only: every lane/seed still scores them from
+    # exact Hex8 and may reject or refine them.
+    "2000k-dark": (
+        ("#EB8DA6", "#74E5C0", "#C39B65", "#A2D0FF"),
+        ("#EC8B96", "#74E5C0", "#C39B55", "#9FC7FC"),
+    ),
+    "1200k-dark": (
+        ("#F39399", "#CCFFB4", "#DEC671"),
+        ("#F19299", "#E6FFAF", "#DBC370"),
+    ),
+}
 # These bounds preserve the visual-maturity choices recorded in the prior
 # Pareto pass.  Chroma alone did not reject the candy-like clipped frontiers.
 CATEGORY_CHANNEL_CEILINGS = {
@@ -631,6 +644,7 @@ def bounded_exact_search(
     seed: int,
     iterations: int,
     radius: int,
+    initial_candidates: tuple[tuple[str, ...], ...] = (),
 ) -> dict[str, Any]:
     """Deterministic bounded stochastic hill-climb over exact byte proposals."""
 
@@ -641,6 +655,21 @@ def bounded_exact_search(
     best_score = objective(best_values)
     accepted = 0
     evaluated = 1
+    for candidate in initial_candidates:
+        candidate_bytes = bytes_from_hex(candidate)
+        if candidate_bytes.shape != origin.shape:
+            continue
+        if np.any(np.abs(candidate_bytes - origin) > radius):
+            continue
+        score = objective(candidate)
+        evaluated += 1
+        if score < best_score - 1e-12 or (
+            abs(score - best_score) <= 1e-12 and candidate < best_values
+        ):
+            best = candidate_bytes
+            best_values = candidate
+            best_score = score
+            accepted += 1
     for iteration in range(iterations):
         progress = iteration / max(1, iterations - 1)
         step = max(1, round(radius * (1.0 - progress) + 1.0))
@@ -793,7 +822,7 @@ def full_system_violations(
     base: FamilyDefinition,
     surfaces: tuple[str, ...],
     foregrounds: tuple[str, ...],
-    terminal_values: tuple[str, ...],
+    terminal_values: tuple[str, ...] | None,
 ) -> list[float]:
     foreground = foreground_metrics(base, surfaces, foregrounds)
     surface = surface_metrics(base, surfaces, foregrounds)
@@ -910,32 +939,34 @@ def full_system_violations(
             for value in np.diff(np.asarray(chroma)) * direction
         )
 
-    # Couple the full-system proposal to the terminal role bank before the fresh
-    # terminal rerun, so foreground moves cannot depend on an accent rescue.
-    coupled_base = candidate_family(base, surfaces, foregrounds)
-    terminal = accent_metrics(coupled_base, terminal_values, foregrounds, terminal=True)
-    day_floors = (
-        base.terminal_daylight_minimum_fg_0_delta_e_ok,
-        base.terminal_daylight_minimum_fg_1_delta_e_ok,
-        base.terminal_daylight_minimum_fg_2_delta_e_ok,
-    )
-    night_floors = (
-        base.terminal_night_minimum_fg_0_delta_e_ok,
-        base.terminal_night_minimum_fg_1_delta_e_ok,
-        base.terminal_night_minimum_fg_2_delta_e_ok,
-    )
-    values.extend(
-        violation(actual, floor or 0.0)
-        for actual, floor in zip(
-            terminal["normal_foreground_clearance_by_role"], day_floors, strict=True
+    # Initial foreground selection is transformed-usability first and must not
+    # be pulled back toward warmth by the shipped terminal bank. Terminal
+    # clearance enters only during the post-search coupled refinement/final gate.
+    if terminal_values is not None:
+        coupled_base = candidate_family(base, surfaces, foregrounds)
+        terminal = accent_metrics(coupled_base, terminal_values, foregrounds, terminal=True)
+        day_floors = (
+            base.terminal_daylight_minimum_fg_0_delta_e_ok,
+            base.terminal_daylight_minimum_fg_1_delta_e_ok,
+            base.terminal_daylight_minimum_fg_2_delta_e_ok,
         )
-    )
-    values.extend(
-        violation(actual, floor or 0.0)
-        for actual, floor in zip(
-            terminal["shifted_foreground_clearance_by_role"], night_floors, strict=True
+        night_floors = (
+            base.terminal_night_minimum_fg_0_delta_e_ok,
+            base.terminal_night_minimum_fg_1_delta_e_ok,
+            base.terminal_night_minimum_fg_2_delta_e_ok,
         )
-    )
+        values.extend(
+            violation(actual, floor or 0.0)
+            for actual, floor in zip(
+                terminal["normal_foreground_clearance_by_role"], day_floors, strict=True
+            )
+        )
+        values.extend(
+            violation(actual, floor or 0.0)
+            for actual, floor in zip(
+                terminal["shifted_foreground_clearance_by_role"], night_floors, strict=True
+            )
+        )
     return values
 
 
@@ -943,7 +974,7 @@ def full_system_objective(
     base: FamilyDefinition,
     target_ab: np.ndarray,
     values: tuple[str, ...],
-    terminal_values: tuple[str, ...],
+    terminal_values: tuple[str, ...] | None,
 ) -> float:
     surfaces = values[:6]
     foregrounds = values[6:]
@@ -958,15 +989,18 @@ def full_system_objective(
     )
     proposed_fg = srgb_to_oklab(hex_array(foregrounds))
     shipped_fg = srgb_to_oklab(hex_array(tuple(base.surfaces[f"fg_{index}"] for index in range(3))))
-    coupled_base = candidate_family(base, surfaces, foregrounds)
-    terminal = accent_metrics(coupled_base, terminal_values, foregrounds, terminal=True)
+    terminal_clearance = 0.0
+    if terminal_values is not None:
+        coupled_base = candidate_family(base, surfaces, foregrounds)
+        terminal = accent_metrics(coupled_base, terminal_values, foregrounds, terminal=True)
+        terminal_clearance = terminal["shifted_foreground_clearance_min"]
     surface_move = float(np.linalg.norm(proposed_surface - shipped_surface, axis=1).mean())
     foreground_move = float(np.linalg.norm(proposed_fg - shipped_fg, axis=1).mean())
     target_error = float(np.linalg.norm(proposed_fg[:, 1:] - target_ab, axis=1).mean())
     return (
         -0.30 * min(foreground["worst_surface_shifted_contrast"])
         - 0.035 * min(foreground["shifted_adjacent_delta_e_ok"])
-        - 0.020 * terminal["shifted_foreground_clearance_min"]
+        - 0.020 * terminal_clearance
         + 600.0 * surface_move
         + 8.0 * foreground_move
         + 90.0 * target_error
@@ -978,7 +1012,7 @@ def full_system_objective(
 def system_initialization(
     base: FamilyDefinition,
     target_ab: np.ndarray,
-    terminal_values: tuple[str, ...],
+    terminal_values: tuple[str, ...] | None,
 ) -> tuple[str, ...]:
     """Choose a feasible exact-Hex8 L-grid point before stochastic refinement."""
 
@@ -1012,7 +1046,7 @@ def system_initialization(
 def bounded_system_search(
     base: FamilyDefinition,
     target_ab: np.ndarray,
-    terminal_values: tuple[str, ...],
+    terminal_values: tuple[str, ...] | None,
     *,
     seed: int,
     iterations: int,
@@ -1314,7 +1348,7 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
             "same-profile seed pairs; bounded evidence only"
         ),
         "foreground_target": (
-            "Light Mid-Depth mean unit Oklab a/b direction at chroma multipliers "
+            "unit direction of the Light Mid-Depth mean Oklab a/b vector at chroma multipliers "
             "[1.2,1.0,0.8]; lane interpolation from shipped a/b; soft target with free L"
         ),
         "lanes": {name: weight for name, weight in LANES.items()},
@@ -1345,7 +1379,7 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                 bounded_system_search(
                     base,
                     target_ab,
-                    base.terminal_colors,
+                    None,
                     seed=SEED_BASES["full_system"] + controlled_seed_offset + seed_add,
                     iterations=iterations["full_system"],
                 )
@@ -1382,7 +1416,8 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                             if slug == "1200k-dark"
                             else iterations["terminal"]
                         ),
-                        radius=36 if slug == "1200k-dark" else 16,
+                        radius=36 if slug in TERMINAL_INITIAL_PROPOSALS else 16,
+                        initial_candidates=TERMINAL_INITIAL_PROPOSALS.get(slug, ()),
                     )
                 )
             categorical, selected_cat_run = select_two_seed_runs(cat_runs)
@@ -1418,7 +1453,8 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                             if slug == "1200k-dark"
                             else iterations["terminal"]
                         ),
-                        radius=36 if slug == "1200k-dark" else 16,
+                        radius=36 if slug in TERMINAL_INITIAL_PROPOSALS else 16,
+                        initial_candidates=TERMINAL_INITIAL_PROPOSALS.get(slug, ()),
                     )
                     for seed_add in (0, 1)
                 ]
@@ -1527,6 +1563,12 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                             "surfaces": list(surfaces),
                             "foregrounds": list(foregrounds),
                         },
+                        "changed_from_shipped": (
+                            list(surfaces)
+                            != [base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES]
+                            or list(foregrounds)
+                            != [base.surfaces[f"fg_{index}"] for index in range(3)]
+                        ),
                     },
                     "categorical": {
                         "bounds": "each shipped sRGB byte ±18, clipped to [0,255]",

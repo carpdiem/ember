@@ -8,18 +8,23 @@ from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
+import pytest
 from PIL import Image, ImageChops
 
 from ember.color import (
     contrast_ratio,
     hex_to_srgb,
-    oklab_to_srgb,
     perceived_lab,
     srgb_to_hex,
     srgb_to_oklab,
     warm_transform,
 )
-from ember.definitions import BACKGROUND_SURFACE_ROLES, FAMILIES
+from ember.definitions import (
+    BACKGROUND_SURFACE_ROLES,
+    DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK,
+    DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE,
+    FAMILIES,
+)
 from ember.generate import _sequential_colors
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,27 +51,22 @@ def renderer_module() -> dict:
     return runpy.run_path(str(ROOT / "tools/render_dark_foreground_warmth_experiment.py"))
 
 
-def expected_lane_foregrounds(slug: str, weight: float) -> list[str]:
+def expected_lane_target_ab(slug: str, weight: float) -> np.ndarray:
     base = family(slug)
     light = family("3400k-light")
-    values = []
-    for index in range(3):
-        source = srgb_to_oklab(hex_to_srgb(base.surfaces[f"fg_{index}"]))
-        target = srgb_to_oklab(hex_to_srgb(light.surfaces[f"fg_{index}"]))
-        lab = np.asarray(
-            [
-                source[0],
-                source[1] + weight * (target[1] - source[1]),
-                source[2] + weight * (target[2] - source[2]),
-            ]
-        )
-        values.append(srgb_to_hex(np.clip(oklab_to_srgb(lab), 0.0, 1.0)))
-    return values
+    shipped = srgb_to_oklab(rgb(tuple(base.surfaces[f"fg_{index}"] for index in range(3))))
+    light_lab = srgb_to_oklab(rgb(tuple(light.surfaces[f"fg_{index}"] for index in range(3))))
+    light_chroma = np.linalg.norm(light_lab[:, 1:], axis=1)
+    mean_vector = light_lab[:, 1:].mean(axis=0)
+    direction = mean_vector / np.linalg.norm(mean_vector)
+    full_ab = (light_chroma.mean() * np.asarray((1.2, 1.0, 0.8)))[:, None] * direction
+    return shipped[:, 1:] + weight * (full_ab - shipped[:, 1:])
 
 
 def expected_candidate_family(slug: str, record: dict):
     base = family(slug)
     surfaces = dict(base.surfaces)
+    surfaces.update(record["surfaces"])
     surfaces.update({f"fg_{index}": value for index, value in enumerate(record["foregrounds"])})
     return replace(
         base,
@@ -79,19 +79,37 @@ def expected_candidate_family(slug: str, record: dict):
     )
 
 
-def test_fixed_foreground_lanes_are_exact_and_preserve_dark_lightness() -> None:
+def test_relaxed_foreground_lanes_follow_warmth_philosophy_and_free_lightness() -> None:
     data = load()
+    assert data["schema"] == 2
     assert data["lanes"] == LANES
     for slug in PROFILES:
         base = family(slug)
+        shipped_fg = tuple(base.surfaces[f"fg_{index}"] for index in range(3))
+        shipped_lab = srgb_to_oklab(rgb(shipped_fg))
+        lane_chroma = []
+        lane_plus_b = []
         for lane, weight in LANES.items():
             record = data["profiles"][slug]["candidates"][lane]
-            assert record["foregrounds"] == expected_lane_foregrounds(slug, weight)
-            for index, value in enumerate(record["foregrounds"]):
-                actual_l = srgb_to_oklab(hex_to_srgb(value))[0]
-                source_l = srgb_to_oklab(hex_to_srgb(base.surfaces[f"fg_{index}"]))[0]
-                # Hex8 is the declared boundary; this is the expected quantization residue.
-                assert abs(actual_l - source_l) < 0.002
+            np.testing.assert_allclose(
+                record["foreground_target_ab"], expected_lane_target_ab(slug, weight), atol=1e-12
+            )
+            candidate_lab = srgb_to_oklab(rgb(record["foregrounds"]))
+            np.testing.assert_allclose(
+                record["foreground_lightness_deltas_vs_shipped"],
+                candidate_lab[:, 0] - shipped_lab[:, 0],
+                atol=1e-12,
+            )
+            if lane == "current":
+                assert tuple(record["foregrounds"]) == shipped_fg
+            else:
+                assert np.max(np.abs(candidate_lab[:, 0] - shipped_lab[:, 0])) > 0.002
+            lane_chroma.append(record["metrics"]["foreground"]["normal_mean_chroma"])
+            lane_plus_b.append(record["metrics"]["foreground"]["normal_mean_plus_b"])
+        assert lane_chroma[0] > lane_chroma[1] > lane_chroma[2]
+        assert lane_plus_b[0] > lane_plus_b[1] > lane_plus_b[2]
+        assert lane_chroma[2] < 0.016
+        assert lane_plus_b[2] < 0.014
 
 
 def test_surfaces_counts_aliases_and_canonical_outputs_are_unchanged() -> None:
@@ -119,9 +137,24 @@ def test_surfaces_counts_aliases_and_canonical_outputs_are_unchanged() -> None:
         shipped = data["profiles"][slug]["shipped"]
         for lane in LANES:
             record = data["profiles"][slug]["candidates"][lane]
-            assert record["surfaces"] == {
-                role: base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES
-            }
+            assert list(record["surfaces"]) == list(BACKGROUND_SURFACE_ROLES)
+            candidate_surface = srgb_to_oklab(rgb(list(record["surfaces"].values())))
+            shipped_surface = srgb_to_oklab(
+                rgb(tuple(base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES))
+            )
+            assert record["surface_movement_mean_delta_e_ok"] == pytest.approx(
+                np.linalg.norm(candidate_surface - shipped_surface, axis=1).mean() * 100.0
+            )
+            surface = record["metrics"]["surface"]
+            assert np.all(np.diff(surface["normal_relative_luminance"]) >= 0.0)
+            assert np.all(np.diff(surface["shifted_relative_luminance"]) >= 0.0)
+            assert min(surface["shifted_adjacent_delta_e_ok"]) >= (
+                DARK_MINIMUM_ADJACENT_SURFACE_DELTA_E_OK
+            )
+            for role, value in zip(
+                BACKGROUND_SURFACE_ROLES, surface["normal_relative_luminance"], strict=True
+            ):
+                assert value <= DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE[role]
             assert len(record["categorical"]) == len(base.categorical_colors)
             assert len(record["terminal"]) == len(base.terminal_colors)
             assert record["terminal_ansi_indices"] == list(base.terminal_ansi_indices)
@@ -135,6 +168,7 @@ def test_every_dependent_bank_has_controlled_two_seed_search_provenance() -> Non
     for profile_index, slug in enumerate(PROFILES):
         records = data["profiles"][slug]["candidates"]
         expected_seed_pairs = {
+            "full_system": [7000 + profile_index * 100, 7001 + profile_index * 100],
             "categorical": [17000 + profile_index * 100, 17001 + profile_index * 100],
             "terminal": [27000 + profile_index * 100, 27001 + profile_index * 100],
             "sequential": [37000 + profile_index * 100, 37001 + profile_index * 100],
@@ -145,25 +179,25 @@ def test_every_dependent_bank_has_controlled_two_seed_search_provenance() -> Non
                 assert [run["seed"] for run in search["runs"]] == seeds
                 assert all(run["evaluated_exact_hex8_candidates"] > 1 for run in search["runs"])
                 assert search["selected_seed"] in seeds
-                assert search["changed_from_shipped"] == (
-                    records[lane][
-                        {
-                            "categorical": "categorical",
-                            "terminal": "terminal",
-                            "sequential": "sequential_anchors",
-                        }[bank]
-                    ]
-                    != data["profiles"][slug]["shipped"][
-                        {
-                            "categorical": "categorical",
-                            "terminal": "terminal",
-                            "sequential": "sequential_anchors",
-                        }[bank]
-                    ]
-                )
+                if bank == "full_system":
+                    selected = search["selected_after_coupled_refinement"]
+                    changed = (
+                        selected["surfaces"]
+                        != list(data["profiles"][slug]["shipped"]["surfaces"].values())
+                        or selected["foregrounds"]
+                        != data["profiles"][slug]["shipped"]["foregrounds"]
+                    )
+                else:
+                    key = {
+                        "categorical": "categorical",
+                        "terminal": "terminal",
+                        "sequential": "sequential_anchors",
+                    }[bank]
+                    changed = records[lane][key] != data["profiles"][slug]["shipped"][key]
+                assert search["changed_from_shipped"] == changed
                 run_count += len(search["runs"])
-        # Sequential objective is independent of foreground warmth: one controlled
-        # profile search is reused byte-for-byte rather than introducing seed noise.
+        # Selected surfaces are byte-identical here, so controlled identical
+        # dependencies must yield identical maps rather than lane seed noise.
         assert (
             records["current"]["sequential_anchors"]
             == records["halfway"]["sequential_anchors"]
@@ -174,7 +208,16 @@ def test_every_dependent_bank_has_controlled_two_seed_search_provenance() -> Non
             == records["halfway"]["search"]["sequential"]["runs"]
             == records["full"]["search"]["sequential"]["runs"]
         )
-    assert run_count == 54
+        assert (
+            len(
+                {
+                    records[lane]["search"]["sequential"]["surface_dependency_fingerprint"]
+                    for lane in LANES
+                }
+            )
+            == 1
+        )
+    assert run_count == 72
 
 
 def test_serialized_transformed_targets_maps_and_metrics_recompute_independently() -> None:
@@ -231,39 +274,21 @@ def test_serialized_transformed_targets_maps_and_metrics_recompute_independently
             assert abs(np.ptp(night[:, 0]) - metrics["shifted_lightness_range"]) < 1e-12
 
 
-def test_release_status_distinguishes_strict_contract_from_universal_text() -> None:
+def test_relaxed_system_restores_strict_and_universal_status_for_every_lane() -> None:
     data = load()
     renderer = renderer_module()
-    expected_strict = {
-        "3400k-dark": {"current": "PASS", "halfway": "FAIL", "full": "FAIL"},
-        "2000k-dark": {"current": "PASS", "halfway": "FAIL", "full": "FAIL"},
-        "1200k-dark": {"current": "PASS", "halfway": "FAIL", "full": "FAIL"},
-    }
     for slug in PROFILES:
         for lane in LANES:
             record = data["profiles"][slug]["candidates"][lane]
-            assert record["release_status"] == expected_strict[slug][lane]
-            assert record["release_status"] == (
-                "PASS" if not record["release_failures"] else "FAIL"
-            )
+            assert record["release_status"] == "PASS"
+            assert record["release_failures"] == []
+            assert record["foreground_failures"] == []
+            assert record["dependent_bank_failures"] == []
             contrasts = record["metrics"]["foreground"]["worst_surface_shifted_contrast"]
-            expected_universal = (
-                "PASS"
-                if all(
-                    value >= floor for value, floor in zip(contrasts, UNIVERSAL_FLOORS, strict=True)
-                )
-                else "FAIL"
+            assert all(
+                value >= floor for value, floor in zip(contrasts, UNIVERSAL_FLOORS, strict=True)
             )
-            assert renderer["universal_status"](record) == expected_universal
-    assert any(
-        "6.8000" in failure
-        for failure in data["profiles"]["3400k-dark"]["candidates"]["halfway"]["release_failures"]
-    )
-    assert any(
-        "5.6500" in failure
-        for failure in data["profiles"]["2000k-dark"]["candidates"]["full"]["release_failures"]
-    )
-    assert len(data["profiles"]["1200k-dark"]["candidates"]["full"]["foreground_failures"]) >= 3
+            assert renderer["universal_status"](record) == "PASS"
 
 
 def test_current_lane_is_fresh_and_reported_honestly() -> None:
@@ -273,9 +298,9 @@ def test_current_lane_is_fresh_and_reported_honestly() -> None:
         record = data["profiles"][slug]["candidates"]["current"]
         assert all(
             len(record["search"][bank]["runs"]) == 2
-            for bank in ("categorical", "terminal", "sequential")
+            for bank in ("full_system", "categorical", "terminal", "sequential")
         )
-        for bank in ("categorical", "terminal", "sequential"):
+        for bank in ("full_system", "categorical", "terminal", "sequential"):
             phrase = (
                 "changed"
                 if record["search"][bank]["changed_from_shipped"]
@@ -367,16 +392,16 @@ def test_candidate_rasters_are_hash_locked_source_mapped_exact_simulations() -> 
     assets = EXPERIMENT / "candidate-assets"
     commanded_sha256 = {
         "3400k-dark": {
-            "mars": "bdb5fb233d48b73149aeadbfb9516b784cc26a009d87ea7ca11efaadc40e48a3",
-            "mona": "187174aca1ab893a9a55c5659f64e60c077fb4e41082228035ec588233560c06",
+            "mars": "c1995cf04cc095ca7aa2b778868a90db33d4bfa2f7b280beaa25fd6b57eb20cc",
+            "mona": "00a8faa5d010aee2d462a8f021271c1fa5cdb9cb781b0d15da3f9afd99054bb5",
         },
         "2000k-dark": {
-            "mars": "f40539284f5ea5f543c08b8f82f919941213b46c9ebd87e9dcd5d01634f3fe00",
-            "mona": "8a2c1124c94e576ee404eeaa410e0ba3f7a8b8ecb6795ee4f1a037f805a1ecb1",
+            "mars": "1915ac974009c5c454b875838c92ba6aa872b750f8363590f417e8dc801da597",
+            "mona": "944c41bf09b22584db13ed24e5bc7d4d2bbb145b79fbd825b902756b1b574412",
         },
         "1200k-dark": {
-            "mars": "5cd152d38293b784fb8b6e6a74386976f248a0349aeb51d4b4d6bfbc1d7e8721",
-            "mona": "c9572598f1f03d3fbb9341df0b60b7a0df65da23bc1ab4c83186dfefd18c0cea",
+            "mars": "ddeab5c5b6991a34690df10dfda3c152682b91988b31c9527dd756479050ff00",
+            "mona": "cb650685b94d517494726fe745b33319c70470c645ad1dbb7043eb37230c7aa8",
         },
     }
 
