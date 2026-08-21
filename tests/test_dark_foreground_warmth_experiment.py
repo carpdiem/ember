@@ -362,7 +362,7 @@ def test_html_contains_all_required_domains_controls_and_default_comparison() ->
     assert "@media(max-width:680px)" in landing
 
 
-def test_candidate_rasters_are_hash_locked_exact_simulations_with_real_dimensions() -> None:
+def test_candidate_rasters_are_hash_locked_source_mapped_exact_simulations() -> None:
     data = load()
     assets = EXPERIMENT / "candidate-assets"
     commanded_sha256 = {
@@ -379,10 +379,36 @@ def test_candidate_rasters_are_hash_locked_exact_simulations_with_real_dimension
             "mona": "c9572598f1f03d3fbb9341df0b60b7a0df65da23bc1ab4c83186dfefd18c0cea",
         },
     }
+
+    elevation = np.fromfile(ROOT / "assets/megt90n000cb.img", dtype=">i2").reshape((720, 1440))
+    low, high = np.quantile(elevation, (0.01, 0.99))
+    mars_indices = np.rint(np.clip((elevation - low) / (high - low), 0.0, 1.0) * 255).astype(
+        np.uint8
+    )
+
+    with Image.open(ROOT / "assets/mona-lisa-c2rmf-public-domain.jpg") as source:
+        source = source.convert("RGB")
+        height = round(source.height * 640 / source.width)
+        source = source.resize((640, height), Image.Resampling.LANCZOS)
+        source_lightness = srgb_to_oklab(np.asarray(source, dtype=float) / 255.0)[..., 0]
+    low, high = np.quantile(source_lightness, (0.01, 0.99))
+    mona_indices = np.rint(np.clip((source_lightness - low) / (high - low), 0.0, 1.0) * 255).astype(
+        np.uint8
+    )
+
     for slug in PROFILES:
         gains = np.asarray(data["profiles"][slug]["gains"])
+        sequence = np.asarray(
+            data["profiles"][slug]["candidates"]["current"]["continuous_float_srgb"]
+        )
+        palette_rgb8 = np.rint(sequence * 255).astype(np.uint8)
+        expected_commanded = {
+            "mars": palette_rgb8[mars_indices],
+            "mona": palette_rgb8[mona_indices],
+        }
         # The profile-level sequential invariant makes commanded assets identical
-        # across lanes. Hash-lock them, then verify every simulated derivative.
+        # across lanes. Verify container hashes, decoded source mapping, then every
+        # simulated derivative independently.
         for lane in LANES:
             stem = f"{slug}-{lane}"
             for subject in ("mars", "mona"):
@@ -398,14 +424,12 @@ def test_candidate_rasters_are_hash_locked_exact_simulations_with_real_dimension
                 ):
                     commanded = commanded_source.convert("RGB")
                     simulated = simulated_source.convert("RGB")
-                    assert commanded.size == simulated.size
-                    assert commanded.width >= 600
-                    assert commanded.height >= (600 if subject == "mona" else 300)
-                    expected_pixels = np.rint(
+                    assert np.array_equal(np.asarray(commanded), expected_commanded[subject])
+                    expected_simulated = np.rint(
                         np.clip(np.asarray(commanded, dtype=float) / 255.0 * gains, 0.0, 1.0)
                         * 255.0
                     ).astype(np.uint8)
-                    assert np.array_equal(np.asarray(simulated), expected_pixels)
+                    assert np.array_equal(np.asarray(simulated), expected_simulated)
                     assert ImageChops.difference(commanded, simulated).getbbox() is not None
 
 
