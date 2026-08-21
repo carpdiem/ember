@@ -29,10 +29,11 @@ For **each profile × lane**, the joint surface/foreground system and every depe
 
 - full system: restrained surface bytes plus relaxed foreground bytes and explicit Oklab-L bounds;
 - categorical: each shipped byte ±18;
-- terminal: profile-recorded exact byte bounds, broadened where required by the severe transform;
+- terminal: profile-specific exact byte bounds (±16 for 3400K, ±36 for 2000K/1200K), broadened for the severe transforms;
 - sequential anchors: each shipped byte ±10;
 - hard penalties: the complete current surface, foreground, categorical, terminal, sequential, maturity, contrast, and sampled-corner release contracts;
 - soft objective: transformed clarity and hierarchy, restrained movement, then commanded warmth/chroma and lane-target closeness.
+- terminal/foreground feedback: one deterministic focused `±0.018` Oklab-L refinement grid, followed by fresh dependent searches and authoritative final full-system gates.
 
 ### Current-lane result
 
