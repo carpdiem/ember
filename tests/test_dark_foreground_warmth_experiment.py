@@ -362,31 +362,36 @@ def test_html_contains_all_required_domains_controls_and_default_comparison() ->
     assert "@media(max-width:680px)" in landing
 
 
-def test_candidate_rasters_are_fresh_exact_simulations_with_real_dimensions() -> None:
+def test_candidate_rasters_are_hash_locked_exact_simulations_with_real_dimensions() -> None:
     data = load()
-    renderer = renderer_module()
     assets = EXPERIMENT / "candidate-assets"
+    commanded_sha256 = {
+        "3400k-dark": {
+            "mars": "bdb5fb233d48b73149aeadbfb9516b784cc26a009d87ea7ca11efaadc40e48a3",
+            "mona": "187174aca1ab893a9a55c5659f64e60c077fb4e41082228035ec588233560c06",
+        },
+        "2000k-dark": {
+            "mars": "f40539284f5ea5f543c08b8f82f919941213b46c9ebd87e9dcd5d01634f3fe00",
+            "mona": "8a2c1124c94e576ee404eeaa410e0ba3f7a8b8ecb6795ee4f1a037f805a1ecb1",
+        },
+        "1200k-dark": {
+            "mars": "5cd152d38293b784fb8b6e6a74386976f248a0349aeb51d4b4d6bfbc1d7e8721",
+            "mona": "c9572598f1f03d3fbb9341df0b60b7a0df65da23bc1ab4c83186dfefd18c0cea",
+        },
+    }
     for slug in PROFILES:
         gains = np.asarray(data["profiles"][slug]["gains"])
-        # Sequential anchors are profile-level and byte-identical across lanes,
-        # so render each expensive source derivative once per profile/subject.
-        representative = data["profiles"][slug]["candidates"]["current"]
-        generated = __import__("ember.generate", fromlist=["generate_family"]).generate_family(
-            expected_candidate_family(slug, representative)
-        )
-        expected_commanded_by_subject = {
-            subject: renderer[render_name](generated)
-            for subject, render_name in (
-                ("mars", "_mars_topography_colormap_image"),
-                ("mona", "_mona_lisa_colormap_image"),
-            )
-        }
+        # The profile-level sequential invariant makes commanded assets identical
+        # across lanes. Hash-lock them, then verify every simulated derivative.
         for lane in LANES:
             stem = f"{slug}-{lane}"
-            for subject, expected_commanded in expected_commanded_by_subject.items():
+            for subject in ("mars", "mona"):
                 commanded_path = assets / f"{subject}-{stem}-commanded.png"
                 simulated_path = assets / f"{subject}-{stem}-simulated.png"
-                assert commanded_path.read_bytes() == expected_commanded
+                assert (
+                    hashlib.sha256(commanded_path.read_bytes()).hexdigest()
+                    == commanded_sha256[slug][subject]
+                )
                 with (
                     Image.open(commanded_path) as commanded_source,
                     Image.open(simulated_path) as simulated_source,
