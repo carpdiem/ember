@@ -21,7 +21,7 @@ This fourth pass compares all three shipped dark profiles under two commanded ph
 
 | Profile | Current bg_count | Halfway bg_count | Halfway choice rule / note |
 |---|:---:|:---:|---|
-| 3400K Dark | 6 | 4 | shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84 |
+| 3400K Dark | 6 | 5 | shared dark anchor; floating warm light anchor; interiors refined to even CAM16-UCS steps >=3.84 |
 | 2000K Dark | 6 | 4 | shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84 |
 | 1200K Dark | 6 | 4 | shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84 |
 
@@ -30,7 +30,7 @@ This fourth pass compares all three shipped dark profiles under two commanded ph
 - **3400K Dark · Current:** shipped count retained; shipped count is 6 colors.
 - **3400K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 6 colors.
 - **2000K Dark · Current:** shipped count retained; shipped count is 4 colors.
-- **2000K Dark · Halfway:** shipped count retained; shipped count is 4 colors.
+- **2000K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 4 colors.
 - **1200K Dark · Current:** shipped count retained; shipped count is 3 colors.
 - **1200K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 3 colors.
 
@@ -56,16 +56,16 @@ Rows are Pareto-ranked: transformed usability first, then commanded warmth. Ever
 
 | Metric | Direction | 3400K Dark Current | 3400K Dark Halfway | 2000K Dark Current | 2000K Dark Halfway | 1200K Dark Current | 1200K Dark Halfway |
 |---|:---:|---:|---:|---:|---:|---:|---:|
-| Background surface count | ↑ higher | **6** | 4 | **6** | 4 | **6** | 4 |
-| Transformed adjacent ΔEOK minimum | ↑ higher | 2.31 | **7.72** | 2.10 | **4.65** | 2.34 | **4.43** |
-| Transformed uniformity ratio, max:min step | ↓ lower | 2.143 | **1.025** | 1.816 | **1.020** | 1.679 | **1.307** |
-| Transformed surface span ΔEOK | ↑ higher | **14.57** | 13.25 | **14.84** | 13.98 | **14.91** | 14.68 |
-| Transformed fg-background clearance minimum | ↑ higher | 33.58 | **46.52** | 38.63 | **48.85** | 34.07 | **39.98** |
-| FG-0 transformed worst-surface contrast | ↑ higher | 6.83 | **7.76** | 5.86 | **7.03** | 5.32 | **5.37** |
-| FG-1 transformed worst-surface contrast | ↑ higher | 4.94 | **5.98** | 4.66 | **5.65** | 3.52 | **4.03** |
-| FG-2 transformed worst-surface contrast | ↑ higher | 3.08 | **4.76** | 3.31 | **4.67** | 2.48 | **3.03** |
-| Commanded foreground mean +b | ↓ lower | 0.0375 | **0.0247** | 0.0460 | **0.0284** | 0.0528 | **0.0320** |
-| Commanded foreground mean chroma | ↓ lower | 0.0379 | **0.0254** | 0.0472 | **0.0295** | 0.0546 | **0.0337** |
+| Background surface count | ↑ higher | **6** | 5 | **6** | 4 | **6** | 4 |
+| Transformed adjacent ΔEOK minimum | ↑ higher | 2.31 | **4.72** | 2.10 | **4.65** | 2.34 | **4.50** |
+| Transformed uniformity ratio, max:min step | ↓ lower | 2.143 | **1.103** | 1.816 | **1.020** | 1.679 | **1.319** |
+| Transformed surface span ΔEOK | ↑ higher | 14.57 | **16.46** | **14.84** | 13.98 | **14.91** | 14.68 |
+| Transformed fg-background clearance minimum | ↑ higher | 33.58 | **44.40** | 38.63 | **47.93** | 34.07 | **40.24** |
+| FG-0 transformed worst-surface contrast | ↑ higher | 6.83 | **7.80** | 5.86 | **6.29** | 5.32 | **5.37** |
+| FG-1 transformed worst-surface contrast | ↑ higher | 4.94 | **5.81** | 4.66 | **4.80** | 3.52 | **4.06** |
+| FG-2 transformed worst-surface contrast | ↑ higher | 3.08 | **4.47** | 3.31 | **4.57** | 2.48 | **3.06** |
+| Commanded foreground mean +b | ↓ lower | 0.0375 | **0.0277** | 0.0460 | **0.0291** | 0.0528 | **0.0316** |
+| Commanded foreground mean chroma | ↓ lower | 0.0379 | **0.0299** | 0.0472 | **0.0327** | 0.0546 | **0.0334** |
 
 ## Reader-facing proof domains
 
@@ -113,13 +113,13 @@ Terminal:    F5AD9A 7FB798 C89145 B4C6F7 D795D2 62E1DA
 Sequential:  282527 51404F 7F5E69 A17C6C C49D70 ECCD9F
 ```
 
-#### Halfway (4 surfaces)
+#### Halfway (5 surfaces)
 
 ```text
-Surfaces:    070403 0A1008 1B1711 2E1E18
-Foregrounds: E5D9C6 CABDAC ACAB9D
+Surfaces:    070403 100603 1D0E04 2B1608 38271F
+Foregrounds: F0E3CF D0C3B0 BAA699
 Categorical: 6E96D5 DDAA69 2E8B7E 67BE95 945D48 C3779A
-Terminal:    FBAC93 6EBE88 CD824F B9CCFF DC98D2 64E4DA
+Terminal:    FFAD94 72B592 BA8236 B2C5FD D793C8 64E5DC
 Sequential:  282527 51404F 7F5E69 A17C6C C49D70 ECCD9F
 ```
 
@@ -139,9 +139,9 @@ Sequential:  18110E 4B343E 785167 A27882 C59A8B FCD6AB
 
 ```text
 Surfaces:    070403 130A07 20130D 2E1E18
-Foregrounds: FFEDD6 E4D3BF C8C5B7
-Categorical: 65B0D5 E99096 A56347 A7E7B0
-Terminal:    EC8B96 74E5C0 C39C49 A7D1FB
+Foregrounds: F2DEC5 D5BBA8 C2C7BA
+Categorical: 66B0D4 E99096 A46449 A3DCA9
+Terminal:    EC8B96 74E5C0 C29C49 A5D1FD
 Sequential:  18110E 4B343E 785167 A27882 C59A8B FCD6AB
 ```
 
@@ -160,8 +160,8 @@ Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7
 #### Halfway (4 surfaces)
 
 ```text
-Surfaces:    070403 110700 200E00 2E1E18
-Foregrounds: FFECD4 DAC7B1 B7A99A
+Surfaces:    070403 120601 1F0E05 2E1E18
+Foregrounds: FFEDD5 DBC7B2 B8AA9B
 Categorical: BB6572 8FF0FF E9B76C
 Terminal:    F696A0 CCFFB3 E1A95D
 Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7

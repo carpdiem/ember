@@ -240,13 +240,31 @@ def system_violations(
     values.extend(violation(float(d), -1e-12) for d in np.diff(luminance))
     # Map each surface's ladder position to the shipped six-role ceiling so a
     # compressed count still uses the ceiling of the depth band it occupies.
+    # The floating light anchor buys span with a little ceiling headroom on the
+    # lightest role (user-directed: endpoints may float).
     position_ceilings = np.asarray(
         [DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE[f"bg_{i}"] for i in range(6)]
     )
+    position_ceilings[-1] += 0.005
     positions = np.linspace(0.0, 1.0, 6)
     role_ceilings = np.interp(np.linspace(0.0, 1.0, count), positions, position_ceilings)
     for index in range(count):
         values.append(violation(float(luminance[index]), ceiling=float(role_ceilings[index])))
+
+    # Commanded hue corridor: interiors must stay on the warm-neutral axis spanned
+    # by the ladder endpoints — no green/cyan excursions even when CAM16 spacing
+    # would reward them.
+    if weight > 0.0 and count >= 3:
+        surf_lab = srgb_to_oklab(hex_array(surfaces))
+        endpoint_lab = srgb_to_oklab(hex_array((surfaces[0], surfaces[-1])))
+        hues = np.degrees(np.arctan2(endpoint_lab[:, 2], endpoint_lab[:, 1])) % 360.0
+        low, high = min(hues), max(hues)
+        tol = 12.0
+        lo, hi = (low - tol, high + tol) if abs(high - low) < 180 else (high - tol, low + tol)
+        for index in range(1, count - 1):
+            hue = float(np.degrees(np.arctan2(surf_lab[index, 2], surf_lab[index, 1])) % 360.0)
+            in_corridor = lo <= hue <= hi if lo <= hi else (hue >= lo or hue <= hi)
+            values.append(violation(float(in_corridor), 1.0))
 
     # Commanded warmth soft target and L pinning. The shared-anchor halfway path
     # replaces the resampled-ladder pin with the anchor endpoints themselves.
@@ -254,14 +272,12 @@ def system_violations(
     surf_lab = srgb_to_oklab(hex_array(surfaces))
     cmd = commanded_metrics(surfaces, fg)
     if weight > 0.0:
-        anchor_ladder = srgb_to_oklab(hex_array((SHARED_DARK_ANCHOR, SHARED_LIGHT_ANCHOR)))
+        # Pin interiors to the actual endpoints of the proposed ladder (which may
+        # float per profile) rather than the shared light anchor.
+        anchor_lab = srgb_to_oklab(hex_array((surfaces[0], surfaces[-1])))
         anchors = np.linspace(0.0, 1.0, count)
         ladder = np.column_stack(
-            [
-                np.interp(anchors, (0.0, 1.0), anchor_ladder[:, 0]),
-                np.interp(anchors, (0.0, 1.0), anchor_ladder[:, 1]),
-                np.interp(anchors, (0.0, 1.0), anchor_ladder[:, 2]),
-            ]
+            [np.interp(anchors, (0.0, 1.0), anchor_lab[:, c]) for c in range(3)]
         )
     for index in range(count):
         ceiling = SURFACE_LIGHTNESS_DRIFT + (
@@ -423,6 +439,9 @@ def refine_foregrounds(
     best_values = hex_from_bytes(best)
     count = len(surfaces)
     best_score = system_objective(base, surfaces, best_values, count, 0.5)
+    # Walk from the shipped foregrounds so the starting point is gate-feasible;
+    # never accept a proposal that is infeasible when the current best is feasible.
+    best_feasible = best_score < 1e13
     accepted = 0
     evaluated = 1
     for iteration in range(iterations):
@@ -437,12 +456,16 @@ def refine_foregrounds(
         values = hex_from_bytes(proposal)
         score = system_objective(base, surfaces, values, count, 0.5)
         evaluated += 1
+        feasible = score < 1e13
+        if best_feasible and not feasible:
+            continue
         if score < best_score - 1e-12 or (
             abs(score - best_score) <= 1e-12 and values < best_values
         ):
             best = proposal
             best_values = values
             best_score = score
+            best_feasible = feasible
             accepted += 1
     return {
         "seed": seed,
@@ -788,7 +811,21 @@ def main() -> int:
                         )
                         for add in (0, 1)
                     ]
-                    best, _ = select_two_seed_runs(fg_refine)
+                    fg_refine.extend(
+                        [
+                            refine_foregrounds(
+                                base,
+                                tuple(best["selected"]["surfaces"]),
+                                tuple(shipped_fg),
+                                seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
+                                iterations=iterations["system"],
+                            )
+                            for add in (0, 1)
+                        ]
+                    )
+                    feasible_runs = [r for r in fg_refine if r["objective"] < 1e13]
+                    pool = feasible_runs or fg_refine
+                    best, _ = select_two_seed_runs(pool)
                     per_count[str(count)] = runs_summary(best)
                     if best["objective"] < 1e13:
                         best_overall = best

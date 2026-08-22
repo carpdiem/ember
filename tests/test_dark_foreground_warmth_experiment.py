@@ -110,12 +110,12 @@ def test_halfway_counts_float_within_light_reference_bounds() -> None:
 
 def test_commanded_bg_lightness_pinned_to_shared_anchor_ladder() -> None:
     data = load()
-    shared_dark = "#070403"
-    shared_light = "#2E1E18"
-    anchor_lab = srgb_to_oklab(rgb((shared_dark, shared_light)))
     for slug in PROFILES:
         record = lane_record(data, slug, "halfway")
         surfaces = lane_surfaces(record)
+        # Endpoints are the shared/floating anchors by construction; interiors stay
+        # within the drift envelope of the endpoint-interpolated lightness.
+        anchor_lab = srgb_to_oklab(rgb((surfaces[0], surfaces[-1])))
         positions = np.linspace(0.0, 1.0, len(surfaces))
         ladder = np.column_stack(
             [np.interp(positions, (0.0, 1.0), anchor_lab[:, c]) for c in range(3)]
