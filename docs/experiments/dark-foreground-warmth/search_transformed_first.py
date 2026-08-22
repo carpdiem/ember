@@ -51,7 +51,9 @@ LANES: dict[str, float] = {"current": 0.0, "halfway": 0.5}
 LIGHT_SLUG = "3400k-light"
 
 TRANSFORMED_ADJACENT_FLOOR = 2.5
-TRANSFORMED_UNIFORMITY_RATIO = 1.6
+TRANSFORMED_BG_STEP_FLOOR = 3.4
+TRANSFORMED_FG_STEP_FLOOR = 3.4
+TRANSFORMED_UNIFORMITY_RATIO = 1.35
 CAM16_ADAPTATION_LUMINANCE = 50.0
 CAM16_BACKGROUND_LUMINANCE = 20.0
 SURFACE_LIGHTNESS_DRIFT = 0.02
@@ -183,6 +185,7 @@ def transformed_metrics(surfaces: tuple[str, ...], fg: tuple[str, ...], gains) -
     t_surf_ucs = cam16_ucs(surf_rgb, gains)
     t_fg_ucs = cam16_ucs(fg_rgb, gains)
     adjacent = np.linalg.norm(np.diff(t_surf_ucs, axis=0), axis=1).tolist()
+    fg_adjacent = np.linalg.norm(np.diff(t_fg_ucs, axis=0), axis=1).tolist()
     fg_bg_clearance = (
         np.linalg.norm(t_surf_ucs[:, None, :] - t_fg_ucs[None, :, :], axis=2).min(axis=0)
     ).tolist()
@@ -191,6 +194,8 @@ def transformed_metrics(surfaces: tuple[str, ...], fg: tuple[str, ...], gains) -
     return {
         "adjacent": adjacent,
         "adjacent_min": float(min(adjacent)),
+        "fg_adjacent": fg_adjacent,
+        "fg_adjacent_min": float(min(fg_adjacent)),
         "uniformity_ratio": float(max(adjacent) / max(min(adjacent), 1e-9)),
         "span": span,
         "fg_bg_clearance": fg_bg_clearance,
@@ -219,7 +224,8 @@ def system_violations(
 ) -> tuple[list[float], float]:
     metrics = transformed_metrics(surfaces, fg, base.profile.gains)
     values: list[float] = []
-    values.extend(violation(v, TRANSFORMED_ADJACENT_FLOOR) for v in metrics["adjacent"])
+    values.extend(violation(v, TRANSFORMED_BG_STEP_FLOOR) for v in metrics["adjacent"])
+    values.extend(violation(v, TRANSFORMED_FG_STEP_FLOOR) for v in metrics["fg_adjacent"])
     values.append(violation(metrics["uniformity_ratio"], ceiling=TRANSFORMED_UNIFORMITY_RATIO))
     values.append(violation(metrics["span"], 6.0))
     primary_floor = max(4.5, DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST.get(base.slug, 4.5))
@@ -355,6 +361,69 @@ def bounded_system_search(
             "surfaces": list(best_values[:count]),
             "foregrounds": list(best_values[count:]),
         },
+    }
+
+
+def pinned_endpoint_surfaces(base: Any, count: int) -> tuple[str, ...]:
+    """User-directed 1200K shape: shipped bg_0/bg_4 endpoints, N=4, even CAM16 steps."""
+
+    endpoints = [base.surfaces["bg_0"], base.surfaces["bg_4"]]
+    lab = srgb_to_oklab(hex_array(tuple(endpoints)))
+    ts = np.linspace(0.0, 1.0, count)
+    inner = [
+        srgb_to_hex(np.clip(oklab_to_srgb(lab[0] * (1 - t) + lab[1] * t), 0.0, 1.0))
+        for t in ts[1:-1]
+    ]
+    return (endpoints[0], *inner, endpoints[1])
+
+
+def refine_pinned_intermediates(
+    base: Any,
+    surfaces: tuple[str, ...],
+    fg: tuple[str, ...],
+    *,
+    seed: int,
+    iterations: int,
+) -> dict[str, Any]:
+    """Hill-climb only the interior surfaces; endpoints and foregrounds stay fixed."""
+
+    rng = np.random.default_rng(seed)
+    origin = bytes_from_hex(surfaces)
+    best = origin.copy()
+    best_values = hex_from_bytes(best)
+    best_score = system_objective(base, best_values, fg, len(surfaces), 0.5)
+    accepted = 0
+    evaluated = 1
+    radius = np.full(origin.shape, 24, dtype=np.int16)
+    radius[0] = 0
+    radius[-1] = 0
+    for iteration in range(iterations):
+        progress = iteration / max(1, iterations - 1)
+        step = max(1, round(9.0 * (1.0 - progress) + 1.0))
+        proposal = best.copy()
+        edits = 1 + int(rng.integers(0, min(4, len(surfaces) - 2)))
+        rows = rng.choice(len(surfaces) - 2, size=edits, replace=False)
+        for row in rows:
+            channel = rng.choice(3, size=1)
+            proposal[row + 1, channel] += rng.integers(-step, step + 1, size=1, dtype=np.int16)
+        proposal = np.clip(proposal, origin - radius, origin + radius).reshape(origin.shape)
+        values = hex_from_bytes(proposal)
+        score = system_objective(base, values, fg, len(surfaces), 0.5)
+        evaluated += 1
+        if score < best_score - 1e-12 or (
+            abs(score - best_score) <= 1e-12 and values < best_values
+        ):
+            best = proposal
+            best_values = values
+            best_score = score
+            accepted += 1
+    return {
+        "seed": seed,
+        "iterations": iterations,
+        "evaluated_exact_hex8_candidates": evaluated,
+        "accepted_moves": accepted,
+        "objective": float(best_score),
+        "selected": {"surfaces": list(best_values), "foregrounds": list(fg)},
     }
 
 
@@ -577,6 +646,59 @@ def main() -> int:
                         "per_count": {},
                         "note": "current lane is the shipped palette scored verbatim; "
                         "no surface search applied",
+                    },
+                }
+                record["lanes"][lane] = lane_record
+                continue
+            if slug == "1200k-dark":
+                # User-directed shape: N=4 with shipped bg_0/bg_4 endpoints frozen;
+                # only the two interior surfaces and the foregrounds are searched.
+                pinned = pinned_endpoint_surfaces(base, 4)
+                fg_runs = [
+                    bounded_system_search(
+                        base,
+                        4,
+                        weight,
+                        seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
+                        iterations=iterations["system"],
+                    )
+                    for add in (0, 1)
+                ]
+                _, fg_pick = select_two_seed_runs(fg_runs)
+                foregrounds = tuple(fg_pick["selected"]["foregrounds"])
+                runs = [
+                    refine_pinned_intermediates(
+                        base,
+                        pinned,
+                        foregrounds,
+                        seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
+                        iterations=iterations["system"],
+                    )
+                    for add in (0, 1)
+                ]
+                best, _ = select_two_seed_runs(runs)
+                chosen_count = 4
+                choice_rule = (
+                    "user-directed: N=4, shipped bg_0/bg_4 endpoints frozen, "
+                    "interiors refined for even CAM16-UCS steps"
+                )
+                lane_record = {
+                    "weight": weight,
+                    "bg_count": chosen_count,
+                    "count_choice_rule": choice_rule,
+                    "surfaces": {f"bg_{i}": v for i, v in enumerate(best["selected"]["surfaces"])},
+                    "foregrounds": list(best["selected"]["foregrounds"]),
+                    **search_dependent_banks(
+                        full,
+                        base,
+                        tuple(best["selected"]["surfaces"]),
+                        tuple(best["selected"]["foregrounds"]),
+                        profile_index,
+                        iterations,
+                    ),
+                    "search": {
+                        "per_count": {"4": runs_summary(best)},
+                        "count_choice_rule": choice_rule,
                     },
                 }
                 record["lanes"][lane] = lane_record
