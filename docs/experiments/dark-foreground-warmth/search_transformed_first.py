@@ -15,6 +15,7 @@ Bounded exact-Hex8 evidence only; no global-optimality or feasibility claim.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -353,15 +354,166 @@ def select_two_seed_runs(runs: list[dict[str, Any]]) -> tuple[dict[str, Any], di
     return selected, selected
 
 
-def accent_metrics_stub(*args, **kwargs):
-    raise NotImplementedError
+def load_full_palette_module() -> dict[str, Any]:
+    import runpy
+
+    return runpy.run_path(str(EXPERIMENT / "search_full_palette.py"))
+
+
+def search_dependent_banks(
+    full: dict[str, Any],
+    base: Any,
+    surfaces: tuple[str, ...],
+    foregrounds: tuple[str, ...],
+    profile_index: int,
+    iterations: dict[str, int],
+) -> dict[str, Any]:
+    """Fresh categorical (with count bonus), terminal, and sequential searches."""
+
+    surfaces_six = expand_to_six(surfaces)
+    lane_base = full["candidate_family"](base, surfaces_six, foregrounds)
+    categorical_shipped = len(base.categorical_colors)
+    cat_trials: dict[str, Any] = {}
+    categorical: tuple[str, ...] | None = None
+    categorical_metrics = None
+    adopted_reason = "shipped count retained"
+    for count in range(categorical_shipped, min(categorical_shipped + 3, 7)):
+        runs = []
+        for seed_add in (0, 1):
+            runs.append(
+                full["bounded_exact_search"](
+                    base.categorical_colors,
+                    lambda values, lb=lane_base, fg=foregrounds, c=count: full[
+                        "categorical_objective"
+                    ](lb, fg, values[:c]),
+                    seed=CATEGORY_SEED_BASE + profile_index * 100 + seed_add,
+                    iterations=iterations["categorical"],
+                    radius=18,
+                )
+            )
+        best, _ = full["select_two_seed_runs"](runs)
+        values = tuple(best)[:count]
+        metrics = full["accent_metrics"](lane_base, values, foregrounds, terminal=False)
+        shipped_terminal_metrics = full["accent_metrics"](
+            lane_base, base.terminal_colors, foregrounds, terminal=True
+        )
+        shipped_sequential_metrics, _ = full["sequential_metrics"](
+            lane_base, base.sequential_anchors
+        )
+        failures = full["dependent_failures"](
+            lane_base,
+            values,
+            metrics,
+            base.terminal_colors,
+            shipped_terminal_metrics,
+            shipped_sequential_metrics,
+            shipped_sequential_metrics,
+        )
+        cat_trials[str(count)] = {
+            "selected": list(values),
+            "objective": best["objective"] if isinstance(best, dict) else None,
+            "failures": failures,
+        }
+        if not failures and categorical is None:
+            categorical = values
+            categorical_metrics = metrics
+            if count > categorical_shipped:
+                adopted_reason = f"count {count} adopted: every categorical release gate passes"
+        elif not failures and categorical is not None and count > len(categorical):
+            categorical = values
+            categorical_metrics = metrics
+            adopted_reason = (
+                f"count {count} adopted over {len(categorical)}: gates pass with margin"
+            )
+    if categorical is None:
+        categorical = base.categorical_colors
+        categorical_metrics = full["accent_metrics"](
+            lane_base, categorical, foregrounds, terminal=False
+        )
+        adopted_reason = "no larger count passed all gates; shipped retained"
+
+    term_runs = [
+        full["bounded_exact_search"](
+            base.terminal_colors,
+            lambda values, lb=lane_base, fg=foregrounds: full["terminal_objective"](lb, fg, values),
+            seed=TERMINAL_SEED_BASE + profile_index * 100 + seed_add,
+            iterations=iterations["terminal"],
+            radius=36 if slug_has_deep_transform(base.slug) else 16,
+            initial_candidates=full["TERMINAL_INITIAL_PROPOSALS"].get(base.slug, ()),
+        )
+        for seed_add in (0, 1)
+    ]
+    terminal, _ = full["select_two_seed_runs"](term_runs)
+
+    sequential_baseline, _ = full["sequential_metrics"](lane_base, base.sequential_anchors)
+    seq_runs = [
+        full["bounded_exact_search"](
+            base.sequential_anchors,
+            lambda values, lb=lane_base, baseline=sequential_baseline: full["sequential_objective"](
+                lb, baseline, values
+            ),
+            seed=SEQUENTIAL_SEED_BASE + profile_index * 100 + seed_add,
+            iterations=iterations["sequential"],
+            radius=10,
+        )
+        for seed_add in (0, 1)
+    ]
+    sequential, _ = full["select_two_seed_runs"](seq_runs)
+    sequential_record, sequence = full["sequential_metrics"](lane_base, sequential)
+    dependency_payload = {
+        "surfaces": list(surfaces),
+        "gains": list(base.profile.gains),
+        "baseline": sequential_baseline,
+        "objective": "transformed-first-v1",
+    }
+    fingerprint = hashlib.sha256(
+        json.dumps(dependency_payload, sort_keys=True).encode()
+    ).hexdigest()
+    return {
+        "categorical": list(categorical),
+        "categorical_trials": cat_trials,
+        "categorical_adoption": adopted_reason,
+        "categorical_metrics": categorical_metrics,
+        "terminal": list(terminal),
+        "terminal_runs": [{k: v for k, v in r.items() if k != "selected"} for r in term_runs],
+        "sequential_anchors": list(sequential),
+        "sequential_metrics": sequential_record,
+        "sequential_dependency_fingerprint": fingerprint,
+        "continuous_float_srgb": sequence.tolist(),
+        "continuous_hex8": [srgb_to_hex(v) for v in sequence],
+    }
+
+
+def slug_has_deep_transform(slug: str) -> bool:
+    return slug in TERMINAL_INITIAL_PROPOSALS
+
+
+def expand_to_six(surfaces: tuple[str, ...]) -> tuple[str, ...]:
+    """Resample N selected surfaces to the six-role ladder by Oklab interpolation."""
+
+    if len(surfaces) == 6:
+        return surfaces
+    lab = srgb_to_oklab(hex_array(surfaces))
+    anchors = np.linspace(0.0, 1.0, len(surfaces))
+    positions = np.linspace(0.0, 1.0, 6)
+    expanded = np.column_stack(
+        [np.interp(positions, anchors, lab[:, channel]) for channel in range(3)]
+    )
+    rgb = oklab_to_srgb(expanded)
+    return tuple(srgb_to_hex(v) for v in np.clip(rgb, 0.0, 1.0))
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--quick", action="store_true")
     args = parser.parse_args()
-    iterations = {"system": 300 if args.quick else 2400}
+    full = load_full_palette_module()
+    iterations = {
+        "system": 300 if args.quick else 2400,
+        "categorical": 300 if args.quick else 900,
+        "terminal": 600 if args.quick else (4000 if True else 900),
+        "sequential": 60 if args.quick else 180,
+    }
     output: dict[str, Any] = {
         "schema": 4,
         "method": (
@@ -378,15 +530,19 @@ def main() -> int:
         for lane, weight in LANES.items():
             print(f"{slug} / {lane}", flush=True)
             if weight == 0.0:
+                banks = search_dependent_banks(
+                    full, base, shipped_surfaces, shipped_fg, profile_index, iterations
+                )
                 lane_record: dict[str, Any] = {
                     "weight": weight,
                     "bg_count": 6,
                     "surfaces": {f"bg_{i}": shipped_surfaces[i] for i in range(6)},
                     "foregrounds": list(shipped_fg),
+                    **banks,
                     "search": {
                         "per_count": {},
                         "note": "current lane is the shipped palette scored verbatim; "
-                        "no search applied",
+                        "no surface search applied",
                     },
                 }
                 record["lanes"][lane] = lane_record
@@ -420,7 +576,18 @@ def main() -> int:
                     f"bg_{i}": v for i, v in enumerate(counts[chosen_count]["selected"]["surfaces"])
                 },
                 "foregrounds": list(counts[chosen_count]["selected"]["foregrounds"]),
-                "search": {"per_count": {str(n): runs_summary(counts[n]) for n in counts}},
+                **search_dependent_banks(
+                    full,
+                    base,
+                    tuple(counts[chosen_count]["selected"]["surfaces"]),
+                    tuple(counts[chosen_count]["selected"]["foregrounds"]),
+                    profile_index,
+                    iterations,
+                ),
+                "search": {
+                    "per_count": {str(n): runs_summary(counts[n]) for n in counts},
+                    "count_choice_rule": choice_rule,
+                },
             }
             record["lanes"][lane] = lane_record
         output["profiles"][slug] = record
