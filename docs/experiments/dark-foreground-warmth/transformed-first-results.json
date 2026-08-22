@@ -1758,14 +1758,14 @@
           "surfaces": {
             "bg_0": "#070403",
             "bg_1": "#100603",
-            "bg_2": "#1D0E04",
-            "bg_3": "#2B1608",
+            "bg_2": "#1E0D05",
+            "bg_3": "#2A190D",
             "bg_4": "#38271F"
           },
           "foregrounds": [
-            "#F0E3CF",
-            "#D0C3B0",
-            "#BAA699"
+            "#E9DDCA",
+            "#CCC0AF",
+            "#AFAA9D"
           ],
           "categorical": [
             "#6E96D5",
@@ -1778,18 +1778,18 @@
           "categorical_trials": {
             "6": {
               "selected": [
-                "#6E96D7",
-                "#E2A863",
+                "#6F96D5",
+                "#E8A668",
                 "#2E8B7E",
-                "#67BE95",
+                "#67BF95",
                 "#945D48",
                 "#C4779A"
               ],
               "objective": null,
               "failures": [
-                "terminal day fg_1 clearance 7.1116 < 8.0000",
-                "terminal day fg_2 clearance 8.7674 < 10.0000",
-                "terminal transformed fg_2 clearance 4.7032 < 9.0000"
+                "terminal day fg_1 clearance 7.1426 < 8.0000",
+                "terminal day fg_2 clearance 7.1181 < 10.0000",
+                "terminal transformed fg_2 clearance 6.1190 < 9.0000"
               ]
             }
           },
@@ -1798,17 +1798,17 @@
             "normal_pair_delta_e_ok": 15.004698766023159,
             "shifted_pair_delta_e_ok": 11.45032224007158,
             "normal_foreground_clearance_by_role": [
-              16.606481352273832,
-              8.87671232429419,
-              8.072731890458103
+              15.010021708834037,
+              8.590176790261632,
+              9.000237077018722
             ],
             "shifted_foreground_clearance_by_role": [
-              10.869105499625638,
-              4.7950395282045335,
-              6.55318366844612
+              9.444861657251158,
+              4.711127381947344,
+              8.109354831497415
             ],
-            "normal_foreground_clearance_min": 8.072731890458103,
-            "shifted_foreground_clearance_min": 4.7950395282045335,
+            "normal_foreground_clearance_min": 8.590176790261632,
+            "shifted_foreground_clearance_min": 4.711127381947344,
             "normal_background_contrast_min": 2.6509569695954043,
             "shifted_background_contrast_bg0_min": 3.0620754005140345,
             "shifted_background_contrast_all_surfaces_min": 2.318963230566293,
@@ -1824,7 +1824,7 @@
                   0.5035
                 ],
                 "pair_delta_e_ok": 10.881012577199549,
-                "foreground_clearance_delta_e_ok": 4.523894644621004,
+                "foreground_clearance_delta_e_ok": 4.503295618548753,
                 "background_contrast": 2.862726436830185
               },
               {
@@ -1834,7 +1834,7 @@
                   0.5565000000000001
                 ],
                 "pair_delta_e_ok": 11.146559219771596,
-                "foreground_clearance_delta_e_ok": 4.817926793680346,
+                "foreground_clearance_delta_e_ok": 4.8076079350684875,
                 "background_contrast": 2.8781614489126564
               },
               {
@@ -1844,7 +1844,7 @@
                   0.5035
                 ],
                 "pair_delta_e_ok": 10.956135615490558,
-                "foreground_clearance_delta_e_ok": 4.855416267080558,
+                "foreground_clearance_delta_e_ok": 4.695453353486869,
                 "background_contrast": 3.1457243509608688
               },
               {
@@ -1854,36 +1854,36 @@
                   0.5565000000000001
                 ],
                 "pair_delta_e_ok": 11.472027211818121,
-                "foreground_clearance_delta_e_ok": 5.067236759007225,
+                "foreground_clearance_delta_e_ok": 4.923586449622676,
                 "background_contrast": 3.1503464518508526
               }
             ],
             "gain_corner_pair_min": 10.881012577199549,
-            "gain_corner_foreground_clearance_min": 4.523894644621004,
+            "gain_corner_foreground_clearance_min": 4.503295618548753,
             "gain_corner_background_contrast_min": 2.862726436830185
           },
           "terminal": [
-            "#FFAD94",
-            "#72B592",
-            "#BA8236",
-            "#B2C5FD",
-            "#D793C8",
-            "#64E5DC"
+            "#FDAE97",
+            "#6FBD8B",
+            "#CD824F",
+            "#A4CEFF",
+            "#DD9AD2",
+            "#6FE5CD"
           ],
           "terminal_runs": [
             {
               "seed": 27000,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4001,
-              "accepted_moves": 92,
-              "objective": 544060742.9424179
+              "accepted_moves": 107,
+              "objective": 148578183.8859891
             },
             {
               "seed": 27001,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4001,
-              "accepted_moves": 83,
-              "objective": 544060742.9321342
+              "accepted_moves": 105,
+              "objective": 132393930.3471434
             }
           ],
           "sequential_anchors": [
@@ -1950,7 +1950,7 @@
             "gain_corner_max_to_min_max": 1.02249926957915,
             "gain_corner_minimum_signed_lightness_step": 0.0019352430872523474
           },
-          "sequential_dependency_fingerprint": "8d5ac8476aece409de60e7d717bccf821c34d1e9bafea8525c56efa44bf72fe5",
+          "sequential_dependency_fingerprint": "3dbb7e22279c8289162098efba9d783ffa633d144bce76c700fc25beae0fdfa5",
           "continuous_float_srgb": [
             [
               0.1568627504,
@@ -3494,22 +3494,22 @@
           "search": {
             "per_count": {
               "4": {
-                "seed": 7001,
+                "seed": 7000,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 38,
-                "objective": -6.102256737831645,
+                "accepted_moves": 87,
+                "objective": -6.8984834379510795,
                 "selected": {
                   "surfaces": [
                     "#070403",
-                    "#130B06",
-                    "#20140E",
+                    "#120806",
+                    "#20130D",
                     "#2E1E18"
                   ],
                   "foregrounds": [
-                    "#E9DAC2",
-                    "#CAC0A7",
-                    "#BFA39A"
+                    "#EDE1CE",
+                    "#CDC1B0",
+                    "#B1A99D"
                   ]
                 }
               },
@@ -3517,20 +3517,20 @@
                 "seed": 7000,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 76,
-                "objective": 23.477389791884693,
+                "accepted_moves": 106,
+                "objective": 33.81960946035828,
                 "selected": {
                   "surfaces": [
                     "#070403",
                     "#100603",
-                    "#1D0E04",
-                    "#2B1608",
+                    "#1E0D05",
+                    "#2A190D",
                     "#38271F"
                   ],
                   "foregrounds": [
-                    "#F0E3CF",
-                    "#D0C3B0",
-                    "#BAA699"
+                    "#E9DDCA",
+                    "#CCC0AF",
+                    "#AFAA9D"
                   ]
                 }
               }
@@ -5327,9 +5327,9 @@
             "bg_3": "#2E1E18"
           },
           "foregrounds": [
-            "#F2DEC5",
-            "#D5BBA8",
-            "#C2C7BA"
+            "#F4E2CB",
+            "#D8C7B3",
+            "#BDB9AE"
           ],
           "categorical": [
             "#66B0D4",
@@ -5340,15 +5340,14 @@
           "categorical_trials": {
             "4": {
               "selected": [
-                "#62B2D7",
-                "#E990A8",
-                "#A66449",
-                "#A7E4A8"
+                "#66B0D4",
+                "#E99096",
+                "#A46448",
+                "#A8E3AD"
               ],
               "objective": null,
               "failures": [
-                "categorical transformed fg_1 clearance 5.2732 < 5.5000",
-                "categorical sampled-corner foreground clearance 5.0004 < 5.2000"
+                "terminal transformed fg_2 clearance 3.4092 < 4.0000"
               ]
             },
             "5": {
@@ -5362,8 +5361,8 @@
               "objective": null,
               "failures": [
                 "categorical day maximum chroma 0.124365 > 0.111000",
-                "categorical day fg_1 clearance 8.8348 < 9.0000",
-                "categorical day fg_2 clearance 8.2293 < 9.0000"
+                "categorical day fg_2 clearance 8.3531 < 9.0000",
+                "terminal transformed fg_2 clearance 3.4092 < 4.0000"
               ]
             },
             "6": {
@@ -5378,9 +5377,10 @@
               "objective": null,
               "failures": [
                 "categorical day maximum chroma 0.130327 > 0.111000",
-                "categorical day fg_2 clearance 6.2337 < 9.0000",
+                "categorical day fg_2 clearance 6.7497 < 9.0000",
                 "categorical sampled-corner pair 8.4782 < 8.5000",
-                "categorical sampled-corner background contrast 2.8698 < 3.0000"
+                "categorical sampled-corner background contrast 2.8698 < 3.0000",
+                "terminal transformed fg_2 clearance 3.4092 < 4.0000"
               ]
             }
           },
@@ -5389,17 +5389,17 @@
             "normal_pair_delta_e_ok": 16.996056112545627,
             "shifted_pair_delta_e_ok": 12.906189823184006,
             "normal_foreground_clearance_by_role": [
-              11.250625979254298,
-              10.421142450113377,
-              7.744618212563363
+              11.880083142405837,
+              8.943604670208103,
+              10.09992159913174
             ],
             "shifted_foreground_clearance_by_role": [
-              8.625890395993654,
-              5.256527524293773,
-              5.981766883639691
+              9.197614213680934,
+              6.064235228199943,
+              6.306384620312875
             ],
-            "normal_foreground_clearance_min": 7.744618212563363,
-            "shifted_foreground_clearance_min": 5.256527524293773,
+            "normal_foreground_clearance_min": 8.943604670208103,
+            "shifted_foreground_clearance_min": 6.064235228199943,
             "normal_background_contrast_min": 3.42003715781518,
             "shifted_background_contrast_bg0_min": 3.058815096279711,
             "shifted_background_contrast_all_surfaces_min": 2.6115516843831523,
@@ -5415,7 +5415,7 @@
                   0.0824595155
                 ],
                 "pair_delta_e_ok": 12.908311163395393,
-                "foreground_clearance_delta_e_ok": 4.985453826914069,
+                "foreground_clearance_delta_e_ok": 5.6419666655854455,
                 "background_contrast": 3.0114307842408157
               },
               {
@@ -5425,7 +5425,7 @@
                   0.09113946450000002
                 ],
                 "pair_delta_e_ok": 12.906797978459636,
-                "foreground_clearance_delta_e_ok": 4.982541554502379,
+                "foreground_clearance_delta_e_ok": 5.637805962038835,
                 "background_contrast": 3.011669801274198
               },
               {
@@ -5435,7 +5435,7 @@
                   0.0824595155
                 ],
                 "pair_delta_e_ok": 12.917291461210667,
-                "foreground_clearance_delta_e_ok": 5.549337260889911,
+                "foreground_clearance_delta_e_ok": 6.494353980597871,
                 "background_contrast": 3.1087005934541314
               },
               {
@@ -5445,34 +5445,34 @@
                   0.09113946450000002
                 ],
                 "pair_delta_e_ok": 12.916409463807216,
-                "foreground_clearance_delta_e_ok": 5.546715300557918,
+                "foreground_clearance_delta_e_ok": 6.495535200286123,
                 "background_contrast": 3.1089382996876798
               }
             ],
             "gain_corner_pair_min": 12.906797978459636,
-            "gain_corner_foreground_clearance_min": 4.982541554502379,
+            "gain_corner_foreground_clearance_min": 5.637805962038835,
             "gain_corner_background_contrast_min": 3.0114307842408157
           },
           "terminal": [
-            "#EC8B96",
+            "#F595AC",
             "#74E5C0",
-            "#C29C49",
-            "#A5D1FD"
+            "#C4996B",
+            "#A5D1FB"
           ],
           "terminal_runs": [
             {
               "seed": 27100,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4003,
-              "accepted_moves": 6,
-              "objective": -1.8189101492259436
+              "accepted_moves": 22,
+              "objective": 4757719.303659095
             },
             {
               "seed": 27101,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4003,
-              "accepted_moves": 9,
-              "objective": -1.819355795517425
+              "accepted_moves": 12,
+              "objective": 18866520.185721386
             }
           ],
           "sequential_anchors": [
@@ -7086,8 +7086,8 @@
                 "seed": 7100,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 60,
-                "objective": -10.28414877191839,
+                "accepted_moves": 66,
+                "objective": -6.941476962287592,
                 "selected": {
                   "surfaces": [
                     "#070403",
@@ -7096,9 +7096,9 @@
                     "#2E1E18"
                   ],
                   "foregrounds": [
-                    "#F2DEC5",
-                    "#D5BBA8",
-                    "#C2C7BA"
+                    "#F4E2CB",
+                    "#D8C7B3",
+                    "#BDB9AE"
                   ]
                 }
               }
@@ -8902,8 +8902,8 @@
             "bg_3": "#2E1E18"
           },
           "foregrounds": [
-            "#FFEDD5",
-            "#DBC7B2",
+            "#FFEDD4",
+            "#DBC7B1",
             "#B8AA9B"
           ],
           "categorical": [
@@ -8977,8 +8977,8 @@
             "normal_pair_delta_e_ok": 20.715981254015855,
             "shifted_pair_delta_e_ok": 10.253649364130393,
             "normal_foreground_clearance_by_role": [
-              13.35444365455643,
-              8.015048588226078,
+              13.392616108052206,
+              7.897499154348505,
               10.456389830796907
             ],
             "shifted_foreground_clearance_by_role": [
@@ -8986,7 +8986,7 @@
               2.6645278905185736,
               2.6404560413611207
             ],
-            "normal_foreground_clearance_min": 8.015048588226078,
+            "normal_foreground_clearance_min": 7.897499154348505,
             "shifted_foreground_clearance_min": 2.6404560413611207,
             "normal_background_contrast_min": 3.967410827656381,
             "shifted_background_contrast_bg0_min": 3.1096227934007024,
@@ -10673,8 +10673,8 @@
                 "seed": 7201,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 57,
-                "objective": 30.839939051209196,
+                "accepted_moves": 46,
+                "objective": 30.83660727858133,
                 "selected": {
                   "surfaces": [
                     "#070403",
@@ -10683,8 +10683,8 @@
                     "#2E1E18"
                   ],
                   "foregrounds": [
-                    "#FFEDD5",
-                    "#DBC7B2",
+                    "#FFEDD4",
+                    "#DBC7B1",
                     "#B8AA9B"
                   ]
                 }

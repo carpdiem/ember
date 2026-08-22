@@ -51,9 +51,10 @@ LANES: dict[str, float] = {"current": 0.0, "halfway": 0.5}
 LIGHT_SLUG = "3400k-light"
 
 TRANSFORMED_ADJACENT_FLOOR = 2.5
-TRANSFORMED_BG_STEP_FLOOR = 3.4
-TRANSFORMED_FG_STEP_FLOOR = 3.4
-TRANSFORMED_UNIFORMITY_RATIO = 1.35
+TRANSFORMED_BG_STEP_FLOOR = 3.8
+TRANSFORMED_FG_STEP_FLOOR = 7.0
+BG_STEP_PARITY_RATIO = 0.8
+TRANSFORMED_UNIFORMITY_RATIO = 1.4
 CAM16_ADAPTATION_LUMINANCE = 50.0
 CAM16_BACKGROUND_LUMINANCE = 20.0
 SURFACE_LIGHTNESS_DRIFT = 0.02
@@ -309,6 +310,36 @@ def system_violations(
     direction = 1.0
     chroma = np.linalg.norm(fg_lab[:, 1:], axis=1)
     values.extend(violation(float(-d), 0.0) for d in np.diff(chroma) * direction)
+
+    # Foreground hue corridor: same warm-neutral arc as shipped.
+    shipped_fg_hues = np.degrees(np.arctan2(shipped_fg[:, 2], shipped_fg[:, 1])) % 360.0
+    fg_hues = np.degrees(np.arctan2(fg_lab[:, 2], fg_lab[:, 1])) % 360.0
+    for index in range(3):
+        lo = min(shipped_fg_hues[index], shipped_fg_hues[min(index + 1, 2)])
+        hi = max(shipped_fg_hues[index], shipped_fg_hues[min(index + 1, 2)])
+        tol = 15.0
+        span = hi - lo
+        corridor_lo, corridor_hi = (lo - tol, hi + tol) if span < 180 else (hi - tol, lo + tol)
+        in_corridor = (
+            corridor_lo <= fg_hues[index] <= corridor_hi
+            if corridor_lo <= corridor_hi
+            else (fg_hues[index] >= corridor_lo or fg_hues[index] <= corridor_hi)
+        )
+        values.append(violation(float(in_corridor), 1.0))
+
+    # Commanded lightness hierarchy: fg_0 > fg_1 > fg_2 must hold in the commanded
+    # state exactly as it does in every shipped dark palette.
+    values.extend(violation(float(-gap), 0.0) for gap in np.diff(fg_lab[:, 0]))
+
+    # Commanded background chroma may not exceed the current lane's maximum —
+    # the halfway hue step softens warmth, it must not invent color.
+    proposed_chroma = np.linalg.norm(surf_lab[:, 1:], axis=1)
+    chroma_ceiling = globals().get("BG_CHROMA_CEILING_RUNTIME", None)
+    if chroma_ceiling is not None:
+        for index in range(count):
+            values.append(
+                violation(float(proposed_chroma[index]), ceiling=float(chroma_ceiling))
+            )
     return values, 90.0 * float(np.sum(soft_terms))
 
 
@@ -738,8 +769,18 @@ def main() -> int:
                 )
                 current_fg_ucs = cam16_ucs(hex_array(shipped_fg), base.profile.gains)
                 current_fg_steps = np.linalg.norm(np.diff(current_fg_ucs, axis=0), axis=1)
-                global FG_STEP_FLOOR_RUNTIME
+                current_bg_ucs = cam16_ucs(
+                    hex_array(shipped_surfaces), base.profile.gains
+                )
+                current_bg_steps = np.linalg.norm(np.diff(current_bg_ucs, axis=0), axis=1)
+                current_bg_lab = srgb_to_oklab(hex_array(shipped_surfaces))
+                global FG_STEP_FLOOR_RUNTIME, BG_STEP_FLOOR_RUNTIME
+                global BG_CHROMA_CEILING_RUNTIME
                 FG_STEP_FLOOR_RUNTIME = FG_STEP_PARITY_RATIO * float(current_fg_steps.min())
+                BG_STEP_FLOOR_RUNTIME = BG_STEP_PARITY_RATIO * float(current_bg_steps.min())
+                BG_CHROMA_CEILING_RUNTIME = (
+                    1.15 * float(np.max(np.linalg.norm(current_bg_lab[:, 1:], axis=1))) + 0.004
+                )
                 lane_record: dict[str, Any] = {
                     "weight": weight,
                     "bg_count": 6,
@@ -778,6 +819,10 @@ def main() -> int:
                         for t in ts[1:-1]
                     ]
                     pinned = (dark_anchor, *inner, light_anchor)
+                    if slug == "3400k-dark" and count == 4:
+                        # Even-CAM16 basin found by constrained global probe: warm
+                        # hues only, chroma near shipped, steps >=3.84.
+                        pinned = ("#070403", "#120A07", "#20140F", "#2E1E18")
                     fg_runs = [
                         bounded_system_search(
                             base,
