@@ -1753,20 +1753,18 @@
         },
         "halfway": {
           "weight": 0.5,
-          "bg_count": 6,
-          "count_choice_rule": "best feasible objective; larger N wins ties",
+          "bg_count": 4,
+          "count_choice_rule": "shared anchors; smallest feasible count meeting bg>=3.84 / fg>=7.0 CAM16-UCS step floors",
           "surfaces": {
-            "bg_0": "#090807",
-            "bg_1": "#100A09",
-            "bg_2": "#181618",
-            "bg_3": "#201D19",
-            "bg_4": "#292219",
-            "bg_5": "#2E211E"
+            "bg_0": "#070403",
+            "bg_1": "#0A1008",
+            "bg_2": "#1B1711",
+            "bg_3": "#2E1E18"
           },
           "foregrounds": [
-            "#DBCBB6",
-            "#BAAE98",
-            "#A89384"
+            "#DED2BF",
+            "#BBAF9E",
+            "#A39B8A"
           ],
           "categorical": [
             "#6E96D5",
@@ -1779,20 +1777,17 @@
           "categorical_trials": {
             "6": {
               "selected": [
-                "#6E96D5",
-                "#DDAA69",
-                "#2E8B7E",
+                "#6E96DA",
+                "#E3A965",
+                "#2D8B7E",
                 "#67BE95",
-                "#945D48",
-                "#C3779A"
+                "#925E47",
+                "#C4779A"
               ],
               "objective": null,
               "failures": [
-                "terminal day fg_0 clearance 7.7090 < 8.5000",
-                "terminal day fg_1 clearance 7.8626 < 8.0000",
-                "terminal day fg_2 clearance 8.5776 < 10.0000",
-                "terminal transformed fg_0 clearance 6.0677 < 6.5000",
-                "terminal transformed fg_2 clearance 6.4244 < 9.0000"
+                "terminal day fg_2 clearance 8.2395 < 10.0000",
+                "terminal transformed fg_2 clearance 7.0359 < 9.0000"
               ]
             }
           },
@@ -1801,20 +1796,20 @@
             "normal_pair_delta_e_ok": 15.004698766023159,
             "shifted_pair_delta_e_ok": 11.45032224007158,
             "normal_foreground_clearance_by_role": [
-              10.401544566781956,
-              7.118742889624731,
-              9.747182326053053
+              12.171130824300937,
+              7.5566406729665205,
+              11.05068945953111
             ],
             "shifted_foreground_clearance_by_role": [
-              5.84109892736221,
-              6.105692783184088,
-              7.099505102174502
+              7.105640008004556,
+              6.007651663760089,
+              8.529100431754642
             ],
-            "normal_foreground_clearance_min": 7.118742889624731,
-            "shifted_foreground_clearance_min": 5.84109892736221,
-            "normal_background_contrast_min": 2.897313371775584,
-            "shifted_background_contrast_bg0_min": 3.013852751690427,
-            "shifted_background_contrast_all_surfaces_min": 2.4895744170294942,
+            "normal_foreground_clearance_min": 7.5566406729665205,
+            "shifted_foreground_clearance_min": 6.007651663760089,
+            "normal_background_contrast_min": 2.979692473330619,
+            "shifted_background_contrast_bg0_min": 3.0620754005140345,
+            "shifted_background_contrast_all_surfaces_min": 2.5289835455948797,
             "normal_hue_gap_degrees": 20.22514316519485,
             "normal_mean_chroma": 0.09707627103553519,
             "normal_max_chroma": 0.1044860937383399,
@@ -1827,8 +1822,8 @@
                   0.5035
                 ],
                 "pair_delta_e_ok": 10.881012577199549,
-                "foreground_clearance_delta_e_ok": 5.448107494850742,
-                "background_contrast": 2.819484882343969
+                "foreground_clearance_delta_e_ok": 6.062615236932984,
+                "background_contrast": 2.862726436830185
               },
               {
                 "gains": [
@@ -1837,8 +1832,8 @@
                   0.5565000000000001
                 ],
                 "pair_delta_e_ok": 11.146559219771596,
-                "foreground_clearance_delta_e_ok": 5.711795110322046,
-                "background_contrast": 2.8344358529726468
+                "foreground_clearance_delta_e_ok": 6.225936833072106,
+                "background_contrast": 2.8781614489126564
               },
               {
                 "gains": [
@@ -1847,8 +1842,8 @@
                   0.5035
                 ],
                 "pair_delta_e_ok": 10.956135615490558,
-                "foreground_clearance_delta_e_ok": 5.940239187502567,
-                "background_contrast": 3.094438900588032
+                "foreground_clearance_delta_e_ok": 5.818649766729844,
+                "background_contrast": 3.1457243509608688
               },
               {
                 "gains": [
@@ -1857,36 +1852,36 @@
                   0.5565000000000001
                 ],
                 "pair_delta_e_ok": 11.472027211818121,
-                "foreground_clearance_delta_e_ok": 6.034976294556742,
-                "background_contrast": 3.0987122927106947
+                "foreground_clearance_delta_e_ok": 5.955002349329226,
+                "background_contrast": 3.1503464518508526
               }
             ],
             "gain_corner_pair_min": 10.881012577199549,
-            "gain_corner_foreground_clearance_min": 5.448107494850742,
-            "gain_corner_background_contrast_min": 2.819484882343969
+            "gain_corner_foreground_clearance_min": 5.818649766729844,
+            "gain_corner_background_contrast_min": 2.862726436830185
           },
           "terminal": [
-            "#FFACA3",
-            "#7DB797",
-            "#D79F53",
-            "#B4C6F7",
-            "#CF91D2",
-            "#60E0DD"
+            "#F7AD97",
+            "#72B88E",
+            "#CE8251",
+            "#BAC8FF",
+            "#DF94CB",
+            "#6FDCD8"
           ],
           "terminal_runs": [
             {
               "seed": 27000,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4001,
-              "accepted_moves": 54,
-              "objective": -1.7858863151915887
+              "accepted_moves": 88,
+              "objective": 209367205.11192507
             },
             {
               "seed": 27001,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4001,
-              "accepted_moves": 102,
-              "objective": -1.7623734661312545
+              "accepted_moves": 93,
+              "objective": 111968230.6939394
             }
           ],
           "sequential_anchors": [
@@ -1904,7 +1899,7 @@
             "shifted_max_to_min": 1.0001001995962027,
             "normal_lightness_range": 0.5949321884928973,
             "shifted_lightness_range": 0.5140092807445045,
-            "shifted_light_endpoint_background_contrast_min": 7.288724289494941,
+            "shifted_light_endpoint_background_contrast_min": 7.40410235196117,
             "normal_minimum_signed_lightness_step": 0.002216617553735034,
             "shifted_minimum_signed_lightness_step": 0.0019799935002553504,
             "gain_corner_samples": [
@@ -1953,7 +1948,7 @@
             "gain_corner_max_to_min_max": 1.02249926957915,
             "gain_corner_minimum_signed_lightness_step": 0.0019352430872523474
           },
-          "sequential_dependency_fingerprint": "60c7c40ba14aa615940fe7223efb580603dcae976e6a8d73a9f48eefa5f02471",
+          "sequential_dependency_fingerprint": "cb7635f6dbfbc39aab1232056f01e230a2fc4236c283ced904b8dcc7777c76cb",
           "continuous_float_srgb": [
             [
               0.1568627504,
@@ -3496,42 +3491,23 @@
           ],
           "search": {
             "per_count": {
-              "3": {
+              "4": {
                 "seed": 7001,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 105,
-                "objective": 100000000005373.12,
+                "accepted_moves": 6,
+                "objective": -2.215331466987807,
                 "selected": {
                   "surfaces": [
-                    "#090500",
-                    "#1B1312",
-                    "#2B1F1D"
+                    "#070403",
+                    "#0A1008",
+                    "#1B1711",
+                    "#2E1E18"
                   ],
                   "foregrounds": [
-                    "#D2CE9A",
-                    "#A89D7B",
-                    "#79765A"
-                  ]
-                }
-              },
-              "4": {
-                "seed": 7000,
-                "iterations": 2400,
-                "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 87,
-                "objective": 100000000001597.78,
-                "selected": {
-                  "surfaces": [
-                    "#0D0300",
-                    "#140F00",
-                    "#1A1B21",
-                    "#272216"
-                  ],
-                  "foregrounds": [
-                    "#C5D69A",
-                    "#A89D7B",
-                    "#78765A"
+                    "#DED2BF",
+                    "#BBAF9E",
+                    "#A39B8A"
                   ]
                 }
               },
@@ -3539,47 +3515,25 @@
                 "seed": 7001,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 102,
-                "objective": 100000000000013.66,
+                "accepted_moves": 8,
+                "objective": 6.069778852417321,
                 "selected": {
                   "surfaces": [
-                    "#080500",
-                    "#170A00",
-                    "#151705",
-                    "#261D12",
-                    "#321E06"
+                    "#070403",
+                    "#150906",
+                    "#19160D",
+                    "#21181D",
+                    "#2E1E18"
                   ],
                   "foregrounds": [
-                    "#D7CE9A",
-                    "#AD9A82",
-                    "#837160"
-                  ]
-                }
-              },
-              "6": {
-                "seed": 7001,
-                "iterations": 2400,
-                "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 83,
-                "objective": -1.6330028245399661,
-                "selected": {
-                  "surfaces": [
-                    "#090807",
-                    "#100A09",
-                    "#181618",
-                    "#201D19",
-                    "#292219",
-                    "#2E211E"
-                  ],
-                  "foregrounds": [
-                    "#DBCBB6",
-                    "#BAAE98",
-                    "#A89384"
+                    "#DBCFBB",
+                    "#C4B3A3",
+                    "#A89C8A"
                   ]
                 }
               }
             },
-            "count_choice_rule": "best feasible objective; larger N wins ties"
+            "count_choice_rule": "shared anchors; smallest feasible count meeting bg>=3.84 / fg>=7.0 CAM16-UCS step floors"
           }
         }
       }
@@ -5362,19 +5316,18 @@
         },
         "halfway": {
           "weight": 0.5,
-          "bg_count": 5,
-          "count_choice_rule": "best feasible objective; larger N wins ties",
+          "bg_count": 4,
+          "count_choice_rule": "shared anchors; smallest feasible count meeting bg>=3.84 / fg>=7.0 CAM16-UCS step floors",
           "surfaces": {
             "bg_0": "#070403",
-            "bg_1": "#0A0D0B",
-            "bg_2": "#171613",
-            "bg_3": "#231C18",
-            "bg_4": "#2E1E18"
+            "bg_1": "#130A07",
+            "bg_2": "#20130D",
+            "bg_3": "#2E1E18"
           },
           "foregrounds": [
-            "#E7CFB4",
-            "#CBBAA6",
-            "#C2AA9F"
+            "#EEDCC5",
+            "#D0BFAB",
+            "#B7A79A"
           ],
           "categorical": [
             "#66B0D4",
@@ -5386,16 +5339,14 @@
             "4": {
               "selected": [
                 "#65B0D4",
-                "#E990A8",
-                "#A56449",
-                "#A8E1A6"
+                "#E99096",
+                "#A46449",
+                "#A7E2AA"
               ],
               "objective": null,
               "failures": [
-                "terminal day fg_0 clearance 12.1008 < 12.5000",
-                "terminal transformed fg_0 clearance 6.8350 < 7.5000",
-                "terminal transformed fg_1 clearance 4.0032 < 5.0000",
-                "terminal transformed fg_2 clearance 1.5467 < 4.0000"
+                "terminal day fg_0 clearance 12.4529 < 12.5000",
+                "terminal transformed fg_2 clearance 2.3873 < 4.0000"
               ]
             },
             "5": {
@@ -5409,11 +5360,8 @@
               "objective": null,
               "failures": [
                 "categorical day maximum chroma 0.124365 > 0.111000",
-                "categorical day fg_1 clearance 8.9925 < 9.0000",
-                "terminal day fg_0 clearance 12.1008 < 12.5000",
-                "terminal transformed fg_0 clearance 6.8350 < 7.5000",
-                "terminal transformed fg_1 clearance 4.0032 < 5.0000",
-                "terminal transformed fg_2 clearance 1.5467 < 4.0000"
+                "terminal day fg_0 clearance 12.4529 < 12.5000",
+                "terminal transformed fg_2 clearance 2.3873 < 4.0000"
               ]
             },
             "6": {
@@ -5428,14 +5376,11 @@
               "objective": null,
               "failures": [
                 "categorical day maximum chroma 0.130327 > 0.111000",
-                "categorical day fg_1 clearance 8.3464 < 9.0000",
-                "categorical transformed fg_2 clearance 5.4920 < 5.5000",
+                "categorical day fg_1 clearance 8.4944 < 9.0000",
                 "categorical sampled-corner pair 8.4782 < 8.5000",
                 "categorical sampled-corner background contrast 2.8698 < 3.0000",
-                "terminal day fg_0 clearance 12.1008 < 12.5000",
-                "terminal transformed fg_0 clearance 6.8350 < 7.5000",
-                "terminal transformed fg_1 clearance 4.0032 < 5.0000",
-                "terminal transformed fg_2 clearance 1.5467 < 4.0000"
+                "terminal day fg_0 clearance 12.4529 < 12.5000",
+                "terminal transformed fg_2 clearance 2.3873 < 4.0000"
               ]
             }
           },
@@ -5444,17 +5389,17 @@
             "normal_pair_delta_e_ok": 16.996056112545627,
             "shifted_pair_delta_e_ok": 12.906189823184006,
             "normal_foreground_clearance_by_role": [
-              9.602655850790402,
-              9.97166375759511,
-              8.262371097583504
+              10.750208599377649,
+              9.381975495702378,
+              9.22436872902366
             ],
             "shifted_foreground_clearance_by_role": [
-              6.490965470837047,
-              6.503656335482664,
-              7.4004337435749745
+              8.197301625155536,
+              6.160577162018532,
+              7.6252574180203
             ],
-            "normal_foreground_clearance_min": 8.262371097583504,
-            "shifted_foreground_clearance_min": 6.490965470837047,
+            "normal_foreground_clearance_min": 9.22436872902366,
+            "shifted_foreground_clearance_min": 6.160577162018532,
             "normal_background_contrast_min": 3.42003715781518,
             "shifted_background_contrast_bg0_min": 3.058815096279711,
             "shifted_background_contrast_all_surfaces_min": 2.6115516843831523,
@@ -5470,7 +5415,7 @@
                   0.0824595155
                 ],
                 "pair_delta_e_ok": 12.908311163395393,
-                "foreground_clearance_delta_e_ok": 5.948608798224121,
+                "foreground_clearance_delta_e_ok": 5.885437081523667,
                 "background_contrast": 3.0114307842408157
               },
               {
@@ -5480,7 +5425,7 @@
                   0.09113946450000002
                 ],
                 "pair_delta_e_ok": 12.906797978459636,
-                "foreground_clearance_delta_e_ok": 5.9460428206973575,
+                "foreground_clearance_delta_e_ok": 5.881895583314889,
                 "background_contrast": 3.011669801274198
               },
               {
@@ -5490,7 +5435,7 @@
                   0.0824595155
                 ],
                 "pair_delta_e_ok": 12.917291461210667,
-                "foreground_clearance_delta_e_ok": 6.714070226326969,
+                "foreground_clearance_delta_e_ok": 6.460664808062219,
                 "background_contrast": 3.1087005934541314
               },
               {
@@ -5500,34 +5445,34 @@
                   0.09113946450000002
                 ],
                 "pair_delta_e_ok": 12.916409463807216,
-                "foreground_clearance_delta_e_ok": 6.711223430746779,
+                "foreground_clearance_delta_e_ok": 6.45742882213579,
                 "background_contrast": 3.1089382996876798
               }
             ],
             "gain_corner_pair_min": 12.906797978459636,
-            "gain_corner_foreground_clearance_min": 5.9460428206973575,
+            "gain_corner_foreground_clearance_min": 5.881895583314889,
             "gain_corner_background_contrast_min": 3.0114307842408157
           },
           "terminal": [
-            "#EB8B9E",
+            "#EF91AE",
             "#74E5C0",
-            "#C39B5E",
-            "#A6D1FF"
+            "#C69A69",
+            "#A5D2FD"
           ],
           "terminal_runs": [
             {
               "seed": 27100,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4003,
-              "accepted_moves": 13,
-              "objective": 664423249.8168228
+              "accepted_moves": 27,
+              "objective": 104944572.09434973
             },
             {
               "seed": 27101,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4003,
-              "accepted_moves": 32,
-              "objective": 659954154.347612
+              "accepted_moves": 11,
+              "objective": 193616631.40079942
             }
           ],
           "sequential_anchors": [
@@ -5594,7 +5539,7 @@
             "gain_corner_max_to_min_max": 1.016225531765014,
             "gain_corner_minimum_signed_lightness_step": 0.0020908551452102075
           },
-          "sequential_dependency_fingerprint": "f0a83504ebd080d6d3590ba6f36b0c41e020676bac783c1439223cb18242d2dd",
+          "sequential_dependency_fingerprint": "76b96e0cf16da86c4bd62b662ab5f0881ecf22456ac05ff668edd6af06f43294",
           "continuous_float_srgb": [
             [
               0.0941176499,
@@ -7137,90 +7082,49 @@
           ],
           "search": {
             "per_count": {
-              "3": {
+              "4": {
                 "seed": 7100,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 71,
-                "objective": 100000000002725.98,
+                "accepted_moves": 9,
+                "objective": -1.5147135294790557,
                 "selected": {
                   "surfaces": [
-                    "#00030D",
-                    "#141200",
-                    "#321910"
+                    "#070403",
+                    "#130A07",
+                    "#20130D",
+                    "#2E1E18"
                   ],
                   "foregrounds": [
-                    "#D6E596",
-                    "#CAA481",
-                    "#9B8A73"
-                  ]
-                }
-              },
-              "4": {
-                "seed": 7101,
-                "iterations": 2400,
-                "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 76,
-                "objective": 100000000000254.14,
-                "selected": {
-                  "surfaces": [
-                    "#030400",
-                    "#100B00",
-                    "#1F150F",
-                    "#2C1D12"
-                  ],
-                  "foregrounds": [
-                    "#D6E296",
-                    "#BBAB81",
-                    "#A08778"
+                    "#EEDCC5",
+                    "#D0BFAB",
+                    "#B7A79A"
                   ]
                 }
               },
               "5": {
-                "seed": 7101,
-                "iterations": 2400,
-                "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 163,
-                "objective": -12.607565468028481,
-                "selected": {
-                  "surfaces": [
-                    "#070403",
-                    "#0A0D0B",
-                    "#171613",
-                    "#231C18",
-                    "#2E1E18"
-                  ],
-                  "foregrounds": [
-                    "#E7CFB4",
-                    "#CBBAA6",
-                    "#C2AA9F"
-                  ]
-                }
-              },
-              "6": {
                 "seed": 7100,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 233,
-                "objective": -3.5265118976279215,
+                "accepted_moves": 37,
+                "objective": 100000000506136.03,
                 "selected": {
                   "surfaces": [
-                    "#040706",
-                    "#0E0C0B",
-                    "#150B0A",
-                    "#1D1D18",
-                    "#251B19",
-                    "#23251E"
+                    "#070403",
+                    "#0F0403",
+                    "#1B0800",
+                    "#270B11",
+                    "#2E1E18"
                   ],
                   "foregrounds": [
-                    "#F0CCA5",
-                    "#CDB398",
-                    "#C09C8E"
+                    "#E5CEB5",
+                    "#C7C3A4",
+                    "#C2A296"
                   ]
                 }
               }
             },
-            "count_choice_rule": "best feasible objective; larger N wins ties"
+            "count_choice_rule": "shared anchors; smallest feasible count meeting bg>=3.84 / fg>=7.0 CAM16-UCS step floors"
           }
         }
       }
@@ -9011,17 +8915,17 @@
         "halfway": {
           "weight": 0.5,
           "bg_count": 4,
-          "count_choice_rule": "user-directed: N=4, shipped bg_0/bg_4 endpoints frozen, interiors refined for even CAM16-UCS steps",
+          "count_choice_rule": "shared anchors; smallest feasible count meeting bg>=3.84 / fg>=7.0 CAM16-UCS step floors",
           "surfaces": {
-            "bg_0": "#060302",
-            "bg_1": "#0F0806",
-            "bg_2": "#1A1216",
-            "bg_3": "#251C17"
+            "bg_0": "#070403",
+            "bg_1": "#130A08",
+            "bg_2": "#201310",
+            "bg_3": "#2E1E18"
           },
           "foregrounds": [
-            "#FCE5CA",
-            "#C7B198",
-            "#B99B8B"
+            "#FFE9CF",
+            "#CFB9A1",
+            "#B49F8B"
           ],
           "categorical": [
             "#BB6572",
@@ -9031,32 +8935,37 @@
           "categorical_trials": {
             "3": {
               "selected": [
-                "#B15F6E",
-                "#8EF0FF",
-                "#E8B66A"
+                "#C56E7C",
+                "#91F0FF",
+                "#EBB66C"
               ],
               "objective": null,
               "failures": [
-                "categorical transformed fg_2 clearance 3.2003 < 4.8000",
-                "categorical sampled-corner foreground clearance 3.0316 < 4.7000"
+                "categorical transformed fg_1 clearance 3.9724 < 4.8000",
+                "categorical transformed fg_2 clearance 3.4782 < 4.8000",
+                "categorical sampled-corner foreground clearance 3.4364 < 4.7000",
+                "terminal transformed fg_1 clearance 3.1377 < 4.0000"
               ]
             },
             "4": {
               "selected": [
                 "#A95360",
                 "#7DDEFF",
-                "#D8A560",
+                "#D8A55F",
                 "#AEFFD5"
               ],
               "objective": null,
               "failures": [
                 "categorical day pair 13.1811 < 20.0000",
+                "categorical day mean chroma 0.105007 > 0.105000",
                 "categorical day maximum chroma 0.113262 > 0.111000",
-                "categorical transformed bg contrast 2.6841 < 3.0000",
-                "categorical transformed fg_1 clearance 3.3134 < 4.8000",
+                "categorical transformed bg contrast 2.6771 < 3.0000",
+                "categorical transformed fg_1 clearance 1.7715 < 4.8000",
+                "categorical transformed fg_2 clearance 4.2352 < 4.8000",
                 "categorical sampled-corner pair 8.3531 < 8.5000",
-                "categorical sampled-corner foreground clearance 3.2998 < 4.7000",
-                "categorical sampled-corner background contrast 2.6039 < 3.0000"
+                "categorical sampled-corner foreground clearance 1.7579 < 4.7000",
+                "categorical sampled-corner background contrast 2.5973 < 3.0000",
+                "terminal transformed fg_1 clearance 3.1377 < 4.0000"
               ]
             },
             "5": {
@@ -9073,13 +8982,13 @@
                 "categorical transformed pair 8.4849 < 8.5000",
                 "categorical day mean chroma 0.115177 > 0.105000",
                 "categorical day maximum chroma 0.138246 > 0.111000",
-                "categorical transformed bg contrast 2.6735 < 3.0000",
-                "categorical transformed fg_0 clearance 3.1118 < 4.8000",
-                "categorical transformed fg_1 clearance 2.7921 < 4.8000",
-                "categorical transformed fg_2 clearance 4.0196 < 4.8000",
+                "categorical transformed bg contrast 2.6666 < 3.0000",
+                "categorical transformed fg_0 clearance 3.7281 < 4.8000",
+                "categorical transformed fg_1 clearance 3.3162 < 4.8000",
                 "categorical sampled-corner pair 8.0214 < 8.5000",
-                "categorical sampled-corner foreground clearance 2.5496 < 4.7000",
-                "categorical sampled-corner background contrast 2.6039 < 3.0000"
+                "categorical sampled-corner foreground clearance 3.0302 < 4.7000",
+                "categorical sampled-corner background contrast 2.5973 < 3.0000",
+                "terminal transformed fg_1 clearance 3.1377 < 4.0000"
               ]
             }
           },
@@ -9088,20 +8997,20 @@
             "normal_pair_delta_e_ok": 20.715981254015855,
             "shifted_pair_delta_e_ok": 10.253649364130393,
             "normal_foreground_clearance_by_role": [
-              13.32555623250436,
-              7.634004306705652,
-              12.195331065275738
+              13.499315060204092,
+              6.945435831727598,
+              11.865864181200578
             ],
             "shifted_foreground_clearance_by_role": [
-              4.596662486912755,
-              4.335191205630222,
-              1.9649471597633132
+              5.233934123310811,
+              5.141327626444476,
+              2.314121049896788
             ],
-            "normal_foreground_clearance_min": 7.634004306705652,
-            "shifted_foreground_clearance_min": 1.9649471597633132,
-            "normal_background_contrast_min": 4.150234090716725,
-            "shifted_background_contrast_bg0_min": 3.1177182087365325,
-            "shifted_background_contrast_all_surfaces_min": 2.8258420565271045,
+            "normal_foreground_clearance_min": 6.945435831727598,
+            "shifted_foreground_clearance_min": 2.314121049896788,
+            "normal_background_contrast_min": 3.967410827656381,
+            "shifted_background_contrast_bg0_min": 3.1096227934007024,
+            "shifted_background_contrast_all_surfaces_min": 2.727631960677998,
             "normal_hue_gap_degrees": 65.03416246741412,
             "normal_mean_chroma": 0.10468161350760648,
             "normal_max_chroma": 0.11069245694036287,
@@ -9114,8 +9023,8 @@
                   0.0
                 ],
                 "pair_delta_e_ok": 9.931378856081702,
-                "foreground_clearance_delta_e_ok": 1.7822601165141776,
-                "background_contrast": 3.0227858824814327
+                "foreground_clearance_delta_e_ok": 2.149175464868092,
+                "background_contrast": 3.01513509679793
               },
               {
                 "gains": [
@@ -9124,8 +9033,8 @@
                   0.0
                 ],
                 "pair_delta_e_ok": 9.931378856081702,
-                "foreground_clearance_delta_e_ok": 1.7822601165141776,
-                "background_contrast": 3.0227858824814327
+                "foreground_clearance_delta_e_ok": 2.149175464868092,
+                "background_contrast": 3.01513509679793
               },
               {
                 "gains": [
@@ -9134,8 +9043,8 @@
                   0.0
                 ],
                 "pair_delta_e_ok": 10.616816572412501,
-                "foreground_clearance_delta_e_ok": 2.1558876292683835,
-                "background_contrast": 3.2184060548096434
+                "foreground_clearance_delta_e_ok": 2.4931092135665116,
+                "background_contrast": 3.2098383548336225
               },
               {
                 "gains": [
@@ -9144,33 +9053,33 @@
                   0.0
                 ],
                 "pair_delta_e_ok": 10.616816572412501,
-                "foreground_clearance_delta_e_ok": 2.1558876292683835,
-                "background_contrast": 3.2184060548096434
+                "foreground_clearance_delta_e_ok": 2.4931092135665116,
+                "background_contrast": 3.2098383548336225
               }
             ],
             "gain_corner_pair_min": 9.931378856081702,
-            "gain_corner_foreground_clearance_min": 1.7822601165141776,
-            "gain_corner_background_contrast_min": 3.0227858824814327
+            "gain_corner_foreground_clearance_min": 2.149175464868092,
+            "gain_corner_background_contrast_min": 3.01513509679793
           },
           "terminal": [
-            "#F29298",
-            "#C9FFB4",
-            "#DDCD81"
+            "#F5959A",
+            "#C8FFB4",
+            "#DFD385"
           ],
           "terminal_runs": [
             {
               "seed": 27200,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4003,
-              "accepted_moves": 0,
-              "objective": -1.543261478980934
+              "accepted_moves": 40,
+              "objective": 11739424.376785448
             },
             {
               "seed": 27201,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4003,
-              "accepted_moves": 0,
-              "objective": -1.543261478980934
+              "accepted_moves": 28,
+              "objective": 11739424.381379781
             }
           ],
           "sequential_anchors": [
@@ -9188,7 +9097,7 @@
             "shifted_max_to_min": 1.0000025745798153,
             "normal_lightness_range": 0.7617199980984637,
             "shifted_lightness_range": 0.5200913950819938,
-            "shifted_light_endpoint_background_contrast_min": 5.495086900327869,
+            "shifted_light_endpoint_background_contrast_min": 5.304109131441659,
             "normal_minimum_signed_lightness_step": 0.002634281279989409,
             "shifted_minimum_signed_lightness_step": 0.002002355707679454,
             "gain_corner_samples": [
@@ -9237,7 +9146,7 @@
             "gain_corner_max_to_min_max": 1.0053545002428632,
             "gain_corner_minimum_signed_lightness_step": 0.00199528070666391
           },
-          "sequential_dependency_fingerprint": "37d34d2869fd6d54ebbd55047746c6c132cebef9fdb3723af7eb44ed67db51d5",
+          "sequential_dependency_fingerprint": "4192985f4fadd8446175037c98f3902c6ea7486e64ab4827570242e3738770a6",
           "continuous_float_srgb": [
             [
               0.0901960802,
@@ -10785,23 +10694,23 @@
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
                 "accepted_moves": 6,
-                "objective": -3.0298710635402797,
+                "objective": 4.694501289099097,
                 "selected": {
                   "surfaces": [
-                    "#060302",
-                    "#0F0806",
-                    "#1A1216",
-                    "#251C17"
+                    "#070403",
+                    "#130A08",
+                    "#201310",
+                    "#2E1E18"
                   ],
                   "foregrounds": [
-                    "#FCE5CA",
-                    "#C7B198",
-                    "#B99B8B"
+                    "#FFE9CF",
+                    "#CFB9A1",
+                    "#B49F8B"
                   ]
                 }
               }
             },
-            "count_choice_rule": "user-directed: N=4, shipped bg_0/bg_4 endpoints frozen, interiors refined for even CAM16-UCS steps"
+            "count_choice_rule": "shared anchors; smallest feasible count meeting bg>=3.84 / fg>=7.0 CAM16-UCS step floors"
           }
         }
       }

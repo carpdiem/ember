@@ -224,8 +224,8 @@ def system_violations(
 ) -> tuple[list[float], float]:
     metrics = transformed_metrics(surfaces, fg, base.profile.gains)
     values: list[float] = []
-    values.extend(violation(v, TRANSFORMED_BG_STEP_FLOOR) for v in metrics["adjacent"])
-    values.extend(violation(v, TRANSFORMED_FG_STEP_FLOOR) for v in metrics["fg_adjacent"])
+    values.extend(violation(v, BG_STEP_FLOOR_LIGHT_REFERENCE) for v in metrics["adjacent"])
+    values.extend(violation(v, FG_STEP_FLOOR_CURRENT_REFERENCE) for v in metrics["fg_adjacent"])
     values.append(violation(metrics["uniformity_ratio"], ceiling=TRANSFORMED_UNIFORMITY_RATIO))
     values.append(violation(metrics["span"], 6.0))
     primary_floor = max(4.5, DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST.get(base.slug, 4.5))
@@ -237,19 +237,39 @@ def system_violations(
     # Commanded-state structural gates.
     luminance = np.asarray(wcag_luminance(hex_array(surfaces)))
     values.extend(violation(float(d), -1e-12) for d in np.diff(luminance))
+    # Map each surface's ladder position to the shipped six-role ceiling so a
+    # compressed count still uses the ceiling of the depth band it occupies.
+    position_ceilings = np.asarray(
+        [DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE[f"bg_{i}"] for i in range(6)]
+    )
+    positions = np.linspace(0.0, 1.0, 6)
+    role_ceilings = np.interp(np.linspace(0.0, 1.0, count), positions, position_ceilings)
     for index in range(count):
-        ceiling = DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE[f"bg_{min(index, 5)}"]
-        values.append(violation(float(luminance[index]), ceiling=ceiling))
+        values.append(violation(float(luminance[index]), ceiling=float(role_ceilings[index])))
 
-    # Commanded warmth soft target and L pinning.
+    # Commanded warmth soft target and L pinning. The shared-anchor halfway path
+    # replaces the resampled-ladder pin with the anchor endpoints themselves.
     target_ab, ladder = surface_warmth_target(base, weight, count)
     surf_lab = srgb_to_oklab(hex_array(surfaces))
     cmd = commanded_metrics(surfaces, fg)
+    if weight > 0.0:
+        anchor_ladder = srgb_to_oklab(hex_array((SHARED_DARK_ANCHOR, SHARED_LIGHT_ANCHOR)))
+        anchors = np.linspace(0.0, 1.0, count)
+        ladder = np.column_stack(
+            [
+                np.interp(anchors, (0.0, 1.0), anchor_ladder[:, 0]),
+                np.interp(anchors, (0.0, 1.0), anchor_ladder[:, 1]),
+                np.interp(anchors, (0.0, 1.0), anchor_ladder[:, 2]),
+            ]
+        )
     for index in range(count):
+        ceiling = SURFACE_LIGHTNESS_DRIFT + (
+            0.005 if weight > 0.0 and index in (0, count - 1) else 0.0
+        )
         values.append(
             violation(
-                abs(float(surf_lab[index, 0] - ladder[index])),
-                ceiling=SURFACE_LIGHTNESS_DRIFT,
+                abs(float(surf_lab[index, 0] - ladder[index][0])),
+                ceiling=ceiling,
             )
         )
     soft_terms = [float(np.linalg.norm(cmd["surf_ab"] - target_ab))]
@@ -364,17 +384,23 @@ def bounded_system_search(
     }
 
 
-def pinned_endpoint_surfaces(base: Any, count: int) -> tuple[str, ...]:
-    """User-directed 1200K shape: shipped bg_0/bg_4 endpoints, N=4, even CAM16 steps."""
+SHARED_DARK_ANCHOR = "#070403"
+SHARED_LIGHT_ANCHOR = "#2E1E18"
+BG_STEP_FLOOR_LIGHT_REFERENCE = 3.84
+FG_STEP_FLOOR_CURRENT_REFERENCE = 7.0
+FOREGROUND_LIGHTNESS_RADIUS = 0.12
 
-    endpoints = [base.surfaces["bg_0"], base.surfaces["bg_4"]]
-    lab = srgb_to_oklab(hex_array(tuple(endpoints)))
+
+def pinned_endpoint_surfaces(base: Any, count: int) -> tuple[str, ...]:
+    """Shared-anchor halfway shape: common dark/light endpoints, N surfaces between."""
+
+    lab = srgb_to_oklab(hex_array((SHARED_DARK_ANCHOR, SHARED_LIGHT_ANCHOR)))
     ts = np.linspace(0.0, 1.0, count)
     inner = [
         srgb_to_hex(np.clip(oklab_to_srgb(lab[0] * (1 - t) + lab[1] * t), 0.0, 1.0))
         for t in ts[1:-1]
     ]
-    return (endpoints[0], *inner, endpoints[1])
+    return (SHARED_DARK_ANCHOR, *inner, SHARED_LIGHT_ANCHOR)
 
 
 def refine_pinned_intermediates(
@@ -650,54 +676,74 @@ def main() -> int:
                 }
                 record["lanes"][lane] = lane_record
                 continue
-            if slug == "1200k-dark":
-                # User-directed shape: N=4 with shipped bg_0/bg_4 endpoints frozen;
-                # only the two interior surfaces and the foregrounds are searched.
-                pinned = pinned_endpoint_surfaces(base, 4)
-                fg_runs = [
-                    bounded_system_search(
-                        base,
-                        4,
-                        weight,
-                        seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
-                        iterations=iterations["system"],
+            if True:
+                # Shared-anchor halfway: common endpoints for every profile, count
+                # floats but must satisfy the light-reference bg step floor and the
+                # current-reference fg step floor. Endpoints frozen; interiors and
+                # foregrounds searched.
+                pinned_counts = (4, 5) if slug != "1200k-dark" else (4,)
+                best_overall = None
+                per_count: dict[str, Any] = {}
+                chosen_count = None
+                choice_rule = ""
+                for count in pinned_counts:
+                    pinned = pinned_endpoint_surfaces(base, count)
+                    fg_runs = [
+                        bounded_system_search(
+                            base,
+                            count,
+                            weight,
+                            seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
+                            iterations=iterations["system"],
+                        )
+                        for add in (0, 1)
+                    ]
+                    _, fg_pick = select_two_seed_runs(fg_runs)
+                    foregrounds = tuple(fg_pick["selected"]["foregrounds"])
+                    runs = [
+                        refine_pinned_intermediates(
+                            base,
+                            pinned,
+                            foregrounds,
+                            seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
+                            iterations=iterations["system"],
+                        )
+                        for add in (0, 1)
+                    ]
+                    best, _ = select_two_seed_runs(runs)
+                    per_count[str(count)] = runs_summary(best)
+                    if best["objective"] < 1e13 and (
+                        best_overall is None or best["objective"] < best_overall["objective"]
+                    ):
+                        best_overall = best
+                        chosen_count = count
+                if best_overall is None:
+                    fallback_key = min(per_count, key=lambda k: per_count[k]["objective"])
+                    raise RuntimeError(
+                        f"no feasible halfway count for {slug}; weakest was N={fallback_key}"
                     )
-                    for add in (0, 1)
-                ]
-                _, fg_pick = select_two_seed_runs(fg_runs)
-                foregrounds = tuple(fg_pick["selected"]["foregrounds"])
-                runs = [
-                    refine_pinned_intermediates(
-                        base,
-                        pinned,
-                        foregrounds,
-                        seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
-                        iterations=iterations["system"],
-                    )
-                    for add in (0, 1)
-                ]
-                best, _ = select_two_seed_runs(runs)
-                chosen_count = 4
                 choice_rule = (
-                    "user-directed: N=4, shipped bg_0/bg_4 endpoints frozen, "
-                    "interiors refined for even CAM16-UCS steps"
+                    "shared anchors; smallest feasible count meeting "
+                    "bg>=3.84 / fg>=7.0 CAM16-UCS step floors"
                 )
                 lane_record = {
                     "weight": weight,
                     "bg_count": chosen_count,
                     "count_choice_rule": choice_rule,
-                    "surfaces": {f"bg_{i}": v for i, v in enumerate(best["selected"]["surfaces"])},
-                    "foregrounds": list(best["selected"]["foregrounds"]),
+                    "surfaces": {
+                        f"bg_{i}": v for i, v in enumerate(best_overall["selected"]["surfaces"])
+                    },
+                    "foregrounds": list(best_overall["selected"]["foregrounds"]),
                     **search_dependent_banks(
                         full,
                         base,
-                        tuple(best["selected"]["surfaces"]),
-                        tuple(best["selected"]["foregrounds"]),
+                        tuple(best_overall["selected"]["surfaces"]),
+                        tuple(best_overall["selected"]["foregrounds"]),
                         profile_index,
                         iterations,
                     ),
                     "search": {
-                        "per_count": {"4": runs_summary(best)},
+                        "per_count": per_count,
                         "count_choice_rule": choice_rule,
                     },
                 }
