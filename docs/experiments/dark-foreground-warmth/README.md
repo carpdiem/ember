@@ -29,9 +29,9 @@ This fourth pass compares all three shipped dark profiles under two commanded ph
 
 - **3400K Dark · Current:** shipped count retained; shipped count is 6 colors.
 - **3400K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 6 colors.
-- **2000K Dark · Current:** count 6 adopted over 4: gates pass with margin; shipped count is 4 colors.
+- **2000K Dark · Current:** shipped count retained; shipped count is 4 colors.
 - **2000K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 4 colors.
-- **1200K Dark · Current:** count 5 adopted over 3: gates pass with margin; shipped count is 3 colors.
+- **1200K Dark · Current:** shipped count retained; shipped count is 3 colors.
 - **1200K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 3 colors.
 
 ## Distinctness vs universal text badges

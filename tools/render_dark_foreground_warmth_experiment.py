@@ -26,7 +26,6 @@ from build_all import _mars_topography_colormap_image, _mona_lisa_colormap_image
 from ember.color import (
     contrast_ratio,
     hex_to_srgb,
-    oklab_to_srgb,
     perceived_lab,
     srgb_to_hex,
     srgb_to_oklab,
@@ -87,16 +86,15 @@ def lane_surface_values(record: dict[str, Any]) -> list[str]:
 
 
 def expand_to_six(values: list[str]) -> tuple[str, ...]:
-    """Resample N selected surfaces to the six-role ladder by Oklab interpolation."""
-    if len(values) == 6:
-        return tuple(values)
-    lab = srgb_to_oklab(np.asarray([hex_to_srgb(value) for value in values]))
-    anchors = np.linspace(0.0, 1.0, len(values))
-    positions = np.linspace(0.0, 1.0, 6)
-    expanded = np.column_stack(
-        [np.interp(positions, anchors, lab[:, channel]) for channel in range(3)]
-    )
-    return tuple(srgb_to_hex(value) for value in np.clip(oklab_to_srgb(expanded), 0.0, 1.0))
+    """Pad N designed surfaces to the six-role FamilyDefinition shape.
+
+    Unused trailing roles repeat the lightest designed surface so no invented
+    intermediate colors ever appear in any rendered artifact. Display code
+    always renders exactly the designed `bg_count` swatches."""
+
+    if len(values) >= 6:
+        return tuple(values[:6])
+    return tuple(values) + tuple([values[-1]] * (6 - len(values)))
 
 
 def candidate_definition(slug: str, record: dict[str, Any]):

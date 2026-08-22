@@ -378,22 +378,40 @@ def search_dependent_banks(
     categorical: tuple[str, ...] | None = None
     categorical_metrics = None
     adopted_reason = "shipped count retained"
+
+    def extended_origin(count: int) -> tuple[str, ...]:
+        """Shipped palette extended to `count` entries with deterministic hue-shifted seeds."""
+
+        shipped = list(base.categorical_colors)
+        if count <= len(shipped):
+            return tuple(shipped[:count])
+        extra = []
+        lab = srgb_to_oklab(hex_array(tuple(shipped)))
+        for index in range(count - len(shipped)):
+            source = lab[(index * 2 + 1) % len(lab)]
+            shifted = source.copy()
+            shifted[2] += 0.035 * (1 if index % 2 == 0 else -1)
+            rgb = oklab_to_srgb(shifted.reshape(1, 3))[0]
+            extra.append(srgb_to_hex(np.clip(rgb, 0.0, 1.0)))
+        return tuple(shipped) + tuple(extra)
+
     for count in range(categorical_shipped, min(categorical_shipped + 3, 7)):
+        origin = extended_origin(count)
         runs = []
         for seed_add in (0, 1):
             runs.append(
                 full["bounded_exact_search"](
-                    base.categorical_colors,
-                    lambda values, lb=lane_base, fg=foregrounds, c=count: full[
-                        "categorical_objective"
-                    ](lb, fg, values[:c]),
+                    origin,
+                    lambda values, lb=lane_base, fg=foregrounds: full["categorical_objective"](
+                        lb, fg, values
+                    ),
                     seed=CATEGORY_SEED_BASE + profile_index * 100 + seed_add,
                     iterations=iterations["categorical"],
                     radius=18,
                 )
             )
         best, _ = full["select_two_seed_runs"](runs)
-        values = tuple(best)[:count]
+        values = tuple(best)
         metrics = full["accent_metrics"](lane_base, values, foregrounds, terminal=False)
         shipped_terminal_metrics = full["accent_metrics"](
             lane_base, base.terminal_colors, foregrounds, terminal=True

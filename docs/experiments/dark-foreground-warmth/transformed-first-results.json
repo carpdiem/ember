@@ -3624,26 +3624,39 @@
             },
             "5": {
               "selected": [
-                "#66B0D4",
-                "#E99096",
-                "#A46449",
-                "#A8E2AA"
+                "#66B0DC",
+                "#D77EA8",
+                "#9C7650",
+                "#91CA99",
+                "#FFA07B"
               ],
               "objective": null,
-              "failures": []
+              "failures": [
+                "categorical day maximum chroma 0.124365 > 0.111000",
+                "categorical day fg_1 clearance 8.6427 < 9.0000"
+              ]
             },
             "6": {
               "selected": [
-                "#66B0D4",
-                "#E99096",
-                "#A46449",
-                "#A8E2AA"
+                "#62A5E6",
+                "#D77EA0",
+                "#97724C",
+                "#B5EE97",
+                "#FEA073",
+                "#86CAC0"
               ],
               "objective": null,
-              "failures": []
+              "failures": [
+                "categorical day pair 13.8711 < 14.0000",
+                "categorical day mean chroma 0.105233 > 0.105000",
+                "categorical day maximum chroma 0.128416 > 0.111000",
+                "categorical transformed bg contrast 2.9203 < 3.0000",
+                "categorical day fg_1 clearance 8.6472 < 9.0000",
+                "categorical sampled-corner background contrast 2.7781 < 3.0000"
+              ]
             }
           },
-          "categorical_adoption": "count 6 adopted over 4: gates pass with margin",
+          "categorical_adoption": "shipped count retained",
           "categorical_metrics": {
             "normal_pair_delta_e_ok": 18.588710411260188,
             "shifted_pair_delta_e_ok": 14.152167946977329,
@@ -5384,13 +5397,16 @@
             },
             "5": {
               "selected": [
-                "#66B0D4",
-                "#E98F9E",
-                "#A46449",
-                "#A8E2A6"
+                "#66B0DC",
+                "#D77EA8",
+                "#9C744F",
+                "#91CA99",
+                "#FFA07B"
               ],
               "objective": null,
               "failures": [
+                "categorical day maximum chroma 0.124365 > 0.111000",
+                "categorical day fg_1 clearance 8.9740 < 9.0000",
                 "terminal day fg_0 clearance 11.6528 < 12.5000",
                 "terminal transformed fg_0 clearance 7.1746 < 7.5000",
                 "terminal transformed fg_1 clearance 4.3213 < 5.0000",
@@ -5399,13 +5415,20 @@
             },
             "6": {
               "selected": [
-                "#66B0D4",
-                "#E98F9E",
-                "#A46449",
-                "#A8E2A6"
+                "#719FE6",
+                "#D77E9D",
+                "#997349",
+                "#B3EE97",
+                "#FFA06F",
+                "#8ECAC6"
               ],
               "objective": null,
               "failures": [
+                "categorical day maximum chroma 0.130327 > 0.111000",
+                "categorical transformed bg contrast 2.9981 < 3.0000",
+                "categorical day fg_1 clearance 8.2528 < 9.0000",
+                "categorical sampled-corner pair 8.4782 < 8.5000",
+                "categorical sampled-corner background contrast 2.8670 < 3.0000",
                 "terminal day fg_0 clearance 11.6528 < 12.5000",
                 "terminal transformed fg_0 clearance 7.1746 < 7.5000",
                 "terminal transformed fg_1 clearance 4.3213 < 5.0000",
@@ -7240,24 +7263,49 @@
             },
             "4": {
               "selected": [
-                "#BB6572",
-                "#8EF0FF",
-                "#E9B76C"
+                "#A95360",
+                "#7DDEFF",
+                "#D8A560",
+                "#AEFFD5"
               ],
               "objective": null,
-              "failures": []
+              "failures": [
+                "categorical day pair 13.1811 < 20.0000",
+                "categorical day maximum chroma 0.113262 > 0.111000",
+                "categorical transformed bg contrast 2.6841 < 3.0000",
+                "categorical day fg_1 clearance 4.7017 < 6.0000",
+                "categorical transformed fg_1 clearance 2.5280 < 4.8000",
+                "categorical transformed fg_2 clearance 2.3850 < 4.8000",
+                "categorical sampled-corner pair 8.3531 < 8.5000",
+                "categorical sampled-corner foreground clearance 2.2386 < 4.7000",
+                "categorical sampled-corner background contrast 2.6039 < 3.0000"
+              ]
             },
             "5": {
               "selected": [
-                "#BB6572",
-                "#8EF0FF",
-                "#E9B76C"
+                "#CD6160",
+                "#7DDEFF",
+                "#F1BA7E",
+                "#AEFFD5",
+                "#A3549B"
               ],
               "objective": null,
-              "failures": []
+              "failures": [
+                "categorical day pair 13.1811 < 20.0000",
+                "categorical transformed pair 8.4849 < 8.5000",
+                "categorical day mean chroma 0.115177 > 0.105000",
+                "categorical day maximum chroma 0.138246 > 0.111000",
+                "categorical transformed bg contrast 2.6735 < 3.0000",
+                "categorical transformed fg_0 clearance 3.6069 < 4.8000",
+                "categorical transformed fg_1 clearance 2.6735 < 4.8000",
+                "categorical transformed fg_2 clearance 2.1694 < 4.8000",
+                "categorical sampled-corner pair 8.0214 < 8.5000",
+                "categorical sampled-corner foreground clearance 1.9723 < 4.7000",
+                "categorical sampled-corner background contrast 2.6039 < 3.0000"
+              ]
             }
           },
-          "categorical_adoption": "count 5 adopted over 3: gates pass with margin",
+          "categorical_adoption": "shipped count retained",
           "categorical_metrics": {
             "normal_pair_delta_e_ok": 20.749237383958867,
             "shifted_pair_delta_e_ok": 10.412877553467824,
@@ -8993,26 +9041,44 @@
             },
             "4": {
               "selected": [
-                "#B15E6E",
-                "#8EF0FF",
-                "#E9B76C"
+                "#A95360",
+                "#7DDEFF",
+                "#D8A55F",
+                "#AEFFD5"
               ],
               "objective": null,
               "failures": [
-                "categorical transformed fg_2 clearance 3.2274 < 4.8000",
-                "categorical sampled-corner foreground clearance 3.0557 < 4.7000"
+                "categorical day pair 13.1811 < 20.0000",
+                "categorical day mean chroma 0.105007 > 0.105000",
+                "categorical day maximum chroma 0.113262 > 0.111000",
+                "categorical transformed bg contrast 2.6875 < 3.0000",
+                "categorical transformed fg_1 clearance 3.1004 < 4.8000",
+                "categorical sampled-corner pair 8.3531 < 8.5000",
+                "categorical sampled-corner foreground clearance 3.0905 < 4.7000",
+                "categorical sampled-corner background contrast 2.6072 < 3.0000"
               ]
             },
             "5": {
               "selected": [
-                "#B15E6E",
-                "#8EF0FF",
-                "#E9B76C"
+                "#CD6160",
+                "#7DDEFF",
+                "#F1BA7E",
+                "#AEFFD5",
+                "#A3549B"
               ],
               "objective": null,
               "failures": [
-                "categorical transformed fg_2 clearance 3.2274 < 4.8000",
-                "categorical sampled-corner foreground clearance 3.0557 < 4.7000"
+                "categorical day pair 13.1811 < 20.0000",
+                "categorical transformed pair 8.4849 < 8.5000",
+                "categorical day mean chroma 0.115177 > 0.105000",
+                "categorical day maximum chroma 0.138246 > 0.111000",
+                "categorical transformed bg contrast 2.6769 < 3.0000",
+                "categorical transformed fg_0 clearance 3.6972 < 4.8000",
+                "categorical transformed fg_1 clearance 2.8910 < 4.8000",
+                "categorical transformed fg_2 clearance 4.0196 < 4.8000",
+                "categorical sampled-corner pair 8.0214 < 8.5000",
+                "categorical sampled-corner foreground clearance 2.6286 < 4.7000",
+                "categorical sampled-corner background contrast 2.6072 < 3.0000"
               ]
             }
           },
