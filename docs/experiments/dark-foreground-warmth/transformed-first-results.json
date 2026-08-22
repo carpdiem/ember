@@ -1756,17 +1756,17 @@
           "bg_count": 6,
           "count_choice_rule": "best feasible objective; larger N wins ties",
           "surfaces": {
-            "bg_0": "#090807",
+            "bg_0": "#080808",
             "bg_1": "#100E0D",
             "bg_2": "#181512",
-            "bg_3": "#1F1D1A",
-            "bg_4": "#28241F",
+            "bg_3": "#201D1A",
+            "bg_4": "#272620",
             "bg_5": "#34241D"
           },
           "foregrounds": [
-            "#D9CDB9",
-            "#BFB19F",
-            "#A89289"
+            "#E3D7C4",
+            "#BDB1A1",
+            "#A59489"
           ],
           "categorical": [
             "#6E96D5",
@@ -1779,18 +1779,17 @@
           "categorical_trials": {
             "6": {
               "selected": [
-                "#6E96D7",
-                "#E4A764",
+                "#6E96DA",
+                "#E8AA68",
                 "#2E8B7E",
                 "#67BE95",
-                "#945D48",
-                "#C4779A"
+                "#935E47",
+                "#C5779A"
               ],
               "objective": null,
               "failures": [
-                "terminal day fg_0 clearance 8.2543 < 8.5000",
-                "terminal day fg_2 clearance 9.2624 < 10.0000",
-                "terminal transformed fg_2 clearance 6.5975 < 9.0000"
+                "terminal day fg_2 clearance 9.2756 < 10.0000",
+                "terminal transformed fg_2 clearance 6.9520 < 9.0000"
               ]
             }
           },
@@ -1799,19 +1798,19 @@
             "normal_pair_delta_e_ok": 15.004698766023159,
             "shifted_pair_delta_e_ok": 11.45032224007158,
             "normal_foreground_clearance_by_role": [
-              10.884019063590875,
-              7.232828185205797,
-              9.080298354649944
+              13.434556366809227,
+              7.596113597951233,
+              9.736140588399628
             ],
             "shifted_foreground_clearance_by_role": [
-              6.156539902947428,
-              5.363060238189123,
-              6.817300424754354
+              8.132506975367344,
+              5.703746504920797,
+              7.4280712940341305
             ],
-            "normal_foreground_clearance_min": 7.232828185205797,
-            "shifted_foreground_clearance_min": 5.363060238189123,
+            "normal_foreground_clearance_min": 7.596113597951233,
+            "shifted_foreground_clearance_min": 5.703746504920797,
             "normal_background_contrast_min": 2.7670942312687434,
-            "shifted_background_contrast_bg0_min": 3.013852751690427,
+            "shifted_background_contrast_bg0_min": 3.016925888515089,
             "shifted_background_contrast_all_surfaces_min": 2.3964390207874113,
             "normal_hue_gap_degrees": 20.22514316519485,
             "normal_mean_chroma": 0.09707627103553519,
@@ -1825,8 +1824,8 @@
                   0.5035
                 ],
                 "pair_delta_e_ok": 10.881012577199549,
-                "foreground_clearance_delta_e_ok": 5.393857091359541,
-                "background_contrast": 2.819484882343969
+                "foreground_clearance_delta_e_ok": 5.74062434077468,
+                "background_contrast": 2.822395244466877
               },
               {
                 "gains": [
@@ -1835,8 +1834,8 @@
                   0.5565000000000001
                 ],
                 "pair_delta_e_ok": 11.146559219771596,
-                "foreground_clearance_delta_e_ok": 5.577929207896651,
-                "background_contrast": 2.8344358529726468
+                "foreground_clearance_delta_e_ok": 5.930079955356903,
+                "background_contrast": 2.8372976113670725
               },
               {
                 "gains": [
@@ -1845,8 +1844,8 @@
                   0.5035
                 ],
                 "pair_delta_e_ok": 10.956135615490558,
-                "foreground_clearance_delta_e_ok": 5.182127296729969,
-                "background_contrast": 3.094438900588032
+                "foreground_clearance_delta_e_ok": 5.511962580139505,
+                "background_contrast": 3.0976251779082293
               },
               {
                 "gains": [
@@ -1855,36 +1854,36 @@
                   0.5565000000000001
                 ],
                 "pair_delta_e_ok": 11.472027211818121,
-                "foreground_clearance_delta_e_ok": 5.33571116677242,
-                "background_contrast": 3.0987122927106947
+                "foreground_clearance_delta_e_ok": 5.670274002057328,
+                "background_contrast": 3.101833137579008
               }
             ],
             "gain_corner_pair_min": 10.881012577199549,
-            "gain_corner_foreground_clearance_min": 5.182127296729969,
-            "gain_corner_background_contrast_min": 2.819484882343969
+            "gain_corner_foreground_clearance_min": 5.511962580139505,
+            "gain_corner_background_contrast_min": 2.822395244466877
           },
           "terminal": [
-            "#FEAEA4",
-            "#84B999",
-            "#D89F54",
+            "#F8AEA1",
+            "#8EC497",
+            "#D59C51",
             "#B4C6F7",
-            "#D190CE",
-            "#62E0DD"
+            "#DB94CF",
+            "#60E3E7"
           ],
           "terminal_runs": [
             {
               "seed": 27000,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4001,
-              "accepted_moves": 84,
-              "objective": -1.7389106125513525
+              "accepted_moves": 97,
+              "objective": -1.7764710728212656
             },
             {
               "seed": 27001,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4001,
-              "accepted_moves": 81,
-              "objective": -1.7486276564909415
+              "accepted_moves": 109,
+              "objective": -1.7581647988581046
             }
           ],
           "sequential_anchors": [
@@ -1951,7 +1950,7 @@
             "gain_corner_max_to_min_max": 1.02249926957915,
             "gain_corner_minimum_signed_lightness_step": 0.0019352430872523474
           },
-          "sequential_dependency_fingerprint": "23c1dc4dd2f09b977920024f2309da71a09d19f2f268867cc2df497a70b86dc9",
+          "sequential_dependency_fingerprint": "69a442a07a3b38032d879c06f5d2f73774267cea6bc8356825cee79e43af7b3f",
           "continuous_float_srgb": [
             [
               0.1568627504,
@@ -3498,18 +3497,18 @@
                 "seed": 7000,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 95,
-                "objective": 100000000005545.0,
+                "accepted_moves": 97,
+                "objective": 100000000005516.84,
                 "selected": {
                   "surfaces": [
                     "#000800",
                     "#151225",
-                    "#2C200E"
+                    "#2B2015"
                   ],
                   "foregrounds": [
-                    "#C6BF9A",
-                    "#A59F7B",
-                    "#78755F"
+                    "#C5D69A",
+                    "#A59E7D",
+                    "#787560"
                   ]
                 }
               },
@@ -3517,7 +3516,7 @@
                 "seed": 7000,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 85,
+                "accepted_moves": 90,
                 "objective": 100000000001388.5,
                 "selected": {
                   "surfaces": [
@@ -3527,9 +3526,9 @@
                     "#2D1D24"
                   ],
                   "foregrounds": [
-                    "#C5C09A",
-                    "#A59F7B",
-                    "#787370"
+                    "#C5D69A",
+                    "#A59E7D",
+                    "#78746A"
                   ]
                 }
               },
@@ -3537,20 +3536,20 @@
                 "seed": 7000,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 84,
-                "objective": 100000000000002.92,
+                "accepted_moves": 101,
+                "objective": 100000000000005.23,
                 "selected": {
                   "surfaces": [
-                    "#020700",
+                    "#050600",
                     "#001101",
-                    "#161700",
-                    "#221C27",
-                    "#21260A"
+                    "#0B1818",
+                    "#1C1D2E",
+                    "#1E2610"
                   ],
                   "foregrounds": [
-                    "#C5C09A",
-                    "#AF9A7B",
-                    "#78746F"
+                    "#D7CA9A",
+                    "#A59F7B",
+                    "#7C745E"
                   ]
                 }
               },
@@ -3558,21 +3557,21 @@
                 "seed": 7001,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 72,
-                "objective": 9.020389397587444,
+                "accepted_moves": 78,
+                "objective": 8.270918645415293,
                 "selected": {
                   "surfaces": [
-                    "#090807",
+                    "#080808",
                     "#100E0D",
                     "#181512",
-                    "#1F1D1A",
-                    "#28241F",
+                    "#201D1A",
+                    "#272620",
                     "#34241D"
                   ],
                   "foregrounds": [
-                    "#D9CDB9",
-                    "#BFB19F",
-                    "#A89289"
+                    "#E3D7C4",
+                    "#BDB1A1",
+                    "#A59489"
                   ]
                 }
               }
@@ -5357,8 +5356,8 @@
             "bg_4": "#2B251F"
           },
           "foregrounds": [
-            "#D8C6AF",
-            "#CABAA7",
+            "#E7D2BB",
+            "#CCBCA8",
             "#C2ADA0"
           ],
           "categorical": [
@@ -5371,45 +5370,45 @@
             "4": {
               "selected": [
                 "#66B0D4",
-                "#E98F9F",
+                "#E98F9E",
                 "#A46449",
-                "#A8E3AA"
+                "#A8E2A6"
               ],
               "objective": null,
               "failures": [
-                "terminal day fg_0 clearance 11.1424 < 12.5000",
-                "terminal transformed fg_0 clearance 6.5223 < 7.5000",
-                "terminal transformed fg_1 clearance 3.9118 < 5.0000",
+                "terminal day fg_0 clearance 11.6528 < 12.5000",
+                "terminal transformed fg_0 clearance 7.1746 < 7.5000",
+                "terminal transformed fg_1 clearance 4.3213 < 5.0000",
                 "terminal transformed fg_2 clearance 1.9020 < 4.0000"
               ]
             },
             "5": {
               "selected": [
                 "#66B0D4",
-                "#E98F9F",
+                "#E98F9E",
                 "#A46449",
-                "#A8E3AA"
+                "#A8E2A6"
               ],
               "objective": null,
               "failures": [
-                "terminal day fg_0 clearance 11.1424 < 12.5000",
-                "terminal transformed fg_0 clearance 6.5223 < 7.5000",
-                "terminal transformed fg_1 clearance 3.9118 < 5.0000",
+                "terminal day fg_0 clearance 11.6528 < 12.5000",
+                "terminal transformed fg_0 clearance 7.1746 < 7.5000",
+                "terminal transformed fg_1 clearance 4.3213 < 5.0000",
                 "terminal transformed fg_2 clearance 1.9020 < 4.0000"
               ]
             },
             "6": {
               "selected": [
                 "#66B0D4",
-                "#E98F9F",
+                "#E98F9E",
                 "#A46449",
-                "#A8E3AA"
+                "#A8E2A6"
               ],
               "objective": null,
               "failures": [
-                "terminal day fg_0 clearance 11.1424 < 12.5000",
-                "terminal transformed fg_0 clearance 6.5223 < 7.5000",
-                "terminal transformed fg_1 clearance 3.9118 < 5.0000",
+                "terminal day fg_0 clearance 11.6528 < 12.5000",
+                "terminal transformed fg_0 clearance 7.1746 < 7.5000",
+                "terminal transformed fg_1 clearance 4.3213 < 5.0000",
                 "terminal transformed fg_2 clearance 1.9020 < 4.0000"
               ]
             }
@@ -5419,17 +5418,17 @@
             "normal_pair_delta_e_ok": 16.996056112545627,
             "shifted_pair_delta_e_ok": 12.906189823184006,
             "normal_foreground_clearance_by_role": [
-              8.876908659339772,
-              9.968044778184046,
+              9.733285918144773,
+              9.650995542950588,
               8.762417852334355
             ],
             "shifted_foreground_clearance_by_role": [
-              5.967978534276522,
-              6.650677681823999,
+              6.834134137006749,
+              6.481806531655379,
               7.459486675678565
             ],
             "normal_foreground_clearance_min": 8.762417852334355,
-            "shifted_foreground_clearance_min": 5.967978534276522,
+            "shifted_foreground_clearance_min": 6.481806531655379,
             "normal_background_contrast_min": 3.2423602193715975,
             "shifted_background_contrast_bg0_min": 3.055492680377972,
             "shifted_background_contrast_all_surfaces_min": 2.5861352129997015,
@@ -5445,7 +5444,7 @@
                   0.0824595155
                 ],
                 "pair_delta_e_ok": 12.908311163395393,
-                "foreground_clearance_delta_e_ok": 5.555940516175085,
+                "foreground_clearance_delta_e_ok": 6.265419701790015,
                 "background_contrast": 3.0085122465016343
               },
               {
@@ -5455,7 +5454,7 @@
                   0.09113946450000002
                 ],
                 "pair_delta_e_ok": 12.906797978459636,
-                "foreground_clearance_delta_e_ok": 5.552398953023603,
+                "foreground_clearance_delta_e_ok": 6.261986266072513,
                 "background_contrast": 3.0087398328864956
               },
               {
@@ -5465,7 +5464,7 @@
                   0.0824595155
                 ],
                 "pair_delta_e_ok": 12.917291461210667,
-                "foreground_clearance_delta_e_ok": 6.398745348876685,
+                "foreground_clearance_delta_e_ok": 6.7204026956188825,
                 "background_contrast": 3.104972161693033
               },
               {
@@ -5475,34 +5474,34 @@
                   0.09113946450000002
                 ],
                 "pair_delta_e_ok": 12.916409463807216,
-                "foreground_clearance_delta_e_ok": 6.39566412062557,
+                "foreground_clearance_delta_e_ok": 6.717345516626875,
                 "background_contrast": 3.105198046177023
               }
             ],
             "gain_corner_pair_min": 12.906797978459636,
-            "gain_corner_foreground_clearance_min": 5.552398953023603,
+            "gain_corner_foreground_clearance_min": 6.261986266072513,
             "gain_corner_background_contrast_min": 3.0085122465016343
           },
           "terminal": [
-            "#EC8B96",
+            "#EB8B9E",
             "#74E5C0",
-            "#C39B55",
-            "#9ECBFF"
+            "#C39B5C",
+            "#A3CEFD"
           ],
           "terminal_runs": [
             {
               "seed": 27100,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4003,
-              "accepted_moves": 5,
-              "objective": 582393143.799535
+              "accepted_moves": 17,
+              "objective": 432823680.3462721
             },
             {
               "seed": 27101,
               "iterations": 4000,
               "evaluated_exact_hex8_candidates": 4003,
-              "accepted_moves": 4,
-              "objective": 582393143.7954885
+              "accepted_moves": 27,
+              "objective": 430013437.78260934
             }
           ],
           "sequential_anchors": [
@@ -7116,18 +7115,18 @@
                 "seed": 7100,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 136,
-                "objective": 100000000001950.53,
+                "accepted_moves": 122,
+                "objective": 100000000002633.2,
                 "selected": {
                   "surfaces": [
                     "#000500",
-                    "#131202",
-                    "#3C0E16"
+                    "#111300",
+                    "#331812"
                   ],
                   "foregrounds": [
-                    "#D6C497",
-                    "#BBAB81",
-                    "#968C74"
+                    "#DEDC96",
+                    "#C4A781",
+                    "#9E8780"
                   ]
                 }
               },
@@ -7135,7 +7134,7 @@
                 "seed": 7100,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 94,
+                "accepted_moves": 90,
                 "objective": 100000000000217.25,
                 "selected": {
                   "surfaces": [
@@ -7145,9 +7144,9 @@
                     "#2D1C16"
                   ],
                   "foregrounds": [
-                    "#DFBEA8",
-                    "#BBAA8A",
-                    "#938D77"
+                    "#EEC296",
+                    "#BBAB81",
+                    "#948D73"
                   ]
                 }
               },
@@ -7155,8 +7154,8 @@
                 "seed": 7101,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 88,
-                "objective": -5.134886298204123,
+                "accepted_moves": 81,
+                "objective": -5.0980029246950425,
                 "selected": {
                   "surfaces": [
                     "#060504",
@@ -7166,8 +7165,8 @@
                     "#2B251F"
                   ],
                   "foregrounds": [
-                    "#D8C6AF",
-                    "#CABAA7",
+                    "#E7D2BB",
+                    "#CCBCA8",
                     "#C2ADA0"
                   ]
                 }
@@ -7176,20 +7175,20 @@
                 "seed": 7101,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 58,
-                "objective": -2.661919208072133,
+                "accepted_moves": 47,
+                "objective": -1.7421563964040547,
                 "selected": {
                   "surfaces": [
                     "#060504",
-                    "#0D0A09",
-                    "#14120F",
-                    "#1D1916",
-                    "#271F1C",
-                    "#31251F"
+                    "#0C0A09",
+                    "#14110F",
+                    "#1D1815",
+                    "#271E1A",
+                    "#31241D"
                   ],
                   "foregrounds": [
-                    "#EBD9C2",
-                    "#C7B7A3",
+                    "#E9D7C0",
+                    "#C3B39F",
                     "#C2ACA1"
                   ]
                 }
@@ -10718,18 +10717,18 @@
                 "seed": 7200,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 73,
-                "objective": 100000000001155.03,
+                "accepted_moves": 62,
+                "objective": 100000000000822.19,
                 "selected": {
                   "surfaces": [
                     "#000300",
                     "#0F1000",
-                    "#271B0A"
+                    "#301509"
                   ],
                   "foregrounds": [
-                    "#E7DFA5",
-                    "#CA9D76",
-                    "#9E745B"
+                    "#FEE6A5",
+                    "#CE9A71",
+                    "#A2745B"
                   ]
                 }
               },
@@ -10737,19 +10736,19 @@
                 "seed": 7200,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 72,
-                "objective": 8.102977233405095,
+                "accepted_moves": 77,
+                "objective": 8.76159075065334,
                 "selected": {
                   "surfaces": [
                     "#060605",
-                    "#100E0B",
+                    "#100E0C",
                     "#1D1310",
                     "#2A1A14"
                   ],
                   "foregrounds": [
-                    "#E9D4B9",
-                    "#C8B299",
-                    "#B99B8B"
+                    "#FDE1C3",
+                    "#CAAF93",
+                    "#B99C83"
                   ]
                 }
               },
@@ -10757,7 +10756,7 @@
                 "seed": 7200,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 74,
+                "accepted_moves": 71,
                 "objective": -0.32727129476165934,
                 "selected": {
                   "surfaces": [
@@ -10778,21 +10777,21 @@
                 "seed": 7200,
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
-                "accepted_moves": 98,
-                "objective": 18.524993990198933,
+                "accepted_moves": 73,
+                "objective": 19.125224571847994,
                 "selected": {
                   "surfaces": [
                     "#060200",
                     "#0B0807",
                     "#12110E",
-                    "#1C110E",
-                    "#251915",
-                    "#2E251F"
+                    "#1C100D",
+                    "#251814",
+                    "#2E241E"
                   ],
                   "foregrounds": [
-                    "#ECD7BE",
-                    "#CAB69F",
-                    "#B59D8B"
+                    "#FFE8CD",
+                    "#CAB79C",
+                    "#B99B8B"
                   ]
                 }
               }

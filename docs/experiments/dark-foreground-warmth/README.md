@@ -6,174 +6,126 @@
 
 ## Bottom line
 
-This third pass compares all three shipped dark profiles under three commanded warmth philosophies: current, halfway, and full — applied to **both ink and surfaces**. Foreground roles keep the Light Mid-Depth mean-warmth pattern from the previous pass (decreasing `1.2 / 1.0 / 0.8` dark-role chroma). Each background role now also interpolates its Oklab `a/b` toward its **3400K Light Mid-Depth** counterpart: halfway covers half that hue step, full reaches it completely. These are aesthetic penalties, not fixed colors.
+Design the seen state first: even transformed distinctness binds before commanded warmth; leftover exact-Hex8 freedom buys the halfway hue step for ink and surfaces.
 
-The optimizer chooses a usable transformed foreground hierarchy first. Foreground Oklab `L` may move inside an explicit bound; surfaces move only in hue (`a/b`) within restrained ±24-byte bounds and must keep their dark lightness ladder exactly. Dependent categorical, terminal, and sequential banks are then rerun against each lane's selected exact system, including a deterministic terminal/foreground lightness feedback loop where needed.
+This fourth pass compares all three shipped dark profiles under two commanded philosophies: **current** (each shipped dark palette scored verbatim) and **halfway** (ink *and* surfaces moved 50% of the way toward the 3400K Light Mid-Depth warmth step). The optimizer scores every candidate only after exact Hex8 quantization, with transformed adjacent ΔE ≥ 2.5, a uniformity ratio ≤ 1.6, transformed span ≥ 6.0, and text contrast floors as hard gates. Warmth closeness, chroma, and movement compete only after usability, so there is **no single scalar winner**.
 
-There is **no single scalar winner**. Lower warmth/chroma competes with transformed contrast, hierarchy, semantic clearance, and sequential regularity.
+## Methodology
 
-## Why this pass exists
+- **Transformed-first gating.** Even the *transformed* (warm-display simulated) appearance must keep distinct surfaces and readable text before any commanded-warmth objective is scored. This is the pass's central discipline: the seen state is designed first.
+- **Variable surface count.** The halfway lane searches background counts 3–6 per profile; each count gets a bounded exact-Hex8 search with deterministic seeds. Leftover byte freedom inside the ±24-byte radius is what buys the hue step.
+- **Fresh dependent banks.** Categorical (with a larger-count bonus), terminal, and sequential banks are re-searched against each lane's selected exact system — never copied across lanes.
+- **Recomputed evidence.** The renderer recomputes every published metric and both badge families from the serialized Hex8 values; no upstream release-status field exists in this schema to trust.
 
-The [first fixed-lightness diagnostic](https://github.com/carpdiem/ember/tree/e99f9db7daa84e678d00d6796e2ffc2eff543f90/docs/experiments/dark-foreground-warmth) found transformed contrast breaches as warmth fell. Those breaches described the imposed fixed-`L` substitution, not the best achievable cooler system. The [second pass](https://github.com/carpdiem/ember/blob/e99f9db7daa84e678d00d6796e2ffc2eff543f90/docs/experiments/dark-foreground-warmth/README.md) freed foreground lightness but left backgrounds fixed. This pass extends the same hue step to surfaces as well, so dependent accent banks are re-optimized against genuinely cooler surroundings rather than warm ones held fixed by assumption.
+## Chosen surface counts
 
-## What remains controlled
+| Profile | Current bg_count | Halfway bg_count | Halfway choice rule / note |
+|---|:---:|:---:|---|
+| 3400K Dark | 6 | 6 | best feasible objective; larger N wins ties |
+| 2000K Dark | 6 | 5 | best feasible objective; larger N wins ties |
+| 1200K Dark | 6 | 5 | best feasible objective; larger N wins ties |
 
-- Surface and foreground bounds, seeds, objectives, selected exact values, movement, and failed gates are serialized for every lane.
-- Surface movement is hue-only: dark lightness values are pinned per role while `a/b` interpolates toward the Mid-Depth counterpart under hard spacing/luminance gates.
-- Semantic counts, `terminal_ansi_indices`, and `terminal_night_groups` are preserved per family.
-- Canonical definitions, public manifests, CSS, package exports, and generated release themes are untouched.
+## Categorical adoption notes
 
-## Fresh dependent searches
+- **3400K Dark · Current:** shipped count retained; shipped count is 6 colors.
+- **3400K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 6 colors.
+- **2000K Dark · Current:** count 6 adopted over 4: gates pass with margin; shipped count is 4 colors.
+- **2000K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 4 colors.
+- **1200K Dark · Current:** count 5 adopted over 3: gates pass with margin; shipped count is 3 colors.
+- **1200K Dark · Halfway:** no larger count passed all gates; shipped retained; shipped count is 3 colors.
 
-For **each profile × lane**, the joint surface/foreground system and every dependent bank receive fresh bounded exact-Hex8 searches with two deterministic seeds. Every lane within a profile uses the same controlled pair. Sequential search includes the selected surface system in its dependency fingerprint; byte-identical dependencies should produce byte-identical maps, while changed dependencies are recomputed rather than explained by seed noise. This is bounded-search evidence, not a global-optimum or infeasibility claim.
+## Distinctness vs universal text badges
 
-- full system: restrained surface bytes plus relaxed foreground bytes and explicit Oklab-L bounds;
-- categorical: each shipped byte ±18;
-- terminal: profile-specific exact byte bounds (±16 for 3400K, ±36 for 2000K/1200K), broadened for the severe transforms;
-- sequential anchors: each shipped byte ±10;
-- hard penalties: the complete current surface, foreground, categorical, terminal, sequential, maturity, contrast, and sampled-corner release contracts;
-- soft objective: transformed clarity and hierarchy, restrained movement, then commanded warmth/chroma and lane-target closeness.
-- terminal/foreground feedback: one deterministic focused `±0.018` Oklab-L refinement grid, followed by fresh dependent searches and authoritative final full-system gates.
+The third pass serialized a strict release status per lane; this schema does not. Instead the renderer computes two lightweight lenses from the Hex8 values themselves:
 
-### Current-lane result
+- **Distinctness** — transformed adjacent ΔE ≥ 2.5 on every step, uniformity ratio ≤ 1.6, and span ≥ 6.0;
+- **Universal text** — transformed worst-surface contrast floors of `4.5 / 3.5 / 2.4` for `fg_0 / fg_1 / fg_2`, with `fg_0` raised to each family's own primary-text floor when stricter.
 
-The current lane was not copied. It went through the same fresh two-seed searches. Exact outcomes:
-
-- **3400K Dark:** full_system reselected shipped exact values; categorical changed; terminal changed; sequential changed.
-- **2000K Dark:** full_system reselected shipped exact values; categorical changed; terminal reselected shipped exact values; sequential changed.
-- **1200K Dark:** full_system reselected shipped exact values; categorical changed; terminal reselected shipped exact values; sequential changed.
-
-## Strict release status vs universal text usability
-
-“Strict” means every current family-specific surface, foreground, categorical, terminal, sequential, maturity, contrast, and sampled-corner gate. “Universal text” separately isolates transformed `fg_0 / fg_1 / fg_2` floors of `4.5 / 3.5 / 2.4`. All nine relaxed candidates clear both lenses; the distinction remains visible so later experiments cannot hide a family-specific miss behind the universal floor.
-
-| Profile | Lane | Strict contract | Universal text roles | Exact failed gates |
-|---|---|:---:|:---:|---|
-| 3400K Dark | Current warmth | PASS | PASS | None |
-| 3400K Dark | Halfway | PASS | PASS | None |
-| 3400K Dark | Full step | PASS | PASS | None |
-| 2000K Dark | Current warmth | PASS | PASS | None |
-| 2000K Dark | Halfway | PASS | PASS | None |
-| 2000K Dark | Full step | PASS | PASS | None |
-| 1200K Dark | Current warmth | PASS | PASS | None |
-| 1200K Dark | Halfway | PASS | PASS | None |
-| 1200K Dark | Full step | PASS | PASS | None |
+| Profile | Lane | Distinctness | Universal text |
+|---|---|:---:|:---:|
+| 3400k-dark | Current | FAIL | PASS |
+| 3400k-dark | Halfway | PASS | PASS |
+| 2000k-dark | Current | FAIL | PASS |
+| 2000k-dark | Halfway | PASS | PASS |
+| 1200k-dark | Current | FAIL | PASS |
+| 1200k-dark | Halfway | PASS | PASS |
 
 ## Combined metrics
 
-Rows are Pareto-ranked: usability and warmth first, provenance and secondary detail below. Underline marks only the best-performing lane(s) **within each profile for that metric**; values are not underlined merely for passing. Directions compete; there is no aggregate winner. Gain-corner values are extrema observed at four sampled corners, not continuous-box guarantees.
+Rows are Pareto-ranked: transformed usability first, then commanded warmth. Every value is recomputed from the serialized Hex8 records by the renderer. Underline marks only the best-performing lane(s) **within each profile for that metric** — shown underlined on the page and **bold** in this markdown. Values are not decorated merely for passing a floor. Directions compete; there is no aggregate winner.
 
-| Metric | Direction | 3400K Dark Current warmth | 3400K Dark Halfway | 3400K Dark Full step | 2000K Dark Current warmth | 2000K Dark Halfway | 2000K Dark Full step | 1200K Dark Current warmth | 1200K Dark Halfway | 1200K Dark Full step |
-|---|:---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Strict release status | ↑ higher | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** |
-| FG-0 worst-surface transformed contrast | ↑ higher | 6.83 | 7.08 | **7.09** | 5.86 | **6.43** | 6.28 | 5.32 | 5.31 | **5.35** |
-| FG-1 worst-surface transformed contrast | ↑ higher | **4.94** | 4.84 | 4.86 | 4.66 | **4.70** | 4.64 | 3.52 | 3.52 | **3.54** |
-| FG-2 worst-surface transformed contrast | ↑ higher | 3.08 | 3.20 | **3.21** | 3.31 | **3.38** | 3.36 | **2.48** | 2.41 | 2.40 |
-| Foreground mean +b | ↓ lower | 0.0375 | 0.0242 | **0.0127** | 0.0460 | 0.0284 | **0.0113** | 0.0528 | 0.0325 | **0.0150** |
-| Foreground mean chroma | ↓ lower | 0.0379 | 0.0251 | **0.0151** | 0.0472 | 0.0298 | **0.0134** | 0.0546 | 0.0342 | **0.0187** |
-| Foreground chroma reduction vs current | ↑ higher | 0.0% | 33.7% | **60.1%** | 0.0% | 36.8% | **71.6%** | 0.0% | 37.3% | **65.7%** |
-| FG-0 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0141 | 0.0151 | **0.0000** | 0.0403 | 0.0413 | **0.0000** | 0.0098 | 0.0152 |
-| FG-1 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0031 | 0.0002 | **0.0000** | 0.0096 | 0.0158 | **0.0000** | 0.0143 | 0.0262 |
-| FG-2 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0134 | 0.0157 | **0.0000** | 0.0089 | 0.0112 | **0.0000** | 0.0008 | 0.0097 |
-| Foreground adjacent ΔEOK, transformed minimum | ↑ higher | 8.70 | 10.26 | **10.36** | 6.20 | **8.50** | 8.21 | 9.16 | 9.89 | **10.10** |
-| Foreground adjacent ΔEOK, day minimum | ↑ higher | 10.41 | **12.11** | 11.91 | 8.04 | 10.33 | **10.57** | 11.79 | 13.22 | **13.33** |
-| Terminal foreground clearance, transformed | ↑ higher | 5.16 | 5.49 | **5.91** | 4.75 | 4.70 | **5.02** | **4.13** | 4.01 | 4.01 |
-| Terminal foreground clearance, day | ↑ higher | **8.13** | 8.01 | 8.11 | 8.25 | 9.23 | **9.29** | 8.96 | 9.05 | **9.80** |
-| Categorical foreground clearance, transformed | ↑ higher | 6.41 | 7.21 | **7.35** | 5.50 | 6.16 | **7.01** | 4.89 | 4.89 | **4.92** |
-| Categorical foreground clearance, day | ↑ higher | 7.03 | 8.40 | **9.44** | 9.48 | **10.36** | 10.18 | 6.32 | 7.60 | **9.25** |
-| FG-0 commanded Oklab L | ↑ higher | 0.8604 | 0.8745 | **0.8754** | 0.8840 | 0.9243 | **0.9254** | 0.9332 | 0.9430 | **0.9484** |
-| FG-1 commanded Oklab L | ↑ higher | 0.7564 | 0.7533 | **0.7566** | 0.8039 | 0.8134 | **0.8197** | 0.7690 | 0.7833 | **0.7952** |
-| FG-2 commanded Oklab L | ↑ higher | 0.6190 | 0.6323 | **0.6347** | 0.7022 | 0.7111 | **0.7134** | 0.6524 | 0.6515 | **0.6621** |
-| Surface mean movement ΔEOK | ↓ lower | **0.000** | 0.411 | 0.513 | **0.000** | 0.494 | 0.974 | **0.000** | 0.683 | 1.302 |
-| Surface transformed adjacent ΔEOK minimum | ↑ higher | 1.94 | 1.86 | **1.94** | **2.28** | 1.88 | 1.85 | **2.34** | 1.88 | 1.98 |
-| Surface transformed span ΔEOK | ↑ higher | **12.83** | 12.58 | 12.82 | **12.90** | 12.53 | 11.95 | **12.58** | 11.52 | 11.80 |
-| Categorical pair separation, transformed | ↑ higher | **11.61** | **11.61** | **11.61** | **14.15** | **14.15** | **14.15** | **10.41** | 10.16 | 10.16 |
-| Categorical pair separation, day | ↑ higher | **15.18** | **15.18** | **15.18** | **18.59** | **18.59** | **18.59** | **20.75** | 20.71 | 20.71 |
-| Categorical BG-0 transformed contrast | ↑ higher | 3.01 | 3.01 | **3.02** | 3.05 | **3.06** | 3.05 | 3.10 | 3.10 | **3.10** |
-| Terminal pair separation, transformed | ↑ higher | 7.80 | 7.80 | **8.53** | **7.75** | **7.75** | 7.75 | **4.13** | **4.13** | 4.05 |
-| Terminal group separation, day | ↑ higher | 11.36 | 11.36 | **12.06** | 12.62 | 12.62 | **12.78** | 12.35 | 12.35 | **12.58** |
-| Terminal BG-0 transformed contrast | ↑ higher | 5.29 | 5.29 | **5.32** | 4.52 | **4.53** | 4.50 | 4.55 | 4.54 | **4.61** |
-| Sequential transformed CV | ↓ lower | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** |
-| Sequential day CV | ↓ lower | **0.0409** | **0.0409** | **0.0409** | **0.0489** | **0.0489** | **0.0489** | **0.0632** | **0.0632** | **0.0632** |
-| Sequential transformed max:min | ↓ lower | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** |
-| Sequential day max:min | ↓ lower | **1.141** | **1.141** | **1.141** | **1.149** | **1.149** | **1.149** | **1.244** | **1.244** | **1.244** |
-| Sequential transformed lightness range | ↑ higher | **0.5140** | **0.5140** | **0.5140** | **0.5500** | **0.5500** | **0.5500** | **0.5201** | **0.5201** | **0.5201** |
-| Sequential day lightness range | ↑ higher | **0.5949** | **0.5949** | **0.5949** | **0.7124** | **0.7124** | **0.7124** | **0.7617** | **0.7617** | **0.7617** |
-| Sampled categorical gain-corner pair minimum | ↑ higher | **11.05** | **11.05** | **11.05** | **13.85** | **13.85** | **13.85** | **10.10** | 9.83 | 9.83 |
-| Sampled terminal gain-corner pair minimum | ↑ higher | 7.26 | 7.26 | **8.11** | 7.42 | 7.42 | **7.72** | **4.08** | **4.08** | 3.95 |
-| Sampled sequential gain-corner CV maximum | ↓ lower | **0.0079** | **0.0079** | **0.0079** | **0.0044** | **0.0044** | **0.0044** | **0.0015** | **0.0015** | **0.0015** |
+| Metric | Direction | 3400K Dark Current | 3400K Dark Halfway | 2000K Dark Current | 2000K Dark Halfway | 1200K Dark Current | 1200K Dark Halfway |
+|---|:---:|---:|---:|---:|---:|---:|---:|
+| Background surface count | ↑ higher | **6** | **6** | **6** | 5 | **6** | 5 |
+| Transformed adjacent ΔEOK minimum | ↑ higher | 1.94 | **2.79** | 2.28 | **3.08** | 2.34 | **3.03** |
+| Transformed uniformity ratio, max:min step | ↓ lower | 1.549 | **1.046** | 1.222 | **1.042** | 1.169 | **1.018** |
+| Transformed surface span ΔEOK | ↑ higher | 12.83 | **13.42** | **12.90** | 12.43 | **12.58** | 12.18 |
+| Transformed fg-background clearance minimum | ↑ higher | 28.94 | **33.71** | 32.74 | **38.66** | 28.28 | **34.31** |
+| FG-0 transformed worst-surface contrast | ↑ higher | 6.83 | **7.22** | **5.86** | 5.66 | 5.32 | **5.40** |
+| FG-1 transformed worst-surface contrast | ↑ higher | 4.94 | **5.01** | **4.66** | 4.55 | **3.52** | 3.51 |
+| FG-2 transformed worst-surface contrast | ↑ higher | 3.08 | **3.75** | 3.31 | **4.07** | 2.48 | **3.05** |
+| Commanded foreground mean +b | ↓ lower | 0.0375 | **0.0249** | 0.0460 | **0.0309** | 0.0528 | **0.0386** |
+| Commanded foreground mean chroma | ↓ lower | 0.0379 | **0.0269** | 0.0472 | **0.0341** | 0.0546 | **0.0432** |
 
 ## Reader-facing proof domains
 
-The [live page](index.html) keeps all three warmth lanes visible together by default for the selected profile and provides controls for:
+The [live page](index.html) keeps both warmth lanes visible together by default for the selected profile and provides controls for:
 
 - profile: 3400K / 2000K / 1200K;
 - commanded vs exact signal simulation;
-- optional single-candidate focus.
+- optional single-lane focus (all / current / halfway).
 
 It includes complete anatomy, a substantial editorial hierarchy, realistic code/terminal syntax and all semantic roles, a dense dashboard with categories/statuses/table/forms, sequential gradient and heatmap, real Mars MOLA scalar data, Mona Lisa photographic mapping, and a scientific propagation figure. Mars and Mona are candidate-specific commanded PNGs with separately generated exact-simulated PNGs; raster evidence is not a CSS-only transform.
 
 ## Static review captures
 
-The interactive page is authoritative. These committed captures make the same comparison reviewable directly on GitHub.
+The interactive page is authoritative. These committed captures make the same comparison reviewable directly on GitHub:
 
-### Complete anatomy across all dark profiles
+- [`3400k-dark-anatomy-commanded.png`](review-captures/3400k-dark-anatomy-commanded.png)
+- [`3400k-dark-anatomy-simulated.png`](review-captures/3400k-dark-anatomy-simulated.png)
+- [`2000k-dark-anatomy-commanded.png`](review-captures/2000k-dark-anatomy-commanded.png)
+- [`2000k-dark-anatomy-simulated.png`](review-captures/2000k-dark-anatomy-simulated.png)
+- [`1200k-dark-anatomy-commanded.png`](review-captures/1200k-dark-anatomy-commanded.png)
+- [`1200k-dark-anatomy-simulated.png`](review-captures/1200k-dark-anatomy-simulated.png)
+- [`3400k-dark-terminal-commanded.png`](review-captures/3400k-dark-terminal-commanded.png)
+- [`3400k-dark-terminal-simulated.png`](review-captures/3400k-dark-terminal-simulated.png)
+- [`3400k-dark-dashboard-commanded.png`](review-captures/3400k-dark-dashboard-commanded.png)
+- [`3400k-dark-dashboard-simulated.png`](review-captures/3400k-dark-dashboard-simulated.png)
+- [`3400k-dark-science-commanded.png`](review-captures/3400k-dark-science-commanded.png)
+- [`3400k-dark-science-simulated.png`](review-captures/3400k-dark-science-simulated.png)
+- [`metrics-table.png`](review-captures/metrics-table.png)
+- [`phone-metrics.png`](review-captures/phone-metrics.png)
+- [`phone-2000k-halfway-simulated.png`](review-captures/phone-2000k-halfway-simulated.png)
 
-| Profile | Commanded | Exact simulated |
-|---|---|---|
-| 3400K Dark | ![3400K Dark commanded anatomy](review-captures/3400k-dark-anatomy-commanded.png) | ![3400K Dark exact simulated anatomy](review-captures/3400k-dark-anatomy-simulated.png) |
-| 2000K Dark | ![2000K Dark commanded anatomy](review-captures/2000k-dark-anatomy-commanded.png) | ![2000K Dark exact simulated anatomy](review-captures/2000k-dark-anatomy-simulated.png) |
-| 1200K Dark | ![1200K Dark commanded anatomy](review-captures/1200k-dark-anatomy-commanded.png) | ![1200K Dark exact simulated anatomy](review-captures/1200k-dark-anatomy-simulated.png) |
-
-### Full proof domains in 3400K Dark
-
-| Domain | Commanded | Exact simulated |
-|---|---|---|
-| Terminal | ![Terminal commanded](review-captures/3400k-dark-terminal-commanded.png) | ![Terminal exact simulated](review-captures/3400k-dark-terminal-simulated.png) |
-| Dashboard | ![Dashboard commanded](review-captures/3400k-dark-dashboard-commanded.png) | ![Dashboard exact simulated](review-captures/3400k-dark-dashboard-simulated.png) |
-| Science and images | ![Science commanded](review-captures/3400k-dark-science-commanded.png) | ![Science exact simulated](review-captures/3400k-dark-science-simulated.png) |
-
-### Phone-width focused state
-
-![2000K Dark Full Step exact simulated at 390 px](review-captures/phone-2000k-full-simulated.png)
+![2000K Dark Halfway exact simulated at 390 px](review-captures/phone-2000k-halfway-simulated.png)
 
 ## Exact values
 
 ### 3400K Dark
 
-#### Current warmth
+#### Current (6 surfaces)
 
 ```text
 Surfaces:    090807 100E0C 181612 201D19 29251F 32241B
 Foregrounds: DDD0B2 BDAE93 908472
 Categorical: 6E96D7 E2AA67 2E8B7E 67BE95 945D48 C4779A
-Terminal:    F5AD9A 7EB798 CA9246 B4C6F7 DA95C9 6ADDD8
+Terminal:    F5AD9A 7FB798 C89145 B4C6F7 D795D2 62E1DA
 Sequential:  282527 51404F 7F5E69 A17C6C C49D70 ECCD9F
 ```
 
-#### Halfway
+#### Halfway (6 surfaces)
 
 ```text
-Surfaces:    090807 100F0E 171613 1F1D1A 272420 2F261F
-Foregrounds: E0D4C1 B9AD9D 92887D
-Categorical: 6E96D7 E2AA67 2E8B7E 67BE95 945D48 C4779A
-Terminal:    F5AD9A 7EB798 CA9246 B4C6F7 DA95C9 6ADDD8
-Sequential:  282527 51404F 7F5E69 A17C6C C49D70 ECCD9F
-```
-
-#### Full step
-
-```text
-Surfaces:    080807 0E0E0D 161614 1F1D1B 272522 302520
-Foregrounds: E1D3C9 B7AEA8 908984
-Categorical: 6E96D7 E0AA67 2E8B7E 67BE95 945D48 C4779A
-Terminal:    F6AD99 80B798 C69243 B4C6F9 D895D2 62E0DB
+Surfaces:    080808 100E0D 181512 201D1A 272620 34241D
+Foregrounds: E3D7C4 BDB1A1 A59489
+Categorical: 6E96D5 DDAA69 2E8B7E 67BE95 945D48 C3779A
+Terminal:    F8AEA1 8EC497 D59C51 B4C6F7 DB94CF 60E3E7
 Sequential:  282527 51404F 7F5E69 A17C6C C49D70 ECCD9F
 ```
 
 ### 2000K Dark
 
-#### Current warmth
+#### Current (6 surfaces)
 
 ```text
 Surfaces:    070504 0D0A09 15110E 1E1814 271F1B 30221B
@@ -183,29 +135,19 @@ Terminal:    EC8B96 74E5C0 C39C49 A7D1FB
 Sequential:  18110E 4B343E 785167 A27882 C59A8B FCD6AB
 ```
 
-#### Halfway
+#### Halfway (5 surfaces)
 
 ```text
-Surfaces:    060504 0D0B0A 14120F 1D1916 25201C 2C241E
-Foregrounds: F5E3CC D0BFAB AAA095
-Categorical: 66B0D4 E99096 A46449 A8E2AA
-Terminal:    EC8B96 74E5C0 C39C49 A7D1FB
-Sequential:  18110E 4B343E 785167 A27882 C59A8B FCD6AB
-```
-
-#### Full step
-
-```text
-Surfaces:    060606 0B0B0A 121210 1A1917 23211E 292722
-Foregrounds: EFE4DC CBC2BC A8A19C
-Categorical: 66B0D4 E99096 A46449 A8E2AA
-Terminal:    EC8B96 74E5C0 C39B50 A4D0FC
+Surfaces:    060504 0E0A09 18110E 201D1A 2B251F
+Foregrounds: E7D2BB CCBCA8 C2ADA0
+Categorical: 66B0D4 E99096 A46449 A3DCA9
+Terminal:    EB8B9E 74E5C0 C39B5C A3CEFD
 Sequential:  18110E 4B343E 785167 A27882 C59A8B FCD6AB
 ```
 
 ### 1200K Dark
 
-#### Current warmth
+#### Current (6 surfaces)
 
 ```text
 Surfaces:    060302 0C0806 130E0B 1C1511 251C17 2E1E17
@@ -215,34 +157,24 @@ Terminal:    F29298 C9FFB4 DDCD81
 Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7
 ```
 
-#### Halfway
+#### Halfway (5 surfaces)
 
 ```text
-Surfaces:    060403 0A0807 110E0C 191512 231D19 2A211B
-Foregrounds: FCE9D1 C8B59F 9B8D7E
-Categorical: B96572 8EF0FF E8B76C
+Surfaces:    050302 0C0807 15100D 1F1A16 2A221C
+Foregrounds: FFE8CD C8B499 B99B8B
+Categorical: BB6572 8FF0FF E9B76C
 Terminal:    F29298 C9FFB4 DDCD81
-Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7
-```
-
-#### Full step
-
-```text
-Surfaces:    040404 080807 10100E 171614 201E1B 272520
-Foregrounds: FCEADF C7B9B1 99918C
-Categorical: B96572 8EF0FF E8B76C
-Terminal:    F39399 CBFFB4 DECC80
 Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7
 ```
 
 ## Search provenance and reproducibility
 
-- Exact selected data, unrounded metrics, per-seed objectives, bounds, changed/reselected flags, continuous float maps, Hex8 previews, and sampled gain corners: [`search-results.json`](search-results.json)
-- Reproducible bounded search: [`search_full_palette.py`](search_full_palette.py)
+- Exact selected data, per-count system searches with seeds, iterations, evaluated candidate counts, accepted moves, objectives, continuous float maps, Hex8 previews, categorical trials, and adoption notes: [`transformed-first-results.json`](transformed-first-results.json)
+- Reproducible bounded search: [`search_transformed_first.py`](search_transformed_first.py)
 - Deterministic renderer: [`../../../tools/render_dark_foreground_warmth_experiment.py`](../../../tools/render_dark_foreground_warmth_experiment.py)
 - Independent verification: [`../../../tests/test_dark_foreground_warmth_experiment.py`](../../../tests/test_dark_foreground_warmth_experiment.py)
 
-The simulated state applies each family's documented encoded-sRGB diagonal gain vector. The ±5% samples scale nonzero G/B gains only; exact zero blue remains zero.
+The simulated state applies each family's documented encoded-sRGB diagonal gain vector.
 
 ## Promotion boundary
 

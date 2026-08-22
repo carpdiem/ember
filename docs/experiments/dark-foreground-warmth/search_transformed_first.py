@@ -38,6 +38,7 @@ from ember.color import (
     wcag_luminance,
 )
 from ember.definitions import (
+    DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST,
     DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE,
     FAMILIES,
 )
@@ -206,7 +207,7 @@ def system_violations(
     values.extend(violation(v, TRANSFORMED_ADJACENT_FLOOR) for v in metrics["adjacent"])
     values.append(violation(metrics["uniformity_ratio"], ceiling=TRANSFORMED_UNIFORMITY_RATIO))
     values.append(violation(metrics["span"], 6.0))
-    primary_floor = getattr(base, "primary_text_contrast_floor", None) or 4.5
+    primary_floor = max(4.5, DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST.get(base.slug, 4.5))
     floors_by_role = {"fg_0": max(4.5, primary_floor), "fg_1": 3.5, "fg_2": 2.4}
     for contrast, floor_key in zip(metrics["contrast"], ("fg_0", "fg_1", "fg_2"), strict=True):
         family_floor = floors_by_role[floor_key]
