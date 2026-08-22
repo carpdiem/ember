@@ -66,33 +66,33 @@ Rows are Pareto-ranked: usability and warmth first, provenance and secondary det
 | Metric | Direction | 3400K Dark Current warmth | 3400K Dark Halfway | 3400K Dark Full step | 2000K Dark Current warmth | 2000K Dark Halfway | 2000K Dark Full step | 1200K Dark Current warmth | 1200K Dark Halfway | 1200K Dark Full step |
 |---|:---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Strict release status | ↑ higher | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS** |
-| FG-0 worst-surface transformed contrast | ↑ higher | 6.83 | 7.08 | **7.09** | 5.86 | **6.43** | 6.28 | **5.32** | 5.31 | 5.30 |
-| FG-1 worst-surface transformed contrast | ↑ higher | **4.94** | 4.84 | 4.86 | 4.66 | **4.70** | 4.64 | 3.52 | **3.52** | 3.52 |
+| FG-0 worst-surface transformed contrast | ↑ higher | 6.83 | 7.08 | **7.09** | 5.86 | **6.43** | 6.28 | 5.32 | 5.31 | **5.35** |
+| FG-1 worst-surface transformed contrast | ↑ higher | **4.94** | 4.84 | 4.86 | 4.66 | **4.70** | 4.64 | 3.52 | 3.52 | **3.54** |
 | FG-2 worst-surface transformed contrast | ↑ higher | 3.08 | 3.20 | **3.21** | 3.31 | **3.38** | 3.36 | **2.48** | 2.41 | 2.40 |
-| Foreground mean +b | ↓ lower | 0.0375 | 0.0242 | **0.0127** | 0.0460 | 0.0284 | **0.0113** | 0.0528 | 0.0325 | **0.0200** |
-| Foreground mean chroma | ↓ lower | 0.0379 | 0.0251 | **0.0151** | 0.0472 | 0.0298 | **0.0134** | 0.0546 | 0.0342 | **0.0242** |
-| Foreground chroma reduction vs current | ↑ higher | 0.0% | 33.7% | **60.1%** | 0.0% | 36.8% | **71.6%** | 0.0% | 37.3% | **55.6%** |
-| FG-0 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0141 | 0.0151 | **0.0000** | 0.0403 | 0.0413 | **0.0000** | 0.0098 | 0.0039 |
-| FG-1 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0031 | 0.0002 | **0.0000** | 0.0096 | 0.0158 | **0.0000** | 0.0143 | 0.0191 |
-| FG-2 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0134 | 0.0157 | **0.0000** | 0.0089 | 0.0112 | **0.0000** | 0.0008 | 0.0130 |
-| Foreground adjacent ΔEOK, transformed minimum | ↑ higher | 8.70 | 10.26 | **10.36** | 6.20 | **8.50** | 8.21 | 9.16 | 9.89 | **10.01** |
-| Foreground adjacent ΔEOK, day minimum | ↑ higher | 10.41 | **12.11** | 11.91 | 8.04 | 10.33 | **10.57** | 11.79 | **13.22** | 12.36 |
+| Foreground mean +b | ↓ lower | 0.0375 | 0.0242 | **0.0127** | 0.0460 | 0.0284 | **0.0113** | 0.0528 | 0.0325 | **0.0150** |
+| Foreground mean chroma | ↓ lower | 0.0379 | 0.0251 | **0.0151** | 0.0472 | 0.0298 | **0.0134** | 0.0546 | 0.0342 | **0.0187** |
+| Foreground chroma reduction vs current | ↑ higher | 0.0% | 33.7% | **60.1%** | 0.0% | 36.8% | **71.6%** | 0.0% | 37.3% | **65.7%** |
+| FG-0 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0141 | 0.0151 | **0.0000** | 0.0403 | 0.0413 | **0.0000** | 0.0098 | 0.0152 |
+| FG-1 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0031 | 0.0002 | **0.0000** | 0.0096 | 0.0158 | **0.0000** | 0.0143 | 0.0262 |
+| FG-2 absolute L movement from shipped | ↓ lower | **0.0000** | 0.0134 | 0.0157 | **0.0000** | 0.0089 | 0.0112 | **0.0000** | 0.0008 | 0.0097 |
+| Foreground adjacent ΔEOK, transformed minimum | ↑ higher | 8.70 | 10.26 | **10.36** | 6.20 | **8.50** | 8.21 | 9.16 | 9.89 | **10.10** |
+| Foreground adjacent ΔEOK, day minimum | ↑ higher | 10.41 | **12.11** | 11.91 | 8.04 | 10.33 | **10.57** | 11.79 | 13.22 | **13.33** |
 | Terminal foreground clearance, transformed | ↑ higher | 5.16 | 5.49 | **5.91** | 4.75 | 4.70 | **5.02** | **4.13** | 4.01 | 4.01 |
-| Terminal foreground clearance, day | ↑ higher | **8.13** | 8.01 | 8.11 | 8.25 | 9.23 | **9.29** | 8.96 | 9.05 | **9.71** |
-| Categorical foreground clearance, transformed | ↑ higher | 6.41 | 7.21 | **7.35** | 5.50 | 6.16 | **7.01** | 4.89 | 4.89 | **4.96** |
-| Categorical foreground clearance, day | ↑ higher | 7.03 | 8.40 | **9.44** | 9.48 | **10.36** | 10.18 | 6.32 | 7.60 | **8.70** |
-| FG-0 commanded Oklab L | ↑ higher | 0.8604 | 0.8745 | **0.8754** | 0.8840 | 0.9243 | **0.9254** | 0.9332 | **0.9430** | 0.9371 |
-| FG-1 commanded Oklab L | ↑ higher | 0.7564 | 0.7533 | **0.7566** | 0.8039 | 0.8134 | **0.8197** | 0.7690 | 0.7833 | **0.7881** |
-| FG-2 commanded Oklab L | ↑ higher | 0.6190 | 0.6323 | **0.6347** | 0.7022 | 0.7111 | **0.7134** | 0.6524 | 0.6515 | **0.6654** |
-| Surface mean movement ΔEOK | ↓ lower | **0.000** | 0.411 | 0.513 | **0.000** | 0.494 | 0.974 | **0.000** | 0.683 | 1.560 |
-| Surface transformed adjacent ΔEOK minimum | ↑ higher | 1.94 | 1.86 | **1.94** | **2.28** | 1.88 | 1.85 | **2.34** | 1.88 | 1.80 |
-| Surface transformed span ΔEOK | ↑ higher | **12.83** | 12.58 | 12.82 | **12.90** | 12.53 | 11.95 | 12.58 | 11.52 | **13.07** |
+| Terminal foreground clearance, day | ↑ higher | **8.13** | 8.01 | 8.11 | 8.25 | 9.23 | **9.29** | 8.96 | 9.05 | **9.80** |
+| Categorical foreground clearance, transformed | ↑ higher | 6.41 | 7.21 | **7.35** | 5.50 | 6.16 | **7.01** | 4.89 | 4.89 | **4.92** |
+| Categorical foreground clearance, day | ↑ higher | 7.03 | 8.40 | **9.44** | 9.48 | **10.36** | 10.18 | 6.32 | 7.60 | **9.25** |
+| FG-0 commanded Oklab L | ↑ higher | 0.8604 | 0.8745 | **0.8754** | 0.8840 | 0.9243 | **0.9254** | 0.9332 | 0.9430 | **0.9484** |
+| FG-1 commanded Oklab L | ↑ higher | 0.7564 | 0.7533 | **0.7566** | 0.8039 | 0.8134 | **0.8197** | 0.7690 | 0.7833 | **0.7952** |
+| FG-2 commanded Oklab L | ↑ higher | 0.6190 | 0.6323 | **0.6347** | 0.7022 | 0.7111 | **0.7134** | 0.6524 | 0.6515 | **0.6621** |
+| Surface mean movement ΔEOK | ↓ lower | **0.000** | 0.411 | 0.513 | **0.000** | 0.494 | 0.974 | **0.000** | 0.683 | 1.302 |
+| Surface transformed adjacent ΔEOK minimum | ↑ higher | 1.94 | 1.86 | **1.94** | **2.28** | 1.88 | 1.85 | **2.34** | 1.88 | 1.98 |
+| Surface transformed span ΔEOK | ↑ higher | **12.83** | 12.58 | 12.82 | **12.90** | 12.53 | 11.95 | **12.58** | 11.52 | 11.80 |
 | Categorical pair separation, transformed | ↑ higher | **11.61** | **11.61** | **11.61** | **14.15** | **14.15** | **14.15** | **10.41** | 10.16 | 10.16 |
 | Categorical pair separation, day | ↑ higher | **15.18** | **15.18** | **15.18** | **18.59** | **18.59** | **18.59** | **20.75** | 20.71 | 20.71 |
-| Categorical BG-0 transformed contrast | ↑ higher | 3.01 | 3.01 | **3.02** | 3.05 | **3.06** | 3.05 | 3.10 | 3.10 | **3.11** |
-| Terminal pair separation, transformed | ↑ higher | 7.80 | 7.80 | **8.53** | **7.75** | **7.75** | 7.75 | **4.13** | **4.13** | 4.10 |
+| Categorical BG-0 transformed contrast | ↑ higher | 3.01 | 3.01 | **3.02** | 3.05 | **3.06** | 3.05 | 3.10 | 3.10 | **3.10** |
+| Terminal pair separation, transformed | ↑ higher | 7.80 | 7.80 | **8.53** | **7.75** | **7.75** | 7.75 | **4.13** | **4.13** | 4.05 |
 | Terminal group separation, day | ↑ higher | 11.36 | 11.36 | **12.06** | 12.62 | 12.62 | **12.78** | 12.35 | 12.35 | **12.58** |
-| Terminal BG-0 transformed contrast | ↑ higher | 5.29 | 5.29 | **5.32** | 4.52 | **4.53** | 4.50 | 4.55 | 4.54 | **4.59** |
+| Terminal BG-0 transformed contrast | ↑ higher | 5.29 | 5.29 | **5.32** | 4.52 | **4.53** | 4.50 | 4.55 | 4.54 | **4.61** |
 | Sequential transformed CV | ↓ lower | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** | **0.0000** |
 | Sequential day CV | ↓ lower | **0.0409** | **0.0409** | **0.0409** | **0.0489** | **0.0489** | **0.0489** | **0.0632** | **0.0632** | **0.0632** |
 | Sequential transformed max:min | ↓ lower | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** | **1.000** |
@@ -100,7 +100,7 @@ Rows are Pareto-ranked: usability and warmth first, provenance and secondary det
 | Sequential transformed lightness range | ↑ higher | **0.5140** | **0.5140** | **0.5140** | **0.5500** | **0.5500** | **0.5500** | **0.5201** | **0.5201** | **0.5201** |
 | Sequential day lightness range | ↑ higher | **0.5949** | **0.5949** | **0.5949** | **0.7124** | **0.7124** | **0.7124** | **0.7617** | **0.7617** | **0.7617** |
 | Sampled categorical gain-corner pair minimum | ↑ higher | **11.05** | **11.05** | **11.05** | **13.85** | **13.85** | **13.85** | **10.10** | 9.83 | 9.83 |
-| Sampled terminal gain-corner pair minimum | ↑ higher | 7.26 | 7.26 | **8.11** | 7.42 | 7.42 | **7.72** | **4.08** | **4.08** | 4.06 |
+| Sampled terminal gain-corner pair minimum | ↑ higher | 7.26 | 7.26 | **8.11** | 7.42 | 7.42 | **7.72** | **4.08** | **4.08** | 3.95 |
 | Sampled sequential gain-corner CV maximum | ↓ lower | **0.0079** | **0.0079** | **0.0079** | **0.0044** | **0.0044** | **0.0044** | **0.0015** | **0.0015** | **0.0015** |
 
 ## Reader-facing proof domains
@@ -228,10 +228,10 @@ Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7
 #### Full step
 
 ```text
-Surfaces:    030303 0B0B0A 121210 181715 22201D 292621
-Foregrounds: FDE5D5 C8B6AA 9A928D
+Surfaces:    040404 080807 10100E 171614 201E1B 272520
+Foregrounds: FCEADF C7B9B1 99918C
 Categorical: B96572 8EF0FF E8B76C
-Terminal:    F39399 CAFFB4 DECC80
+Terminal:    F39399 CBFFB4 DECC80
 Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7
 ```
 

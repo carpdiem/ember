@@ -66,6 +66,7 @@ SEED_BASES = {
 SURFACE_BYTE_RADIUS = 24
 FOREGROUND_BYTE_RADIUS = 48
 FOREGROUND_LIGHTNESS_RADIUS = 0.06
+SURFACE_LIGHTNESS_DRIFT = 0.0125
 TERMINAL_HUE_CENTERS = np.asarray((20.0, 140.0, 82.0, 275.0, 335.0, 185.0))
 FULL_TARGET_CHROMA_SCALES = np.asarray((1.2, 1.0, 0.8))
 TERMINAL_INITIAL_PROPOSALS = {
@@ -306,6 +307,16 @@ def surface_metrics(
         "shifted_span_delta_e_ok": float(np.linalg.norm(shifted_lab[-1] - shifted_lab[0]) * 100.0),
         "shifted_foreground_contrast": contrasts.tolist(),
     }
+
+
+def surface_lightness_drift(base: FamilyDefinition, surfaces: tuple[str, ...]) -> float:
+    """Maximum Oklab L deviation of proposed surfaces from the shipped dark ladder."""
+
+    shipped = srgb_to_oklab(
+        hex_array(tuple(base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES))
+    )
+    proposed = srgb_to_oklab(hex_array(surfaces))
+    return float(np.max(np.abs(proposed[:, 0] - shipped[:, 0])))
 
 
 def gain_corners(gains: tuple[float, float, float]) -> list[tuple[float, float, float]]:
@@ -871,6 +882,9 @@ def full_system_violations(
             foreground["worst_surface_shifted_contrast"], contrast_floors, strict=True
         )
     )
+    values.append(
+        violation(surface_lightness_drift(base, surfaces), ceiling=SURFACE_LIGHTNESS_DRIFT)
+    )
     for key, floor, ceiling in (
         (
             "normal_adjacent_delta_e_ok",
@@ -1216,6 +1230,12 @@ def full_system_failures(
         ceiling = DARK_SURFACE_MAXIMUM_COMMANDED_LUMINANCE[role]
         if value > ceiling + 1e-12:
             failures.append(f"{role} commanded luminance {value:.6f} > {ceiling:.6f}")
+    drift = surface_lightness_drift(base, surfaces)
+    if drift > SURFACE_LIGHTNESS_DRIFT + 1e-12:
+        failures.append(
+            f"surface Oklab L drifted {drift:.4f} > {SURFACE_LIGHTNESS_DRIFT:.4f}; "
+            "surfaces may move in hue only"
+        )
     if any(full_system_violations(base, surfaces, foregrounds, terminal_values)) and not failures:
         failures.append("terminal-coupled or explicit foreground bound gate failed")
     return failures
@@ -1463,7 +1483,7 @@ def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
                 )
             categorical, selected_cat_run = select_two_seed_runs(cat_runs)
             terminal, selected_term_run = select_two_seed_runs(term_runs)
-            for _repair_pass in range(4):
+            for _repair_pass in range(8):
                 repaired_foregrounds = coupled_lightness_repair(
                     base, surfaces, foregrounds, target_ab, surface_target_ab, terminal
                 )
