@@ -1,0 +1,409 @@
+{
+  "schema": 4,
+  "method": "transformed-first: even transformed distinctness gates bind before commanded warmth; variable surface count (>=3); dependent banks searched fresh per lane",
+  "profiles": {
+    "3400k-dark": {
+      "name": "3400K Dark",
+      "gains": [
+        1.0,
+        0.74,
+        0.53
+      ],
+      "lanes": {
+        "current": {
+          "weight": 0.0,
+          "bg_count": 6,
+          "surfaces": {
+            "bg_0": "#090807",
+            "bg_1": "#100E0C",
+            "bg_2": "#181612",
+            "bg_3": "#201D19",
+            "bg_4": "#29251F",
+            "bg_5": "#32241B"
+          },
+          "foregrounds": [
+            "#DDD0B2",
+            "#BDAE93",
+            "#908472"
+          ],
+          "search": {
+            "per_count": {},
+            "note": "current lane is the shipped palette scored verbatim; no search applied"
+          }
+        },
+        "halfway": {
+          "weight": 0.5,
+          "bg_count": 6,
+          "count_choice_rule": "best feasible objective; larger N wins ties",
+          "surfaces": {
+            "bg_0": "#090807",
+            "bg_1": "#100E0D",
+            "bg_2": "#181512",
+            "bg_3": "#1F1D1A",
+            "bg_4": "#28241F",
+            "bg_5": "#34241D"
+          },
+          "foregrounds": [
+            "#D9CDB9",
+            "#BFB19F",
+            "#A89289"
+          ],
+          "search": {
+            "per_count": {
+              "3": {
+                "seed": 7000,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 95,
+                "objective": 100000000005545.0,
+                "selected": {
+                  "surfaces": [
+                    "#000800",
+                    "#151225",
+                    "#2C200E"
+                  ],
+                  "foregrounds": [
+                    "#C6BF9A",
+                    "#A59F7B",
+                    "#78755F"
+                  ]
+                }
+              },
+              "4": {
+                "seed": 7000,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 85,
+                "objective": 100000000001388.5,
+                "selected": {
+                  "surfaces": [
+                    "#000800",
+                    "#081300",
+                    "#181E0E",
+                    "#2D1D24"
+                  ],
+                  "foregrounds": [
+                    "#C5C09A",
+                    "#A59F7B",
+                    "#787370"
+                  ]
+                }
+              },
+              "5": {
+                "seed": 7000,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 84,
+                "objective": 100000000000002.92,
+                "selected": {
+                  "surfaces": [
+                    "#020700",
+                    "#001101",
+                    "#161700",
+                    "#221C27",
+                    "#21260A"
+                  ],
+                  "foregrounds": [
+                    "#C5C09A",
+                    "#AF9A7B",
+                    "#78746F"
+                  ]
+                }
+              },
+              "6": {
+                "seed": 7001,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 72,
+                "objective": 9.020389397587444,
+                "selected": {
+                  "surfaces": [
+                    "#090807",
+                    "#100E0D",
+                    "#181512",
+                    "#1F1D1A",
+                    "#28241F",
+                    "#34241D"
+                  ],
+                  "foregrounds": [
+                    "#D9CDB9",
+                    "#BFB19F",
+                    "#A89289"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "2000k-dark": {
+      "name": "2000K Dark",
+      "gains": [
+        1.0,
+        0.54360078,
+        0.08679949
+      ],
+      "lanes": {
+        "current": {
+          "weight": 0.0,
+          "bg_count": 6,
+          "surfaces": {
+            "bg_0": "#070504",
+            "bg_1": "#0D0A09",
+            "bg_2": "#15110E",
+            "bg_3": "#1E1814",
+            "bg_4": "#271F1B",
+            "bg_5": "#30221B"
+          },
+          "foregrounds": [
+            "#EED5AE",
+            "#D3BB99",
+            "#AA9D8B"
+          ],
+          "search": {
+            "per_count": {},
+            "note": "current lane is the shipped palette scored verbatim; no search applied"
+          }
+        },
+        "halfway": {
+          "weight": 0.5,
+          "bg_count": 5,
+          "count_choice_rule": "best feasible objective; larger N wins ties",
+          "surfaces": {
+            "bg_0": "#060504",
+            "bg_1": "#0E0A09",
+            "bg_2": "#18110E",
+            "bg_3": "#201D1A",
+            "bg_4": "#2B251F"
+          },
+          "foregrounds": [
+            "#D8C6AF",
+            "#CABAA7",
+            "#C2ADA0"
+          ],
+          "search": {
+            "per_count": {
+              "3": {
+                "seed": 7100,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 136,
+                "objective": 100000000001950.53,
+                "selected": {
+                  "surfaces": [
+                    "#000500",
+                    "#131202",
+                    "#3C0E16"
+                  ],
+                  "foregrounds": [
+                    "#D6C497",
+                    "#BBAB81",
+                    "#968C74"
+                  ]
+                }
+              },
+              "4": {
+                "seed": 7100,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 94,
+                "objective": 100000000000217.25,
+                "selected": {
+                  "surfaces": [
+                    "#000500",
+                    "#001100",
+                    "#18180F",
+                    "#2D1C16"
+                  ],
+                  "foregrounds": [
+                    "#DFBEA8",
+                    "#BBAA8A",
+                    "#938D77"
+                  ]
+                }
+              },
+              "5": {
+                "seed": 7101,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 88,
+                "objective": -5.134886298204123,
+                "selected": {
+                  "surfaces": [
+                    "#060504",
+                    "#0E0A09",
+                    "#18110E",
+                    "#201D1A",
+                    "#2B251F"
+                  ],
+                  "foregrounds": [
+                    "#D8C6AF",
+                    "#CABAA7",
+                    "#C2ADA0"
+                  ]
+                }
+              },
+              "6": {
+                "seed": 7101,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 58,
+                "objective": -2.661919208072133,
+                "selected": {
+                  "surfaces": [
+                    "#060504",
+                    "#0D0A09",
+                    "#14120F",
+                    "#1D1916",
+                    "#271F1C",
+                    "#31251F"
+                  ],
+                  "foregrounds": [
+                    "#EBD9C2",
+                    "#C7B7A3",
+                    "#C2ACA1"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "1200k-dark": {
+      "name": "1200K Dark",
+      "gains": [
+        1.0,
+        0.30942099,
+        0.0
+      ],
+      "lanes": {
+        "current": {
+          "weight": 0.0,
+          "bg_count": 6,
+          "surfaces": {
+            "bg_0": "#060302",
+            "bg_1": "#0C0806",
+            "bg_2": "#130E0B",
+            "bg_3": "#1C1511",
+            "bg_4": "#251C17",
+            "bg_5": "#2E1E17"
+          },
+          "foregrounds": [
+            "#FFE5BD",
+            "#CBAF89",
+            "#A18C73"
+          ],
+          "search": {
+            "per_count": {},
+            "note": "current lane is the shipped palette scored verbatim; no search applied"
+          }
+        },
+        "halfway": {
+          "weight": 0.5,
+          "bg_count": 5,
+          "count_choice_rule": "best feasible objective; larger N wins ties",
+          "surfaces": {
+            "bg_0": "#050302",
+            "bg_1": "#0C0807",
+            "bg_2": "#15100D",
+            "bg_3": "#1F1A16",
+            "bg_4": "#2A221C"
+          },
+          "foregrounds": [
+            "#FFE8CD",
+            "#C8B499",
+            "#B99B8B"
+          ],
+          "search": {
+            "per_count": {
+              "3": {
+                "seed": 7200,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 73,
+                "objective": 100000000001155.03,
+                "selected": {
+                  "surfaces": [
+                    "#000300",
+                    "#0F1000",
+                    "#271B0A"
+                  ],
+                  "foregrounds": [
+                    "#E7DFA5",
+                    "#CA9D76",
+                    "#9E745B"
+                  ]
+                }
+              },
+              "4": {
+                "seed": 7200,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 72,
+                "objective": 8.102977233405095,
+                "selected": {
+                  "surfaces": [
+                    "#060605",
+                    "#100E0B",
+                    "#1D1310",
+                    "#2A1A14"
+                  ],
+                  "foregrounds": [
+                    "#E9D4B9",
+                    "#C8B299",
+                    "#B99B8B"
+                  ]
+                }
+              },
+              "5": {
+                "seed": 7200,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 74,
+                "objective": -0.32727129476165934,
+                "selected": {
+                  "surfaces": [
+                    "#050302",
+                    "#0C0807",
+                    "#15100D",
+                    "#1F1A16",
+                    "#2A221C"
+                  ],
+                  "foregrounds": [
+                    "#FFE8CD",
+                    "#C8B499",
+                    "#B99B8B"
+                  ]
+                }
+              },
+              "6": {
+                "seed": 7200,
+                "iterations": 2400,
+                "evaluated_exact_hex8_candidates": 2401,
+                "accepted_moves": 98,
+                "objective": 18.524993990198933,
+                "selected": {
+                  "surfaces": [
+                    "#060200",
+                    "#0B0807",
+                    "#12110E",
+                    "#1C110E",
+                    "#251915",
+                    "#2E251F"
+                  ],
+                  "foregrounds": [
+                    "#ECD7BE",
+                    "#CAB69F",
+                    "#B59D8B"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
