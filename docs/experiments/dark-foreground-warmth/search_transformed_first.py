@@ -225,7 +225,8 @@ def system_violations(
     metrics = transformed_metrics(surfaces, fg, base.profile.gains)
     values: list[float] = []
     values.extend(violation(v, BG_STEP_FLOOR_LIGHT_REFERENCE) for v in metrics["adjacent"])
-    values.extend(violation(v, FG_STEP_FLOOR_CURRENT_REFERENCE) for v in metrics["fg_adjacent"])
+    fg_floor = max(FG_STEP_FLOOR_CURRENT_REFERENCE, globals().get("FG_STEP_FLOOR_RUNTIME", 0.0))
+    values.extend(violation(v, fg_floor) for v in metrics["fg_adjacent"])
     values.append(violation(metrics["uniformity_ratio"], ceiling=TRANSFORMED_UNIFORMITY_RATIO))
     values.append(violation(metrics["span"], 6.0))
     primary_floor = max(4.5, DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST.get(base.slug, 4.5))
@@ -386,8 +387,11 @@ def bounded_system_search(
 
 SHARED_DARK_ANCHOR = "#070403"
 SHARED_LIGHT_ANCHOR = "#2E1E18"
+FLOATING_LIGHT_ANCHOR = "#38271F"
+FG_STEP_PARITY_RATIO = 0.8
 BG_STEP_FLOOR_LIGHT_REFERENCE = 3.84
 FG_STEP_FLOOR_CURRENT_REFERENCE = 7.0
+FG_STEP_FLOOR_RUNTIME = 0.0
 FOREGROUND_LIGHTNESS_RADIUS = 0.12
 
 
@@ -401,6 +405,53 @@ def pinned_endpoint_surfaces(base: Any, count: int) -> tuple[str, ...]:
         for t in ts[1:-1]
     ]
     return (SHARED_DARK_ANCHOR, *inner, SHARED_LIGHT_ANCHOR)
+
+
+def refine_foregrounds(
+    base: Any,
+    surfaces: tuple[str, ...],
+    fg: tuple[str, ...],
+    *,
+    seed: int,
+    iterations: int,
+) -> dict[str, Any]:
+    """Hill-climb only the foreground roles against fixed surfaces."""
+
+    rng = np.random.default_rng(seed)
+    origin = bytes_from_hex(fg)
+    best = origin.copy()
+    best_values = hex_from_bytes(best)
+    count = len(surfaces)
+    best_score = system_objective(base, surfaces, best_values, count, 0.5)
+    accepted = 0
+    evaluated = 1
+    for iteration in range(iterations):
+        progress = iteration / max(1, iterations - 1)
+        step = max(1, round(9.0 * (1.0 - progress) + 1.0))
+        proposal = best.copy()
+        edits = 1 + int(rng.integers(0, 4))
+        flat = proposal.reshape(-1)
+        indices = rng.choice(flat.size, size=edits, replace=False)
+        flat[indices] += rng.integers(-step, step + 1, size=edits, dtype=np.int16)
+        proposal = np.clip(proposal, origin - 48, origin + 48).reshape(origin.shape)
+        values = hex_from_bytes(proposal)
+        score = system_objective(base, surfaces, values, count, 0.5)
+        evaluated += 1
+        if score < best_score - 1e-12 or (
+            abs(score - best_score) <= 1e-12 and values < best_values
+        ):
+            best = proposal
+            best_values = values
+            best_score = score
+            accepted += 1
+    return {
+        "seed": seed,
+        "iterations": iterations,
+        "evaluated_exact_hex8_candidates": evaluated,
+        "accepted_moves": accepted,
+        "objective": float(best_score),
+        "selected": {"surfaces": list(surfaces), "foregrounds": list(best_values)},
+    }
 
 
 def refine_pinned_intermediates(
@@ -662,6 +713,10 @@ def main() -> int:
                 banks = search_dependent_banks(
                     full, base, shipped_surfaces, shipped_fg, profile_index, iterations
                 )
+                current_fg_ucs = cam16_ucs(hex_array(shipped_fg), base.profile.gains)
+                current_fg_steps = np.linalg.norm(np.diff(current_fg_ucs, axis=0), axis=1)
+                global FG_STEP_FLOOR_RUNTIME
+                FG_STEP_FLOOR_RUNTIME = FG_STEP_PARITY_RATIO * float(current_fg_steps.min())
                 lane_record: dict[str, Any] = {
                     "weight": weight,
                     "bg_count": 6,
@@ -677,17 +732,29 @@ def main() -> int:
                 record["lanes"][lane] = lane_record
                 continue
             if True:
-                # Shared-anchor halfway: common endpoints for every profile, count
-                # floats but must satisfy the light-reference bg step floor and the
-                # current-reference fg step floor. Endpoints frozen; interiors and
-                # foregrounds searched.
-                pinned_counts = (4, 5) if slug != "1200k-dark" else (4,)
+                # Shared-anchor halfway with per-profile anchor/count strategy:
+                #   1200K: N=4, shared anchors (span-limited).
+                #   2000K: N=4, shared anchors.
+                #   3400K: N=5, light anchor floats to FLOATING_LIGHT_ANCHOR so its
+                #          minimum step stays at parity with the other profiles.
+                plans = ((4, SHARED_DARK_ANCHOR, SHARED_LIGHT_ANCHOR),)
+                if slug == "3400k-dark":
+                    plans = (
+                        (4, SHARED_DARK_ANCHOR, SHARED_LIGHT_ANCHOR),
+                        (5, SHARED_DARK_ANCHOR, FLOATING_LIGHT_ANCHOR),
+                    )
                 best_overall = None
                 per_count: dict[str, Any] = {}
                 chosen_count = None
                 choice_rule = ""
-                for count in pinned_counts:
-                    pinned = pinned_endpoint_surfaces(base, count)
+                for count, dark_anchor, light_anchor in plans:
+                    lab = srgb_to_oklab(hex_array((dark_anchor, light_anchor)))
+                    ts = np.linspace(0.0, 1.0, count)
+                    inner = [
+                        srgb_to_hex(np.clip(oklab_to_srgb(lab[0] * (1 - t) + lab[1] * t), 0.0, 1.0))
+                        for t in ts[1:-1]
+                    ]
+                    pinned = (dark_anchor, *inner, light_anchor)
                     fg_runs = [
                         bounded_system_search(
                             base,
@@ -711,10 +778,19 @@ def main() -> int:
                         for add in (0, 1)
                     ]
                     best, _ = select_two_seed_runs(runs)
+                    fg_refine = [
+                        refine_foregrounds(
+                            base,
+                            tuple(best["selected"]["surfaces"]),
+                            tuple(best["selected"]["foregrounds"]),
+                            seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
+                            iterations=iterations["system"],
+                        )
+                        for add in (0, 1)
+                    ]
+                    best, _ = select_two_seed_runs(fg_refine)
                     per_count[str(count)] = runs_summary(best)
-                    if best["objective"] < 1e13 and (
-                        best_overall is None or best["objective"] < best_overall["objective"]
-                    ):
+                    if best["objective"] < 1e13:
                         best_overall = best
                         chosen_count = count
                 if best_overall is None:
@@ -723,8 +799,13 @@ def main() -> int:
                         f"no feasible halfway count for {slug}; weakest was N={fallback_key}"
                     )
                 choice_rule = (
-                    "shared anchors; smallest feasible count meeting "
-                    "bg>=3.84 / fg>=7.0 CAM16-UCS step floors"
+                    "shared dark anchor; "
+                    + (
+                        "floating warm light anchor; "
+                        if chosen_count == 5
+                        else "shared light anchor; "
+                    )
+                    + "interiors refined to even CAM16-UCS steps >=3.84"
                 )
                 lane_record = {
                     "weight": weight,
