@@ -135,6 +135,9 @@ def test_surface_lanes_follow_mid_depth_warmth_philosophy() -> None:
             expected_ab = shipped_lab[:, 1:] + weight * (light_lab[:, 1:] - shipped_lab[:, 1:])
             np.testing.assert_allclose(record["surface_target_ab"], expected_ab, atol=1e-12)
             candidate_lab = srgb_to_oklab(rgb(list(record["surfaces"].values())))
+            # Hue-only movement contract: dark surface L must stay pinned to the
+            # shipped ladder within the search's declared drift ceiling.
+            assert float(np.max(np.abs(candidate_lab[:, 0] - shipped_lab[:, 0]))) <= 0.0125
             if lane != "current":
                 residual = float(
                     np.linalg.norm(
