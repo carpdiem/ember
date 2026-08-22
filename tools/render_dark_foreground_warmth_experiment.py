@@ -102,7 +102,10 @@ def expand_to_six(values: list[str]) -> tuple[str, ...]:
 def candidate_definition(slug: str, record: dict[str, Any]):
     base = family(slug)
     gains = lane_gains(slug)
-    surfaces = {f"bg_{index}": value for index, value in enumerate(expand_to_six(lane_surface_values(record)))}
+    surfaces = {
+        f"bg_{index}": value
+        for index, value in enumerate(expand_to_six(lane_surface_values(record)))
+    }
     surfaces.update({f"fg_{index}": value for index, value in enumerate(record["foregrounds"])})
     return replace(
         base,
@@ -166,7 +169,9 @@ def css_variables(profile: str, lane: str, record: dict[str, Any], gains, simula
         variables.append(f"--fg-{index}:{state(value)}")
     for index, value in enumerate(record["categorical"]):
         variables.append(f"--cat-{index + 1}:{state(value)}")
-    expanded_terminal = [record["terminal"][index] for index in family(profile).terminal_ansi_indices]
+    expanded_terminal = [
+        record["terminal"][index] for index in family(profile).terminal_ansi_indices
+    ]
     for name, value in zip(TERM_NAMES, expanded_terminal, strict=True):
         variables.append(f"--term-{name}:{state(value)}")
     stops = [record["continuous_hex8"][round(index * 255 / 10)] for index in range(11)]
@@ -238,8 +243,7 @@ def distinctness_status(metrics: dict[str, float]) -> str:
 def universal_status(slug: str, metrics: dict[str, float]) -> str:
     floors = universal_floors(slug)
     passes = all(
-        metrics[f"fg{index}_contrast"] + 1e-12 >= floor
-        for index, floor in enumerate(floors)
+        metrics[f"fg{index}_contrast"] + 1e-12 >= floor for index, floor in enumerate(floors)
     )
     return "PASS" if passes else "FAIL"
 
@@ -267,9 +271,7 @@ def metrics_html(data: dict[str, Any], computed: dict[str, dict[str, dict[str, f
             best = best_lanes(values, direction)
             for lane in LANES:
                 rendered = format_metric(values[lane], spec)
-                decorated = (
-                    f'<u class="winner">{rendered}</u>' if lane in best else rendered
-                )
+                decorated = f'<u class="winner">{rendered}</u>' if lane in best else rendered
                 cells.append(f"<td>{decorated}</td>")
         arrow = "↓ lower" if direction == "lower" else "↑ higher"
         rows.append(
@@ -281,9 +283,7 @@ def metrics_html(data: dict[str, Any], computed: dict[str, dict[str, dict[str, f
     )
 
 
-def metrics_markdown(
-    data: dict[str, Any], computed: dict[str, dict[str, dict[str, float]]]
-) -> str:
+def metrics_markdown(data: dict[str, Any], computed: dict[str, dict[str, dict[str, float]]]) -> str:
     columns = [
         f"{data['profiles'][profile]['name']} {LANE_LABELS[lane][0]}"
         for profile in PROFILE_SLUGS
@@ -331,7 +331,9 @@ def anatomy(slug: str, lane: str, record: dict[str, Any], metrics: dict[str, flo
         chosen = str(record["bg_count"])
         run = search["per_count"][chosen]
         provenance = [
-            escape(f"surface count {record['bg_count']} chosen by rule: {search['count_choice_rule']}"),
+            escape(
+                f"surface count {record['bg_count']} chosen by rule: {search['count_choice_rule']}"
+            ),
             escape(
                 f"seed {run['seed']} · {run['iterations']} iterations · "
                 f"{run['evaluated_exact_hex8_candidates']} exact Hex8 candidates · "
@@ -655,23 +657,28 @@ It includes complete anatomy, a substantial editorial hierarchy, realistic code/
 
 The interactive page is authoritative. These committed captures make the same comparison reviewable directly on GitHub:
 
-{chr(10).join(f"- [`{name}`](review-captures/{name})" for name in (
-    "3400k-dark-anatomy-commanded.png",
-    "3400k-dark-anatomy-simulated.png",
-    "2000k-dark-anatomy-commanded.png",
-    "2000k-dark-anatomy-simulated.png",
-    "1200k-dark-anatomy-commanded.png",
-    "1200k-dark-anatomy-simulated.png",
-    "3400k-dark-terminal-commanded.png",
-    "3400k-dark-terminal-simulated.png",
-    "3400k-dark-dashboard-commanded.png",
-    "3400k-dark-dashboard-simulated.png",
-    "3400k-dark-science-commanded.png",
-    "3400k-dark-science-simulated.png",
-    "metrics-table.png",
-    "phone-metrics.png",
-    "phone-2000k-halfway-simulated.png",
-))}
+{
+        chr(10).join(
+            f"- [`{name}`](review-captures/{name})"
+            for name in (
+                "3400k-dark-anatomy-commanded.png",
+                "3400k-dark-anatomy-simulated.png",
+                "2000k-dark-anatomy-commanded.png",
+                "2000k-dark-anatomy-simulated.png",
+                "1200k-dark-anatomy-commanded.png",
+                "1200k-dark-anatomy-simulated.png",
+                "3400k-dark-terminal-commanded.png",
+                "3400k-dark-terminal-simulated.png",
+                "3400k-dark-dashboard-commanded.png",
+                "3400k-dark-dashboard-simulated.png",
+                "3400k-dark-science-commanded.png",
+                "3400k-dark-science-simulated.png",
+                "metrics-table.png",
+                "phone-metrics.png",
+                "phone-2000k-halfway-simulated.png",
+            )
+        )
+    }
 
 ![2000K Dark Halfway exact simulated at 390 px](review-captures/phone-2000k-halfway-simulated.png)
 
