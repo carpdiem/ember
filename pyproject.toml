@@ -22,6 +22,9 @@ dev = [
   "scipy>=1.12",
   "tomli>=2; python_version < '3.11'",
 ]
+experiment = [
+  "colour-science>=0.4.4",
+]
 
 [build-system]
 requires = ["hatchling"]

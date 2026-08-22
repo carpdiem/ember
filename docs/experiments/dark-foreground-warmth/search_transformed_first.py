@@ -21,6 +21,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import colour
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -31,7 +32,6 @@ from ember.color import (
     contrast_ratio,
     hex_to_srgb,
     oklab_to_srgb,
-    perceived_lab,
     srgb_to_hex,
     srgb_to_oklab,
     warm_transform,
@@ -52,6 +52,8 @@ LIGHT_SLUG = "3400k-light"
 
 TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_RATIO = 1.6
+CAM16_ADAPTATION_LUMINANCE = 50.0
+CAM16_BACKGROUND_LUMINANCE = 20.0
 SURFACE_LIGHTNESS_DRIFT = 0.02
 FOREGROUND_LIGHTNESS_RADIUS = 0.06
 MINIMUM_BG_COUNT = 3
@@ -160,19 +162,32 @@ def foreground_target(base: Any, weight: float) -> np.ndarray:
     return shipped[:, 1:] + weight * (full_ab - shipped[:, 1:])
 
 
+def cam16_ucs(rgb01: np.ndarray, gains) -> np.ndarray:
+    """CAM16-UCS coordinates under transformed sRGB and night viewing conditions."""
+
+    transformed = np.clip(rgb01 * np.asarray(gains), 0.0, 1.0)
+    return np.asarray(
+        colour.XYZ_to_CAM16UCS(
+            colour.sRGB_to_XYZ(transformed),
+            L_A=CAM16_ADAPTATION_LUMINANCE,
+            Y_b=CAM16_BACKGROUND_LUMINANCE,
+        )
+    )
+
+
 def transformed_metrics(surfaces: tuple[str, ...], fg: tuple[str, ...], gains) -> dict:
     surf_rgb = hex_array(surfaces)
     fg_rgb = hex_array(fg)
     t_surf = warm_transform(surf_rgb, gains)
     t_fg = warm_transform(fg_rgb, gains)
-    t_surf_lab = perceived_lab(surf_rgb, gains)
-    t_fg_lab = perceived_lab(fg_rgb, gains)
-    adjacent = (np.linalg.norm(np.diff(t_surf_lab, axis=0), axis=1) * 100.0).tolist()
+    t_surf_ucs = cam16_ucs(surf_rgb, gains)
+    t_fg_ucs = cam16_ucs(fg_rgb, gains)
+    adjacent = np.linalg.norm(np.diff(t_surf_ucs, axis=0), axis=1).tolist()
     fg_bg_clearance = (
-        np.linalg.norm(t_surf_lab[:, None, :] - t_fg_lab[None, :, :], axis=2).min(axis=0) * 100.0
+        np.linalg.norm(t_surf_ucs[:, None, :] - t_fg_ucs[None, :, :], axis=2).min(axis=0)
     ).tolist()
     contrasts = [min(contrast_ratio(f, b) for b in t_surf) for f in t_fg]
-    span = float(np.linalg.norm(t_surf_lab[-1] - t_surf_lab[0]) * 100.0)
+    span = float(np.linalg.norm(t_surf_ucs[-1] - t_surf_ucs[0]))
     return {
         "adjacent": adjacent,
         "adjacent_min": float(min(adjacent)),

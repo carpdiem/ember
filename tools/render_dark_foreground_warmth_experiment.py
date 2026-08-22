@@ -11,6 +11,7 @@ from html import escape
 from pathlib import Path
 from typing import Any
 
+import colour
 import numpy as np
 from PIL import Image
 
@@ -26,7 +27,6 @@ from build_all import _mars_topography_colormap_image, _mona_lisa_colormap_image
 from ember.color import (
     contrast_ratio,
     hex_to_srgb,
-    perceived_lab,
     srgb_to_hex,
     srgb_to_oklab,
     warm_transform,
@@ -48,6 +48,8 @@ TERM_NAMES = ("red", "green", "yellow", "blue", "magenta", "cyan")
 TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_CEILING = 1.6
 TRANSFORMED_SPAN_FLOOR = 6.0
+CAM16_ADAPTATION_LUMINANCE = 50.0
+CAM16_BACKGROUND_LUMINANCE = 20.0
 UNIVERSAL_FOREGROUND_FLOORS = (4.5, 3.5, 2.4)
 
 # Pareto-ranked competing directions. Every value is recomputed in this renderer
@@ -188,6 +190,19 @@ def universal_floors(slug: str) -> tuple[float, float, float]:
     return (primary, UNIVERSAL_FOREGROUND_FLOORS[1], UNIVERSAL_FOREGROUND_FLOORS[2])
 
 
+def cam16_ucs(rgb01: np.ndarray, gains) -> np.ndarray:
+    """CAM16-UCS coordinates under transformed sRGB and night viewing conditions."""
+
+    transformed = np.clip(rgb01 * np.asarray(gains), 0.0, 1.0)
+    return np.asarray(
+        colour.XYZ_to_CAM16UCS(
+            colour.sRGB_to_XYZ(transformed),
+            L_A=CAM16_ADAPTATION_LUMINANCE,
+            Y_b=CAM16_BACKGROUND_LUMINANCE,
+        )
+    )
+
+
 def lane_metrics(slug: str, record: dict[str, Any]) -> dict[str, float]:
     """Recompute every published metric from the serialized exact Hex8 record."""
     gains = lane_gains(slug)
@@ -195,23 +210,22 @@ def lane_metrics(slug: str, record: dict[str, Any]) -> dict[str, float]:
     foregrounds = np.asarray([hex_to_srgb(value) for value in record["foregrounds"]])
     transformed_surfaces = warm_transform(surfaces, gains)
     transformed_foregrounds = warm_transform(foregrounds, gains)
-    surface_lab = perceived_lab(surfaces, gains)
-    foreground_lab = perceived_lab(foregrounds, gains)
-    adjacent = np.linalg.norm(np.diff(surface_lab, axis=0), axis=1) * 100.0
+    surface_ucs = cam16_ucs(surfaces, gains)
+    foreground_ucs = cam16_ucs(foregrounds, gains)
+    adjacent = np.linalg.norm(np.diff(surface_ucs, axis=0), axis=1)
     contrasts = [
         min(contrast_ratio(foreground, background) for background in transformed_surfaces)
         for foreground in transformed_foregrounds
     ]
-    clearance = (
-        np.linalg.norm(surface_lab[:, None, :] - foreground_lab[None, :, :], axis=2).min(axis=0)
-        * 100.0
+    clearance = np.linalg.norm(surface_ucs[:, None, :] - foreground_ucs[None, :, :], axis=2).min(
+        axis=0
     )
     commanded_lab = srgb_to_oklab(foregrounds)
     return {
         "bg_count": float(record["bg_count"]),
         "adjacent_min": float(adjacent.min()),
         "uniformity_ratio": float(adjacent.max() / max(adjacent.min(), 1e-9)),
-        "span": float(np.linalg.norm(surface_lab[-1] - surface_lab[0]) * 100.0),
+        "span": float(np.linalg.norm(surface_ucs[-1] - surface_ucs[0])),
         "clearance_min": float(clearance.min()),
         "fg0_contrast": contrasts[0],
         "fg1_contrast": contrasts[1],

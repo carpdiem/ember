@@ -7,12 +7,12 @@ import runpy
 from dataclasses import replace
 from pathlib import Path
 
+import colour
 import numpy as np
 
 from ember.color import (
     contrast_ratio,
     hex_to_srgb,
-    perceived_lab,
     srgb_to_hex,
     srgb_to_oklab,
     warm_transform,
@@ -66,8 +66,9 @@ def resampled_ladder(base, count: int) -> np.ndarray:
 
 
 def transformed_adjacent(surfaces: tuple[str, ...], gains) -> np.ndarray:
-    lab = perceived_lab(rgb(surfaces), gains)
-    return np.linalg.norm(np.diff(lab, axis=0), axis=1) * 100.0
+    transformed = np.clip(rgb(surfaces) * np.asarray(gains), 0.0, 1.0)
+    ucs = np.asarray(colour.XYZ_to_CAM16UCS(colour.sRGB_to_XYZ(transformed), L_A=50.0, Y_b=20.0))
+    return np.linalg.norm(np.diff(ucs, axis=0), axis=1)
 
 
 def worst_contrasts(surfaces: tuple[str, ...], fg: tuple[str, ...], gains) -> list[float]:
