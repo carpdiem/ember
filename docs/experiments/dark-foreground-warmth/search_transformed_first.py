@@ -54,7 +54,7 @@ TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_BG_STEP_FLOOR = 3.3
 TRANSFORMED_FG_STEP_FLOOR = 7.0
 BG_STEP_PARITY_RATIO = 0.8
-TRANSFORMED_UNIFORMITY_RATIO = 1.4
+TRANSFORMED_UNIFORMITY_RATIO = 1.25
 CAM16_ADAPTATION_LUMINANCE = 8.0
 CAM16_BACKGROUND_LUMINANCE = 3.0
 FLARE_FRACTION = 0.0075
@@ -254,7 +254,13 @@ def system_violations(
     values.append(violation(metrics["uniformity_ratio"], ceiling=TRANSFORMED_UNIFORMITY_RATIO))
     values.append(violation(metrics["span"], 6.0))
     primary_floor = max(4.5, DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST.get(base.slug, 4.5))
-    floors_by_role = {"fg_0": max(4.5, primary_floor), "fg_1": 3.5, "fg_2": 2.4}
+    # Tiny margin so Hex8 quantization can land exactly on the floor and still
+    # pass downstream strict comparisons.
+    floors_by_role = {
+        "fg_0": max(4.5, primary_floor) * 1.02,
+        "fg_1": 3.5 * 1.02,
+        "fg_2": 2.4 * 1.02,
+    }
     for contrast, floor_key in zip(metrics["contrast"], ("fg_0", "fg_1", "fg_2"), strict=True):
         family_floor = floors_by_role[floor_key]
         values.append(violation(contrast, family_floor))
@@ -495,9 +501,9 @@ def bounded_system_search(
     }
 
 
-SHARED_DARK_ANCHOR = "#070403"
-SHARED_LIGHT_ANCHOR = "#2E1E18"
-FLOATING_LIGHT_ANCHOR = "#38271F"
+SHARED_DARK_ANCHOR = "#050404"
+SHARED_LIGHT_ANCHOR = "#322926"
+FLOATING_LIGHT_ANCHOR = "#322926"
 FG_STEP_PARITY_RATIO = 0.8
 BG_STEP_FLOOR_LIGHT_REFERENCE = 3.84
 FG_STEP_FLOOR_CURRENT_REFERENCE = 7.0
@@ -518,14 +524,8 @@ def constructive_halfway_ladder(
 
     gains = base.profile.gains
     anchor_lab = srgb_to_oklab(hex_array((dark_anchor, light_anchor)))
-    shipped_chroma = np.linalg.norm(
-        srgb_to_oklab(hex_array([base.surfaces[f"bg_{i}"] for i in range(6)]))[:, 1:],
-        axis=1,
-    )
-    light_chroma = np.linalg.norm(
-        srgb_to_oklab(hex_array([light_target().surfaces[f"bg_{i}"] for i in range(6)]))[:, 1:],
-        axis=1,
-    )
+    dark_anchor_chroma = float(np.linalg.norm(anchor_lab[0, 1:]))
+    light_anchor_chroma = float(np.linalg.norm(anchor_lab[1, 1:]))
     ts = np.linspace(0.0, 1.0, count)
 
     def j_of_l(l_value: float, t: float, chroma: float) -> float:
@@ -544,10 +544,7 @@ def constructive_halfway_ladder(
     for index in range(1, count - 1):
         t = ts[index]
         target_j = j_lo + (j_hi - j_lo) * t
-        interp_chroma = (
-            shipped_chroma[index * (6 - 1) // max(count - 2, 1)]
-            + light_chroma[index * (6 - 1) // max(count - 2, 1)]
-        ) / 2
+        interp_chroma = dark_anchor_chroma + t * (light_anchor_chroma - dark_anchor_chroma)
         lo_l, hi_l = float(anchor_lab[0, 0]), float(anchor_lab[1, 0])
         for _ in range(40):
             mid = (lo_l + hi_l) / 2

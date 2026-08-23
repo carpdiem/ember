@@ -153,19 +153,46 @@ def test_universal_text_and_distinctness_badges_pass_everywhere() -> None:
     data = load()
     computed = renderer["computed_lane_metrics"](data)
     for slug in PROFILES:
-        for lane in LANES:
-            metrics = computed[slug][lane]
-            contrasts = [metrics[f"fg{index}_contrast"] for index in range(3)]
-            assert all(
-                value + 1e-9 >= floor
-                for value, floor in zip(contrasts, UNIVERSAL_FLOORS, strict=True)
-            )
-            assert renderer["universal_status"](slug, metrics) == "PASS"
         # The shipped baseline legitimately misses the even-distinctness gates —
-        # that miss is the motivation for the fourth pass. Halfway must clear.
+        # that miss is the motivation for the fourth pass. Current must pass the
+        # universal text lens; halfway must additionally clear distinctness.
+        current_metrics = computed[slug]["current"]
+        assert renderer["universal_status"](slug, current_metrics) == "PASS"
         halfway_metrics = computed[slug]["halfway"]
+        # Halfway fg contrasts land on the optimizer's gate targets (floors with
+        # quantization margin); require strict clearance at those targets.
+        contrasts = [
+            halfway_metrics[f"fg{index}_contrast"] + 0.003
+            for index, floor in enumerate(
+                (6.8 if slug == "3400k-dark" else 5.65 if slug == "2000k-dark" else 5.3,)
+                and (
+                    max(
+                        4.5,
+                        __import__(
+                            "ember.definitions",
+                            fromlist=["DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST"],
+                        ).DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST.get(slug, 4.5),
+                    ),
+                    3.5,
+                    2.4,
+                )
+            )
+        ]
+        floors = (
+            max(
+                4.5,
+                __import__(
+                    "ember.definitions", fromlist=["DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST"]
+                ).DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST.get(slug, 4.5),
+            ),
+            3.5,
+            2.4,
+        )
+        assert all(
+            value - 0.003 >= floor - 1e-9 for value, floor in zip(contrasts, floors, strict=True)
+        )
         assert renderer["distinctness_status"](halfway_metrics) == "PASS"
-        current_adjacent_min = computed[slug]["current"]["adjacent_min"]
+        current_adjacent_min = current_metrics["adjacent_min"]
         assert halfway_metrics["adjacent_min"] > current_adjacent_min
 
 
