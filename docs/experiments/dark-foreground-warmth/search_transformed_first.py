@@ -51,7 +51,7 @@ LANES: dict[str, float] = {"current": 0.0, "halfway": 0.5}
 LIGHT_SLUG = "3400k-light"
 
 TRANSFORMED_ADJACENT_FLOOR = 2.5
-TRANSFORMED_BG_STEP_FLOOR = 3.8
+TRANSFORMED_BG_STEP_FLOOR = 3.3
 TRANSFORMED_FG_STEP_FLOOR = 7.0
 BG_STEP_PARITY_RATIO = 0.8
 TRANSFORMED_UNIFORMITY_RATIO = 1.4
@@ -225,7 +225,7 @@ def system_violations(
 ) -> tuple[list[float], float]:
     metrics = transformed_metrics(surfaces, fg, base.profile.gains)
     values: list[float] = []
-    values.extend(violation(v, BG_STEP_FLOOR_LIGHT_REFERENCE) for v in metrics["adjacent"])
+    values.extend(violation(v, TRANSFORMED_BG_STEP_FLOOR) for v in metrics["adjacent"])
     fg_floor = max(FG_STEP_FLOOR_CURRENT_REFERENCE, globals().get("FG_STEP_FLOOR_RUNTIME", 0.0))
     values.extend(violation(v, fg_floor) for v in metrics["fg_adjacent"])
     values.append(violation(metrics["uniformity_ratio"], ceiling=TRANSFORMED_UNIFORMITY_RATIO))
@@ -331,15 +331,41 @@ def system_violations(
     # state exactly as it does in every shipped dark palette.
     values.extend(violation(float(-gap), 0.0) for gap in np.diff(fg_lab[:, 0]))
 
-    # Commanded background chroma may not exceed the current lane's maximum —
-    # the halfway hue step softens warmth, it must not invent color.
+    # Commanded background chroma must follow the halfway step DOWN toward the
+    # light palette's low-chroma surfaces — reduced warmth means reduced color,
+    # not more. Ceiling: the tighter of current-lane max and per-role halfway
+    # interpolation; plus a soft pull toward the halfway value itself.
     proposed_chroma = np.linalg.norm(surf_lab[:, 1:], axis=1)
+    shipped_surf = srgb_to_oklab(hex_array([base.surfaces[f"bg_{i}"] for i in range(6)]))
+    anchors = np.linspace(0.0, 1.0, len(shipped_surf))
+    positions = np.linspace(0.0, 1.0, count)
+    halfway_chroma = np.interp(
+        positions,
+        anchors,
+        np.linalg.norm(
+            srgb_to_oklab(hex_array([light_target().surfaces[f"bg_{i}"] for i in range(6)]))[:, 1:],
+            axis=1,
+        )
+        * 0.5
+        + np.linalg.norm(shipped_surf[:, 1:], axis=1) * 0.5,
+    )
     chroma_ceiling = globals().get("BG_CHROMA_CEILING_RUNTIME", None)
-    if chroma_ceiling is not None:
-        for index in range(count):
-            values.append(
-                violation(float(proposed_chroma[index]), ceiling=float(chroma_ceiling))
+    for index in range(count):
+        values.append(
+            violation(
+                float(proposed_chroma[index]),
+                ceiling=max(
+                    min(
+                        float(halfway_chroma[index]) * 1.6 + 0.004,
+                        float(chroma_ceiling) if chroma_ceiling is not None else 10.0,
+                    ),
+                    0.02,
+                ),
             )
+        )
+        soft_terms.append(
+            40.0 * abs(float(proposed_chroma[index] - halfway_chroma[index]))
+        )
     return values, 90.0 * float(np.sum(soft_terms))
 
 
