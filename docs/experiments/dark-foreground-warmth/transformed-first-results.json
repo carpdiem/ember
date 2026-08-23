@@ -1757,9 +1757,9 @@
           "count_choice_rule": "shared dark anchor; floating warm light anchor; interiors refined to even CAM16-UCS steps >=3.84",
           "surfaces": {
             "bg_0": "#070403",
-            "bg_1": "#100906",
-            "bg_2": "#1C120D",
-            "bg_3": "#291B15",
+            "bg_1": "#131110",
+            "bg_2": "#1F1B19",
+            "bg_3": "#2C211D",
             "bg_4": "#38271F"
           },
           "foregrounds": [
@@ -1946,7 +1946,7 @@
             "gain_corner_max_to_min_max": 1.02249926957915,
             "gain_corner_minimum_signed_lightness_step": 0.0019352430872523474
           },
-          "sequential_dependency_fingerprint": "68f5d45897ad89d92a67399d0d3f33b1ae099bccf00787647802db6dfbc47465",
+          "sequential_dependency_fingerprint": "0568511701bac52605a0283a03e1b1f38ea9032d5cf812bec00112d0204c9100",
           "continuous_float_srgb": [
             [
               0.1568627504,
@@ -3494,12 +3494,12 @@
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
                 "accepted_moves": 86,
-                "objective": 872.2847444452984,
+                "objective": 17740.237588034677,
                 "selected": {
                   "surfaces": [
                     "#070403",
-                    "#170F0B",
-                    "#271A15",
+                    "#181413",
+                    "#291E1A",
                     "#38271F"
                   ],
                   "foregrounds": [
@@ -3514,13 +3514,13 @@
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
                 "accepted_moves": 86,
-                "objective": 159200768.97885326,
+                "objective": 32151153.15896989,
                 "selected": {
                   "surfaces": [
                     "#070403",
-                    "#100906",
-                    "#1C120D",
-                    "#291B15",
+                    "#131110",
+                    "#1F1B19",
+                    "#2C211D",
                     "#38271F"
                   ],
                   "foregrounds": [
@@ -5318,8 +5318,8 @@
           "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84",
           "surfaces": {
             "bg_0": "#070403",
-            "bg_1": "#140C09",
-            "bg_2": "#201510",
+            "bg_1": "#14110F",
+            "bg_2": "#221814",
             "bg_3": "#2E1E18"
           },
           "foregrounds": [
@@ -5545,7 +5545,7 @@
             "gain_corner_max_to_min_max": 1.016225531765014,
             "gain_corner_minimum_signed_lightness_step": 0.0020908551452102075
           },
-          "sequential_dependency_fingerprint": "a85338ab221b3591e8dd7658333f9120393586cabf4ab5a04ecc1e2745696b0f",
+          "sequential_dependency_fingerprint": "025f482fca3ae2dde863674ef9a43952ab7ecb3defa276bdebad5a6ae6ca76bc",
           "continuous_float_srgb": [
             [
               0.0941176499,
@@ -7093,12 +7093,12 @@
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
                 "accepted_moves": 0,
-                "objective": 60018.53805149627,
+                "objective": 796556.212906228,
                 "selected": {
                   "surfaces": [
                     "#070403",
-                    "#140C09",
-                    "#201510",
+                    "#14110F",
+                    "#221814",
                     "#2E1E18"
                   ],
                   "foregrounds": [
@@ -8903,8 +8903,8 @@
           "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84",
           "surfaces": {
             "bg_0": "#070403",
-            "bg_1": "#140C09",
-            "bg_2": "#201510",
+            "bg_1": "#161210",
+            "bg_2": "#231814",
             "bg_3": "#2E1E18"
           },
           "foregrounds": [
@@ -9129,7 +9129,7 @@
             "gain_corner_max_to_min_max": 1.0053545002428632,
             "gain_corner_minimum_signed_lightness_step": 0.00199528070666391
           },
-          "sequential_dependency_fingerprint": "27f91289d8c1c3b5c529d4b84d0645568c5db74859ba42c22b5bde83d479e056",
+          "sequential_dependency_fingerprint": "b1719d4590f9d63f42b830d39584a7855a396507c5c75ab07c2d659912c9ac47",
           "continuous_float_srgb": [
             [
               0.0901960802,
@@ -10677,12 +10677,12 @@
                 "iterations": 2400,
                 "evaluated_exact_hex8_candidates": 2401,
                 "accepted_moves": 34,
-                "objective": 436.1218915601747,
+                "objective": 1110.3894154571462,
                 "selected": {
                   "surfaces": [
                     "#070403",
-                    "#140C09",
-                    "#201510",
+                    "#161210",
+                    "#231814",
                     "#2E1E18"
                   ],
                   "foregrounds": [

@@ -393,12 +393,9 @@ def system_violations(
         values.append(
             violation(
                 float(proposed_chroma[index]),
-                ceiling=max(
-                    min(
-                        float(halfway_chroma[index]) * 1.6 + 0.004,
-                        float(chroma_ceiling) if chroma_ceiling is not None else 10.0,
-                    ),
-                    0.02,
+                ceiling=min(
+                    float(halfway_chroma[index]) * 1.3 + 0.003,
+                    float(chroma_ceiling) if chroma_ceiling is not None else 10.0,
                 ),
             )
         )
@@ -506,6 +503,77 @@ BG_STEP_FLOOR_LIGHT_REFERENCE = 3.84
 FG_STEP_FLOOR_CURRENT_REFERENCE = 7.0
 FG_STEP_FLOOR_RUNTIME = 0.0
 FOREGROUND_LIGHTNESS_RADIUS = 0.12
+
+
+def constructive_halfway_ladder(
+    base: Any, count: int, dark_anchor: str, light_anchor: str
+) -> tuple[str, ...]:
+    """Fable constructive algorithm: even transformed J' steps at halfway chroma.
+
+    Places each interior surface by solving commanded Oklab L (1-D bisection)
+    such that its flare-included transformed CAM16 J' hits an evenly spaced
+    target, holding commanded a/b on the anchor hue axis at per-role halfway
+    chroma. Falls back toward anchors when inversion leaves gamut.
+    """
+
+    gains = base.profile.gains
+    anchor_lab = srgb_to_oklab(hex_array((dark_anchor, light_anchor)))
+    shipped_chroma = np.linalg.norm(
+        srgb_to_oklab(hex_array([base.surfaces[f"bg_{i}"] for i in range(6)]))[:, 1:],
+        axis=1,
+    )
+    light_chroma = np.linalg.norm(
+        srgb_to_oklab(hex_array([light_target().surfaces[f"bg_{i}"] for i in range(6)]))[:, 1:],
+        axis=1,
+    )
+    ts = np.linspace(0.0, 1.0, count)
+
+    def j_of_l(l_value: float, t: float, chroma: float) -> float:
+        ab = anchor_lab[0] * (1 - t) + anchor_lab[1] * t
+        direction = ab[1:] / max(np.linalg.norm(ab[1:]), 1e-9)
+        okl = np.concatenate(([l_value], direction * chroma)).reshape(1, 3)
+        rgb = np.clip(oklab_to_srgb(okl), 0.0, 1.0)
+        return float(cam16_ucs(rgb, gains)[0][0])
+
+    # Even J' targets between the endpoints' transformed J'.
+    endpoints_rgb = hex_array((dark_anchor, light_anchor))
+    j_lo = float(cam16_ucs(endpoints_rgb[:1], gains)[0][0])
+    j_hi = float(cam16_ucs(endpoints_rgb[1:], gains)[0][0])
+
+    surfaces = [dark_anchor]
+    for index in range(1, count - 1):
+        t = ts[index]
+        target_j = j_lo + (j_hi - j_lo) * t
+        interp_chroma = (
+            shipped_chroma[index * (6 - 1) // max(count - 2, 1)]
+            + light_chroma[index * (6 - 1) // max(count - 2, 1)]
+        ) / 2
+        lo_l, hi_l = float(anchor_lab[0, 0]), float(anchor_lab[1, 0])
+        for _ in range(40):
+            mid = (lo_l + hi_l) / 2
+            if j_of_l(mid, t, interp_chroma) < target_j:
+                lo_l = mid
+            else:
+                hi_l = mid
+        ab = anchor_lab[0] * (1 - t) + anchor_lab[1] * t
+        direction_ab = ab[1:] / max(np.linalg.norm(ab[1:]), 1e-9)
+        okl = np.concatenate(([(lo_l + hi_l) / 2], direction_ab * interp_chroma)).reshape(1, 3)
+        rgb = np.clip(oklab_to_srgb(okl), 0.0, 1.0)
+        if np.any((rgb <= 0.001) | (rgb >= 0.999)):
+            # Out of gamut: fall back to linear interpolation at this role.
+            fallback = oklab_to_srgb(
+                np.concatenate(([ladder_l_for(count)[index]], ab[1:])).reshape(1, 3)
+            )
+            surfaces.append(srgb_to_hex(np.clip(fallback, 0.0, 1.0)[0]))
+        else:
+            surfaces.append(srgb_to_hex(rgb[0]))
+    surfaces.append(light_anchor)
+    return tuple(surfaces)
+
+
+def ladder_l_for(count: int):
+    ladder = np.asarray(GEOMETRIC_LADDER_BY_COUNT[count])
+    return ladder
 
 
 def pinned_endpoint_surfaces(base: Any, count: int) -> tuple[str, ...]:
@@ -881,20 +949,9 @@ def main() -> int:
                 chosen_count = None
                 choice_rule = ""
                 for count, d_a, l_a in plans:
-                    anchor_lab = srgb_to_oklab(hex_array((d_a, l_a)))
-                    ladder_l = np.asarray(GEOMETRIC_LADDER_BY_COUNT[count])
-                    # Rescale the geometric ladder to sit within the anchors' L range.
-                    lo, hi = float(anchor_lab[0, 0]), float(anchor_lab[1, 0])
-                    ladder_l = lo + (ladder_l - ladder_l.min()) / max(
-                        ladder_l.max() - ladder_l.min(), 1e-9
-                    ) * (hi - lo)
-                    ts = np.linspace(0.0, 1.0, count)
-                    inner = []
-                    for index, t in enumerate(ts[1:-1]):
-                        base_ab = anchor_lab[0] * (1 - t) + anchor_lab[1] * t
-                        okl = np.concatenate(([ladder_l[index + 1]], base_ab[1:])).reshape(1, 3)
-                        inner.append(srgb_to_hex(np.clip(oklab_to_srgb(okl), 0.0, 1.0)[0]))
-                    pinned = (d_a, *inner, l_a)
+                    # Fable constructive algorithm: even transformed J' targets,
+                    # per-role halfway chroma, anchor hue axis, bisection on L.
+                    pinned = constructive_halfway_ladder(base, count, d_a, l_a)
                     # Fable direct construction: surfaces fixed at the geometric
                     # ladder; only foregrounds are searched against them.
                     fg_refine = [

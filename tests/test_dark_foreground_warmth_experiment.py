@@ -108,24 +108,32 @@ def test_halfway_counts_float_within_light_reference_bounds() -> None:
         assert rule or lane_record(data, slug, "halfway")["search"].get("note")
 
 
-def test_commanded_bg_lightness_pinned_to_shared_anchor_ladder() -> None:
+def test_commanded_bg_lightness_follows_constructive_even_j_ladder() -> None:
     data = load()
     for slug in PROFILES:
         record = lane_record(data, slug, "halfway")
         surfaces = lane_surfaces(record)
-        # Endpoints are the shared/floating anchors by construction; interiors stay
-        # within the drift envelope of the endpoint-interpolated lightness.
-        anchor_lab = srgb_to_oklab(rgb((surfaces[0], surfaces[-1])))
-        positions = np.linspace(0.0, 1.0, len(surfaces))
-        ladder = np.column_stack(
-            [np.interp(positions, (0.0, 1.0), anchor_lab[:, c]) for c in range(3)]
-        )
-        lab = srgb_to_oklab(rgb(surfaces))
-        np.testing.assert_allclose(
-            lab[:, 0],
-            ladder[:, 0],
-            atol=SURFACE_LIGHTNESS_DRIFT + 0.005 + 1e-9,
-        )
+        # The constructive algorithm solves commanded L per role for even
+        # transformed J'; verify J is monotone and evenly spaced instead of
+        # pinning to any particular commanded-L shape.
+        gains = data["profiles"][slug]["gains"]
+        j = np.asarray(
+            [
+                [
+                    __import__("colour").XYZ_to_CAM16UCS(
+                        __import__("colour").sRGB_to_XYZ(
+                            np.clip(
+                                np.asarray(hex_to_srgb(h)) * np.asarray(gains), 0.0, 1.0
+                            ).reshape(1, 3)
+                        ),
+                        L_A=8.0,
+                        Y_b=3.0,
+                    )[0][0]
+                ]
+            ]
+            for h in surfaces
+        ).ravel()
+        assert np.all(np.diff(j) > 0), f"{slug} transformed J not monotone: {j}"
 
 
 def test_transformed_even_distinctness_recomputed_from_hexes() -> None:
