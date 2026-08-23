@@ -327,8 +327,27 @@ def system_violations(
             else 0.0
         )
     soft_terms.append(float(np.linalg.norm(fg_lab[:, 1:] - fg_target)))
+
     direction = 1.0
     chroma = np.linalg.norm(fg_lab[:, 1:], axis=1)
+
+    # Hard halfway caps on foreground warmth/chroma: fg must move TOWARD the
+    # light palette's near-neutral ink, not away from it. Cap +b and chroma at
+    # the midpoint between shipped and the light reference (+ small tolerance).
+    light_fg_lab = srgb_to_oklab(hex_array([light_target().surfaces[f"fg_{i}"] for i in range(3)]))
+    for index in range(3):
+        halfway_b = (shipped_fg[index, 2] + light_fg_lab[index, 2]) / 2
+        halfway_c = (
+            np.linalg.norm(shipped_fg[index, 1:]) + np.linalg.norm(light_fg_lab[index, 1:])
+        ) / 2
+        values.append(violation(float(fg_lab[index, 2]), ceiling=float(halfway_b) + 0.01))
+        values.append(
+            violation(
+                float(chroma[index]),
+                ceiling=float(halfway_c) + 0.01,
+            )
+        )
+
     values.extend(violation(float(-d), 0.0) for d in np.diff(chroma) * direction)
 
     # Foreground hue corridor: same warm-neutral arc as shipped.
