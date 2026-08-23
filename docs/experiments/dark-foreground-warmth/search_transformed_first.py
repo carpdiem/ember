@@ -55,8 +55,35 @@ TRANSFORMED_BG_STEP_FLOOR = 3.3
 TRANSFORMED_FG_STEP_FLOOR = 7.0
 BG_STEP_PARITY_RATIO = 0.8
 TRANSFORMED_UNIFORMITY_RATIO = 1.4
-CAM16_ADAPTATION_LUMINANCE = 50.0
-CAM16_BACKGROUND_LUMINANCE = 20.0
+CAM16_ADAPTATION_LUMINANCE = 8.0
+CAM16_BACKGROUND_LUMINANCE = 3.0
+FLARE_FRACTION = 0.0075
+MIN_ADJACENT_DJ = 1.0
+MIN_ADJACENT_DJ_TARGET = 2.0
+GEOMETRIC_LADDER_BY_COUNT = {
+    # Fable-recommended geometric okL ladders: bottom gap widest to counteract
+    # CAM16 J compression at the dark end of the transformed state.
+    4: (0.105, 0.155, 0.20, 0.245),
+    5: (0.10, 0.128, 0.162, 0.198, 0.238),
+    6: (0.095, 0.115, 0.14, 0.17, 0.205, 0.245),
+}
+
+
+def cam16_ucs(rgb01: np.ndarray, gains) -> np.ndarray:
+    """Flare-included CAM16-UCS under the transformed sRGB, dim viewing conditions."""
+
+    transformed = np.clip(rgb01 * np.asarray(gains), 0.0, 1.0)
+    xyz = colour.sRGB_to_XYZ(transformed)
+    flare = FLARE_FRACTION * colour.sRGB_to_XYZ(np.ones_like(transformed))
+    return np.asarray(
+        colour.XYZ_to_CAM16UCS(
+            xyz + flare,
+            L_A=CAM16_ADAPTATION_LUMINANCE,
+            Y_b=CAM16_BACKGROUND_LUMINANCE,
+        )
+    )
+
+
 SURFACE_LIGHTNESS_DRIFT = 0.02
 FOREGROUND_LIGHTNESS_RADIUS = 0.06
 MINIMUM_BG_COUNT = 3
@@ -165,19 +192,6 @@ def foreground_target(base: Any, weight: float) -> np.ndarray:
     return shipped[:, 1:] + weight * (full_ab - shipped[:, 1:])
 
 
-def cam16_ucs(rgb01: np.ndarray, gains) -> np.ndarray:
-    """CAM16-UCS coordinates under transformed sRGB and night viewing conditions."""
-
-    transformed = np.clip(rgb01 * np.asarray(gains), 0.0, 1.0)
-    return np.asarray(
-        colour.XYZ_to_CAM16UCS(
-            colour.sRGB_to_XYZ(transformed),
-            L_A=CAM16_ADAPTATION_LUMINANCE,
-            Y_b=CAM16_BACKGROUND_LUMINANCE,
-        )
-    )
-
-
 def transformed_metrics(surfaces: tuple[str, ...], fg: tuple[str, ...], gains) -> dict:
     surf_rgb = hex_array(surfaces)
     fg_rgb = hex_array(fg)
@@ -225,7 +239,16 @@ def system_violations(
 ) -> tuple[list[float], float]:
     metrics = transformed_metrics(surfaces, fg, base.profile.gains)
     values: list[float] = []
+    soft_terms: list[float] = []
     values.extend(violation(v, TRANSFORMED_BG_STEP_FLOOR) for v in metrics["adjacent"])
+    # Fable gate: minimum absolute transformed J' separation per adjacent pair so
+    # distance cannot be satisfied by chromatic residue alone.
+    t_surf_ucs = cam16_ucs(hex_array(surfaces), base.profile.gains)
+    dj = np.abs(np.diff(t_surf_ucs[:, 0]))
+    values.extend(violation(float(d), MIN_ADJACENT_DJ) for d in dj)
+    soft_terms.extend([violation(float(d), MIN_ADJACENT_DJ_TARGET) * 10 for d in dj])
+    # Transformed J' must increase strictly up the ladder.
+    values.extend(violation(float(d), floor=0.0) for d in np.diff(t_surf_ucs[:, 0]))
     fg_floor = max(FG_STEP_FLOOR_CURRENT_REFERENCE, globals().get("FG_STEP_FLOOR_RUNTIME", 0.0))
     values.extend(violation(v, fg_floor) for v in metrics["fg_adjacent"])
     values.append(violation(metrics["uniformity_ratio"], ceiling=TRANSFORMED_UNIFORMITY_RATIO))
@@ -268,29 +291,26 @@ def system_violations(
             values.append(violation(float(in_corridor), 1.0))
 
     # Commanded warmth soft target and L pinning. The shared-anchor halfway path
-    # replaces the resampled-ladder pin with the anchor endpoints themselves.
+    # pins interiors to the endpoint-interpolated commanded L ladder (which for
+    # the fable plan is geometric: bottom gap widest).
     target_ab, ladder = surface_warmth_target(base, weight, count)
     surf_lab = srgb_to_oklab(hex_array(surfaces))
     cmd = commanded_metrics(surfaces, fg)
     if weight > 0.0:
-        # Pin interiors to the actual endpoints of the proposed ladder (which may
-        # float per profile) rather than the shared light anchor.
         anchor_lab = srgb_to_oklab(hex_array((surfaces[0], surfaces[-1])))
         anchors = np.linspace(0.0, 1.0, count)
         ladder = np.column_stack(
             [np.interp(anchors, (0.0, 1.0), anchor_lab[:, c]) for c in range(3)]
         )
+    drift_ceiling = SURFACE_LIGHTNESS_DRIFT + 0.02 if weight > 0.0 else SURFACE_LIGHTNESS_DRIFT
     for index in range(count):
-        ceiling = SURFACE_LIGHTNESS_DRIFT + (
-            0.005 if weight > 0.0 and index in (0, count - 1) else 0.0
-        )
         values.append(
             violation(
                 abs(float(surf_lab[index, 0] - ladder[index][0])),
-                ceiling=ceiling,
+                ceiling=drift_ceiling,
             )
         )
-    soft_terms = [float(np.linalg.norm(cmd["surf_ab"] - target_ab))]
+    soft_terms.append(float(np.linalg.norm(cmd["surf_ab"] - target_ab)))
     fg_target = foreground_target(base, weight)
     shipped_fg = srgb_to_oklab(hex_array([base.surfaces[f"fg_{i}"] for i in range(3)]))
     fg_lab = srgb_to_oklab(hex_array(fg))
@@ -363,9 +383,7 @@ def system_violations(
                 ),
             )
         )
-        soft_terms.append(
-            40.0 * abs(float(proposed_chroma[index] - halfway_chroma[index]))
-        )
+        soft_terms.append(40.0 * abs(float(proposed_chroma[index] - halfway_chroma[index])))
     return values, 90.0 * float(np.sum(soft_terms))
 
 
@@ -407,11 +425,14 @@ def bounded_system_search(
     *,
     seed: int,
     iterations: int,
+    init_surfaces: tuple[str, ...] | None = None,
 ) -> dict[str, Any]:
     rng = np.random.default_rng(seed)
     shipped_surfaces = [base.surfaces[f"bg_{i}"] for i in range(6)]
     shipped_fg = [base.surfaces[f"fg_{i}"] for i in range(3)]
-    if count == 6:
+    if init_surfaces is not None:
+        origin_surfaces = list(init_surfaces)
+    elif count == 6:
         origin_surfaces = shipped_surfaces
     else:
         ladder = role_ladder(base, count)
@@ -495,7 +516,12 @@ def refine_foregrounds(
     best = origin.copy()
     best_values = hex_from_bytes(best)
     count = len(surfaces)
-    best_score = system_objective(base, surfaces, best_values, count, 0.5)
+
+    def gate_score(fg_values: tuple[str, ...]) -> float:
+        violations, _soft = system_violations(base, surfaces, fg_values, count, 0.5)
+        return penalty(violations)
+
+    best_score = gate_score(best_values)
     # Walk from the shipped foregrounds so the starting point is gate-feasible;
     # never accept a proposal that is infeasible when the current best is feasible.
     best_feasible = best_score < 1e13
@@ -511,7 +537,7 @@ def refine_foregrounds(
         flat[indices] += rng.integers(-step, step + 1, size=edits, dtype=np.int16)
         proposal = np.clip(proposal, origin - 48, origin + 48).reshape(origin.shape)
         values = hex_from_bytes(proposal)
-        score = system_objective(base, surfaces, values, count, 0.5)
+        score = gate_score(values)
         evaluated += 1
         feasible = score < 1e13
         if best_feasible and not feasible:
@@ -795,9 +821,7 @@ def main() -> int:
                 )
                 current_fg_ucs = cam16_ucs(hex_array(shipped_fg), base.profile.gains)
                 current_fg_steps = np.linalg.norm(np.diff(current_fg_ucs, axis=0), axis=1)
-                current_bg_ucs = cam16_ucs(
-                    hex_array(shipped_surfaces), base.profile.gains
-                )
+                current_bg_ucs = cam16_ucs(hex_array(shipped_surfaces), base.profile.gains)
                 current_bg_steps = np.linalg.norm(np.diff(current_bg_ucs, axis=0), axis=1)
                 current_bg_lab = srgb_to_oklab(hex_array(shipped_surfaces))
                 global FG_STEP_FLOOR_RUNTIME, BG_STEP_FLOOR_RUNTIME
@@ -805,7 +829,7 @@ def main() -> int:
                 FG_STEP_FLOOR_RUNTIME = FG_STEP_PARITY_RATIO * float(current_fg_steps.min())
                 BG_STEP_FLOOR_RUNTIME = BG_STEP_PARITY_RATIO * float(current_bg_steps.min())
                 BG_CHROMA_CEILING_RUNTIME = (
-                    1.15 * float(np.max(np.linalg.norm(current_bg_lab[:, 1:], axis=1))) + 0.004
+                    1.15 * float(np.max(np.linalg.norm(current_bg_lab[:, 1:], axis=1))) + 0.007
                 )
                 lane_record: dict[str, Any] = {
                     "weight": weight,
@@ -822,56 +846,55 @@ def main() -> int:
                 record["lanes"][lane] = lane_record
                 continue
             if True:
-                # Shared-anchor halfway with per-profile anchor/count strategy:
-                #   1200K: N=4, shared anchors (span-limited).
-                #   2000K: N=4, shared anchors.
-                #   3400K: N=5, light anchor floats to FLOATING_LIGHT_ANCHOR so its
-                #          minimum step stays at parity with the other profiles.
-                plans = ((4, SHARED_DARK_ANCHOR, SHARED_LIGHT_ANCHOR),)
-                if slug == "3400k-dark":
-                    plans = (
-                        (4, SHARED_DARK_ANCHOR, SHARED_LIGHT_ANCHOR),
-                        (5, SHARED_DARK_ANCHOR, FLOATING_LIGHT_ANCHOR),
-                    )
+                # Fable-plan halfway: geometric commanded-L ladder (bottom gap
+                # widest), endpoints anchored at the shared dark and the profile's
+                # ceiling-respecting light anchor, interiors + fg refined.
+                dark_anchor = SHARED_DARK_ANCHOR
+                light_anchor = (
+                    FLOATING_LIGHT_ANCHOR if slug == "3400k-dark" else SHARED_LIGHT_ANCHOR
+                )
+                plans = tuple(
+                    (count, dark_anchor, light_anchor)
+                    for count in ((4, 5) if slug == "3400k-dark" else (4,))
+                )
                 best_overall = None
                 per_count: dict[str, Any] = {}
                 chosen_count = None
                 choice_rule = ""
-                for count, dark_anchor, light_anchor in plans:
-                    lab = srgb_to_oklab(hex_array((dark_anchor, light_anchor)))
+                for count, d_a, l_a in plans:
+                    anchor_lab = srgb_to_oklab(hex_array((d_a, l_a)))
+                    ladder_l = np.asarray(GEOMETRIC_LADDER_BY_COUNT[count])
+                    # Rescale the geometric ladder to sit within the anchors' L range.
+                    lo, hi = float(anchor_lab[0, 0]), float(anchor_lab[1, 0])
+                    ladder_l = lo + (ladder_l - ladder_l.min()) / max(
+                        ladder_l.max() - ladder_l.min(), 1e-9
+                    ) * (hi - lo)
                     ts = np.linspace(0.0, 1.0, count)
-                    inner = [
-                        srgb_to_hex(np.clip(oklab_to_srgb(lab[0] * (1 - t) + lab[1] * t), 0.0, 1.0))
-                        for t in ts[1:-1]
-                    ]
-                    pinned = (dark_anchor, *inner, light_anchor)
-                    if slug == "3400k-dark" and count == 4:
-                        # Even-CAM16 basin found by constrained global probe: warm
-                        # hues only, chroma near shipped, steps >=3.84.
-                        pinned = ("#070403", "#120A07", "#20140F", "#2E1E18")
-                    fg_runs = [
-                        bounded_system_search(
-                            base,
-                            count,
-                            weight,
-                            seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
-                            iterations=iterations["system"],
-                        )
-                        for add in (0, 1)
-                    ]
-                    _, fg_pick = select_two_seed_runs(fg_runs)
-                    foregrounds = tuple(fg_pick["selected"]["foregrounds"])
-                    runs = [
-                        refine_pinned_intermediates(
+                    inner = []
+                    for index, t in enumerate(ts[1:-1]):
+                        base_ab = anchor_lab[0] * (1 - t) + anchor_lab[1] * t
+                        okl = np.concatenate(([ladder_l[index + 1]], base_ab[1:])).reshape(1, 3)
+                        inner.append(srgb_to_hex(np.clip(oklab_to_srgb(okl), 0.0, 1.0)[0]))
+                    pinned = (d_a, *inner, l_a)
+                    # Fable direct construction: surfaces fixed at the geometric
+                    # ladder; only foregrounds are searched against them.
+                    fg_refine = [
+                        refine_foregrounds(
                             base,
                             pinned,
-                            foregrounds,
+                            tuple(base.surfaces[f"fg_{i}"] for i in range(3)),
                             seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
-                            iterations=iterations["system"],
+                            iterations=max(iterations["system"], 4000),
                         )
                         for add in (0, 1)
                     ]
-                    best, _ = select_two_seed_runs(runs)
+                    feasible = [r for r in fg_refine if r["objective"] < 1e13]
+                    if not feasible:
+                        raise RuntimeError(
+                            f"no feasible halfway fg for {slug} N={count}; "
+                            "direct construction missed gates"
+                        )
+                    best, _ = select_two_seed_runs(feasible)
                     fg_refine = [
                         refine_foregrounds(
                             base,

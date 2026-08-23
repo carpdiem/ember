@@ -57,15 +57,15 @@ Rows are Pareto-ranked: transformed usability first, then commanded warmth. Ever
 | Metric | Direction | 3400K Dark Current | 3400K Dark Halfway | 2000K Dark Current | 2000K Dark Halfway | 1200K Dark Current | 1200K Dark Halfway |
 |---|:---:|---:|---:|---:|---:|---:|---:|
 | Background surface count | ↑ higher | **6** | 5 | **6** | 4 | **6** | 4 |
-| Transformed adjacent ΔEOK minimum | ↑ higher | 2.31 | **3.88** | 2.10 | **4.50** | 2.34 | **4.31** |
-| Transformed uniformity ratio, max:min step | ↓ lower | 2.143 | **1.359** | 1.816 | **1.130** | 1.679 | **1.297** |
+| Transformed adjacent ΔEOK minimum | ↑ higher | 2.31 | **3.15** | 2.10 | **4.31** | 2.34 | **4.46** |
+| Transformed uniformity ratio, max:min step | ↓ lower | 2.143 | **1.596** | 1.816 | **1.179** | 1.679 | **1.181** |
 | Transformed surface span ΔEOK | ↑ higher | 14.57 | **16.46** | **14.84** | 13.98 | **14.91** | 14.68 |
-| Transformed fg-background clearance minimum | ↑ higher | 33.58 | **43.48** | 38.63 | **45.65** | 34.07 | **40.24** |
-| FG-0 transformed worst-surface contrast | ↑ higher | 6.83 | **7.31** | 5.86 | **6.44** | 5.32 | **5.37** |
-| FG-1 transformed worst-surface contrast | ↑ higher | 4.94 | **5.65** | 4.66 | **5.10** | 3.52 | **4.06** |
-| FG-2 transformed worst-surface contrast | ↑ higher | 3.08 | **4.39** | 3.31 | **4.20** | 2.48 | **3.06** |
-| Commanded foreground mean +b | ↓ lower | 0.0375 | **0.0246** | 0.0460 | **0.0275** | 0.0528 | **0.0316** |
-| Commanded foreground mean chroma | ↓ lower | 0.0379 | **0.0252** | 0.0472 | **0.0285** | 0.0546 | **0.0334** |
+| Transformed fg-background clearance minimum | ↑ higher | **33.58** | 27.19 | **38.63** | 29.78 | 34.07 | **34.14** |
+| FG-0 transformed worst-surface contrast | ↑ higher | **6.83** | 6.81 | **5.86** | 5.65 | **5.32** | 5.30 |
+| FG-1 transformed worst-surface contrast | ↑ higher | **4.94** | 3.51 | **4.66** | 3.51 | **3.52** | 3.50 |
+| FG-2 transformed worst-surface contrast | ↑ higher | **3.08** | 2.41 | **3.31** | 2.42 | **2.48** | 2.40 |
+| Commanded foreground mean +b | ↓ lower | **0.0375** | 0.0690 | **0.0460** | 0.0861 | **0.0528** | 0.0996 |
+| Commanded foreground mean chroma | ↓ lower | **0.0379** | 0.0698 | **0.0472** | 0.0862 | **0.0546** | 0.1009 |
 
 ## Reader-facing proof domains
 
@@ -116,10 +116,10 @@ Sequential:  282527 51404F 7F5E69 A17C6C C49D70 ECCD9F
 #### Halfway (5 surfaces)
 
 ```text
-Surfaces:    070403 100704 1C130D 291D1A 38271F
-Foregrounds: E8DCC9 CDC0AF B1A99D
+Surfaces:    070403 100906 1C120D 291B15 38271F
+Foregrounds: DED79A 9F9464 837147
 Categorical: 6E96D5 DDAA69 2E8B7E 67BE95 945D48 C3779A
-Terminal:    FCAC96 70BA8A CD824F A5CAFF DE97CF 63E1D2
+Terminal:    F5AD9A 8EBC9C CA9F4A B4C6F7 D792CD 60E2E2
 Sequential:  282527 51404F 7F5E69 A17C6C C49D70 ECCD9F
 ```
 
@@ -138,10 +138,10 @@ Sequential:  18110E 4B343E 785167 A27882 C59A8B FCD6AB
 #### Halfway (4 surfaces)
 
 ```text
-Surfaces:    070403 130B06 201511 2E1E18
-Foregrounds: F4E2CB D8C7B3 BDB9AE
+Surfaces:    070403 140C09 201510 2E1E18
+Foregrounds: E7CF7C B19D62 8B7A49
 Categorical: 66B0D4 E99096 A46449 A3DCA9
-Terminal:    F595AC 74E5C0 C4996B A5D1FB
+Terminal:    EB8B9E 76E6BF C4AA4B A1D1FF
 Sequential:  18110E 4B343E 785167 A27882 C59A8B FCD6AB
 ```
 
@@ -160,10 +160,10 @@ Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7
 #### Halfway (4 surfaces)
 
 ```text
-Surfaces:    070403 100704 1F1410 2E1E18
-Foregrounds: FFEDD5 DBC7B2 B8AA9B
+Surfaces:    070403 140C09 201510 2E1E18
+Foregrounds: FFE384 CAB16D A1773D
 Categorical: BB6572 8FF0FF E9B76C
-Terminal:    F696A0 CCFFB3 E1A95D
+Terminal:    F39399 CAFFC2 DDC57D
 Sequential:  170B09 4B3042 6F4C6D 967186 BD9995 FFE3B7
 ```
 
