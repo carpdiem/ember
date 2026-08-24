@@ -10,13 +10,16 @@ const pairs=[]; const names=spec.contract.category_order;
 for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++)pairs.push([names[i],names[j]]);
 const product=[];
 for(const state of spec.contract.state_order)for(const background of spec.contract.background_order)for(const width_css_px of spec.contract.widths_css_px)for(const style of spec.contract.style_order)for(const orientation of spec.contract.orientations)for(const dpr of spec.contract.device_pixel_ratios)for(const phase_css_px of spec.contract.phases_css_px)for(const pair of pairs)product.push({id:`planned-${String(product.length+1).padStart(5,'0')}`,state,background,background_policy:['bg_0','bg_1'].includes(background)?'gate':'report-only',width_css_px,style,orientation,dpr,phase_css_px,roles:pair.map(name=>`cat.${name}`),status:'PENDING_BROWSER_CALIBRATION',observed_line_core_rgb8:null,observed_distance:null});
-const index=Math.max(0,Math.min(product.length-1,Number(new URLSearchParams(location.search).get('case')||0)));
-const row=product[index]; const style=spec.contract.styles[row.style];
+const rawCase=new URLSearchParams(location.search).get('case')??'0';
+const numericCase=Number(rawCase); const caseValid=Number.isFinite(numericCase);
+const index=caseValid?Math.max(0,Math.min(product.length-1,Math.floor(numericCase))):null;
+const row=caseValid?product[index]:null; const style=caseValid?spec.contract.styles[row.style]:null;
 const paths={horizontal:'M16 64 L144 64',vertical:'M80 16 L80 112',diagonal_45:'M24 104 L120 8',shallow_1_2:'M16 88 L144 40',curved:'M16 96 C48 18 108 116 144 28'};
-const dash=style.dasharray?`stroke-dasharray="${style.dasharray.join(' ')}"`:'';
+const dash=caseValid&&style.dasharray?`stroke-dasharray="${style.dasharray.join(' ')}"`:'';
 const warm='<defs><filter id="g1-warm" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0 0 .74 0 0 0 0 0 .53 0 0 0 0 0 1 0"/></filter></defs>';
-const filter=row.state==='transformed'?' filter="url(#g1-warm)"':'';
-const roleNames=row.roles.map(role=>role.slice(4));
-document.getElementById('probe').innerHTML=`<svg data-case="${index}" data-planned-id="${row.id}" data-status="PENDING_BROWSER_CALIBRATION" width="160" height="128" viewBox="0 0 160 128">${warm}<g${filter}><rect width="160" height="128" fill="${spec.surfaces[row.background]}"/><g transform="translate(${row.phase_css_px[0]} ${row.phase_css_px[1]})"><path d="${paths[row.orientation]}" fill="none" stroke="${spec.categorical[roleNames[0]]}" stroke-width="${row.width_css_px}" stroke-linecap="${style.linecap}" stroke-dashoffset="${style.dashoffset}" ${dash}/><path d="${paths[row.orientation]}" transform="translate(0 8)" fill="none" stroke="${spec.categorical[roleNames[1]]}" stroke-width="${row.width_css_px}" stroke-linecap="${style.linecap}" stroke-dashoffset="${style.dashoffset}" ${dash}/></g></g></svg>`;
-document.getElementById('status').textContent+=` · ${row.id} · ${JSON.stringify(row)}`;
+if(!caseValid){document.getElementById('status').textContent=`ERROR · invalid ?case=${rawCase} · expected a finite number`;document.getElementById('probe').innerHTML='<strong data-status="ERROR">ERROR: invalid case selector</strong>';}
+else{const filter=row.state==='transformed'?' filter="url(#g1-warm)"':'';
+ const roleNames=row.roles.map(role=>role.slice(4));
+ document.getElementById('probe').innerHTML=`<svg data-case="${index}" data-planned-id="${row.id}" data-status="PENDING_BROWSER_CALIBRATION" width="160" height="128" viewBox="0 0 160 128">${warm}<g${filter}><rect width="160" height="128" fill="${spec.surfaces[row.background]}"/><g transform="translate(${row.phase_css_px[0]} ${row.phase_css_px[1]})"><path d="${paths[row.orientation]}" fill="none" stroke="${spec.categorical[roleNames[0]]}" stroke-width="${row.width_css_px}" stroke-linecap="${style.linecap}" stroke-dashoffset="${style.dashoffset}" ${dash}/><path d="${paths[row.orientation]}" transform="translate(0 8)" fill="none" stroke="${spec.categorical[roleNames[1]]}" stroke-width="${row.width_css_px}" stroke-linecap="${style.linecap}" stroke-dashoffset="${style.dashoffset}" ${dash}/></g></g></svg>`;
+ document.getElementById('status').textContent+=` · ${row.id} · ${JSON.stringify(row)}`;}
 </script>

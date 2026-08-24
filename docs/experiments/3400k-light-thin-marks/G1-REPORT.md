@@ -1,39 +1,70 @@
-# G1 Phase 2A: deterministic core checkpoint
+# G1 Phase 2B: real-Chromium raster calibration checkpoint
 
-**Verdict: `CORE_READY_BROWSER_PENDING`. Phase 3 candidate search remains blocked only until the Phase 2B browser machinery gates pass.**
+**Verdict: `BROWSER_CALIBRATION_PASS`. Browser machinery is sufficient and `phase3_search_authorized=true`. Production promotion remains blocked.**
 
-The current 3400K Light categorical bank remains byte-frozen at `c4c25e480912f8f54cbd8c992c0b6eb520dc0b8f`. No candidate search, candidate colours, `categorical_line` bank, production palette edit, or export edit is present.
+The current 3400K Light categorical bank remains byte-frozen at `c4c25e480912f8f54cbd8c992c0b6eb520dc0b8f`. The calibration used approved implementation input `922ba7faa45ccdb56e95356750d353c7602da78a`. No candidate search, candidate colours, `categorical_line` bank, production palette edit, or export edit is present.
 
-## What is ready
+## Capture and factoring
 
-- A complete **planned** raster matrix of 32,400 cases covering state × background × width × style × orientation × DPR × phase × all 15 categorical pairs.
-- Explicit line-core selection: coverage ≥ 0.5, max-coverage pixel nearest the centreline, exclusions for endpoints/joins/markers/crossings/dash transitions, then per-channel median.
-- Commanded solid identity in Oklab and transformed solid/composited-proxy reconnaissance in CAM16-UCS under pinned light-viewing engineering assumptions.
-- Complete analytical category-vs-foreground, benchmark-neutral, and report-only terminal matrices (600 scenario rows).
-- A named 45-sample asymmetric gain grid, a separate local-refinement protocol, and separate brightness uncertainty.
-- A preregistered 15-pair 2AFC visibility protocol with no results.
+- Real Chromium via GStack: 22,320 exact 160×128 tiles in 176 chunks, comprising 720 monochrome masks and 21,600 role/lane colour observations.
+- Each chunk used 128 eager same-origin `srcdoc` iframes and one chained `goto` + `screenshot`; each iframe rasterized at local `(0,0)`. DPR 1 and 2 were captured with screenshot scale equal to DPR.
+- The 2,160 canonical bases and ten exact role/lane observations reconstruct all 32,400 `planned-N` pair rows. All IDs and dimension mappings independently replayed exactly.
+- Browser time was 75.846 s at 294.282 tiles/s. Total capture, analysis, evidence serialization, and sentinels took 100.476 s (322.466 effective pair rows/s).
+- Eight deterministic standalone-vs-batch observation tiles matched at every retained station.
 
-## Metric ownership and viewing assumptions
+Inline SVG atlases and canvas `drawImage` are not release oracles. The tracked evidence is compact and factored; raw screenshots were temporary and removed.
 
-Commanded solid minimum: **cat.three vs cat.six = 16.6381 ΔE_OK**.
+## Line-core policy and support
 
-Primary transformed solid CAM16-UCS minima are reported separately, never averaged:
+Chromium supplied SVG arc lengths, points, and tangents. Monochrome black-on-white masks define encoded-sRGB coverage as `1 - mean(mask_rgb8)/255`. Stations exclude endpoints and dash transitions; the supported paths contain no joins, markers, or crossings in the measured core. Each longitudinal normal slice chooses the highest-coverage pixel, then nearest centerline, then device `y/x`; coverage below 0.5 is unsupported. Aggregation is per-channel median.
 
-| Surface | Pair | CAM16-UCS distance |
-|---|---|---:|
-| bg_0 | cat.one vs cat.five | 19.5185 |
-| bg_1 | cat.one vs cat.five | 19.5293 |
-| bg_2 | cat.one vs cat.five | 19.5303 |
+All 720 masks, 21,600 observations, and 32,400 pair rows were supported. There were **0 unsupported** and **0 errored** rows. The factored artifacts preserve sample coordinates, coverage, observed RGB8, reconstructible predicted RGB8/residuals, and pair references:
 
-The input is encoded sRGB in [0,1]. Coverage compositing occurs in encoded sRGB; gains `[1, .74, .53]` are applied **after** rasterization/compositing. `colour-science` receives XYZ on its 0–1 reference scale, D65 white normalized to Y=1 (mapped to Yw=100 cd/m²), and explicit CAM16 `L_A`, `Y_b`, and surround values. Primary conditions are Dim, flare 0, `L_A=14.2`, with per-surface `Y_b` 56.18/49.82/44.32. Sensitivity conditions are Average, flare 0.0075, `L_A` 9.5 and 19, with transformed-white-adapted `Y_b` 94.77/84.05/74.76. Flare is implemented as additive `flare_fraction × XYZ_D65_white` on the transformed stimulus before CAM16; it is an engineering sensitivity term, not measured device glare. Every scenario is reported separately and never averaged.
+- `raster-masks.json`
+- `raster-observations.json`
+- `raster-baseline.json`
+- `raster-verification.json`
 
-`compute_proxy_frontier(..., transformed_metric=callable)` routes every transformed solid and proxy distance through that callable. `proxy_acceptance` requires correlation ≥0.95 **and** maximum pair/background MAE ≤0.75; either bad polarity fails.
+## Calibration acceptance
 
-## Browser and human truth boundaries
+The calibration engineering metric is Oklab Euclidean distance ×100 (ΔE_OK). The 0.95 correlation floor applies only to the global pooled sample set. Local correlations are diagnostic and are not represented as individually meeting that floor.
 
-`raster-baseline.json` is a planned-case ledger, **not observed browser measurements**. Every row is `PENDING_BROWSER_CALIBRATION`, with observed RGB and distances null. `proxy-calibration.json` contains the Phase 2B schema and acceptance thresholds but no samples, coordinates, observed RGB, correlation, MAE, or PASS. The browser release oracle remains mandatory.
+| Gate | Limit | Observed | Result |
+|---|---:|---:|---|
+| Global pooled correlation | ≥0.95 | 0.99998140 | PASS |
+| Global pooled MAE | ≤0.75 ΔE_OK | 0.00836871 | PASS |
+| Global pooled p95 | report | 0.04308115 ΔE_OK | — |
+| Global pooled max | report | 0.74498721 ΔE_OK | — |
+| Worst gate pair/background MAE | ≤0.75 ΔE_OK | 0.01483597 | PASS |
 
-Every width capacity is `UNKNOWN/UNPROVEN`. The 2AFC study has not run, so there is no visibility floor and no width PASS/FAIL. Analytical distances must not be relabelled as human capacity.
+Every one of the 30 `bg_0`/`bg_1` pair/background gates passed. All 15 `bg_2` report-only rows are disclosed separately. The worst individual planned row was `planned-21860` (tied by `planned-21875`): transformed `bg_1`, 1.5px solid diagonal_45, DPR1, `cat.one` vs `cat.six`, row MAE 0.38880236 ΔE_OK.
+
+RGB8 residuals over 6,717,600 channel values: MAE 0.02664851, p95 0, max 1; channel MAEs were `[0.02892283, 0.02750759, 0.02351509]`.
+
+## Transform-order structural pin
+
+The transformed tile places source-coloured background and stroke beneath one ancestor SVG `feColorMatrix`, with `color-interpolation-filters="sRGB"` and exact diagonal gains `[1, .74, .53]`. There are no pre-transformed literals. That source/DOM structure is the normative transform-after-raster/compositing proof. The unclipped diagonal encoded-sRGB model is linear and commutes with alpha compositing, so pixel agreement alone cannot establish operation order.
+
+## Current-bank numerical reconnaissance, not human capacity
+
+| Width | Gate rows | Pairs observed | Worst observed pair | Minimum observed ΔE_OK | Human capacity |
+|---:|---:|---:|---|---:|---|
+| 1.5px | 7,200 / 7,200 | 15 / 15 | cat.five vs cat.six (`planned-17445`) | 8.45061119 | UNKNOWN/UNPROVEN |
+| 2.0px | 7,200 / 7,200 | 15 / 15 | cat.five vs cat.six (`planned-19350`) | 11.72933559 | UNKNOWN/UNPROVEN |
+| 3.0px | 7,200 / 7,200 | 15 / 15 | cat.five vs cat.six (`planned-19815`) | 12.07960554 | UNKNOWN/UNPROVEN |
+
+These are exact browser/proxy feasibility observations for the current bank, not a visibility floor, forced-choice result, width PASS/FAIL, or human capacity claim.
+
+## Authorization and remaining gates
+
+Phase 3 candidate search is authorized because coverage support is complete and every declared browser calibration gate passed. This does not authorize a candidate, palette change, or promotion.
+
+Before any production promotion:
+
+1. Run the preregistered multi-observer 2AFC visibility study.
+2. Calibrate the final visibility floor on held-out human responses.
+3. Assign width capacity only from that human evidence.
+4. Pass G2 and G3 promotion gates.
 
 ## Review
 
@@ -43,14 +74,5 @@ Every width capacity is `UNKNOWN/UNPROVEN`. The 2AFC study has not run, so there
 - [Commanded 390×844 phone specimen](review/g1-phone-commanded.svg)
 - [Transformed 390×844 phone specimen](review/g1-phone-transformed.svg)
 - [Deterministic browser probe](review/g1-browser-probe.html)
-
-The SVGs are structural review aids, not browser pixels. `bg_0` and `bg_1` are gate surfaces; `bg_2` remains report-only.
-
-## Phase 2B sequencing
-
-1. Run the deterministic probe in real Chromium at the pinned DPRs/viewports and record renderer provenance.
-2. Derive coverage and line-core coordinates from actual raster pixels; do not invent them.
-3. Store predicted/observed RGB8 samples and evaluate pooled correlation plus every pair/background MAE gate.
-4. Treat a missing browser binary as SKIP and every launch/probe/runtime failure as ERROR.
-5. When the browser machinery gates pass, the autonomous process may begin Phase 3 candidate search without inventing human results.
-6. Run the preregistered multi-observer 2AFC study and held-out floor calibration before declaring a final visibility floor, assigning width capacity, or promoting any palette to production. The human study may follow or overlap candidate search; it is not a prerequisite for starting that search.
+- [Calibration summary](proxy-calibration.json)
+- [Observed pair ledger](raster-baseline.json)

@@ -1,0 +1,16 @@
+{
+  "approved_head": "922ba7faa45ccdb56e95356750d353c7602da78a",
+  "mask_records_verified": 720,
+  "matched_pair_station_samples_replayed": 3358800,
+  "maximum_rounded_metric_difference": 4.998438718484266e-09,
+  "pair_rows_replayed": 32400,
+  "planned_id_mapping_rows_verified": 32400,
+  "provenance": {
+    "raster_ledger_sha256": "052b49ae052322f2a3a7bf1830bb670dfe1ef7983c51edb42049d1eeedae09f2",
+    "raster_masks_sha256": "58304e5c7207517390e2d0b268fb0f502e1d4e7031ad22280e68dbc0f677754b",
+    "raster_observations_sha256": "b38087d6054db305088b21d4830af224654b80a0175b2f79a8a3dc2e662b467f",
+    "verifier_sha256": "f2bbb8064b8f69408543badbe0794d5f7b257287a3ad2ace730d30c3eedf63cf"
+  },
+  "role_observations_verified": 21600,
+  "status": "PASS"
+}

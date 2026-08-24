@@ -25,13 +25,9 @@ CORE_OUTPUTS = (
 )
 G1_CORE_OUTPUTS = (
     "viewing-conditions.json",
-    "raster-baseline.json",
     "neutral-confusability.json",
     "gain-grid.json",
     "visibility-trial-protocol.json",
-    "proxy-calibration.json",
-    "G1-REPORT.md",
-    "review/g1-index.html",
     "review/g1-commanded.svg",
     "review/g1-transformed.svg",
     "review/g1-phone-commanded.svg",
@@ -495,15 +491,21 @@ def test_g1_browser_payload_case_mapping_matches_planned_ledger() -> None:
             "dpr": dpr,
             "phase_css_px": list(phase),
             "roles": [f"cat.{name}" for name in pair],
-            "status": "PENDING_BROWSER_CALIBRATION",
-            "observed_line_core_rgb8": None,
-            "observed_distance": None,
         }
-        assert reconstructed == ledger[index]
+        assert reconstructed == {key: ledger[index][key] for key in reconstructed}
 
     assert "Object.keys(spec.categorical)" not in probe
     assert "Object.keys(spec.contract.styles)" not in probe
     assert "data-planned-id" in probe
+
+
+def test_g1_browser_probe_malformed_cases_are_never_blank() -> None:
+    probe = (EXPERIMENT / "review/g1-browser-probe.html").read_text()
+    assert "Number.isFinite(numericCase)" in probe
+    assert "Math.floor(numericCase)" in probe
+    assert "Math.max(0,Math.min(product.length-1" in probe
+    assert 'data-status="ERROR"' in probe
+    assert "ERROR: invalid case selector" in probe
 
 
 def test_g1_review_sheets_contain_real_structurally_tagged_features() -> None:
@@ -616,9 +618,15 @@ def test_g1_artifact_contract_is_complete_and_honest() -> None:
     assert raster["browser_release_oracle"] is True
     assert raster["planned_case_count"] == 32_400
     assert len(raster["matrix"]) == 2 * 3 * 3 * 3 * 5 * 2 * 4 * 15
-    assert {row["status"] for row in raster["matrix"]} == {"PENDING_BROWSER_CALIBRATION"}
-    assert all(row["observed_line_core_rgb8"] is None for row in raster["matrix"])
-    assert all(row["observed_distance"] is None for row in raster["matrix"])
+    assert {row["status"] for row in raster["matrix"]} == {"PASS"}
+    assert all(row["observed_line_core_rgb8"] is not None for row in raster["matrix"])
+    assert all(row["observed_distance"] is not None for row in raster["matrix"])
+    assert all(row["proxy_prediction"] is not None for row in raster["matrix"])
+    assert all(row["proxy_error"] is not None for row in raster["matrix"])
+    assert raster["observed_case_count"] == 32_400
+    assert raster["unsupported_case_count"] == 0
+    assert raster["phase3_search_authorized"] is True
+    assert raster["production_promotion_blocked"] is True
     assert set(raster["width_capacity"]) == {"1.5", "2.0", "3.0"}
     assert all(
         row["human_capacity_status"] == "UNKNOWN/UNPROVEN"
@@ -706,24 +714,53 @@ def test_g1_artifact_contract_is_complete_and_honest() -> None:
         assert len(assignments) == 360
         assert all(assignments.count(combination) == 24 for combination in set(assignments))
 
-    assert calibration["status"] == "PENDING_BROWSER_CALIBRATION"
+    assert calibration["status"] == "PASS"
     assert calibration["full_image_hash_used"] is False
-    assert calibration["acceptance"] == {
-        "minimum_global_pooled_correlation": 0.95,
-        "maximum_pair_background_mae": 0.75,
-        "observed_global_pooled_correlation": None,
-        "observed_pair_background_mae_max": None,
-        "status": "NOT_EVALUATED",
-    }
+    assert calibration["acceptance"]["status"] == "PASS"
+    assert calibration["acceptance"]["global_pooled_correlation"] >= 0.95
+    assert calibration["acceptance"]["global_pooled_mae_delta_e_ok"] <= 0.75
+    assert calibration["acceptance"]["observed_gate_pair_background_mae_max_delta_e_ok"] <= 0.75
+    assert all(
+        row["status"] == "PASS"
+        for row in calibration["acceptance"]["pair_background"]
+        if row["background_policy"] == "gate"
+    )
     assert calibration["provenance"]["chromium_version"] is None
-    assert calibration["provenance"]["chromium_version_status"] == ("pending-browser-calibration")
-    assert calibration["samples"] == []
-    assert calibration["coordinates"] is None
+    assert calibration["provenance"]["chromium_version_status"] == "unavailable-unclaimed"
+    assert calibration["provenance"]["browser_status"] == {
+        "mode": "launched",
+        "status": "healthy",
+    }
+    assert calibration["counts"]["observed_pair_rows"] == 32_400
+    assert calibration["counts"]["unsupported_pair_rows"] == 0
+    assert calibration["phase3_search_authorized"] is True
 
     report = (EXPERIMENT / "G1-REPORT.md").read_text()
-    assert "may begin Phase 3 candidate search without inventing human results" in report
-    assert "not a prerequisite for starting that search" in report
-    assert "before declaring a final visibility floor" in report
+    assert "Phase 3 candidate search is authorized" in report
+    assert "UNKNOWN/UNPROVEN" in report
+    assert "Before any production promotion" in report
+
+
+def test_g1_browser_evidence_hashes_and_independent_replay_are_fresh(tmp_path: Path) -> None:
+    calibration = json.loads((EXPERIMENT / "proxy-calibration.json").read_text())
+    raster = json.loads((EXPERIMENT / "raster-baseline.json").read_text())
+    for key, filename in (
+        ("raster_masks", "raster-masks.json"),
+        ("raster_observations", "raster-observations.json"),
+    ):
+        expected = hashlib.sha256((EXPERIMENT / filename).read_bytes()).hexdigest()
+        assert calibration["evidence"][key]["sha256"] == expected
+        assert raster["evidence"][f"{key}_sha256"] == expected
+    assert (
+        calibration["evidence"]["raster_ledger"]["sha256"]
+        == hashlib.sha256((EXPERIMENT / "raster-baseline.json").read_bytes()).hexdigest()
+    )
+    verifier = load_module("g1_evidence_verify.py", "thin_marks_g1_evidence_replay")
+    output = tmp_path / "verification.json"
+    replayed = verifier.verify_evidence(output)
+    assert replayed == json.loads((EXPERIMENT / "raster-verification.json").read_text())
+    assert replayed["pair_rows_replayed"] == 32_400
+    assert replayed["planned_id_mapping_rows_verified"] == 32_400
 
 
 def test_g1_core_outputs_are_byte_deterministic(tmp_path: Path) -> None:
@@ -749,10 +786,68 @@ def test_g1_browser_missing_is_skip_but_runtime_failure_is_error(
     assert "runtime/probe failure" in result["reason"]
 
     fake.write_text("#!/bin/sh\nprintf 'Status: healthy\\nMode: launched\\n'\n")
-    pending = browser.run_validation(output_dir=tmp_path)
-    assert pending["status"] == "PENDING_BROWSER_CALIBRATION"
-    assert pending["samples"] == []
-    assert pending["acceptance"]["status"] == "NOT_EVALUATED"
+    failed_probe = browser.run_validation(output_dir=tmp_path)
+    assert failed_probe["status"] == "ERROR"
+    assert "runtime/probe failure" in failed_probe["reason"]
+
+
+def test_g1_changed_role_observation_changes_reconstructed_pair() -> None:
+    browser = load_module("g1_browser_validate.py", "thin_marks_g1_reconstruct")
+    mask = {"samples": [[10.0, 1.0, 1.0, 1, 1, 1.0, 0.0]]}
+    base = {"state": "commanded", "background": "bg_0"}
+    baseline = {
+        "categorical": {"one": "#ff0000", "two": "#0000ff"},
+        "surfaces": {"bg_0": "#ffffff"},
+    }
+    left = {
+        "role": "cat.one",
+        "sample_count": 1,
+        "observed_rgb8_base64": browser._encode_rgb8(np.array([[255, 0, 0]], dtype=np.uint8)),
+    }
+    right = {
+        "role": "cat.two",
+        "sample_count": 1,
+        "observed_rgb8_base64": browser._encode_rgb8(np.array([[0, 0, 255]], dtype=np.uint8)),
+    }
+    original = browser.reconstruct_pair_metrics(left, right, mask, mask, base, baseline)
+    left["observed_rgb8_base64"] = browser._encode_rgb8(np.array([[0, 255, 0]], dtype=np.uint8))
+    changed = browser.reconstruct_pair_metrics(left, right, mask, mask, base, baseline)
+    assert original["observed_distance"] != changed["observed_distance"]
+
+
+def test_g1_mask_core_polarity_selects_darkest_max_coverage_pixel() -> None:
+    browser = load_module("g1_browser_validate.py", "thin_marks_g1_mask_polarity")
+    mask = np.full((5, 5, 3), 255, dtype=np.uint8)
+    mask[2, 2] = 0
+    mask[2, 1] = 127
+    samples = browser.select_line_core(
+        mask,
+        [{"s": 1.0, "x": 2.5, "y": 2.5, "tx": 1.0, "ty": 0.0}],
+        1.5,
+        1,
+        (0.0, 0.0),
+        0,
+    )
+    assert samples[0][3:6] == [2, 2, 1.0]
+
+
+def test_g1_bad_contract_pair_background_mae_blocks_acceptance() -> None:
+    browser = load_module("g1_browser_validate.py", "thin_marks_g1_bad_mae")
+    rows = [
+        {
+            "status": "PASS",
+            "state": "commanded",
+            "background": "bg_0",
+            "dpr": 1,
+            "roles": ["cat.five", "cat.six"],
+            "_observed_by_station": [1.0, 2.0, 3.0],
+            "_predicted_by_station": [2.0, 3.0, 4.0],
+            "_absolute_residual_by_station": [1.0, 1.0, 1.0],
+        }
+    ]
+    result = browser.evaluate_acceptance(rows)
+    assert result["status"] == "FAIL"
+    assert result["observed_gate_pair_background_mae_max_delta_e_ok"] == 1.0
 
 
 @pytest.mark.skipif(
@@ -764,8 +859,6 @@ def test_optional_real_browser_g1_validation(tmp_path: Path) -> None:
     result = browser.run_validation(output_dir=tmp_path)
     if result["status"] == "SKIP":
         pytest.skip(result["reason"])
-    if result["status"] == "PENDING_BROWSER_CALIBRATION":
-        pytest.skip(result["reason"])
     assert result["status"] == "PASS"
     assert result["acceptance"]["global_pooled_correlation"] >= 0.95
-    assert result["acceptance"]["maximum_pair_background_mae"] <= 0.75
+    assert result["acceptance"]["observed_gate_pair_background_mae_max_delta_e_ok"] <= 0.75
