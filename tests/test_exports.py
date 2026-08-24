@@ -230,6 +230,31 @@ def test_palette_choice_links_jump_to_their_overviews() -> None:
         assert readme.index(heading) < readme.index(image) < readme.index(link)
 
 
+def test_palette_choice_table_reports_each_role_bank_capacity() -> None:
+    readme = (ROOT / "README.md").read_text()
+    manifest = json.loads((ROOT / "palettes/ember.json").read_text())
+    uses = {
+        "3400k-dark": "general-purpose dark interfaces",
+        "3400k-light": "neutral daytime light interfaces",
+        "2000k-dark": "Redshift near 2000 K",
+        "1200k-dark": "extreme 1200 K filtering",
+    }
+    assert (
+        "| Palette | Choose it for | BG colors | FG colors | Categories | Terminal accents |"
+        in readme
+    )
+    for slug, use in uses.items():
+        family = manifest["families"][slug]
+        foreground_count = sum(role.startswith("fg_") for role in family["surfaces"])
+        row = (
+            f"| [`{slug}`](#{slug}) | {use} | {family['background_surface_count']} | "
+            f"{foreground_count} | {len(family['categorical'])} | "
+            f"{family['terminal_semantic_color_count']} |"
+        )
+        assert row in readme
+    assert "BG counts are unique colors." in readme
+
+
 def test_readme_presents_the_finished_product_without_branch_history() -> None:
     readme = (ROOT / "README.md").read_text()
     first_product_heading = readme.index("## The four palettes")

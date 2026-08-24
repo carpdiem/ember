@@ -75,12 +75,15 @@ filter before judging them, or your screen applies the transform a second time.
 
 ## Choose a palette
 
-| Palette | Choose it for | Categories |
-|---|---|---:|
-| [`3400k-dark`](#3400k-dark) | general-purpose dark interfaces | 6 |
-| [`3400k-light`](#3400k-light) | neutral daytime light interfaces | 6 |
-| [`2000k-dark`](#2000k-dark) | Redshift near 2000 K | 4 |
-| [`1200k-dark`](#1200k-dark) | extreme 1200 K filtering | 3 |
+| Palette | Choose it for | BG colors | FG colors | Categories | Terminal accents |
+|---|---|---:|---:|---:|---:|
+| [`3400k-dark`](#3400k-dark) | general-purpose dark interfaces | 5 | 3 | 6 | 6 |
+| [`3400k-light`](#3400k-light) | neutral daytime light interfaces | 6 | 3 | 6 | 6 |
+| [`2000k-dark`](#2000k-dark) | Redshift near 2000 K | 4 | 3 | 4 | 4 |
+| [`1200k-dark`](#1200k-dark) | extreme 1200 K filtering | 4 | 3 | 3 | 3 |
+
+BG counts are unique colors. Every palette still exports all six `bg_0…bg_5` role names;
+deeper dark palettes intentionally alias adjacent roles.
 
 Start with `3400k-dark` for a dark interface or `3400k-light` for a light one. Choose
 `2000k-dark` or `1200k-dark` only when your filter runs near those deeper settings.
