@@ -128,6 +128,9 @@ code, pre, kbd{ font-family:var(--font-mono); }
 .pp-dot[data-cat="6"]{ background:var(--ember-category-six); }
 .pp[aria-pressed="true"]{ color:var(--ember-fg-0); }
 .pp[aria-pressed="true"]::before{ border-color:var(--ember-terminal-red); }
+.pp[data-palette="3400k-light"][aria-pressed="true"]::before{
+  border-color:var(--ember-category-three);
+}
 .pp .pp-abbr{ display:none; }
 @media (max-width:700px){
   .chrome{ padding:.4rem .75rem; }
