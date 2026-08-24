@@ -679,11 +679,11 @@
             }
           },
           "categorical": [
-            "#6CA5E4",
             "#EFAF71",
             "#2D8B7E",
-            "#68C297",
             "#935E47",
+            "#6CA5E4",
+            "#68C297",
             "#C67BAA"
           ],
           "categorical_trials": {
@@ -1044,7 +1044,7 @@
             "transformed_background_contrast_bg0_min": 3.0094340768351517,
             "transformed_background_contrast_all_surfaces_min": 2.413224910118349,
             "normal_hue_gap_degrees": 20.195152270015,
-            "normal_mean_chroma": 0.10075722173989632,
+            "normal_mean_chroma": 0.10075722173989633,
             "normal_max_chroma": 0.11061708036097974,
             "normal_semantic_hue_error_max": null,
             "terminal_role_contract": null,
@@ -4193,6 +4193,25 @@
           "search": {
             "per_count": {},
             "note": "current lane is the shipped palette scored verbatim; no surface search applied"
+          },
+          "categorical_ordering": {
+            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "permutation_from_search_order": [
+              1,
+              2,
+              4,
+              0,
+              3,
+              5
+            ],
+            "stable_across_lanes": true,
+            "prefix_transformed_pair_minima_cam16_ucs": [
+              47.68387544142455,
+              21.260508174401163,
+              17.544733745911454,
+              17.065687908085106,
+              15.779196901217356
+            ]
           }
         },
         "halfway": {
@@ -4858,11 +4877,11 @@
             }
           },
           "categorical": [
-            "#6BA0DE",
             "#DEA460",
             "#2B8B7F",
-            "#71CFA5",
             "#915E42",
+            "#6BA0DE",
+            "#71CFA5",
             "#C7779E"
           ],
           "categorical_trials": {
@@ -5223,7 +5242,7 @@
             "transformed_background_contrast_bg0_min": 3.0319416987235734,
             "transformed_background_contrast_all_surfaces_min": 2.3170814149436176,
             "normal_hue_gap_degrees": 20.025772894221916,
-            "normal_mean_chroma": 0.10088017351778873,
+            "normal_mean_chroma": 0.10088017351778872,
             "normal_max_chroma": 0.11070391750271806,
             "normal_semantic_hue_error_max": null,
             "terminal_role_contract": null,
@@ -8415,7 +8434,26 @@
             },
             "count_choice_rule": "shared dark anchor; floating warm light anchor; interiors refined to even CAM16-UCS steps >=3.84"
           },
-          "count_choice_rule": "shared dark anchor; floating warm light anchor; interiors refined to even CAM16-UCS steps >=3.84"
+          "count_choice_rule": "shared dark anchor; floating warm light anchor; interiors refined to even CAM16-UCS steps >=3.84",
+          "categorical_ordering": {
+            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "permutation_from_search_order": [
+              1,
+              2,
+              4,
+              0,
+              3,
+              5
+            ],
+            "stable_across_lanes": true,
+            "prefix_transformed_pair_minima_cam16_ucs": [
+              47.68387544142455,
+              21.260508174401163,
+              17.544733745911454,
+              17.065687908085106,
+              15.779196901217356
+            ]
+          }
         }
       }
     },
@@ -9092,10 +9130,10 @@
             }
           },
           "categorical": [
-            "#5BAEDE",
             "#E98FA0",
-            "#A36140",
-            "#9FE5AF"
+            "#5BAEDE",
+            "#9FE5AF",
+            "#A36140"
           ],
           "categorical_trials": {
             "4": {
@@ -10128,7 +10166,7 @@
             "transformed_background_contrast_bg0_min": 3.001075916243596,
             "transformed_background_contrast_all_surfaces_min": 2.5189850372037386,
             "normal_hue_gap_degrees": 38.786466822249594,
-            "normal_mean_chroma": 0.10452223594400971,
+            "normal_mean_chroma": 0.10452223594400972,
             "normal_max_chroma": 0.11054100457361546,
             "normal_semantic_hue_error_max": null,
             "terminal_role_contract": null,
@@ -13275,6 +13313,21 @@
           "search": {
             "per_count": {},
             "note": "current lane is the shipped palette scored verbatim; no surface search applied"
+          },
+          "categorical_ordering": {
+            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "permutation_from_search_order": [
+              1,
+              0,
+              3,
+              2
+            ],
+            "stable_across_lanes": true,
+            "prefix_transformed_pair_minima_cam16_ucs": [
+              47.62066579675576,
+              18.099755010233217,
+              16.420085769813202
+            ]
           }
         },
         "halfway": {
@@ -13940,10 +13993,10 @@
             }
           },
           "categorical": [
-            "#54B7E2",
             "#E99894",
-            "#A36043",
-            "#A8EDB1"
+            "#54B7E2",
+            "#A8EDB1",
+            "#A36043"
           ],
           "categorical_trials": {
             "4": {
@@ -18147,7 +18200,22 @@
             },
             "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84"
           },
-          "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84"
+          "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84",
+          "categorical_ordering": {
+            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "permutation_from_search_order": [
+              1,
+              0,
+              3,
+              2
+            ],
+            "stable_across_lanes": true,
+            "prefix_transformed_pair_minima_cam16_ucs": [
+              47.62066579675576,
+              18.099755010233217,
+              16.420085769813202
+            ]
+          }
         }
       }
     },
@@ -18464,9 +18532,9 @@
             }
           },
           "categorical": [
-            "#BB6572",
+            "#E9B76C",
             "#8FF0FF",
-            "#E9B76C"
+            "#BB6572"
           ],
           "categorical_trials": {
             "3": {
@@ -18950,26 +19018,26 @@
           ],
           "categorical_adoption": "optimized shipped-count trial infeasible; shipped bank retained",
           "categorical_metrics": {
-            "normal_pair_delta_e_ok": 20.715981254015855,
+            "normal_pair_delta_e_ok": 20.71598125401586,
             "transformed_pair_cam16_ucs": 11.433610245946921,
             "normal_foreground_clearance_by_role": [
-              13.397541645835206,
-              6.3189776988464725,
-              10.618407244919002
+              13.39754164583521,
+              6.318977698846474,
+              10.618407244918973
             ],
             "transformed_foreground_clearance_by_role_cam16_ucs": [
               5.422406051837465,
               6.124272168862388,
               7.698512346213538
             ],
-            "normal_foreground_clearance_min": 6.3189776988464725,
+            "normal_foreground_clearance_min": 6.318977698846474,
             "transformed_foreground_clearance_min_cam16_ucs": 5.422406051837465,
             "normal_background_contrast_min": 3.9698777838193955,
             "transformed_background_contrast_bg0_min": 3.1177182087365325,
             "transformed_background_contrast_all_surfaces_min": 2.727631960677998,
-            "normal_hue_gap_degrees": 65.03416246741412,
-            "normal_mean_chroma": 0.10468161350760648,
-            "normal_max_chroma": 0.11069245694036287,
+            "normal_hue_gap_degrees": 65.03416246741406,
+            "normal_mean_chroma": 0.10468161350760641,
+            "normal_max_chroma": 0.11069245694036262,
             "normal_semantic_hue_error_max": null,
             "terminal_role_contract": null,
             "sampled_gain_grid_kind": "unique 3x3 per nonzero gain axis",
@@ -21212,6 +21280,19 @@
           "search": {
             "per_count": {},
             "note": "current lane is the shipped palette scored verbatim; no surface search applied"
+          },
+          "categorical_ordering": {
+            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "permutation_from_search_order": [
+              2,
+              1,
+              0
+            ],
+            "stable_across_lanes": true,
+            "prefix_transformed_pair_minima_cam16_ucs": [
+              26.03556454045657,
+              11.081552392874142
+            ]
           }
         },
         "halfway": {
@@ -21517,9 +21598,9 @@
             }
           },
           "categorical": [
-            "#B76270",
+            "#F3AC74",
             "#8DEEFF",
-            "#F3AC74"
+            "#B76270"
           ],
           "categorical_trials": {
             "3": {
@@ -22000,11 +22081,11 @@
           ],
           "categorical_adoption": "shipped count retained after categorical-only validation",
           "categorical_metrics": {
-            "normal_pair_delta_e_ok": 22.004878350754684,
+            "normal_pair_delta_e_ok": 22.004878350754677,
             "transformed_pair_cam16_ucs": 14.137410230011705,
             "normal_foreground_clearance_by_role": [
               13.891788327607928,
-              9.685491756072159,
+              9.685491756072153,
               13.108032176679222
             ],
             "transformed_foreground_clearance_by_role_cam16_ucs": [
@@ -22012,14 +22093,14 @@
               8.452141868432033,
               7.684649122668624
             ],
-            "normal_foreground_clearance_min": 9.685491756072159,
+            "normal_foreground_clearance_min": 9.685491756072153,
             "transformed_foreground_clearance_min_cam16_ucs": 5.865514473761797,
             "normal_background_contrast_min": 3.3728720189983843,
             "transformed_background_contrast_bg0_min": 3.06626389417614,
             "transformed_background_contrast_all_surfaces_min": 2.6036639985977645,
-            "normal_hue_gap_degrees": 48.1178313894477,
-            "normal_mean_chroma": 0.1049407381053105,
-            "normal_max_chroma": 0.1103360607268129,
+            "normal_hue_gap_degrees": 48.117831389447815,
+            "normal_mean_chroma": 0.10494073810531046,
+            "normal_max_chroma": 0.1103360607268128,
             "normal_semantic_hue_error_max": null,
             "terminal_role_contract": null,
             "sampled_gain_grid_kind": "unique 3x3 per nonzero gain axis",
@@ -24284,7 +24365,20 @@
             },
             "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84"
           },
-          "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84"
+          "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84",
+          "categorical_ordering": {
+            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "permutation_from_search_order": [
+              2,
+              1,
+              0
+            ],
+            "stable_across_lanes": true,
+            "prefix_transformed_pair_minima_cam16_ucs": [
+              26.03556454045657,
+              11.081552392874142
+            ]
+          }
         }
       }
     }

@@ -786,6 +786,142 @@ def _categorical_has_five_percent_margin(
     return not misses, misses
 
 
+def apply_paired_categorical_ordering(
+    full: dict[str, Any], base: Any, profile_record: dict[str, Any]
+) -> None:
+    """Order one profile's fixed categorical sets for strongest useful prefixes.
+
+    The same permutation is applied to current and halfway so category identity
+    survives lane changes.  Slot 1 maximizes sampled-gain bg_0 contrast, then
+    transformed/commanded foreground clearance.  Each later slot greedily
+    maximizes the minimum transformed pair distance to the selected prefix,
+    with commanded Oklab separation as the first tiebreaker.
+    """
+
+    lanes = [profile_record["lanes"][lane] for lane in LANES]
+    count = len(lanes[0]["categorical"])
+    if any(len(record["categorical"]) != count for record in lanes):
+        raise RuntimeError(f"categorical lane counts differ for {base.slug}")
+
+    first_quality = [[float("inf"), float("inf"), float("inf")] for _ in range(count)]
+    pair_transformed = np.full((count, count), np.inf)
+    pair_commanded = np.full((count, count), np.inf)
+    for record in lanes:
+        values = tuple(record["categorical"])
+        foregrounds = tuple(record["foregrounds"])
+        day = srgb_to_oklab(hex_array(values))
+        foreground_day = srgb_to_oklab(hex_array(foregrounds))
+        day_clearance = (
+            np.linalg.norm(day[:, None] - foreground_day[None, :], axis=2).min(axis=1) * 100.0
+        )
+        lane_transformed_clearance = np.full(count, np.inf)
+        lane_contrast = np.full(count, np.inf)
+        for gains in full["sampled_gain_grid"](base.profile.gains):
+            transformed = full["cam16_ucs"](hex_array(values), gains)
+            foreground_transformed = full["cam16_ucs"](hex_array(foregrounds), gains)
+            lane_transformed_clearance = np.minimum(
+                lane_transformed_clearance,
+                np.linalg.norm(transformed[:, None] - foreground_transformed[None, :], axis=2).min(
+                    axis=1
+                ),
+            )
+            background = warm_transform(hex_to_srgb(record["surfaces"]["bg_0"]), gains)
+            lane_contrast = np.minimum(
+                lane_contrast,
+                np.asarray(
+                    [
+                        contrast_ratio(warm_transform(color, gains), background)
+                        for color in hex_array(values)
+                    ]
+                ),
+            )
+            for left in range(count):
+                for right in range(left + 1, count):
+                    distance = float(np.linalg.norm(transformed[left] - transformed[right]))
+                    pair_transformed[left, right] = min(pair_transformed[left, right], distance)
+                    pair_transformed[right, left] = pair_transformed[left, right]
+        for index in range(count):
+            first_quality[index][0] = min(first_quality[index][0], float(lane_contrast[index]))
+            first_quality[index][1] = min(
+                first_quality[index][1], float(lane_transformed_clearance[index])
+            )
+            first_quality[index][2] = min(first_quality[index][2], float(day_clearance[index]))
+        for left in range(count):
+            for right in range(left + 1, count):
+                distance = float(np.linalg.norm(day[left] - day[right]) * 100.0)
+                pair_commanded[left, right] = min(pair_commanded[left, right], distance)
+                pair_commanded[right, left] = pair_commanded[left, right]
+
+    remaining = set(range(count))
+    first = max(remaining, key=lambda index: (*first_quality[index], -index))
+    order = [first]
+    remaining.remove(first)
+    while remaining:
+        choice = max(
+            remaining,
+            key=lambda index: (
+                min(pair_transformed[index, selected] for selected in order),
+                min(pair_commanded[index, selected] for selected in order),
+                *first_quality[index],
+                -index,
+            ),
+        )
+        order.append(choice)
+        remaining.remove(choice)
+
+    prefix_pair_minima = []
+    for prefix_count in range(2, count + 1):
+        prefix_pair_minima.append(
+            min(
+                float(pair_transformed[order[left], order[right]])
+                for left in range(prefix_count)
+                for right in range(left + 1, prefix_count)
+            )
+        )
+
+    for lane, record in zip(LANES, lanes, strict=True):
+        record["categorical"] = [record["categorical"][index] for index in order]
+        lane_base = full["candidate_family"](
+            base,
+            expand_to_six(
+                tuple(
+                    record["surfaces"][key]
+                    for key in sorted(
+                        record["surfaces"],
+                        key=lambda value: int(value.split("_")[1]),
+                    )
+                )
+            ),
+            tuple(record["foregrounds"]),
+        )
+        metrics = full["accent_metrics"](
+            lane_base,
+            tuple(record["categorical"]),
+            tuple(record["foregrounds"]),
+            terminal=False,
+            sample_grid=True,
+        )
+        failures = full["categorical_failures"](
+            lane_base,
+            tuple(record["categorical"]),
+            metrics,
+            record["dependent_floors"],
+        )
+        if failures:
+            raise RuntimeError(f"categorical ordering invalidated {base.slug}/{lane}: {failures}")
+        record["categorical_metrics"] = metrics
+        record["categorical_ordering"] = {
+            "strategy": (
+                "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain "
+                "bg_0 contrast then fg clearance; later slots maximize transformed "
+                "CAM16-UCS prefix separation then commanded Oklab separation"
+            ),
+            "permutation_from_search_order": order,
+            "stable_across_lanes": True,
+            "prefix_transformed_pair_minima_cam16_ucs": prefix_pair_minima,
+        }
+
+
 def search_dependent_banks(
     full: dict[str, Any],
     base: Any,
@@ -1101,6 +1237,7 @@ def main() -> int:
             if "count_choice_rule" in frozen_lane:
                 lane_record["count_choice_rule"] = frozen_lane["count_choice_rule"]
             profile_record["lanes"][lane] = lane_record
+        apply_paired_categorical_ordering(full, base, profile_record)
         output["profiles"][slug] = profile_record
     output_frozen_sha = frozen_system_sha256(output)
     if output_frozen_sha != FROZEN_SYSTEM_SHA256:

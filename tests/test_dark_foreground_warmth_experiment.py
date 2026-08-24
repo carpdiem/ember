@@ -29,6 +29,15 @@ UNIVERSAL_FLOORS = (4.5, 3.5, 2.4)
 TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_RATIO = 1.7
 FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
+FROZEN_CATEGORICAL_SET_SHA256 = "3cef5e1cbb615ba1e29060b3a63bf322736df03abb11d5bfc969d594d583a059"
+FROZEN_NONCATEGORICAL_DEPENDENT_SHA256 = (
+    "308962524a6aa54f84267617aa38776e7fc5e0615151d57f432a7684097e24cf"
+)
+EXPECTED_CATEGORICAL_PERMUTATIONS = {
+    "3400k-dark": [1, 2, 4, 0, 3, 5],
+    "2000k-dark": [1, 0, 3, 2],
+    "1200k-dark": [2, 1, 0],
+}
 
 
 def family(slug: str):
@@ -220,6 +229,42 @@ def test_dependent_banks_present_with_adoption_provenance() -> None:
             assert not record["final_assembled_dependent_failures"]
             for trial in trials.values():
                 assert not any("terminal" in failure for failure in trial["failures"])
+
+
+def test_categorical_ordering_changes_only_slot_order() -> None:
+    data = load()
+    categorical_sets = {
+        slug: {lane: sorted(record["categorical"]) for lane, record in profile["lanes"].items()}
+        for slug, profile in data["profiles"].items()
+    }
+    noncategorical = {
+        slug: {
+            lane: {
+                "terminal": record["terminal"],
+                "sequential_anchors": record["sequential_anchors"],
+                "continuous_float_srgb": record["continuous_float_srgb"],
+            }
+            for lane, record in profile["lanes"].items()
+        }
+        for slug, profile in data["profiles"].items()
+    }
+    for payload, expected in (
+        (categorical_sets, FROZEN_CATEGORICAL_SET_SHA256),
+        (noncategorical, FROZEN_NONCATEGORICAL_DEPENDENT_SHA256),
+    ):
+        serialized = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+        assert hashlib.sha256(serialized).hexdigest() == expected
+
+    for slug, profile in data["profiles"].items():
+        permutations = {
+            tuple(record["categorical_ordering"]["permutation_from_search_order"])
+            for record in profile["lanes"].values()
+        }
+        assert permutations == {tuple(EXPECTED_CATEGORICAL_PERMUTATIONS[slug])}
+        assert all(
+            record["categorical_ordering"]["stable_across_lanes"]
+            for record in profile["lanes"].values()
+        )
 
 
 def test_sequential_maps_recompute_independently() -> None:
