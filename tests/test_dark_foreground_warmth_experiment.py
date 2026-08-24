@@ -29,12 +29,13 @@ UNIVERSAL_FLOORS = (4.5, 3.5, 2.4)
 TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_RATIO = 1.7
 FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
+APPROVED_ARTIFACT_SHA256 = "3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe"
 FROZEN_CATEGORICAL_SET_SHA256 = "3cef5e1cbb615ba1e29060b3a63bf322736df03abb11d5bfc969d594d583a059"
 FROZEN_TERMINAL_SHA256 = "1a005af88f35c4b810d4ebad0898a0a4353628e240f03d48d9204d2a8af91f8c"
-EXPECTED_CATEGORICAL_PERMUTATIONS = {
-    "3400k-dark": [1, 2, 4, 0, 3, 5],
-    "2000k-dark": [1, 0, 3, 2],
-    "1200k-dark": [2, 1, 0],
+EXPECTED_BACKGROUND_ALIAS_INDICES = {
+    4: [0, 0, 1, 2, 3, 3],
+    5: [0, 0, 1, 2, 3, 4],
+    6: [0, 1, 2, 3, 4, 5],
 }
 
 
@@ -80,6 +81,7 @@ def test_dependent_bank_schema_and_frozen_lane_structure() -> None:
     data = load()
     assert data["schema"] == 5
     assert data["frozen_system"]["sha256"] == FROZEN_SYSTEM_SHA256
+    assert data["approved_artifact_freeze"]["sha256"] == APPROVED_ARTIFACT_SHA256
     frozen = {
         slug: {
             lane: {
@@ -93,6 +95,8 @@ def test_dependent_bank_schema_and_frozen_lane_structure() -> None:
     }
     payload = json.dumps(frozen, sort_keys=True, separators=(",", ":")).encode()
     assert hashlib.sha256(payload).hexdigest() == FROZEN_SYSTEM_SHA256
+    search = runpy.run_path(str(EXPERIMENT / "search_transformed_first.py"))
+    assert search["approved_artifact_sha256"](data) == APPROVED_ARTIFACT_SHA256
     for slug in PROFILES:
         profile = data["profiles"][slug]
         assert set(profile["lanes"]) == set(LANES)
@@ -102,6 +106,11 @@ def test_dependent_bank_schema_and_frozen_lane_structure() -> None:
             record = lane_record(data, slug, lane)
             assert record["bg_count"] >= 3
             assert len(lane_surfaces(record)) == record["bg_count"]
+            assert (
+                record["background_role_alias_indices"]
+                == EXPECTED_BACKGROUND_ALIAS_INDICES[record["bg_count"]]
+            )
+            assert list(record["background_role_contract"]) == [f"bg_{i}" for i in range(6)]
             assert sorted(record["surfaces"]) == [f"bg_{i}" for i in range(record["bg_count"])]
             assert len(record["foregrounds"]) == 3
             if lane == "current":
@@ -246,16 +255,29 @@ def test_categorical_ordering_changes_only_slot_order() -> None:
         serialized = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
         assert hashlib.sha256(serialized).hexdigest() == expected
 
-    for slug, profile in data["profiles"].items():
+    for profile in data["profiles"].values():
         permutations = {
             tuple(record["categorical_ordering"]["permutation_from_search_order"])
             for record in profile["lanes"].values()
         }
-        assert permutations == {tuple(EXPECTED_CATEGORICAL_PERMUTATIONS[slug])}
+        assert len(permutations) == 1
         assert all(
             record["categorical_ordering"]["stable_across_lanes"]
             for record in profile["lanes"].values()
         )
+        assert all(
+            record["categorical_ordering"]["semantic_families"][:3]
+            == ["warm amber", "cool blue/cyan", "rose/magenta"]
+            for record in profile["lanes"].values()
+        )
+        ordering = profile["lanes"]["halfway"]["categorical_ordering"]
+        for assigned, target in zip(
+            ordering["assigned_mean_commanded_hues_degrees"],
+            ordering["semantic_target_hues_degrees"],
+            strict=True,
+        ):
+            angular_error = abs((assigned - target + 180.0) % 360.0 - 180.0)
+            assert angular_error <= 30.0
 
 
 def test_profile_specific_sequential_optimization_contracts() -> None:
@@ -295,7 +317,9 @@ def test_sequential_maps_recompute_independently() -> None:
             record = lane_record(data, slug, lane)
             surfaces_six = lane_surfaces(record)
             if len(surfaces_six) < 6:
-                surfaces_six = surfaces_six + (surfaces_six[-1],) * (6 - len(surfaces_six))
+                surfaces_six = tuple(
+                    surfaces_six[index] for index in record["background_role_alias_indices"]
+                )
             candidate = full["candidate_family"](
                 base,
                 surfaces_six,

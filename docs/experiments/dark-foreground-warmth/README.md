@@ -2,21 +2,23 @@
 
 > **Branch:** `exp/dark-foreground-warmth`<br>
 > **Status:** isolated experiment; not a production palette update<br>
-> **Live comparison:** [open `index.html`](index.html)
+> **Live comparison:** [open `index.html`](index.html)<br>
+> **Promotion contract:** [role/alias and remaining-work audit](promotion-readiness.md)
 
 ## Bottom line
 
 Design the seen state first: even transformed distinctness binds before commanded warmth; leftover exact-Hex8 freedom buys the halfway hue step for ink and surfaces.
 
-This dependent-bank pass freeze-locks the already approved current and halfway backgrounds/foregrounds, then redesigns only categorical, terminal, and sequential banks. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
+The complete approved artifact is freeze-locked at `3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe`. It covers profile gains; current and halfway backgrounds/foregrounds; ordered categorical semantic slots; terminal banks and aliases; canonical float and Hex8 sequential ramps; and their metric/selection contracts. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
 
 ## Methodology
 
 - **Transformed-first gating.** Even the *transformed* (warm-display simulated) appearance must keep distinct surfaces and readable text before any commanded-warmth objective is scored. This is the pass's central discipline: the seen state is designed first.
 - **Variable surface count.** The halfway lane searches background counts 3–6 per profile; each count gets a bounded exact-Hex8 search with deterministic seeds. Leftover byte freedom inside the ±24-byte radius is what buys the hue step.
 - **Independent dependent banks.** Categorical count trials are validated only by categorical gates; terminal and sequential gates cannot veto them. The complete selected assembly receives one final combined validation.
+- **Cross-profile categorical identity.** The first three category slots are consistently warm amber, cool blue/cyan, and rose/magenta across every profile. Green/mint, teal, and earth/brown occupy later slots where capacity permits; transformed prefix separation breaks semantic ties.
 - **Sampled gain evidence.** Final candidates receive a unique 3×3 grid over nonzero gain axes (blue-zero duplicates are removed). These are sampled-grid diagnostics, not continuous worst-case claims; near-floor candidates receive a denser adaptive scan.
-- **Constructed scalar ramps.** The approved commanded path is densely sampled and resampled by transformed CAM16-UCS arc length, blended only when required to keep commanded CV ≤ 0.18. The 256 float samples are canonical; six Hex8 anchors are previews.
+- **Profile-specific scalar construction.** 3400K and 2000K stop at transformed CV ≤ 0.05 and then minimize commanded CV. 1200K minimizes worst sampled-gain CV under nominal transformed CV ≤ 0.10 and commanded CV ≤ 0.18. The approved path/endpoints/chroma envelope remain fixed; 256 float samples are canonical and six Hex8 anchors are previews.
 - **Recomputed evidence.** The renderer recomputes every published metric and both badge families from the serialized Hex8 values; no upstream release-status field exists in this schema to trust.
 
 ## Chosen surface counts
@@ -121,7 +123,7 @@ The interactive page is authoritative. These committed captures make the same co
 ```text
 Surfaces:    090807 100E0C 181612 201D19 29251F 32241B
 Foregrounds: DDD0B2 BDAE93 908472
-Categorical: EFAF71 2D8B7E 935E47 6CA5E4 68C297 C67BAA
+Categorical: EFAF71 6CA5E4 C67BAA 68C297 2D8B7E 935E47
 Terminal:    F7A6AA 7EB798 C38236 B4C3FC C886CE 66E8DF
 Sequential:  282527 4D3D4A 765863 9D796C C39E75 E2CDA1
 ```
@@ -131,7 +133,7 @@ Sequential:  282527 4D3D4A 765863 9D796C C39E75 E2CDA1
 ```text
 Surfaces:    050404 13100F 1E1918 29211F 322926
 Foregrounds: DCD9BF 9B9784 7D7564
-Categorical: DEA460 2B8B7F 915E42 6BA0DE 71CFA5 C7779E
+Categorical: DEA460 6BA0DE C7779E 71CFA5 2B8B7F 915E42
 Terminal:    F7B7AA 7BB48F BE8236 A4C0FC D486C3 69EBD5
 Sequential:  282527 4D3D4A 765863 9D796C C39E75 E2CDA1
 ```
@@ -143,7 +145,7 @@ Sequential:  282527 4D3D4A 765863 9D796C C39E75 E2CDA1
 ```text
 Surfaces:    070504 0D0A09 15110E 1E1814 271F1B 30221B
 Foregrounds: EED5AE D3BB99 AA9D8B
-Categorical: E98FA0 5BAEDE 9FE5AF A36140
+Categorical: A36140 5BAEDE E98FA0 9FE5AF
 Terminal:    F490AB 7BEEC0 C2A039 A3C2FC
 Sequential:  17110F 3D2B31 684657 986979 C79B8E F2D9AE
 ```
@@ -153,7 +155,7 @@ Sequential:  17110F 3D2B31 684657 986979 C79B8E F2D9AE
 ```text
 Surfaces:    050404 171312 251F1D 322926
 Foregrounds: ECDCBF B4AA8E 8D8570
-Categorical: E99894 54B7E2 A8EDB1 A36043
+Categorical: A36043 54B7E2 E99894 A8EDB1
 Terminal:    F490AC 85EEB8 C29E39 A9C6FC
 Sequential:  17110F 3D2B31 684657 986979 C79B8E F2D9AE
 ```

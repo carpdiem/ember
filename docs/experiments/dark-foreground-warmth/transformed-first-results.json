@@ -18,6 +18,22 @@
         "current": {
           "weight": 0.0,
           "bg_count": 6,
+          "background_role_alias_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "background_role_contract": {
+            "bg_0": "surface_0",
+            "bg_1": "surface_1",
+            "bg_2": "surface_2",
+            "bg_3": "surface_3",
+            "bg_4": "surface_4",
+            "bg_5": "surface_5"
+          },
           "surfaces": {
             "bg_0": "#090807",
             "bg_1": "#100E0C",
@@ -680,11 +696,11 @@
           },
           "categorical": [
             "#EFAF71",
-            "#2D8B7E",
-            "#935E47",
             "#6CA5E4",
+            "#C67BAA",
             "#68C297",
-            "#C67BAA"
+            "#2D8B7E",
+            "#935E47"
           ],
           "categorical_trials": {
             "6": {
@@ -1044,7 +1060,7 @@
             "transformed_background_contrast_bg0_min": 3.0094340768351517,
             "transformed_background_contrast_all_surfaces_min": 2.413224910118349,
             "normal_hue_gap_degrees": 20.195152270015,
-            "normal_mean_chroma": 0.10075722173989633,
+            "normal_mean_chroma": 0.10075722173989632,
             "normal_max_chroma": 0.11061708036097974,
             "normal_semantic_hue_error_max": null,
             "terminal_role_contract": null,
@@ -4203,21 +4219,45 @@
             "note": "current lane is the shipped palette scored verbatim; no surface search applied"
           },
           "categorical_ordering": {
-            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "strategy": "cross-profile broad commanded-hue identity first; paired current+halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties",
             "permutation_from_search_order": [
               1,
-              2,
-              4,
               0,
+              5,
               3,
-              5
+              2,
+              4
             ],
             "stable_across_lanes": true,
+            "semantic_families": [
+              "warm amber",
+              "cool blue/cyan",
+              "rose/magenta",
+              "green/mint",
+              "teal",
+              "earth/brown"
+            ],
+            "semantic_target_hues_degrees": [
+              65.0,
+              225.0,
+              350.0,
+              150.0,
+              185.0,
+              45.0
+            ],
+            "assigned_mean_commanded_hues_degrees": [
+              66.80363084697413,
+              252.50875489742003,
+              346.0927832418523,
+              162.30636795147007,
+              182.67429490448598,
+              46.670551516396664
+            ],
             "prefix_transformed_pair_minima_cam16_ucs": [
-              47.68387544142455,
-              21.260508174401163,
-              17.544733745911454,
-              17.065687908085106,
+              38.179993740273694,
+              15.96220202810231,
+              15.96220202810231,
+              15.96220202810231,
               15.779196901217356
             ]
           }
@@ -4225,6 +4265,22 @@
         "halfway": {
           "weight": 0.5,
           "bg_count": 5,
+          "background_role_alias_indices": [
+            0,
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "background_role_contract": {
+            "bg_0": "surface_0",
+            "bg_1": "surface_0",
+            "bg_2": "surface_1",
+            "bg_3": "surface_2",
+            "bg_4": "surface_3",
+            "bg_5": "surface_4"
+          },
           "surfaces": {
             "bg_0": "#050404",
             "bg_1": "#13100F",
@@ -4886,11 +4942,11 @@
           },
           "categorical": [
             "#DEA460",
-            "#2B8B7F",
-            "#915E42",
             "#6BA0DE",
+            "#C7779E",
             "#71CFA5",
-            "#C7779E"
+            "#2B8B7F",
+            "#915E42"
           ],
           "categorical_trials": {
             "6": {
@@ -8452,21 +8508,45 @@
           },
           "count_choice_rule": "shared dark anchor; floating warm light anchor; interiors refined to even CAM16-UCS steps >=3.84",
           "categorical_ordering": {
-            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "strategy": "cross-profile broad commanded-hue identity first; paired current+halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties",
             "permutation_from_search_order": [
               1,
-              2,
-              4,
               0,
+              5,
               3,
-              5
+              2,
+              4
             ],
             "stable_across_lanes": true,
+            "semantic_families": [
+              "warm amber",
+              "cool blue/cyan",
+              "rose/magenta",
+              "green/mint",
+              "teal",
+              "earth/brown"
+            ],
+            "semantic_target_hues_degrees": [
+              65.0,
+              225.0,
+              350.0,
+              150.0,
+              185.0,
+              45.0
+            ],
+            "assigned_mean_commanded_hues_degrees": [
+              66.80363084697413,
+              252.50875489742003,
+              346.0927832418523,
+              162.30636795147007,
+              182.67429490448598,
+              46.670551516396664
+            ],
             "prefix_transformed_pair_minima_cam16_ucs": [
-              47.68387544142455,
-              21.260508174401163,
-              17.544733745911454,
-              17.065687908085106,
+              38.179993740273694,
+              15.96220202810231,
+              15.96220202810231,
+              15.96220202810231,
               15.779196901217356
             ]
           }
@@ -8484,6 +8564,22 @@
         "current": {
           "weight": 0.0,
           "bg_count": 6,
+          "background_role_alias_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "background_role_contract": {
+            "bg_0": "surface_0",
+            "bg_1": "surface_1",
+            "bg_2": "surface_2",
+            "bg_3": "surface_3",
+            "bg_4": "surface_4",
+            "bg_5": "surface_5"
+          },
           "surfaces": {
             "bg_0": "#070504",
             "bg_1": "#0D0A09",
@@ -9146,10 +9242,10 @@
             }
           },
           "categorical": [
-            "#E98FA0",
+            "#A36140",
             "#5BAEDE",
-            "#9FE5AF",
-            "#A36140"
+            "#E98FA0",
+            "#9FE5AF"
           ],
           "categorical_trials": {
             "4": {
@@ -10182,7 +10278,7 @@
             "transformed_background_contrast_bg0_min": 3.001075916243596,
             "transformed_background_contrast_all_surfaces_min": 2.5189850372037386,
             "normal_hue_gap_degrees": 38.786466822249594,
-            "normal_mean_chroma": 0.10452223594400972,
+            "normal_mean_chroma": 0.10452223594400971,
             "normal_max_chroma": 0.11054100457361546,
             "normal_semantic_hue_error_max": null,
             "terminal_role_contract": null,
@@ -13339,17 +13435,35 @@
             "note": "current lane is the shipped palette scored verbatim; no surface search applied"
           },
           "categorical_ordering": {
-            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "strategy": "cross-profile broad commanded-hue identity first; paired current+halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties",
             "permutation_from_search_order": [
-              1,
+              2,
               0,
-              3,
-              2
+              1,
+              3
             ],
             "stable_across_lanes": true,
+            "semantic_families": [
+              "warm amber",
+              "cool blue/cyan",
+              "rose/magenta",
+              "green/mint"
+            ],
+            "semantic_target_hues_degrees": [
+              65.0,
+              225.0,
+              350.0,
+              150.0
+            ],
+            "assigned_mean_commanded_hues_degrees": [
+              45.20481679886099,
+              232.86092681202052,
+              15.290047327038025,
+              149.44660116950246
+            ],
             "prefix_transformed_pair_minima_cam16_ucs": [
-              47.62066579675576,
-              18.099755010233217,
+              39.323219734994105,
+              16.420085769813202,
               16.420085769813202
             ]
           }
@@ -13357,6 +13471,22 @@
         "halfway": {
           "weight": 0.5,
           "bg_count": 4,
+          "background_role_alias_indices": [
+            0,
+            0,
+            1,
+            2,
+            3,
+            3
+          ],
+          "background_role_contract": {
+            "bg_0": "surface_0",
+            "bg_1": "surface_0",
+            "bg_2": "surface_1",
+            "bg_3": "surface_2",
+            "bg_4": "surface_3",
+            "bg_5": "surface_3"
+          },
           "surfaces": {
             "bg_0": "#050404",
             "bg_1": "#171312",
@@ -14017,10 +14147,10 @@
             }
           },
           "categorical": [
-            "#E99894",
+            "#A36043",
             "#54B7E2",
-            "#A8EDB1",
-            "#A36043"
+            "#E99894",
+            "#A8EDB1"
           ],
           "categorical_trials": {
             "4": {
@@ -18234,17 +18364,35 @@
           },
           "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84",
           "categorical_ordering": {
-            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "strategy": "cross-profile broad commanded-hue identity first; paired current+halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties",
             "permutation_from_search_order": [
-              1,
+              2,
               0,
-              3,
-              2
+              1,
+              3
             ],
             "stable_across_lanes": true,
+            "semantic_families": [
+              "warm amber",
+              "cool blue/cyan",
+              "rose/magenta",
+              "green/mint"
+            ],
+            "semantic_target_hues_degrees": [
+              65.0,
+              225.0,
+              350.0,
+              150.0
+            ],
+            "assigned_mean_commanded_hues_degrees": [
+              45.20481679886099,
+              232.86092681202052,
+              15.290047327038025,
+              149.44660116950246
+            ],
             "prefix_transformed_pair_minima_cam16_ucs": [
-              47.62066579675576,
-              18.099755010233217,
+              39.323219734994105,
+              16.420085769813202,
               16.420085769813202
             ]
           }
@@ -18262,6 +18410,22 @@
         "current": {
           "weight": 0.0,
           "bg_count": 6,
+          "background_role_alias_indices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "background_role_contract": {
+            "bg_0": "surface_0",
+            "bg_1": "surface_1",
+            "bg_2": "surface_2",
+            "bg_3": "surface_3",
+            "bg_4": "surface_4",
+            "bg_5": "surface_5"
+          },
           "surfaces": {
             "bg_0": "#060302",
             "bg_1": "#0C0806",
@@ -21322,13 +21486,28 @@
             "note": "current lane is the shipped palette scored verbatim; no surface search applied"
           },
           "categorical_ordering": {
-            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "strategy": "cross-profile broad commanded-hue identity first; paired current+halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties",
             "permutation_from_search_order": [
               2,
               1,
               0
             ],
             "stable_across_lanes": true,
+            "semantic_families": [
+              "warm amber",
+              "cool blue/cyan",
+              "rose/magenta"
+            ],
+            "semantic_target_hues_degrees": [
+              65.0,
+              225.0,
+              350.0
+            ],
+            "assigned_mean_commanded_hues_degrees": [
+              67.457695629154,
+              209.14102285818615,
+              10.88169870072309
+            ],
             "prefix_transformed_pair_minima_cam16_ucs": [
               26.03556454045657,
               11.081552392874142
@@ -21338,6 +21517,22 @@
         "halfway": {
           "weight": 0.5,
           "bg_count": 4,
+          "background_role_alias_indices": [
+            0,
+            0,
+            1,
+            2,
+            3,
+            3
+          ],
+          "background_role_contract": {
+            "bg_0": "surface_0",
+            "bg_1": "surface_0",
+            "bg_2": "surface_1",
+            "bg_3": "surface_2",
+            "bg_4": "surface_3",
+            "bg_5": "surface_3"
+          },
           "surfaces": {
             "bg_0": "#050404",
             "bg_1": "#171313",
@@ -24415,13 +24610,28 @@
           },
           "count_choice_rule": "shared dark anchor; shared light anchor; interiors refined to even CAM16-UCS steps >=3.84",
           "categorical_ordering": {
-            "strategy": "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain bg_0 contrast then fg clearance; later slots maximize transformed CAM16-UCS prefix separation then commanded Oklab separation",
+            "strategy": "cross-profile broad commanded-hue identity first; paired current+halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties",
             "permutation_from_search_order": [
               2,
               1,
               0
             ],
             "stable_across_lanes": true,
+            "semantic_families": [
+              "warm amber",
+              "cool blue/cyan",
+              "rose/magenta"
+            ],
+            "semantic_target_hues_degrees": [
+              65.0,
+              225.0,
+              350.0
+            ],
+            "assigned_mean_commanded_hues_degrees": [
+              67.457695629154,
+              209.14102285818615,
+              10.88169870072309
+            ],
             "prefix_transformed_pair_minima_cam16_ucs": [
               26.03556454045657,
               11.081552392874142
@@ -24430,5 +24640,10 @@
         }
       }
     }
+  },
+  "approved_artifact_freeze": {
+    "schema": 1,
+    "sha256": "3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe",
+    "covers": "profile gains; current+halfway bg counts/surfaces/foregrounds and production aliases; ordered categorical semantic slots; terminal banks/aliases; canonical float and Hex8 sequential ramps; dependent metric and sequential selection contracts"
   }
 }

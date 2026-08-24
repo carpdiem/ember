@@ -88,16 +88,12 @@ def lane_surface_values(record: dict[str, Any]) -> list[str]:
     return [record["surfaces"][key] for key in keys]
 
 
-def expand_to_six(values: list[str]) -> tuple[str, ...]:
-    """Pad N designed surfaces to the six-role FamilyDefinition shape.
+def expand_to_six(values: list[str], aliases: list[int]) -> tuple[str, ...]:
+    """Apply the explicit six-role production alias contract."""
 
-    Unused trailing roles repeat the lightest designed surface so no invented
-    intermediate colors ever appear in any rendered artifact. Display code
-    always renders exactly the designed `bg_count` swatches."""
-
-    if len(values) >= 6:
-        return tuple(values[:6])
-    return tuple(values) + tuple([values[-1]] * (6 - len(values)))
+    if len(aliases) != 6 or any(index >= len(values) for index in aliases):
+        raise ValueError(f"invalid background alias contract: {aliases} for {len(values)} values")
+    return tuple(values[index] for index in aliases)
 
 
 def candidate_definition(slug: str, record: dict[str, Any]):
@@ -105,7 +101,9 @@ def candidate_definition(slug: str, record: dict[str, Any]):
     gains = lane_gains(slug)
     surfaces = {
         f"bg_{index}": value
-        for index, value in enumerate(expand_to_six(lane_surface_values(record)))
+        for index, value in enumerate(
+            expand_to_six(lane_surface_values(record), record["background_role_alias_indices"])
+        )
     }
     surfaces.update({f"fg_{index}": value for index, value in enumerate(record["foregrounds"])})
     return replace(
@@ -414,7 +412,8 @@ def anatomy(slug: str, lane: str, record: dict[str, Any], metrics: dict[str, flo
         )
         provenance.append(
             escape(
-                "categorical display order: paired current/halfway prefix-maximin; "
+                "categorical display order: cross-profile broad hue identity; "
+                f"families {ordering['semantic_families']}; "
                 f"search-slot permutation {ordering['permutation_from_search_order']}; "
                 f"prefix pair minima {prefix} CAM16-UCS"
             )
@@ -627,7 +626,7 @@ def render_html(data: dict[str, Any]) -> str:
 @media(prefers-reduced-motion:reduce){{*{{animation:none!important;scroll-behavior:auto!important}}}}
 </style></head><body data-profile="3400k-dark" data-state="commanded" data-focus="all">
 <header class="topbar"><div class="brand"><h1>EMBER · DARK FOREGROUND WARMTH</h1><p>Fifth pass · frozen system · dependent-bank CAM16-UCS redesign</p></div><div class="control" role="group" aria-label="Profile">{profile_buttons}</div><div class="control" role="group" aria-label="Display state"><button type="button" data-state-button="commanded" aria-pressed="true">Commanded</button><button type="button" data-state-button="simulated" aria-pressed="false">Exact simulated</button></div><div class="control" role="group" aria-label="Candidate focus">{focus_buttons}</div></header>
-<main><section class="intro"><p class="eyebrow">BRANCH EXPERIMENT · NOT CANONICAL · BG/FG BYTE-LOCKED</p><h2>Optimize around the approved system</h2><p>This fifth pass freezes every current and halfway background count, surface, and foreground at SHA <code>{escape(data["frozen_system"]["sha256"][:12])}</code>. Only categorical data colors, terminal semantic accents, and canonical float sequential ramps may move. Commanded maturity stays in Oklab; transformed pair and foreground clearance use the same flare-aware CAM16-UCS model as the approved surface system; WCAG remains an independent legibility gate.</p><div class="truth-grid"><article class="truth-card"><h3>Categorical capacity and order are frontiers</h3><p>Each profile tests its shipped count plus up to two larger banks. The selected colors are then ordered as a paired current/halfway prefix-maximin sequence: strongest canvas contrast first, then farthest transformed identities.</p></article><article class="truth-card"><h3>Terminal roles stay semantic</h3><p>Authored ANSI roles keep explicit hue and alias contracts. Every selected bank passes transformed WCAG, individual-role separation, maturity, and fixed-foreground clearance gates.</p></article><article class="truth-card"><h3>Sequential optimization is profile-specific</h3><p>3400K and 2000K stop at perceptually sufficient transformed CV and spend the remaining freedom on commanded uniformity. 1200K minimizes worst sampled-gain CV. Every canonical float stays inside the approved chroma path; six Hex8 anchors are previews.</p></article></div><table class="status-table"><thead><tr><th>Profile</th><th>Current</th><th>Halfway</th></tr></thead><tbody>{statuses}</tbody></table></section>
+<main><section class="intro"><p class="eyebrow">BRANCH EXPERIMENT · NOT CANONICAL · FULL ARTIFACT BYTE-LOCKED</p><h2>Optimize around the approved system</h2><p>The complete approved artifact is frozen at SHA <code>{escape(data["approved_artifact_freeze"]["sha256"][:12])}</code>, including profile gains, background/foreground systems, ordered categorical semantics, terminal banks and aliases, and canonical float/Hex8 sequential ramps. The underlying bg/fg subsystem remains independently locked at <code>{escape(data["frozen_system"]["sha256"][:12])}</code>. Commanded maturity stays in Oklab; transformed pair and foreground clearance use flare-aware CAM16-UCS; WCAG remains an independent legibility gate. The evidence-based six-role production mapping and remaining promotion gates are recorded in <a href="promotion-readiness.md">promotion readiness</a>.</p><div class="truth-grid"><article class="truth-card"><h3>Categorical identity survives profile changes</h3><p>The first three slots are consistently warm amber, cool blue/cyan, and rose/magenta across 3400K, 2000K, and 1200K. Later slots preserve green, teal, and earth families where profile capacity permits; transformed prefix separation breaks semantic ties.</p></article><article class="truth-card"><h3>Real surfaces map honestly to six roles</h3><p>N=5 aliases only subtle bg_1 to canvas. N=4 also aliases rule to border, preserving distinct canvas, panel, raised-panel, and border/selection planes for six-role consumers.</p></article><article class="truth-card"><h3>Sequential optimization is profile-specific</h3><p>3400K and 2000K stop at perceptually sufficient transformed CV and spend the remaining freedom on commanded uniformity. 1200K minimizes worst sampled-gain CV. Every canonical float stays inside the approved chroma path; six Hex8 anchors are previews.</p></article></div><table class="status-table"><thead><tr><th>Profile</th><th>Current</th><th>Halfway</th></tr></thead><tbody>{statuses}</tbody></table></section>
 <section class="metrics-section" id="dependent-frontiers"><p class="eyebrow">DEPENDENT-BANK OUTCOMES · SAMPLED-GRID CAM16-UCS</p><h2>Capacity, semantics, and scalar uniformity</h2><p class="metrics-note">Categorical counts report their sampled-gain minimum pair distance and pass/block state. Terminal columns show the selected bank's sampled-gain minimum pair and foreground clearance. Sequential CV is measured on canonical float samples, not the Hex8 preview anchors.</p>{dependent_frontiers_html(data)}</section>
 <section class="metrics-section" id="metrics"><p class="eyebrow">FROZEN SYSTEM METRICS · BEST WITHIN EACH PROFILE ONLY</p><h2>The backgrounds and foregrounds did not move</h2><p class="metrics-note">Every value below is recomputed from the frozen system bytes. <u>Underline</u> marks the best-performing lane(s) per profile for that metric (bold in the README markdown); passing a floor alone is never underlined.</p>{metrics_html(data, computed)}</section>{"".join(sections)}</main><footer class="footer">Exact values: transformed-first-results.json · Reproducible search: search_transformed_first.py · Promotion requires a separate canonical pass.</footer>
 <script>
@@ -748,21 +747,25 @@ def render_readme(data: dict[str, Any]) -> str:
 
 > **Branch:** `exp/dark-foreground-warmth`<br>
 > **Status:** isolated experiment; not a production palette update<br>
-> **Live comparison:** [open `index.html`](index.html)
+> **Live comparison:** [open `index.html`](index.html)<br>
+> **Promotion contract:** [role/alias and remaining-work audit](promotion-readiness.md)
 
 ## Bottom line
 
 Design the seen state first: even transformed distinctness binds before commanded warmth; leftover exact-Hex8 freedom buys the halfway hue step for ink and surfaces.
 
-This dependent-bank pass freeze-locks the already approved current and halfway backgrounds/foregrounds, then redesigns only categorical, terminal, and sequential banks. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
+The complete approved artifact is freeze-locked at `{
+        data["approved_artifact_freeze"]["sha256"]
+    }`. It covers profile gains; current and halfway backgrounds/foregrounds; ordered categorical semantic slots; terminal banks and aliases; canonical float and Hex8 sequential ramps; and their metric/selection contracts. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
 
 ## Methodology
 
 - **Transformed-first gating.** Even the *transformed* (warm-display simulated) appearance must keep distinct surfaces and readable text before any commanded-warmth objective is scored. This is the pass's central discipline: the seen state is designed first.
 - **Variable surface count.** The halfway lane searches background counts 3–6 per profile; each count gets a bounded exact-Hex8 search with deterministic seeds. Leftover byte freedom inside the ±24-byte radius is what buys the hue step.
 - **Independent dependent banks.** Categorical count trials are validated only by categorical gates; terminal and sequential gates cannot veto them. The complete selected assembly receives one final combined validation.
+- **Cross-profile categorical identity.** The first three category slots are consistently warm amber, cool blue/cyan, and rose/magenta across every profile. Green/mint, teal, and earth/brown occupy later slots where capacity permits; transformed prefix separation breaks semantic ties.
 - **Sampled gain evidence.** Final candidates receive a unique 3×3 grid over nonzero gain axes (blue-zero duplicates are removed). These are sampled-grid diagnostics, not continuous worst-case claims; near-floor candidates receive a denser adaptive scan.
-- **Constructed scalar ramps.** The approved commanded path is densely sampled and resampled by transformed CAM16-UCS arc length, blended only when required to keep commanded CV ≤ 0.18. The 256 float samples are canonical; six Hex8 anchors are previews.
+- **Profile-specific scalar construction.** 3400K and 2000K stop at transformed CV ≤ 0.05 and then minimize commanded CV. 1200K minimizes worst sampled-gain CV under nominal transformed CV ≤ 0.10 and commanded CV ≤ 0.18. The approved path/endpoints/chroma envelope remain fixed; 256 float samples are canonical and six Hex8 anchors are previews.
 - **Recomputed evidence.** The renderer recomputes every published metric and both badge families from the serialized Hex8 values; no upstream release-status field exists in this schema to trust.
 
 ## Chosen surface counts

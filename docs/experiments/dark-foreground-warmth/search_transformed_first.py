@@ -18,6 +18,7 @@ import argparse
 import hashlib
 import json
 import sys
+from itertools import permutations
 from pathlib import Path
 from typing import Any
 
@@ -94,6 +95,24 @@ SYSTEM_SEED_BASE = 7000
 CATEGORY_SEED_BASE = 17000
 TERMINAL_SEED_BASE = 27000
 SEQUENTIAL_SEED_BASE = 37000
+
+CATEGORICAL_SEMANTIC_SLOTS = (
+    ("warm amber", 65.0),
+    ("cool blue/cyan", 225.0),
+    ("rose/magenta", 350.0),
+    ("green/mint", 150.0),
+    ("teal", 185.0),
+    ("earth/brown", 45.0),
+)
+
+BACKGROUND_ROLE_ALIAS_INDICES = {
+    # Preserve the consumer-facing canvas / panel / raised-panel / rule / border
+    # contract.  Missing subtle bg_1 aliases canvas; missing bg_4 aliases border.
+    3: (0, 0, 1, 1, 2, 2),
+    4: (0, 0, 1, 2, 3, 3),
+    5: (0, 0, 1, 2, 3, 4),
+    6: (0, 1, 2, 3, 4, 5),
+}
 
 TERMINAL_INITIAL_PROPOSALS = {
     "2000k-dark": (
@@ -789,85 +808,62 @@ def _categorical_has_five_percent_margin(
 def apply_paired_categorical_ordering(
     full: dict[str, Any], base: Any, profile_record: dict[str, Any]
 ) -> None:
-    """Order one profile's fixed categorical sets for strongest useful prefixes.
-
-    The same permutation is applied to current and halfway so category identity
-    survives lane changes.  Slot 1 maximizes sampled-gain bg_0 contrast, then
-    transformed/commanded foreground clearance.  Each later slot greedily
-    maximizes the minimum transformed pair distance to the selected prefix,
-    with commanded Oklab separation as the first tiebreaker.
-    """
+    """Order fixed categorical sets by cross-profile hue identity and prefix strength."""
 
     lanes = [profile_record["lanes"][lane] for lane in LANES]
     count = len(lanes[0]["categorical"])
     if any(len(record["categorical"]) != count for record in lanes):
         raise RuntimeError(f"categorical lane counts differ for {base.slug}")
 
-    first_quality = [[float("inf"), float("inf"), float("inf")] for _ in range(count)]
     pair_transformed = np.full((count, count), np.inf)
     pair_commanded = np.full((count, count), np.inf)
+    hue_vectors = np.zeros((count, 2), dtype=float)
     for record in lanes:
         values = tuple(record["categorical"])
-        foregrounds = tuple(record["foregrounds"])
         day = srgb_to_oklab(hex_array(values))
-        foreground_day = srgb_to_oklab(hex_array(foregrounds))
-        day_clearance = (
-            np.linalg.norm(day[:, None] - foreground_day[None, :], axis=2).min(axis=1) * 100.0
-        )
-        lane_transformed_clearance = np.full(count, np.inf)
-        lane_contrast = np.full(count, np.inf)
+        day_hues = np.arctan2(day[:, 2], day[:, 1])
+        hue_vectors[:, 0] += np.cos(day_hues)
+        hue_vectors[:, 1] += np.sin(day_hues)
         for gains in full["sampled_gain_grid"](base.profile.gains):
             transformed = full["cam16_ucs"](hex_array(values), gains)
-            foreground_transformed = full["cam16_ucs"](hex_array(foregrounds), gains)
-            lane_transformed_clearance = np.minimum(
-                lane_transformed_clearance,
-                np.linalg.norm(transformed[:, None] - foreground_transformed[None, :], axis=2).min(
-                    axis=1
-                ),
-            )
-            background = warm_transform(hex_to_srgb(record["surfaces"]["bg_0"]), gains)
-            lane_contrast = np.minimum(
-                lane_contrast,
-                np.asarray(
-                    [
-                        contrast_ratio(warm_transform(color, gains), background)
-                        for color in hex_array(values)
-                    ]
-                ),
-            )
             for left in range(count):
                 for right in range(left + 1, count):
                     distance = float(np.linalg.norm(transformed[left] - transformed[right]))
                     pair_transformed[left, right] = min(pair_transformed[left, right], distance)
                     pair_transformed[right, left] = pair_transformed[left, right]
-        for index in range(count):
-            first_quality[index][0] = min(first_quality[index][0], float(lane_contrast[index]))
-            first_quality[index][1] = min(
-                first_quality[index][1], float(lane_transformed_clearance[index])
-            )
-            first_quality[index][2] = min(first_quality[index][2], float(day_clearance[index]))
         for left in range(count):
             for right in range(left + 1, count):
                 distance = float(np.linalg.norm(day[left] - day[right]) * 100.0)
                 pair_commanded[left, right] = min(pair_commanded[left, right], distance)
                 pair_commanded[right, left] = pair_commanded[left, right]
 
-    remaining = set(range(count))
-    first = max(remaining, key=lambda index: (*first_quality[index], -index))
-    order = [first]
-    remaining.remove(first)
-    while remaining:
-        choice = max(
-            remaining,
-            key=lambda index: (
-                min(pair_transformed[index, selected] for selected in order),
-                min(pair_commanded[index, selected] for selected in order),
-                *first_quality[index],
-                -index,
-            ),
+    mean_hues = np.degrees(np.arctan2(hue_vectors[:, 1], hue_vectors[:, 0])) % 360.0
+    semantic_slots = CATEGORICAL_SEMANTIC_SLOTS[:count]
+
+    def angular_distance(left: float, right: float) -> float:
+        return abs((left - right + 180.0) % 360.0 - 180.0)
+
+    def order_key(order: tuple[int, ...]) -> tuple[Any, ...]:
+        semantic_error = sum(
+            angular_distance(mean_hues[color_index], semantic_slots[slot_index][1])
+            for slot_index, color_index in enumerate(order)
         )
-        order.append(choice)
-        remaining.remove(choice)
+        prefix_tiebreakers = []
+        for prefix_count in range(2, count + 1):
+            transformed_min = min(
+                float(pair_transformed[order[left], order[right]])
+                for left in range(prefix_count)
+                for right in range(left + 1, prefix_count)
+            )
+            commanded_min = min(
+                float(pair_commanded[order[left], order[right]])
+                for left in range(prefix_count)
+                for right in range(left + 1, prefix_count)
+            )
+            prefix_tiebreakers.extend((-transformed_min, -commanded_min))
+        return (semantic_error, *prefix_tiebreakers, order)
+
+    order = list(min(permutations(range(count)), key=order_key))
 
     prefix_pair_minima = []
     for prefix_count in range(2, count + 1):
@@ -912,12 +908,14 @@ def apply_paired_categorical_ordering(
         record["categorical_metrics"] = metrics
         record["categorical_ordering"] = {
             "strategy": (
-                "paired current+halfway prefix-maximin: slot 1 maximizes sampled-gain "
-                "bg_0 contrast then fg clearance; later slots maximize transformed "
-                "CAM16-UCS prefix separation then commanded Oklab separation"
+                "cross-profile broad commanded-hue identity first; paired current+halfway "
+                "transformed CAM16-UCS and commanded Oklab prefix separation break ties"
             ),
             "permutation_from_search_order": order,
             "stable_across_lanes": True,
+            "semantic_families": [name for name, _hue in semantic_slots],
+            "semantic_target_hues_degrees": [hue for _name, hue in semantic_slots],
+            "assigned_mean_commanded_hues_degrees": [float(mean_hues[index]) for index in order],
             "prefix_transformed_pair_minima_cam16_ucs": prefix_pair_minima,
         }
 
@@ -1142,14 +1140,24 @@ def slug_has_deep_transform(slug: str) -> bool:
 
 
 def expand_to_six(surfaces: tuple[str, ...]) -> tuple[str, ...]:
-    """Preserve designed roles and repeat the lightest role for unused slots."""
+    """Expand real surfaces through the explicit six-role production contract."""
 
-    if len(surfaces) >= 6:
-        return surfaces[:6]
-    return surfaces + (surfaces[-1],) * (6 - len(surfaces))
+    try:
+        aliases = BACKGROUND_ROLE_ALIAS_INDICES[len(surfaces)]
+    except KeyError as error:
+        raise ValueError(f"unsupported background surface count: {len(surfaces)}") from error
+    return tuple(surfaces[index] for index in aliases)
+
+
+def background_role_contract(count: int) -> dict[str, str]:
+    aliases = BACKGROUND_ROLE_ALIAS_INDICES[count]
+    return {f"bg_{role}": f"surface_{index}" for role, index in enumerate(aliases)}
 
 
 FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
+APPROVED_ARTIFACT_SHA256: str | None = (
+    "3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe"
+)
 
 
 def frozen_system_subset(data: dict[str, Any]) -> dict[str, Any]:
@@ -1168,6 +1176,55 @@ def frozen_system_subset(data: dict[str, Any]) -> dict[str, Any]:
 
 def frozen_system_sha256(data: dict[str, Any]) -> str:
     payload = json.dumps(frozen_system_subset(data), sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(payload).hexdigest()
+
+
+def approved_artifact_subset(data: dict[str, Any]) -> dict[str, Any]:
+    """Canonical reader-facing palette bytes and semantic slot contracts."""
+
+    return {
+        slug: {
+            "gains": profile["gains"],
+            "lanes": {
+                lane: {
+                    "bg_count": record["bg_count"],
+                    "background_role_alias_indices": record["background_role_alias_indices"],
+                    "background_role_contract": record["background_role_contract"],
+                    "surfaces": record["surfaces"],
+                    "foregrounds": record["foregrounds"],
+                    "categorical": record["categorical"],
+                    "categorical_semantic_families": record["categorical_ordering"][
+                        "semantic_families"
+                    ],
+                    "terminal": record["terminal"],
+                    "terminal_role_contract": record["terminal_role_contract"],
+                    "sequential_anchors": record["sequential_anchors"],
+                    "continuous_float_srgb": record["continuous_float_srgb"],
+                    "continuous_hex8": record["continuous_hex8"],
+                    "dependent_metric_model": record["dependent_metric_model"],
+                    "sequential_selection": {
+                        key: record["sequential_metrics"][key]
+                        for key in (
+                            "selection_policy",
+                            "transformed_reference",
+                            "transformed_arc_weight",
+                            "approved_path_chroma_min",
+                            "approved_path_chroma_max",
+                            "chroma_envelope_preserved",
+                        )
+                    },
+                }
+                for lane, record in profile["lanes"].items()
+            },
+        }
+        for slug, profile in data["profiles"].items()
+    }
+
+
+def approved_artifact_sha256(data: dict[str, Any]) -> str:
+    payload = json.dumps(
+        approved_artifact_subset(data), sort_keys=True, separators=(",", ":")
+    ).encode()
     return hashlib.sha256(payload).hexdigest()
 
 
@@ -1229,6 +1286,10 @@ def main() -> int:
             lane_record: dict[str, Any] = {
                 "weight": weight,
                 "bg_count": frozen_lane["bg_count"],
+                "background_role_alias_indices": list(
+                    BACKGROUND_ROLE_ALIAS_INDICES[frozen_lane["bg_count"]]
+                ),
+                "background_role_contract": background_role_contract(frozen_lane["bg_count"]),
                 "surfaces": dict(frozen_lane["surfaces"]),
                 "foregrounds": list(foregrounds),
                 **banks,
@@ -1244,6 +1305,21 @@ def main() -> int:
         raise RuntimeError(
             f"generated output moved frozen bg/fg: {output_frozen_sha} != {FROZEN_SYSTEM_SHA256}"
         )
+    artifact_sha = approved_artifact_sha256(output)
+    if APPROVED_ARTIFACT_SHA256 is not None and artifact_sha != APPROVED_ARTIFACT_SHA256:
+        raise RuntimeError(
+            f"generated output moved the approved artifact: {artifact_sha} != "
+            f"{APPROVED_ARTIFACT_SHA256}"
+        )
+    output["approved_artifact_freeze"] = {
+        "schema": 1,
+        "sha256": artifact_sha,
+        "covers": (
+            "profile gains; current+halfway bg counts/surfaces/foregrounds and production aliases; "
+            "ordered categorical semantic slots; terminal banks/aliases; canonical float and "
+            "Hex8 sequential ramps; dependent metric and sequential selection contracts"
+        ),
+    }
     RESULTS_PATH.write_text(json.dumps(output, indent=2, sort_keys=False) + "\n")
     print(RESULTS_PATH)
     return 0
