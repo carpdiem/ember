@@ -130,6 +130,14 @@ python -m pip install "ember-palettes @ git+https://github.com/carpdiem/ember.gi
 
 - **iTerm2:** open **Settings → Profiles → Colors → Color Presets… → Import…** and
   choose a file from [`themes/terminal/iterm2/`](themes/terminal/iterm2/).
+- **macOS Terminal:** open a file from
+  [`themes/terminal/apple-terminal/`](themes/terminal/apple-terminal/) to import it as a
+  profile, then make it permanent under **Settings → Profiles → Default**:
+
+  ```bash
+  open themes/terminal/apple-terminal/3400k-dark.terminal
+  ```
+
 - **Windows Terminal:** open **Settings → Open JSON file**, copy one object from
   [`themes/terminal/windows-terminal/`](themes/terminal/windows-terminal/) into the root
   `schemes` array, then set your profile's `colorScheme` to its exact `name`.
