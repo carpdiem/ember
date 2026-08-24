@@ -1,7 +1,7 @@
 # Dark palette promotion readiness — roles, aliases, and remaining work
 
 > **Approved artifact SHA:** `faab1e2cb460b618aaca56846ba487b90229b9714e0a14feedfb51de67ffe779`
-> **Status:** experiment contract; canonical production definitions are unchanged
+> **Status:** promoted; canonical definitions and schema-14 exports carry this contract
 
 ## Consumer audit verdict
 
@@ -29,7 +29,7 @@ Alias the least damaging adjacent semantic pairs while preserving the most frequ
 | 4 | `[0,1,1,2,3,3]` | low-emphasis/sidebar and ordinary panel share; rule and border share |
 | 3 | `[0,1,1,1,2,2]` | reserved fallback: low/panel/raised share; rule/border share |
 
-Applied halfway contracts:
+Applied production contracts:
 
 - 3400K N=5: `[0,1,2,3,4,4]`
 - 2000K N=4: `[0,1,1,2,3,3]`
@@ -54,22 +54,20 @@ The same broad category families now occupy the same slot when users change prof
 
 Current and halfway use one identical permutation within each profile. Broad commanded-hue identity produces the initial assignment; paired current/halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties. Human review then swaps 2000K slots 1 and 3: its lighter rose preimage better preserves primary-warm identity under transformation, while rust becomes the secondary warm identity. The full bank colors and release metrics are unchanged by ordering.
 
-## Promotion requirements
+## Promotion closeout
 
-Before changing canonical `src/ember/definitions.py` and generated exports:
+The production release completed these requirements:
 
-1. Export the six aliases explicitly in manifest metadata; do not rely on repeated hex values to imply the contract.
-2. Update publication/terminal tests to assert the mapping above.
-3. Verify selected-row (`bg_5`), terminal normal black (`bg_2`), panel (`bg_2`), and raised panel (`bg_3`) behavior in real consumers.
-4. Keep `fg_2` metadata-only and prohibit alpha-composited halfway text.
-5. Dogfood the frozen artifact under actual OS Night Shift before canonical promotion.
+1. Schema 14 exports unique surfaces and all six role aliases explicitly.
+2. Publication, terminal, manifest, and browser tests assert the mappings.
+3. The live site shows the selected-row, panel, active-state, and aliased-boundary behavior.
+4. The manifest and Do's and Don'ts page make `fg_2`, opacity, and alpha restrictions explicit.
+5. The user waived application dogfood and directed immediate canonical promotion.
 
 ## Preserved backlog
 
-These approved follow-ups remain after steps 1–3:
+One approved follow-up remains:
 
-- 1200K-specific redundant terminal and chart encoding
-- explicit foreground usage contract (`fg_1` supporting; `fg_2` metadata; no opacity-derived text)
-- real application dogfood and final promote-or-archive decision
+- 1200K-specific redundant terminal and chart encoding, tracked in [`../../future-work.md`](../../future-work.md)
 
-None of these require reopening numeric palette optimization unless dogfood produces a concrete failure.
+This work does not require reopening numeric palette optimization.

@@ -4,8 +4,8 @@ from pathlib import Path
 from PIL import Image
 
 ROOT = Path(__file__).parents[1]
-BG_0 = (9, 8, 7)
-FG_0 = (221, 208, 178)
+BG_0 = (5, 4, 4)
+FG_0 = (220, 217, 191)
 
 
 def test_landing_page_declares_the_ember_favicon_package() -> None:
@@ -21,7 +21,7 @@ def test_favicon_uses_the_3400k_dark_bg_0_and_fg_0_contract() -> None:
     assert root.attrib["viewBox"] == "0 0 64 64"
 
     fills = {element.attrib["fill"].lower() for element in root if "fill" in element.attrib}
-    assert fills == {"#090807", "#ddd0b2"}
+    assert fills == {"#050404", "#dcd9bf"}
 
     for filename, expected_size in (
         ("favicon-32x32.png", (32, 32)),

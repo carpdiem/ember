@@ -751,7 +751,7 @@ def render_readme(data: dict[str, Any]) -> str:
     return f"""# Dark foreground warmth exploration
 
 > **Branch:** `exp/dark-foreground-warmth`<br>
-> **Status:** isolated experiment; not a production palette update<br>
+> **Status:** archived pre-promotion comparison; the approved halfway lane is now canonical<br>
 > **Live comparison:** [open `index.html`](index.html)<br>
 > **Promotion contract:** [role/alias and remaining-work audit](promotion-readiness.md)
 
@@ -848,13 +848,13 @@ The interactive page is authoritative. These committed captures make the same co
 - Exact selected data, per-count system searches with seeds, iterations, evaluated candidate counts, accepted moves, objectives, continuous float maps, Hex8 previews, categorical trials, and adoption notes: [`transformed-first-results.json`](transformed-first-results.json)
 - Reproducible bounded search: [`search_transformed_first.py`](search_transformed_first.py)
 - Deterministic renderer: [`../../../tools/render_dark_foreground_warmth_experiment.py`](../../../tools/render_dark_foreground_warmth_experiment.py)
-- Independent verification: [`../../../tests/test_dark_foreground_warmth_experiment.py`](../../../tests/test_dark_foreground_warmth_experiment.py)
+- Archived pre-promotion verification snapshot: [`verification_snapshot.py`](verification_snapshot.py)
 
 The simulated state applies each family's documented encoded-sRGB diagonal gain vector.
 
 ## Promotion boundary
 
-Nothing here is canonical. If a warmth lane is chosen, promotion is a separate pass that must update authoritative definitions, transformed targets, generated exports, release invariants, public documentation, and downstream themes. Experimental prose, failed candidates, and comparison-only assets should not leak into the production reader path.
+The accepted halfway lane was promoted through the authoritative definitions. This directory remains an audit record of the comparison and its search method. Production values, guarantees, and usage rules now live in the root README, schema-14 manifest, generated exports, and live site.
 """
 
 

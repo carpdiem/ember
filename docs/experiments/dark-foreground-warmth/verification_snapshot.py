@@ -15,11 +15,9 @@ from ember.color import (
     srgb_to_hex,
     warm_transform,
 )
-from ember.definitions import (
-    FAMILIES,
-)
+from ember.definitions import FAMILIES
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 EXPERIMENT = ROOT / "docs/experiments/dark-foreground-warmth"
 RESULTS = EXPERIMENT / "transformed-first-results.json"
 PROFILES = ("3400k-dark", "2000k-dark", "1200k-dark")

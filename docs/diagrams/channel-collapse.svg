@@ -1,36 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="760" viewBox="0 0 760 760">
-<rect width="760" height="760" rx="22" fill="#090807"/>
+<rect width="760" height="760" rx="22" fill="#050404"/>
 <g font-family="system-ui, sans-serif">
-<text x="36" y="54" fill="#DDD0B2" font-size="32" font-weight="700">Warm filters squeeze green and blue</text>
-<text x="36" y="90" fill="#BDAE93" font-size="21">Bar length = channel signal left after the modeled transform.</text>
+<text x="36" y="54" fill="#DCD9BF" font-size="32" font-weight="700">Warm filters squeeze green and blue</text>
+<text x="36" y="90" fill="#9B9784" font-size="21">Bar length = channel signal left after the modeled transform.</text>
 
 <g transform="translate(36 136)">
-  <text x="0" y="0" fill="#DDD0B2" font-size="28" font-weight="700">3400 K</text>
-  <text x="164" y="0" fill="#BDAE93" font-size="21">R 100% · G 74% · B 53%</text>
+  <text x="0" y="0" fill="#DCD9BF" font-size="28" font-weight="700">3400 K</text>
+  <text x="164" y="0" fill="#9B9784" font-size="21">R 100% · G 74% · B 53%</text>
   <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
-    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
-    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" y="42" width="473" height="28" rx="7" fill="#82A36F"/>
-    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" y="84" width="339" height="28" rx="7" fill="#6F86A8"/>
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" y="42" width="473" height="28" rx="7" fill="#82A36F"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" y="84" width="339" height="28" rx="7" fill="#6F86A8"/>
   </g>
 </g>
 
 <g transform="translate(36 354)">
-  <text x="0" y="0" fill="#DDD0B2" font-size="28" font-weight="700">2000 K</text>
-  <text x="164" y="0" fill="#BDAE93" font-size="21">R 100% · G 54% · B 9%</text>
+  <text x="0" y="0" fill="#DCD9BF" font-size="28" font-weight="700">2000 K</text>
+  <text x="164" y="0" fill="#9B9784" font-size="21">R 100% · G 54% · B 9%</text>
   <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
-    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
-    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" y="42" width="348" height="28" rx="7" fill="#7B8A5A"/>
-    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" y="84" width="56" height="28" rx="7" fill="#576477"/>
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" y="42" width="348" height="28" rx="7" fill="#7B8A5A"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" y="84" width="56" height="28" rx="7" fill="#576477"/>
   </g>
 </g>
 
 <g transform="translate(36 572)">
-  <text x="0" y="0" fill="#DDD0B2" font-size="28" font-weight="700">1200 K</text>
-  <text x="164" y="0" fill="#BDAE93" font-size="21">R 100% · G 31% · B 0%</text>
+  <text x="0" y="0" fill="#DCD9BF" font-size="28" font-weight="700">1200 K</text>
+  <text x="164" y="0" fill="#9B9784" font-size="21">R 100% · G 31% · B 0%</text>
   <g transform="translate(0 26)" font-size="20" font-family="ui-monospace, monospace">
-    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
-    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" y="42" width="198" height="28" rx="7" fill="#736D49"/>
-    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#201D19"/><rect x="34" y="84" width="0" height="28" fill="#4B5260"/>
+    <text x="0" y="24" fill="#E8B8A7">R</text><rect x="34" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" width="640" height="28" rx="7" fill="#C87865"/>
+    <text x="0" y="66" fill="#BBD8AE">G</text><rect x="34" y="42" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" y="42" width="198" height="28" rx="7" fill="#736D49"/>
+    <text x="0" y="108" fill="#AFC5E5">B</text><rect x="34" y="84" width="640" height="28" rx="7" fill="#29211F"/><rect x="34" y="84" width="0" height="28" fill="#4B5260"/>
   </g>
 </g>
 </g></svg>

@@ -2,8 +2,6 @@
 
 [See it live](https://www.usuallypragmatic.com/ember/)
 
-> **Branch experiment:** [compare dark foreground warmth constraints](docs/experiments/dark-foreground-warmth/README.md) across 3400K, 2000K, and 1200K profiles. This comparison is exploratory and does not change the canonical palettes.
-
 **Color palettes for terminals, interfaces, charts, and heatmaps that keep text
 readable and semantic colors distinct through aggressive warm-screen filtering.**
 
@@ -24,7 +22,7 @@ you already have.
 
 ### 3400K Dark
 
-![3400K Dark — six background surfaces, three foreground text roles, six categorical colors, six distinct terminal ANSI accents, and the 256-sample sequential map](docs/swatches/3400k-dark.svg)
+![3400K Dark — five unique background surfaces mapped to six roles, three foreground roles, six categorical colors, six terminal accents, and a 256-sample sequential map](docs/swatches/3400k-dark.svg)
 
 ### 3400K Light
 
@@ -36,11 +34,11 @@ map is tuned for even daytime progression against its neutral surface system.
 
 ### 2000K Dark
 
-![2000K Dark — six background surfaces, three foreground text roles, four categorical colors, four terminal accent identities with magenta=red and cyan=green aliases, and the 256-sample sequential map](docs/swatches/2000k-dark.svg)
+![2000K Dark — four unique background surfaces mapped to six roles, three foreground roles, four categorical colors, four terminal identities with magenta=red and cyan=green aliases, and a 256-sample sequential map](docs/swatches/2000k-dark.svg)
 
 ### 1200K Dark
 
-![1200K Dark — six background surfaces, three foreground text roles, three categorical colors, three terminal accent identities with blue=yellow, magenta=red, and cyan=green aliases, and the 256-sample sequential map](docs/swatches/1200k-dark.svg)
+![1200K Dark — four unique background surfaces mapped to six roles, three foreground roles, three categorical colors, three terminal identities with blue=yellow, magenta=red, and cyan=green aliases, and a 256-sample sequential map](docs/swatches/1200k-dark.svg)
 
 These are the exact commanded sRGB values shipped in every export. Deeper filters
 leave fewer color identities available, so unsupported ANSI names intentionally
@@ -94,6 +92,7 @@ canvas becomes a large orange-red field.
 - [The four palettes](#the-four-palettes): [3400K Dark](#3400k-dark) · [3400K Light](#3400k-light) · [2000K Dark](#2000k-dark) · [1200K Dark](#1200k-dark)
 - [With and without redshift](#with-and-without-redshift): [terminal](#in-a-terminal) · [charts and heatmaps](#in-charts-and-heatmaps) · [why colors merge](#why-warm-filters-merge-colors)
 - [Choose a palette](#choose-a-palette)
+- [Do's and Don'ts](https://www.usuallypragmatic.com/ember/#rules)
 - [Install and use Ember](#install-and-use-ember): [get the files](#1-get-the-files) · [terminal themes](#2-import-a-terminal-theme) · [UI roles](#3-use-the-ui-surface-roles) · [Matplotlib](#matplotlib) · [CSS](#css)
 - [The science behind Ember](#the-science-behind-ember)
 - [Verification](#verification) · [References](#references) · [License](#license)
@@ -141,7 +140,9 @@ how reduced ANSI banks behave under the deep palettes.
 
 ### 3. Use the UI surface roles
 
-Every palette exposes the same ordered roles in JSON, CSS, and the Python `surfaces()` API:
+Every palette exposes the same ordered roles in JSON, CSS, and the Python `surfaces()` API.
+Dark palettes can map adjacent roles to one designed surface when the filter cannot preserve a
+useful extra step. The manifest records the unique surfaces and the role-to-surface indices.
 
 | Role | Intended use |
 |---|---|
@@ -155,9 +156,15 @@ Every palette exposes the same ordered roles in JSON, CSS, and the Python `surfa
 | `fg_1` | larger supporting text or graphics; not normal-size body text |
 | `fg_2` | muted, nonessential metadata or decoration |
 
-The six backgrounds form a monotonic ladder. `bg_0` is always the canvas and `bg_5` is
-the strongest background state: dark families become lighter toward `bg_5`, while the
-light family becomes darker toward `bg_5`.
+The six role names form a nondecreasing ladder. `bg_0` is always the canvas and `bg_5` is
+the strongest background state. The 3400K Dark mapping is `[0,1,2,3,4,4]`; the 2000K
+and 1200K Dark mapping is `[0,1,1,2,3,3]`. If an aliased boundary must remain visible,
+add a border, spacing, icon, or state mark. Do not invent another surface color.
+
+Use `fg_0` for body text and essential labels. Use `fg_1` for supporting text or larger
+graphics. Use `fg_2` only for nonessential metadata or decoration. Do not dim text with
+opacity, and do not alpha-compose foreground roles onto surfaces. Both operations create
+colors outside the measured contract.
 
 ### Matplotlib
 
@@ -247,104 +254,120 @@ Load [`ember.css`](palettes/ember.css), then select a family:
 }
 ```
 
-CSS exposes eleven representative 8-bit gradient stops. The
+CSS exposes eleven representative 8-bit gradient stops. The schema-14
 [JSON manifest](palettes/ember.json) and Python package preserve all
-256 canonical float samples, along with surfaces, categorical colors, ANSI slots, gain
-profiles, and measured results.
+256 canonical float samples, along with unique surfaces, six-role aliases, foreground
+usage rules, categorical semantics, ANSI slots, gain profiles, and measured results.
 
 ## The science behind Ember
 
-### 1. Model the signal that reaches the display
+Ember designs for the filtered state first. It protects contrast, hierarchy, and color
+identity after a warm-screen filter removes much of the green and blue signal. It then
+uses the remaining RGB freedom to improve the unfiltered palette without weakening the
+filtered result.
 
-Ember approximates a warm display transform as an independent gain on each sRGB channel:
+### 1. The model defines relationships, not physical color
+
+Ember models a warm filter as an independent gain on each encoded sRGB channel:
 
 ```text
-display RGB ≈ commanded RGB × [red gain, green gain, blue gain]
+[display R, display G, display B]
+  = [commanded R, commanded G, commanded B] × [gain R, gain G, gain B]
 ```
 
 | Profile | RGB gains | Basis |
 |---|---:|---|
 | `3400k` | `[1.00, 0.74, 0.53]` | warm-white engineering surrogate |
-| `2000k` | `[1.0000, 0.5436, 0.0868]` | pinned Redshift 2000 K signal LUT |
-| `1200k` | `[1.0000, 0.3094, 0.0000]` | pinned Redshift 1200 K signal LUT |
+| `2000k` | `[1.0000, 0.5436, 0.0868]` | pinned Redshift signal LUT |
+| `1200k` | `[1.0000, 0.3094, 0.0000]` | pinned Redshift signal LUT |
 
-At 1200 K, blue contributes nothing to the modeled output. At 2000 K, only 9% survives.
-Ordinary sRGB distance is therefore a bad proxy for nighttime distinction: two colors can
-be far apart by day and converge after filtering.
+The 2000K and 1200K gains use reset Redshift ramps, brightness 1, and gamma 1. At
+1200K, blue contributes nothing to the modeled output. Colors that differ only in blue
+then become identical.
 
-These are software signal models, not calibrated physical color temperatures. A real result
-also depends on the display, operating system, calibration, brightness, and ambient light.
+![RGB channel survival under the 3400 K, 2000 K, and 1200 K models](docs/diagrams/channel-collapse.svg)
 
-The JSON manifest also reports sensitivity diagnostics at four ±5% green/blue gain corners
-for categorical colors, terminal groups, foreground/surface contrast, and sequential spacing.
-These sampled corners expose nearby model sensitivity; they are not extrema over every point
-inside a continuous gain box and are not display calibration measurements.
+The model gives every Ember consumer the same signal-level test. It is not a calibrated
+prediction of a physical Kelvin value. Panel hardware, operating-system behavior,
+calibration, brightness, and ambient light still affect what you see.
 
-### 2. Solve the constrained state first
+### 2. The constrained state comes first
 
-Ember treats day and night as two views of the same commanded color. It does not average
-their quality into one score, because excellent daytime spacing cannot compensate for a
-nighttime collision.
+Day and filtered output are two views of one commanded color. A strong daytime result
+cannot compensate for a filtered collision, so Ember does not average them into one score.
 
-1. Set hard transformed targets for contrast, lightness/chroma geometry, and minimum
-   perceptual separation in Oklab.
-2. Among the commanded colors that reproduce those targets, choose a moderate-chroma
-   daytime set with strong unfiltered separation.
+1. Set floors for filtered contrast, lightness order, and perceptual separation.
+2. Find commanded colors that meet those floors.
+3. Use signal dimensions that the filter removes or attenuates to improve the commanded
+   appearance.
 
-This reverses the usual workflow. At 1200 K, changing only blue cannot disturb the
-transformed color, so Ember can use that otherwise lost channel to improve daytime identity.
-At 2000 K, the same freedom is smaller because a weak blue residual remains. Every serialized
-accent stays within `0.15 ΔEOK` of its authored transformed target.
+At 1200K, blue can improve daytime identity without changing the modeled filtered result.
+At 2000K, a small blue residual remains, so that freedom is narrower. Dense, frequent pixels
+stay neutral or warm-neutral. Chroma is reserved for links, status, syntax, and data.
 
-Categorical colors also remain separated from `fg_0`, `fg_1`, and `fg_2` in both states,
-not merely from one another. At all four sampled gain corners, the 2000 K and 1200 K
-palettes retain their required category spacing, foreground clearance, and background
-contrast.
+Commanded authoring geometry is measured in Oklab. Filtered separation and sequential
+spacing are measured in flare-aware CAM16-UCS under documented viewing conditions. WCAG
+contrast remains a separate legibility gate.
 
-### 3. Keep frequent pixels neutral and reserve color for meaning
+![Common palette failures compared with Ember under the exact models](docs/diagrams/failure-modes.svg)
 
-Human vision carries fine spatial detail more strongly through luminance than chromatic
-channels. Dense saturated glyphs and opposing hues are therefore poor places to spend a
-limited nighttime color gamut. The comparison below shows the practical consequence: pure
-white becomes a brighter transformed orange than Ember's cream body text, while a daytime
-dark gray becomes a much larger rust-colored signal than Ember's near-black canvas.
+### 3. Six role names can use fewer real surfaces
 
-![Wrong palette choices compared with Ember under exact warm transforms](docs/diagrams/failure-modes.svg)
+Every family exports `bg_0` through `bg_5`. Consumers can therefore keep one semantic
+interface contract. The dark palettes use fewer unique surfaces where an extra filtered
+step would not remain useful:
 
-Ember puts most pixels in neutral or warm-neutral surfaces, avoids unnecessary pure-white
-body text, and reserves higher chroma for semantic accents. Every foreground-capable terminal
-accent still clears 4.5:1 contrast against the terminal base background (`bg_0`) after its
-target transform. `fg_1` and `fg_2` remain available for larger supporting text and
-nonessential metadata.
+- 3400K Dark: five real surfaces with role indices `[0,1,2,3,4,4]`;
+- 2000K Dark and 1200K Dark: four real surfaces with role indices `[0,1,1,2,3,3]`;
+- 3400K Light: six real surfaces with role indices `[0,1,2,3,4,5]`.
 
-### 4. Protect identity with both color and structure
+The aliases are explicit in schema 14. If an aliased boundary carries meaning, add a
+border, spacing, icon, or state mark. Do not invent an unmeasured surface color.
 
-Ember supports six categorical identities at 3400 K, four at 2000 K, and three at
-1200 K. Deep terminal themes repeat those supported capacities across the sixteen ANSI
-slots; unsupported names deliberately share one of the supported colors.
+### 4. Foregrounds and categories have strict jobs
 
-An accent may change apparent hue between states; it must remain distinguishable in both.
-Each terminal accent remains distinct from ordinary, supporting, and muted text. Each
-foreground trio forms one ordered warm-neutral ladder rather than three unrelated colors.
+`fg_0` carries body text and essential labels. `fg_1` carries supporting text or larger
+graphics. `fg_2` carries nonessential metadata and decoration. Do not use `fg_2` for body
+text. Do not fade text with opacity or alpha-compose a foreground onto a surface. Both
+operations create a color outside the measured contract.
 
-Color is still not enough for critical identity. Charts should combine it with direct labels,
-position, dash pattern, marker shape, or texture:
+Filtered color capacity is finite. Ember supports six categorical and terminal identities
+at 3400K, four at 2000K, and three at 1200K. Unsupported ANSI names intentionally alias
+supported identities. Category slots keep a stable broad identity across the dark profiles,
+including a human-reviewed 2000K ordering.
+
+Use no more than the supported category count. Keep terminal colors for terminal semantics
+and categorical colors for data. Add direct labels, position, markers, dash patterns, or
+texture when identity is critical.
 
 ![Color-only series compared with redundant encoding](docs/diagrams/redundant-encoding.svg)
 
-### 5. Space continuous maps in the transformed view
+### 5. Sequential maps preserve scalar meaning
 
-Each sequential map begins with a human-chosen earth-tone path. The generator smooths that
-path in Oklab, measures cumulative distance after the target transform, and resamples it at
-equal transformed-distance intervals. The 3400 K Light map uses its own restrained path to
-improve daytime progression on a neutral canvas. The 2000 K and 1200 K maps use restrained
-interior blue-channel adjustments to improve commanded spacing without giving up transformed
-equidistance, endpoints, or monotonic lightness.
+Each palette carries a canonical 256-sample float-sRGB map. Low values are dark and high
+values are bright in every mode. CSS and Hex8 exports are lower-precision previews.
 
-The result is a 256-sample map with strictly monotonic transformed lightness and nearly equal
-modeled transformed Oklab steps. The same map also maintains monotonic daytime lightness and
-bounded daytime step variation. CSS exposes eleven convenient 8-bit preview stops; JSON and
-Python carry the complete float samples.
+The dark maps preserve an approved Oklab path, including its endpoints, hue trajectory, and
+chroma envelope. Their sample density then balances commanded and filtered step uniformity.
+The 3400K and 2000K maps stop when filtered variation is perceptually sufficient and use the
+remaining freedom to improve commanded spacing. The 1200K map minimizes the worst sampled-gain
+variation while keeping both states monotonic.
+
+Map the source according to what it means. A photograph maps through Oklab lightness. A
+physical scalar field maps its real normalized values directly. Do not apply an image-lightness
+stretch to elevation, temperature, pressure, or another measured scalar.
+
+### 6. The checks describe exact serialized values
+
+Release metrics are recomputed from the Hex8 accents and canonical float ramps that consumers
+receive. The manifest retains the four ±5% green/blue gain corners and adds a nominal/±5%
+CAM16-UCS gain grid for the transformed-first contracts. These samples show nearby
+sensitivity. They are not extrema over every point in the gain box, and they are not
+display calibration measurements.
+
+The build checks role aliases, foreground use, categorical and terminal separation, WCAG
+contrast, CAM16-UCS spacing, sequential monotonicity, package exports, and generated assets.
+[Read the measured properties and exact release gates](docs/validation.md).
 
 ## Verification
 
@@ -356,12 +379,14 @@ gates](docs/validation.md).
 Reproduce the release checks locally:
 
 ```bash
-uv sync --extra dev
+uv sync --extra dev --extra experiment
 uv run python tools/build_all.py --check
 uv run pytest -q
 uv run ruff check src tests tools examples
 uv build
 ```
+
+Deferred work is tracked in [docs/future-work.md](docs/future-work.md).
 
 ## References
 

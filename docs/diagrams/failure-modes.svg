@@ -1,49 +1,49 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="1250" viewBox="0 0 760 1250">
-<rect width="760" height="1250" rx="22" fill="#090807"/>
+<rect width="760" height="1250" rx="22" fill="#050404"/>
 <g font-family="system-ui, sans-serif">
-<text x="36" y="54" fill="#DDD0B2" font-size="32" font-weight="700">Why ordinary palettes fail</text>
-<text x="36" y="91" fill="#DDD0B2" font-size="32" font-weight="700">under aggressive warm shifts</text>
-<text x="36" y="126" fill="#BDAE93" font-size="21">Every transformed swatch below uses Ember's exact signal model.</text>
+<text x="36" y="54" fill="#DCD9BF" font-size="32" font-weight="700">Why ordinary palettes fail</text>
+<text x="36" y="91" fill="#DCD9BF" font-size="32" font-weight="700">under aggressive warm shifts</text>
+<text x="36" y="126" fill="#9B9784" font-size="21">Every transformed swatch below uses Ember's exact signal model.</text>
 
 <g transform="translate(36 172)">
-  <text x="0" y="0" fill="#DDD0B2" font-size="27" font-weight="700">1 · Daytime colors can become identical</text>
-  <text x="0" y="34" fill="#BDAE93" font-size="20">At 1200 K, blue is removed. These commands differ only in blue.</text>
-  <text x="0" y="82" fill="#945D48" font-size="20" font-weight="700">Naive commands</text>
-  <rect x="0" y="100" width="214" height="78" rx="10" fill="#8BC1FF"/><text x="18" y="149" fill="#090807" font-size="21" font-family="ui-monospace, monospace">#8BC1FF</text>
-  <rect x="232" y="100" width="214" height="78" rx="10" fill="#8BC100"/><text x="250" y="149" fill="#090807" font-size="21" font-family="ui-monospace, monospace">#8BC100</text>
-  <path d="M472 139 H520" stroke="#BDAE93" stroke-width="4"/><path d="M520 139 l-14 -9 v18 z" fill="#BDAE93"/>
-  <rect x="540" y="100" width="148" height="78" rx="10" fill="#8B3C00"/><text x="554" y="149" fill="#DDD0B2" font-size="20" font-family="ui-monospace, monospace">same</text>
-  <text x="0" y="218" fill="#67BE95" font-size="20" font-weight="700">Ember target identities</text>
-  <rect x="0" y="236" width="214" height="64" rx="10" fill="#F22D00"/>
-  <rect x="232" y="236" width="214" height="64" rx="10" fill="#C94F00"/>
-  <rect x="464" y="236" width="214" height="64" rx="10" fill="#DD3F00"/>
+  <text x="0" y="0" fill="#DCD9BF" font-size="27" font-weight="700">1 · Daytime colors can become identical</text>
+  <text x="0" y="34" fill="#9B9784" font-size="20">At 1200 K, blue is removed. These commands differ only in blue.</text>
+  <text x="0" y="82" fill="#2B8B7F" font-size="20" font-weight="700">Naive commands</text>
+  <rect x="0" y="100" width="214" height="78" rx="10" fill="#8BC1FF"/><text x="18" y="149" fill="#050404" font-size="21" font-family="ui-monospace, monospace">#8BC1FF</text>
+  <rect x="232" y="100" width="214" height="78" rx="10" fill="#8BC100"/><text x="250" y="149" fill="#050404" font-size="21" font-family="ui-monospace, monospace">#8BC100</text>
+  <path d="M472 139 H520" stroke="#9B9784" stroke-width="4"/><path d="M520 139 l-14 -9 v18 z" fill="#9B9784"/>
+  <rect x="540" y="100" width="148" height="78" rx="10" fill="#8B3C00"/><text x="554" y="149" fill="#DCD9BF" font-size="20" font-family="ui-monospace, monospace">same</text>
+  <text x="0" y="218" fill="#71CFA5" font-size="20" font-weight="700">Ember target identities</text>
+  <rect x="0" y="236" width="214" height="64" rx="10" fill="#F62C00"/>
+  <rect x="232" y="236" width="214" height="64" rx="10" fill="#C84F00"/>
+  <rect x="464" y="236" width="214" height="64" rx="10" fill="#DE4300"/>
 </g>
 
 <g transform="translate(36 532)">
-  <text x="0" y="0" fill="#DDD0B2" font-size="27" font-weight="700">2 · Ordinary dark gray becomes a rust field</text>
-  <text x="0" y="34" fill="#BDAE93" font-size="20">Large surfaces amplify the filter. Near-black keeps the canvas quiet.</text>
-  <text x="0" y="80" fill="#945D48" font-size="20" font-weight="700">Ordinary dark theme</text>
-  <rect x="0" y="98" width="324" height="122" rx="12" fill="#280C00" stroke="#32241B" stroke-width="2"/>
-  <text x="18" y="146" fill="#DDD0B2" font-size="21" font-family="ui-monospace, monospace">#282828 → #280C00</text>
-  <text x="18" y="184" fill="#BDAE93" font-size="19">modeled luminance 0.00714</text>
-  <text x="360" y="80" fill="#67BE95" font-size="20" font-weight="700">Ember 1200K canvas</text>
-  <rect x="360" y="98" width="324" height="122" rx="12" fill="#060100" stroke="#32241B" stroke-width="2"/>
-  <text x="378" y="146" fill="#DDD0B2" font-size="21" font-family="ui-monospace, monospace">#060302 → #060100</text>
-  <text x="378" y="184" fill="#BDAE93" font-size="19">modeled luminance 0.00060</text>
+  <text x="0" y="0" fill="#DCD9BF" font-size="27" font-weight="700">2 · Ordinary dark gray becomes a rust field</text>
+  <text x="0" y="34" fill="#9B9784" font-size="20">Large surfaces amplify the filter. Near-black keeps the canvas quiet.</text>
+  <text x="0" y="80" fill="#2B8B7F" font-size="20" font-weight="700">Ordinary dark theme</text>
+  <rect x="0" y="98" width="324" height="122" rx="12" fill="#280C00" stroke="#322926" stroke-width="2"/>
+  <text x="18" y="146" fill="#DCD9BF" font-size="21" font-family="ui-monospace, monospace">#282828 → #280C00</text>
+  <text x="18" y="184" fill="#9B9784" font-size="19">modeled luminance 0.00714</text>
+  <text x="360" y="80" fill="#71CFA5" font-size="20" font-weight="700">Ember 1200K canvas</text>
+  <rect x="360" y="98" width="324" height="122" rx="12" fill="#050100" stroke="#322926" stroke-width="2"/>
+  <text x="378" y="146" fill="#DCD9BF" font-size="21" font-family="ui-monospace, monospace">#050404 → #050100</text>
+  <text x="378" y="184" fill="#9B9784" font-size="19">modeled luminance 0.00054</text>
 </g>
 
 <g transform="translate(36 842)">
-  <text x="0" y="0" fill="#DDD0B2" font-size="27" font-weight="700">3 · Pure white becomes the loudest warm signal</text>
-  <text x="0" y="34" fill="#BDAE93" font-size="20">At 2000 K, neutral source text turns orange. Restraint still matters.</text>
-  <text x="0" y="80" fill="#945D48" font-size="20" font-weight="700">Pure white everywhere</text>
-  <rect x="0" y="98" width="324" height="196" rx="12" fill="#070300" stroke="#32241B" stroke-width="2"/>
+  <text x="0" y="0" fill="#DCD9BF" font-size="27" font-weight="700">3 · Pure white becomes the loudest warm signal</text>
+  <text x="0" y="34" fill="#9B9784" font-size="20">At 2000 K, neutral source text turns orange. Restraint still matters.</text>
+  <text x="0" y="80" fill="#2B8B7F" font-size="20" font-weight="700">Pure white everywhere</text>
+  <rect x="0" y="98" width="324" height="196" rx="12" fill="#050200" stroke="#322926" stroke-width="2"/>
   <text x="18" y="143" fill="#FF8B16" font-size="24" font-family="ui-monospace, monospace">#FFFFFF → #FF8B16</text>
   <text x="18" y="187" fill="#FF8B16" font-size="23" font-family="ui-monospace, monospace">Every glyph competes.</text>
   <text x="18" y="231" fill="#FF8B16" font-size="23" font-family="ui-monospace, monospace">Nothing is quiet.</text>
-  <text x="360" y="80" fill="#67BE95" font-size="20" font-weight="700">Ember neutral + sparse color</text>
-  <rect x="360" y="98" width="324" height="196" rx="12" fill="#070300" stroke="#32241B" stroke-width="2"/>
-  <text x="378" y="143" fill="#EE740F" font-size="24" font-family="ui-monospace, monospace">#EED5AE → #EE740F</text>
-  <text x="378" y="187" fill="#EE740F" font-size="23" font-family="ui-monospace, monospace">Body text stays primary.</text>
-  <text x="378" y="231" fill="#EC4C0D" font-size="23" font-family="ui-monospace, monospace">Color marks meaning.</text>
+  <text x="360" y="80" fill="#71CFA5" font-size="20" font-weight="700">Ember neutral + sparse color</text>
+  <rect x="360" y="98" width="324" height="196" rx="12" fill="#050200" stroke="#322926" stroke-width="2"/>
+  <text x="378" y="143" fill="#EC7811" font-size="24" font-family="ui-monospace, monospace">#ECDCBF → #EC7811</text>
+  <text x="378" y="187" fill="#EC7811" font-size="23" font-family="ui-monospace, monospace">Body text stays primary.</text>
+  <text x="378" y="231" fill="#F44E0F" font-size="23" font-family="ui-monospace, monospace">Color marks meaning.</text>
 </g>
 </g></svg>

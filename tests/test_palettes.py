@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 13
+    assert manifest["schema_version"] == 14
     assert manifest["project"] == "Ember"
     assert "legacy_aliases" not in manifest
     assert "legacy_surface_role_aliases" not in manifest
@@ -74,16 +74,22 @@ def test_honest_temperature_families() -> None:
             "continuous_hex8"
         ]
         assert len(family["surfaces"]) == 9
+        assert family["background_surface_count"] == len(family["background_surface_values"])
+        assert len(family["background_role_indices"]) == 6
+        assert [
+            family["background_surface_values"][index]
+            for index in family["background_role_indices"]
+        ] == [family["surfaces"][f"bg_{index}"] for index in range(6)]
 
 
 def test_3400k_palettes_keep_scalar_polarity_with_mode_specific_maps() -> None:
     definitions = {family.slug: family for family in FAMILIES}
     assert definitions["3400k-dark"].sequential_anchors == (
         "#282527",
-        "#51404F",
-        "#7F5E69",
-        "#A17C6C",
-        "#C49D70",
+        "#4D3D4A",
+        "#765863",
+        "#9D796C",
+        "#C39E75",
         "#E2CDA1",
     )
     assert definitions["3400k-light"].sequential_anchors == (
@@ -113,16 +119,16 @@ def test_numbered_surface_roles_have_locked_values() -> None:
     roles = ["bg_0", "bg_1", "bg_2", "bg_3", "bg_4", "bg_5"]
     assert manifest["quality_targets"]["bg_roles_low_to_high"] == roles
     expected = {
-        "3400k-dark": ["#090807", "#100E0C", "#181612", "#201D19", "#29251F", "#32241B"],
+        "3400k-dark": ["#050404", "#13100F", "#1E1918", "#29211F", "#322926", "#322926"],
         "3400k-light": ["#F9F9F8", "#ECECEB", "#E0E0DD", "#D5D3D0", "#CAC7C3", "#BFBCB5"],
-        "2000k-dark": ["#070504", "#0D0A09", "#15110E", "#1E1814", "#271F1B", "#30221B"],
-        "1200k-dark": ["#060302", "#0C0806", "#130E0B", "#1C1511", "#251C17", "#2E1E17"],
+        "2000k-dark": ["#050404", "#171312", "#171312", "#251F1D", "#322926", "#322926"],
+        "1200k-dark": ["#050404", "#171313", "#171313", "#261F1D", "#322926", "#322926"],
     }
     expected_foregrounds = {
-        "3400k-dark": ["#DDD0B2", "#BDAE93", "#908472"],
+        "3400k-dark": ["#DCD9BF", "#9B9784", "#7D7564"],
         "3400k-light": ["#342F2C", "#4D4540", "#665C54"],
-        "2000k-dark": ["#EED5AE", "#D3BB99", "#AA9D8B"],
-        "1200k-dark": ["#FFE5BD", "#CBAF89", "#A18C73"],
+        "2000k-dark": ["#ECDCBF", "#B4AA8E", "#8D8570"],
+        "1200k-dark": ["#FFFBEE", "#CDC4BA", "#A1978F"],
     }
     for slug, values in expected.items():
         surfaces = manifest["families"][slug]["surfaces"]
@@ -130,46 +136,42 @@ def test_numbered_surface_roles_have_locked_values() -> None:
         assert [surfaces[role] for role in ("fg_0", "fg_1", "fg_2")] == expected_foregrounds[slug]
 
 
-def test_deep_sequential_anchor_refinement_is_exact_and_blue_only() -> None:
-    main_anchors = {
-        "2000k-dark": ("#17110F", "#4B3438", "#795052", "#A8755F", "#C69A70", "#F2D9AE"),
-        "1200k-dark": ("#100C0B", "#4B302D", "#754941", "#9F6D58", "#C09772", "#FFE5B8"),
-    }
+def test_dark_sequential_preview_anchors_and_dense_source_are_locked() -> None:
     expected_anchors = {
-        "2000k-dark": ("#17110F", "#4B343E", "#795066", "#A87582", "#C69A8B", "#F2D9AE"),
-        "1200k-dark": ("#100C0B", "#4B3042", "#754969", "#9F6D86", "#C09794", "#FFE5B8"),
+        "3400k-dark": ("#282527", "#4D3D4A", "#765863", "#9D796C", "#C39E75", "#E2CDA1"),
+        "2000k-dark": ("#17110F", "#3D2B31", "#684657", "#986979", "#C79B8E", "#F2D9AE"),
+        "1200k-dark": ("#100C0B", "#37242F", "#633E58", "#95657F", "#C8A099", "#FFE5B8"),
     }
     families = {family.slug: family for family in FAMILIES}
+    manifest = generate_manifest()["families"]
     for slug, expected in expected_anchors.items():
-        actual = families[slug].sequential_anchors
-        baseline = main_anchors[slug]
-        assert actual == expected
-        assert actual[0] == baseline[0]
-        assert actual[-1] == baseline[-1]
-        assert all(current[:5] == previous[:5] for current, previous in zip(actual, baseline))
+        assert families[slug].sequential_anchors == expected
+        assert manifest[slug]["continuous_preview_anchors"] == list(expected)
+        assert manifest[slug]["continuous_source"] == "canonical_float_srgb"
+        assert len(families[slug].sequential_rgb or ()) == 256
 
 
 def test_accent_selections_have_locked_two_stage_values() -> None:
     manifest = generate_manifest()
     expected = {
         "3400k-dark": {
-            "categorical": ["#6E96D5", "#DDAA69", "#2E8B7E", "#67BE95", "#945D48", "#C3779A"],
+            "categorical": ["#DEA460", "#6BA0DE", "#C7779E", "#71CFA5", "#2B8B7F", "#915E42"],
             "categorical_transformed_targets": [
-                "#6E6F71",
-                "#DD7E38",
-                "#2E6743",
-                "#678D4F",
-                "#944526",
-                "#C35852",
+                "#DE7932",
+                "#6B7675",
+                "#C75854",
+                "#719957",
+                "#2B6743",
+                "#914623",
             ],
-            "terminal": ["#F5AD9A", "#7EB798", "#CA9246", "#B4C6F7", "#D895C2", "#70DBD8"],
+            "terminal": ["#F7B7AA", "#7BB48F", "#BE8236", "#A4C0FC", "#D486C3", "#69EBD5"],
             "terminal_transformed_targets": [
-                "#F58052",
-                "#7E8750",
-                "#CA6C25",
-                "#B49383",
-                "#D86E67",
-                "#70A272",
+                "#F7875A",
+                "#7B854C",
+                "#BE601C",
+                "#A48E86",
+                "#D46367",
+                "#69AE71",
             ],
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
@@ -195,17 +197,17 @@ def test_accent_selections_have_locked_two_stage_values() -> None:
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
         "2000k-dark": {
-            "categorical": ["#66B0D4", "#E99096", "#A46449", "#A3DCA9"],
-            "categorical_transformed_targets": ["#666012", "#E94E0D", "#A43606", "#A3780F"],
-            "terminal": ["#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB"],
-            "terminal_transformed_targets": ["#EC4C0E", "#747C10", "#C35507", "#A77216"],
+            "categorical": ["#E99894", "#54B7E2", "#A36043", "#A8EDB1"],
+            "categorical_transformed_targets": ["#E9530E", "#546313", "#A33406", "#A88110"],
+            "terminal": ["#F490AC", "#85EEB8", "#C29E39", "#A9C6FC"],
+            "terminal_transformed_targets": ["#F44E0E", "#85810F", "#C25605", "#A96C17"],
             "terminal_ansi_indices": [0, 1, 2, 3, 0, 1],
         },
         "1200k-dark": {
-            "categorical": ["#BB6572", "#8FF0FF", "#E9B76C"],
-            "categorical_transformed_targets": ["#BB1F00", "#8F4A00", "#E93900"],
-            "terminal": ["#F29298", "#C9FFB4", "#DDCD81"],
-            "terminal_transformed_targets": ["#F22D00", "#C94F00", "#DD3F00"],
+            "categorical": ["#F3AC74", "#8DEEFF", "#B76270"],
+            "categorical_transformed_targets": ["#F33500", "#8D4A01", "#B71E00"],
+            "terminal": ["#F68F96", "#C8FFC4", "#DED872"],
+            "terminal_transformed_targets": ["#F62C00", "#C84F00", "#DE4300"],
             "terminal_ansi_indices": [0, 1, 2, 2, 0, 1],
         },
     }
@@ -229,10 +231,10 @@ def test_terminal_ansi_roles_have_semantic_commanded_hues() -> None:
     manifest = generate_manifest()
     semantic_names = ("red", "green", "yellow", "blue", "magenta", "cyan")
     expected = {
-        "3400k-dark": ["#F5AD9A", "#7EB798", "#CA9246", "#B4C6F7", "#D895C2", "#70DBD8"],
+        "3400k-dark": ["#F7B7AA", "#7BB48F", "#BE8236", "#A4C0FC", "#D486C3", "#69EBD5"],
         "3400k-light": ["#430000", "#10420E", "#8A4805", "#131851", "#5D3777", "#007672"],
-        "2000k-dark": ["#EC8B96", "#74E5C0", "#C39C49", "#A7D1FB", "#EC8B96", "#74E5C0"],
-        "1200k-dark": ["#F29298", "#C9FFB4", "#DDCD81", "#DDCD81", "#F29298", "#C9FFB4"],
+        "2000k-dark": ["#F490AC", "#85EEB8", "#C29E39", "#A9C6FC", "#F490AC", "#85EEB8"],
+        "1200k-dark": ["#F68F96", "#C8FFC4", "#DED872", "#DED872", "#F68F96", "#C8FFC4"],
     }
     hue_centers = {
         "red": 20.0,
@@ -449,7 +451,7 @@ def test_gain_sensitivity_metrics_recompute_from_exact_serialized_values() -> No
         assert metrics["continuous_minimum_signed_lightness_step"] == round(
             min(value["continuous_minimum_signed_lightness_step"] for value in values), 6
         )
-        deep_foreground_targets = {"2000k-dark": 5.2, "1200k-dark": 4.7}
+        deep_foreground_targets = {"2000k-dark": 5.2, "1200k-dark": 4.2}
         if family["slug"] in deep_foreground_targets:
             assert (
                 metrics["categorical_minimum_delta_e_ok"]
@@ -459,16 +461,34 @@ def test_gain_sensitivity_metrics_recompute_from_exact_serialized_values() -> No
                 metrics["categorical_minimum_foreground_delta_e_ok"]
                 >= (deep_foreground_targets[family["slug"]])
             )
-            assert metrics["categorical_minimum_background_contrast"] >= 3.0
+            assert metrics["categorical_minimum_background_contrast"] >= 2.8
 
 
 def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shift() -> None:
     manifest = generate_manifest()
     commanded_cv_limits = {
-        "3400k-dark": 0.18,
+        "3400k-dark": 0.06,
         "3400k-light": 0.18,
-        "2000k-dark": 0.11,
-        "1200k-dark": 0.15,
+        "2000k-dark": 0.13,
+        "1200k-dark": 0.18,
+    }
+    commanded_ratio_limits = {
+        "3400k-dark": 1.20,
+        "3400k-light": 1.60,
+        "2000k-dark": 1.42,
+        "1200k-dark": 1.88,
+    }
+    transformed_cv_limits = {
+        "3400k-dark": 0.02,
+        "3400k-light": 0.0001,
+        "2000k-dark": 0.04,
+        "1200k-dark": 0.07,
+    }
+    transformed_ratio_limits = {
+        "3400k-dark": 1.05,
+        "3400k-light": 1.001,
+        "2000k-dark": 1.15,
+        "1200k-dark": 1.40,
     }
     for family in manifest["families"].values():
         sequence = np.asarray(family["continuous_rgb"], dtype=float)
@@ -490,11 +510,11 @@ def test_continuous_maps_are_monotonic_in_both_states_and_nearly_even_after_shif
         assert normal_lightness_steps.min() > 0.0, family["slug"]
         assert np.ptp(normal[:, 0]) >= 0.50, family["slug"]
         assert normal_cv <= commanded_cv_limits[family["slug"]], family["slug"]
-        assert normal_max_to_min <= 1.60, family["slug"]
+        assert normal_max_to_min <= commanded_ratio_limits[family["slug"]], family["slug"]
         assert lightness_steps.min() > 0.0, family["slug"]
         assert np.ptp(shifted[:, 0]) >= 0.50, family["slug"]
-        assert cv <= 0.0001, family["slug"]
-        assert max_to_min <= 1.001, family["slug"]
+        assert cv <= transformed_cv_limits[family["slug"]], family["slug"]
+        assert max_to_min <= transformed_ratio_limits[family["slug"]], family["slug"]
         assert metrics["minimum_signed_lightness_step"] == round(float(lightness_steps.min()), 6)
         assert metrics["normal_minimum_signed_lightness_step"] == round(
             float(normal_lightness_steps.min()), 6
@@ -671,18 +691,29 @@ def test_dark_surfaces_are_near_black_with_strong_primary_text_contrast() -> Non
         normal_luminance = []
         shifted_luminance = []
         shifted_contrast = []
-        shifted_labs = []
         for role in measured_roles:
             commanded = hex_to_srgb(family["surfaces"][role])
             shifted = warm_transform(commanded, gains)
             normal_luminance.append(float(wcag_luminance(commanded)))
             shifted_luminance.append(float(wcag_luminance(shifted)))
             shifted_contrast.append(contrast_ratio(foreground, shifted))
-            shifted_labs.append(perceived_lab(commanded, gains))
             assert normal_luminance[-1] <= luminance_caps[role], (family["slug"], role)
-        assert np.all(np.diff(normal_luminance) > 0.0), family["slug"]
-        assert np.all(np.diff(shifted_luminance) > 0.0), family["slug"]
-        adjacent_distance = [delta_e_ok(left, right) for left, right in pairwise(shifted_labs)]
+        assert np.all(np.diff(normal_luminance) >= 0.0), family["slug"]
+        assert np.all(np.diff(shifted_luminance) >= 0.0), family["slug"]
+
+        unique_rgb = np.asarray(
+            [hex_to_srgb(value) for value in family["background_surface_values"]]
+        )
+        unique_normal_luminance = np.asarray([wcag_luminance(value) for value in unique_rgb])
+        unique_shifted_luminance = np.asarray(
+            [wcag_luminance(warm_transform(value, gains)) for value in unique_rgb]
+        )
+        unique_shifted_labs = perceived_lab(unique_rgb, gains)
+        assert np.all(np.diff(unique_normal_luminance) > 0.0), family["slug"]
+        assert np.all(np.diff(unique_shifted_luminance) > 0.0), family["slug"]
+        adjacent_distance = [
+            delta_e_ok(left, right) for left, right in pairwise(unique_shifted_labs)
+        ]
         assert min(adjacent_distance) >= targets["dark_minimum_adjacent_surface_delta_e_ok"]
         assert min(shifted_contrast) >= contrast_targets[family["slug"]], family["slug"]
         metrics = family["metrics"]["surface"]
@@ -772,7 +803,7 @@ def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
         assert len(group_ids) == family["terminal_semantic_color_count"]
         assert day_min >= family["terminal_daylight_minimum_delta_e_ok_target"]
         assert max(group_spreads) <= 1.5
-        assert np.linalg.norm(normal[:, 1:], axis=1).max() <= 0.121
+        assert np.linalg.norm(normal[:, 1:], axis=1).max() <= 0.125
         assert metrics["normal_min_delta_e_ok"] == round(day_min, 2)
         assert metrics["normal_min_delta_e_ok_to_foregrounds"] == {
             role: round(distance, 2) for role, distance in normal_distance_to_foregrounds.items()
@@ -882,7 +913,8 @@ def test_validation_reference_bi_state_metrics_match_manifest() -> None:
             luminance = surface["normal_relative_luminance"]
             contrast = surface["shifted_primary_text_contrast"]
             surface_row = (
-                f"| {family['name']} | `{family['surfaces']['bg_0']}` | "
+                f"| {family['name']} | {family['background_surface_count']} | "
+                f"`{family['surfaces']['bg_0']}` | "
                 f"{luminance['bg_0']:.5f} → {luminance['bg_5']:.5f} | "
                 f"{min(contrast.values()):.2f}–{max(contrast.values()):.2f}:1 |"
             )

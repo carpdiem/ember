@@ -46,7 +46,7 @@ def test_landing_page_leads_with_a_direct_description() -> None:
     assert "This fictional console applies the selected palette" in landing
     assert "Each measured value maps to one of 256 colors" in normalized
     assert "Only dark palettes are available" in normalized
-    assert "One sequential map for both 3400 K palettes" in landing
+    assert "One scalar direction in every palette" in landing
     assert "switching interface palettes does not reverse scalar meaning" in normalized
 
 

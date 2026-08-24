@@ -2,28 +2,28 @@
 /* Continuous maps expose 11 representative stops; use JSON/Python for all 256. */
 
 [data-ember-palette="3400k-dark"] {
-  --ember-bg-0: #090807;
-  --ember-bg-1: #100E0C;
-  --ember-bg-2: #181612;
-  --ember-bg-3: #201D19;
-  --ember-bg-4: #29251F;
-  --ember-bg-5: #32241B;
-  --ember-fg-0: #DDD0B2;
-  --ember-fg-1: #BDAE93;
-  --ember-fg-2: #908472;
-  --ember-category-one: #6E96D5;
-  --ember-category-two: #DDAA69;
-  --ember-category-three: #2E8B7E;
-  --ember-category-four: #67BE95;
-  --ember-category-five: #945D48;
-  --ember-category-six: #C3779A;
-  --ember-terminal-red: #F5AD9A;
-  --ember-terminal-green: #7EB798;
-  --ember-terminal-yellow: #CA9246;
-  --ember-terminal-blue: #B4C6F7;
-  --ember-terminal-magenta: #D895C2;
-  --ember-terminal-cyan: #70DBD8;
-  --ember-sequential: linear-gradient(90deg, #282527 0%, #3B3139 10%, #4D3E4A 20%, #614A58 30%, #765863 40%, #8A686A 50%, #9D796C 60%, #B08A6E 70%, #C39E75 80%, #D3B589 90%, #E2CDA1 100%);
+  --ember-bg-0: #050404;
+  --ember-bg-1: #13100F;
+  --ember-bg-2: #1E1918;
+  --ember-bg-3: #29211F;
+  --ember-bg-4: #322926;
+  --ember-bg-5: #322926;
+  --ember-fg-0: #DCD9BF;
+  --ember-fg-1: #9B9784;
+  --ember-fg-2: #7D7564;
+  --ember-category-one: #DEA460;
+  --ember-category-two: #6BA0DE;
+  --ember-category-three: #C7779E;
+  --ember-category-four: #71CFA5;
+  --ember-category-five: #2B8B7F;
+  --ember-category-six: #915E42;
+  --ember-terminal-red: #F7B7AA;
+  --ember-terminal-green: #7BB48F;
+  --ember-terminal-yellow: #BE8236;
+  --ember-terminal-blue: #A4C0FC;
+  --ember-terminal-magenta: #D486C3;
+  --ember-terminal-cyan: #69EBD5;
+  --ember-sequential: linear-gradient(90deg, #282527 0%, #3A3139 10%, #4D3D4A 20%, #604A58 30%, #765863 40%, #8A686A 50%, #9D796C 60%, #B08A6E 70%, #C39E75 80%, #D4B689 90%, #E2CDA1 100%);
 }
 
 [data-ember-palette="3400k-light"] {
@@ -52,46 +52,46 @@
 }
 
 [data-ember-palette="2000k-dark"] {
-  --ember-bg-0: #070504;
-  --ember-bg-1: #0D0A09;
-  --ember-bg-2: #15110E;
-  --ember-bg-3: #1E1814;
-  --ember-bg-4: #271F1B;
-  --ember-bg-5: #30221B;
-  --ember-fg-0: #EED5AE;
-  --ember-fg-1: #D3BB99;
-  --ember-fg-2: #AA9D8B;
-  --ember-category-one: #66B0D4;
-  --ember-category-two: #E99096;
-  --ember-category-three: #A46449;
-  --ember-category-four: #A3DCA9;
-  --ember-terminal-red: #EC8B96;
-  --ember-terminal-green: #74E5C0;
-  --ember-terminal-yellow: #C39C49;
-  --ember-terminal-blue: #A7D1FB;
-  --ember-terminal-magenta: #EC8B96;
-  --ember-terminal-cyan: #74E5C0;
-  --ember-sequential: linear-gradient(90deg, #17110F 0%, #2B1F21 10%, #3F2C33 20%, #553A46 30%, #6C485A 40%, #84596C 50%, #9B6B7A 60%, #B18185 70%, #C89D8E 80%, #DDBB9D 90%, #F2D9AE 100%);
+  --ember-bg-0: #050404;
+  --ember-bg-1: #171312;
+  --ember-bg-2: #171312;
+  --ember-bg-3: #251F1D;
+  --ember-bg-4: #322926;
+  --ember-bg-5: #322926;
+  --ember-fg-0: #ECDCBF;
+  --ember-fg-1: #B4AA8E;
+  --ember-fg-2: #8D8570;
+  --ember-category-one: #E99894;
+  --ember-category-two: #54B7E2;
+  --ember-category-three: #A36043;
+  --ember-category-four: #A8EDB1;
+  --ember-terminal-red: #F490AC;
+  --ember-terminal-green: #85EEB8;
+  --ember-terminal-yellow: #C29E39;
+  --ember-terminal-blue: #A9C6FC;
+  --ember-terminal-magenta: #F490AC;
+  --ember-terminal-cyan: #85EEB8;
+  --ember-sequential: linear-gradient(90deg, #17110F 0%, #2A1E20 10%, #3D2B31 20%, #513843 30%, #684657 40%, #80566A 50%, #986979 60%, #B07F84 70%, #C79B8E 80%, #DDBA9D 90%, #F2D9AE 100%);
 }
 
 [data-ember-palette="1200k-dark"] {
-  --ember-bg-0: #060302;
-  --ember-bg-1: #0C0806;
-  --ember-bg-2: #130E0B;
-  --ember-bg-3: #1C1511;
-  --ember-bg-4: #251C17;
-  --ember-bg-5: #2E1E17;
-  --ember-fg-0: #FFE5BD;
-  --ember-fg-1: #CBAF89;
-  --ember-fg-2: #A18C73;
-  --ember-category-one: #BB6572;
-  --ember-category-two: #8FF0FF;
-  --ember-category-three: #E9B76C;
-  --ember-terminal-red: #F29298;
-  --ember-terminal-green: #C9FFB4;
-  --ember-terminal-yellow: #DDCD81;
-  --ember-terminal-blue: #DDCD81;
-  --ember-terminal-magenta: #F29298;
-  --ember-terminal-cyan: #C9FFB4;
-  --ember-sequential: linear-gradient(90deg, #100C0B 0%, #24181E 10%, #392531 20%, #4F3246 30%, #67415C 40%, #805270 50%, #986881 60%, #B0838E 70%, #CAA49B 80%, #E5C4A9 90%, #FFE5B8 100%);
+  --ember-bg-0: #050404;
+  --ember-bg-1: #171313;
+  --ember-bg-2: #171313;
+  --ember-bg-3: #261F1D;
+  --ember-bg-4: #322926;
+  --ember-bg-5: #322926;
+  --ember-fg-0: #FFFBEE;
+  --ember-fg-1: #CDC4BA;
+  --ember-fg-2: #A1978F;
+  --ember-category-one: #F3AC74;
+  --ember-category-two: #8DEEFF;
+  --ember-category-three: #B76270;
+  --ember-terminal-red: #F68F96;
+  --ember-terminal-green: #C8FFC4;
+  --ember-terminal-yellow: #DED872;
+  --ember-terminal-blue: #DED872;
+  --ember-terminal-magenta: #F68F96;
+  --ember-terminal-cyan: #C8FFC4;
+  --ember-sequential: linear-gradient(90deg, #100C0B 0%, #24181D 10%, #37242F 20%, #4B3042 30%, #633E58 40%, #7C506D 50%, #95657F 60%, #AE808D 70%, #C8A099 80%, #E2C1A8 90%, #FFE5B8 100%);
 }

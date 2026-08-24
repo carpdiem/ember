@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from itertools import product
 from typing import Any
 
 import numpy as np
@@ -50,6 +51,10 @@ ANSI_NAMES = (
     "bright_cyan",
     "bright_white",
 )
+
+CAM16_ADAPTING_LUMINANCE = 8.0
+CAM16_BACKGROUND_LUMINANCE = 3.0
+CAM16_FLARE_FRACTION = 0.0075
 
 
 def _categorical_colors(family: FamilyDefinition) -> np.ndarray:
@@ -121,6 +126,105 @@ def _gain_sensitivity_vectors(
         for green_scale in scales
         for blue_scale in scales
     ]
+
+
+def _gain_grid_vectors(
+    gains: tuple[float, float, float],
+) -> list[tuple[float, float, float]]:
+    """Return the unique nominal and ±5% samples for every nonzero channel."""
+
+    axes = [(0.0,) if value == 0.0 else (value * 0.95, value, value * 1.05) for value in gains]
+    return [(float(red), float(green), float(blue)) for red, green, blue in product(*axes)]
+
+
+def _cam16_ucs(rgb: np.ndarray, gains: tuple[float, float, float]) -> np.ndarray:
+    """Return flare-aware CAM16-UCS coordinates for transformed encoded sRGB."""
+
+    try:
+        import colour
+    except ModuleNotFoundError as error:
+        raise RuntimeError(
+            "CAM16-UCS generation requires the 'experiment' extra: "
+            "pip install 'ember-palettes[experiment]'"
+        ) from error
+
+    transformed = np.clip(rgb * np.asarray(gains), 0.0, 1.0)
+    xyz = colour.sRGB_to_XYZ(transformed)
+    flare = CAM16_FLARE_FRACTION * colour.sRGB_to_XYZ(np.ones_like(transformed))
+    return np.asarray(
+        colour.XYZ_to_CAM16UCS(
+            xyz + flare,
+            L_A=CAM16_ADAPTING_LUMINANCE,
+            Y_b=CAM16_BACKGROUND_LUMINANCE,
+        )
+    )
+
+
+def _cam16_metrics(
+    family: FamilyDefinition,
+    categories: np.ndarray,
+    terminal_colors: np.ndarray,
+    foregrounds: np.ndarray,
+    sequential: np.ndarray,
+) -> dict[str, Any]:
+    """Measure the accepted transformed-first contracts in CAM16-UCS."""
+
+    unique_surfaces = np.asarray([hex_to_srgb(value) for value in family.background_surface_values])
+
+    def pair_minimum(values: np.ndarray) -> float | None:
+        if len(values) < 2:
+            return None
+        distances = np.linalg.norm(values[:, None] - values[None, :], axis=2)
+        return float(distances[np.triu_indices(len(values), k=1)].min())
+
+    def sequence_row(gains: tuple[float, float, float]) -> dict[str, float]:
+        coordinates = _cam16_ucs(sequential, gains)
+        steps = np.linalg.norm(np.diff(coordinates, axis=0), axis=1)
+        signed_j = np.diff(coordinates[:, 0])
+        return {
+            "cv": float(steps.std() / steps.mean()),
+            "max_to_min": float(steps.max() / steps.min()),
+            "minimum_signed_j_step": float(signed_j.min()),
+        }
+
+    gains = family.profile.gains
+    category_cam = _cam16_ucs(categories, gains)
+    terminal_cam = _cam16_ucs(terminal_colors, gains)
+    foreground_cam = _cam16_ucs(foregrounds, gains)
+    surface_cam = _cam16_ucs(unique_surfaces, gains)
+    sequence = sequence_row(gains)
+    gain_grid = [sequence_row(sample) for sample in _gain_grid_vectors(gains)]
+    return {
+        "viewing_conditions": {
+            "adapting_luminance": CAM16_ADAPTING_LUMINANCE,
+            "background_luminance": CAM16_BACKGROUND_LUMINANCE,
+            "flare_fraction": CAM16_FLARE_FRACTION,
+        },
+        "categorical_minimum_pair_distance": round(pair_minimum(category_cam) or 0.0, 4),
+        "categorical_minimum_foreground_distance": round(
+            float(np.linalg.norm(category_cam[:, None] - foreground_cam[None, :], axis=2).min()),
+            4,
+        ),
+        "terminal_minimum_pair_distance": round(pair_minimum(terminal_cam) or 0.0, 4),
+        "terminal_minimum_foreground_distance": round(
+            float(np.linalg.norm(terminal_cam[:, None] - foreground_cam[None, :], axis=2).min()),
+            4,
+        ),
+        "unique_surface_adjacent_distances": [
+            round(float(value), 4) for value in np.linalg.norm(np.diff(surface_cam, axis=0), axis=1)
+        ],
+        "continuous_delta_e_cv": round(sequence["cv"], 6),
+        "continuous_delta_e_max_to_min": round(sequence["max_to_min"], 6),
+        "continuous_minimum_signed_j_step": round(sequence["minimum_signed_j_step"], 8),
+        "gain_grid_kind": "unique nominal and ±5% sample per nonzero RGB gain",
+        "gain_grid_continuous_maximum_delta_e_cv": round(max(row["cv"] for row in gain_grid), 6),
+        "gain_grid_continuous_maximum_delta_e_max_to_min": round(
+            max(row["max_to_min"] for row in gain_grid), 6
+        ),
+        "gain_grid_continuous_minimum_signed_j_step": round(
+            min(row["minimum_signed_j_step"] for row in gain_grid), 8
+        ),
+    }
 
 
 def _gain_sensitivity_metrics(
@@ -237,6 +341,15 @@ def _interpolate_polyline(points: np.ndarray, samples_per_segment: int = 512) ->
 
 
 def _sequential_colors(family: FamilyDefinition, count: int = 256) -> np.ndarray:
+    if family.sequential_rgb is not None:
+        canonical = np.asarray(family.sequential_rgb, dtype=float)
+        if canonical.shape != (count, 3):
+            raise ValueError(
+                f"{family.slug} canonical sequential ramp has shape {canonical.shape}, "
+                f"expected {(count, 3)}"
+            )
+        return canonical.copy()
+
     anchors_rgb = np.array([hex_to_srgb(value) for value in family.sequential_anchors])
     anchor_lab = _smooth_polyline(srgb_to_oklab(anchors_rgb))
     dense_lab = _interpolate_polyline(anchor_lab)
@@ -477,6 +590,13 @@ def _metrics(
         "foreground_ladder": foreground_metrics,
         "continuous": sequence_metrics,
         "surface": surface_metrics,
+        "transformed_cam16_ucs": _cam16_metrics(
+            family,
+            categories,
+            terminal_colors,
+            foreground_colors,
+            sequential,
+        ),
         "shifted_text_contrast": text_metrics,
         "gain_sensitivity": _gain_sensitivity_metrics(
             family,
@@ -513,12 +633,26 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         for index, value in enumerate(transformed_terminal)
         if family.mode == "light" or index != 0
     ]
+    expanded_backgrounds = tuple(
+        family.background_surface_values[index] for index in family.background_role_indices
+    )
+    declared_backgrounds = tuple(family.surfaces[role] for role in BACKGROUND_SURFACE_ROLES)
+    if expanded_backgrounds != declared_backgrounds:
+        raise ValueError(
+            f"{family.slug} background role indices do not reproduce its six exported roles"
+        )
+    if tuple(dict.fromkeys(family.background_surface_values)) != family.background_surface_values:
+        raise ValueError(f"{family.slug} background_surface_values must be unique and ordered")
+
     return {
         "slug": family.slug,
         "name": family.name,
         "mode": family.mode,
         "profile": family.profile.slug,
         "surfaces": family.surfaces,
+        "background_surface_count": len(family.background_surface_values),
+        "background_surface_values": list(family.background_surface_values),
+        "background_role_indices": list(family.background_role_indices),
         "terminal": dict(zip(ANSI_NAMES, terminal_values)),
         "terminal_daylight_color_count": len(family.terminal_colors),
         "terminal_semantic_color_count": family.terminal_color_count,
@@ -586,6 +720,11 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
             2,
         ),
         "categorical": dict(zip(CATEGORY_NAMES, category_hex)),
+        "categorical_semantic_slots": (
+            list(family.categorical_semantic_slots)
+            if family.categorical_semantic_slots is not None
+            else None
+        ),
         "categorical_transformed_targets": list(family.categorical_transformed_targets),
         "daylight_minimum_delta_e_ok_target": family.daylight_minimum_delta_e_ok,
         "daylight_minimum_hue_gap_degrees_target": (family.daylight_minimum_hue_gap_degrees),
@@ -600,6 +739,12 @@ def generate_family(family: FamilyDefinition) -> dict[str, Any]:
         ),
         "continuous_rgb": sequential.tolist(),
         "continuous_hex8": [srgb_to_hex(color) for color in sequential],
+        "continuous_preview_anchors": list(family.sequential_anchors),
+        "continuous_source": (
+            "canonical_float_srgb"
+            if family.sequential_rgb is not None
+            else "generated_from_hex8_anchors"
+        ),
         "metrics": _metrics(family, categories, sequential),
     }
 
@@ -619,7 +764,7 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 13,
+        "schema_version": 14,
         "project": "Ember",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
@@ -632,6 +777,13 @@ def generate_manifest() -> dict[str, Any]:
                 "optimize commanded daytime aesthetics without weakening transformed outcomes",
             ],
             "cross_state_hue_consistency_required": False,
+            "foreground_usage": {
+                "fg_0": "primary text and essential labels",
+                "fg_1": "supporting text or larger graphics; not normal body text",
+                "fg_2": "muted nonessential metadata or decoration; not body text",
+                "opacity_derived_text_allowed": False,
+                "alpha_composited_foregrounds_allowed": False,
+            },
             "terminal_distinguishability_reference_role": "fg_0",
             "terminal_distinguishability_reference_roles": ["fg_0", "fg_1", "fg_2"],
             "joint_terminal_optimization_priority": [

@@ -25,7 +25,7 @@
   --ease: cubic-bezier(.33,.66,.28,1);
 }
 *,*::before,*::after{ box-sizing:border-box; }
-html{ scroll-behavior:smooth; }
+html{ scroll-behavior:smooth; scroll-padding-top:calc(var(--chrome-h) + 1rem); }
 @media (prefers-reduced-motion: reduce){
   html{ scroll-behavior:auto; }
   *,*::before,*::after{ animation:none !important; transition:none !important; }
@@ -771,6 +771,133 @@ code, pre, kbd{ font-family:var(--font-mono); }
 .profile-table td{ padding:.4rem; border-bottom:1px dotted var(--ember-bg-4); color:var(--ember-fg-1); }
 .profile-table td:first-child{ font-family:var(--font-mono); color:var(--ember-fg-0); }
 
+/* ---------- science and usage rules ---------- */
+.science{
+  border-top:var(--rule); padding:clamp(2.5rem,7vh,5rem) clamp(1rem,5vw,5rem);
+}
+.science-intro{ max-width:58rem; }
+.science h2,.rules h2{
+  font-family:var(--font-serif); font-weight:500;
+  font-size:clamp(1.9rem,4vw,3.5rem); line-height:1.05; margin:.35rem 0 1rem;
+}
+.science-dek,.rules-dek{ max-width:55rem; color:var(--ember-fg-1); font-size:1.05rem; }
+.gain-equation{
+  margin:1.2rem 0; padding:.8rem 1rem; max-width:52rem;
+  background:var(--ember-bg-2); border-left:3px solid var(--ember-category-one);
+  color:var(--ember-fg-0); overflow-x:auto;
+}
+.science-grid{
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1px;
+  margin-top:1.5rem; background:var(--ember-bg-4); border:1px solid var(--ember-bg-4);
+}
+.science-card{ background:var(--ember-bg-1); padding:1rem; }
+.science-card h3{ margin:0 0 .45rem; font-size:.92rem; }
+.science-card p{ margin:0; color:var(--ember-fg-1); font-size:.82rem; }
+.science-links{ margin:1rem 0 0; display:flex; flex-wrap:wrap; gap:.7rem 1.2rem; }
+
+.rules{ padding:0 0 clamp(2.5rem,7vh,5rem); }
+.rules-head{ padding:clamp(2.5rem,7vh,5rem) clamp(1rem,5vw,5rem) 1.5rem; }
+.quick-contract{
+  list-style:none; counter-reset:contract; padding:0; margin:1.2rem 0 0;
+  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:1px;
+  background:var(--ember-bg-4); border:1px solid var(--ember-bg-4);
+}
+.quick-contract li{
+  counter-increment:contract; background:var(--ember-bg-1); padding:.75rem;
+  color:var(--ember-fg-1); font-size:.76rem;
+}
+.quick-contract li::before{
+  content:counter(contract,decimal-leading-zero); display:block; margin-bottom:.3rem;
+  color:var(--ember-category-one); font:700 .62rem var(--font-mono);
+}
+.rules-demo{
+  margin:0 clamp(1rem,5vw,5rem); padding:clamp(1rem,3vw,2rem);
+  background:var(--ember-bg-1); border:1px solid var(--ember-bg-4);
+}
+.rule-grid{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; }
+.rule-card{ background:var(--ember-bg-2); border:1px solid var(--ember-bg-4); }
+.rule-card > header{ padding:.8rem; border-bottom:1px solid var(--ember-bg-4); }
+.rule-card h3{ margin:0; font-size:.9rem; }
+.rule-card > header p{ margin:.25rem 0 0; color:var(--ember-fg-1); font-size:.72rem; }
+.rule-compare{ display:grid; grid-template-columns:1fr 1fr; }
+.rule-example{ min-width:0; padding:.75rem; }
+.rule-example + .rule-example{ border-left:1px solid var(--ember-bg-4); }
+.rule-example h4{
+  margin:0 0 .45rem; font:700 .62rem var(--font-mono); letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.rule-example.good h4{ color:var(--ember-terminal-green); }
+.rule-example.bad h4{ color:var(--ember-terminal-red); }
+.rule-example p{ margin:.4rem 0; font-size:.72rem; color:var(--ember-fg-1); }
+.rule-failure{ border-top:1px dotted var(--ember-bg-4); padding-top:.45rem; }
+.mini-ui{ margin:.55rem 0; padding:.6rem; background:var(--ember-bg-0); border:1px solid var(--ember-bg-4); }
+.mini-ui strong,.mini-ui span{ display:block; }
+.mini-primary{ color:var(--ember-fg-0); }
+.mini-support{ color:var(--ember-fg-1); }
+.mini-meta{ color:var(--ember-fg-2); font-size:.7rem; }
+.bad-body{ color:var(--ember-fg-2); }
+.bad-opacity{ color:var(--ember-fg-0); opacity:.45; }
+.good-disabled{ color:var(--ember-fg-1); border:1px dashed var(--ember-fg-2); padding:.25rem .4rem; }
+.layer-stack{ position:relative; height:4.5rem; margin:.55rem 0; }
+.layer{ position:absolute; padding:.45rem; border:1px solid var(--ember-bg-4); font-size:.66rem; }
+.layer.base{ inset:.35rem 1.8rem .9rem .35rem; background:var(--ember-bg-3); }
+.layer.top{ inset:1.65rem .35rem .25rem 1.8rem; background:var(--ember-bg-4); }
+.layer.good-top{ border-left:4px solid var(--ember-category-one); }
+.layer.bad-base{ background:var(--ember-bg-4); border-color:transparent; }
+.layer.bad-top{ background:var(--ember-bg-5); border-color:transparent; }
+.rule-cat-row{ display:flex; gap:.25rem; margin:.55rem 0; min-height:1.4rem; }
+.rule-cat{ flex:1 1 0; min-width:0; height:1.4rem; border:1px solid var(--ember-bg-4); }
+.rule-cat[data-cat="1"]{ background:var(--ember-category-one); }
+.rule-cat[data-cat="2"]{ background:var(--ember-category-two); }
+.rule-cat[data-cat="3"]{ background:var(--ember-category-three); }
+.rule-cat[data-cat="4"]{ background:var(--ember-category-four); }
+.rule-cat[data-cat="5"]{ background:var(--ember-category-five); }
+.rule-cat[data-cat="6"]{ background:var(--ember-category-six); }
+.rule-cat.cycle-1{ background:var(--ember-category-one); }
+.rule-cat.cycle-2{ background:var(--ember-category-two); }
+.rule-cat.cycle-3{ background:var(--ember-category-three); }
+.rule-cat.cycle-4{ background:var(--ember-category-four); }
+.rule-cat.cycle-5{ background:var(--ember-category-five); }
+.rule-cat.cycle-6{ background:var(--ember-category-six); }
+.bank-split{ display:grid; grid-template-columns:1fr 1fr; gap:.35rem; font-size:.65rem; }
+.bank-split div{ padding:.45rem; background:var(--ember-bg-0); }
+.bank-split .term{ color:var(--ember-terminal-red); }
+.bank-split .cat{ color:var(--ember-category-one); }
+.bad-terminal-chart{ display:flex; gap:.3rem; margin:.55rem 0; }
+.bad-terminal-chart i{ flex:1; height:1.5rem; }
+.bad-terminal-chart i:nth-child(1){ background:var(--ember-terminal-red); }
+.bad-terminal-chart i:nth-child(2){ background:var(--ember-terminal-green); }
+.bad-terminal-chart i:nth-child(3){ background:var(--ember-terminal-yellow); }
+.mapping-demo{ display:grid; gap:.35rem; margin:.55rem 0; font-size:.65rem; }
+.mapping-bar{ height:1.25rem; background:var(--ember-sequential); border:1px solid var(--ember-bg-4); }
+.mapping-ticks{ display:flex; justify-content:space-between; color:var(--ember-fg-2); }
+.mapping-ticks.bad{ justify-content:flex-start; gap:6%; }
+.rules-note{
+  margin:1rem clamp(1rem,5vw,5rem) 0; padding:1rem;
+  border-left:3px solid var(--ember-category-two); background:var(--ember-bg-1);
+}
+.rules-note h3{ margin:0 0 .35rem; }
+.rules-note p{ margin:0; color:var(--ember-fg-1); }
+@media(max-width:1000px){
+  .science-grid{ grid-template-columns:1fr 1fr; }
+  .quick-contract{ grid-template-columns:1fr 1fr; }
+}
+@media(max-width:700px){
+  .rules{ display:block; }
+  .science-grid,.rule-grid,.quick-contract{ grid-template-columns:1fr; }
+  .rules-demo{ margin:0 .75rem; padding:.65rem; }
+  .rules-head{ padding-left:1rem; padding-right:1rem; }
+  .rule-compare{ grid-template-columns:1fr; }
+  .rule-example + .rule-example{ border-left:0; border-top:1px solid var(--ember-bg-4); }
+  .rules-note{ margin-left:.75rem; margin-right:.75rem; }
+}
+@media(max-width:360px){
+  .picker-label{ display:none; }
+  .hero-board-header{ flex-direction:column; }
+  .hero-board-control-host{ align-self:stretch; }
+  .hero-board-control-host .redshift-toggle{ width:100%; justify-content:center; }
+}
+
 footer{
   border-top:var(--rule); padding:1.6rem clamp(1rem,5vw,5rem) 2.4rem;
   font-size:.74rem; color:var(--ember-fg-2); line-height:1.8;
@@ -838,7 +965,9 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <a href="#mars">Mars elevation <small>NASA data</small></a>
     <a href="#mona">Image mapping <small>Mona Lisa</small></a>
     <a href="#field">Field diagram <small>three data colors</small></a>
+    <a href="#science">How Ember works <small>model and guarantees</small></a>
     <h2>Use Ember</h2>
+    <a href="#rules">Do's and Don'ts <small>live failure examples</small></a>
     <a href="#use">Install &amp; use</a>
     <a href="https://github.com/carpdiem/ember">GitHub repository ↗</a>
     <a href="https://github.com/carpdiem/ember#readme">README &amp; documentation ↗</a>
@@ -866,6 +995,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <div class="hero-ctas">
       <a class="btn primary" href="https://github.com/carpdiem/ember">View source on GitHub</a>
       <a class="btn" href="#use">Use Ember</a>
+      <a class="btn" href="#rules">Use it correctly</a>
     </div>
     <div class="clone-wrap">
       <pre class="hero-clone"><code id="clone-command">git clone https://github.com/carpdiem/ember.git</code></pre>
@@ -952,7 +1082,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
           colors that differ only in blue then produce the same displayed color.</p>
           <p>Each Ember palette meets minimum targets for contrast, ordered lightness, and
           perceptual separation after its modeled filter is applied. Perceptual separation is
-          measured in Oklab, a color space designed to approximate human perception. The
+          authored in Oklab and checked after filtering in flare-aware CAM16-UCS. The
           unfiltered colors also remain distinct during the day. At 1200&nbsp;K, differences
           in blue can improve daytime separation even though the filter sets blue output to
           zero.</p>
@@ -1244,16 +1374,15 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       <h2>Mars elevation mapped with Ember</h2>
       <p>Each pixel represents measured Mars elevation from NASA's MGS MOLA dataset. Each
       measured value maps to one of 256 colors from the selected palette. Those colors have
-      equal perceptual spacing and strictly ordered lightness after the modeled filter.</p>
+      bounded perceptual spacing and strictly ordered lightness after the modeled filter.</p>
       <p>That filtered-state spacing keeps Olympus Mons, Hellas, and other elevation features
       visible in every palette.</p>
     </article>
     <article class="plate">
       <span class="truth">Real NASA data</span>
-      <h3>One sequential map for both 3400 K palettes</h3>
-      <p>3400 K Dark and 3400 K Light share the same 256 colors in the same order. Low values
-      are dark and high values are bright, so switching interface palettes does not reverse
-      scalar meaning.</p>
+      <h3>One scalar direction in every palette</h3>
+      <p>Each palette has its own 256-sample map. Low values are always dark and high values
+      are always bright, so switching interface palettes does not reverse scalar meaning.</p>
     </article>
   </div>
 </section>
@@ -1340,6 +1469,102 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
       frame with the same labels.</p>
     </article>
   </div>
+</section>
+
+<!-- ================= SCIENCE ================= -->
+<section class="science information-plane" id="science" aria-label="How Ember works">
+  <div class="science-intro">
+    <p class="kicker">Model the constrained state first</p>
+    <h2>The science behind Ember.</h2>
+    <p class="science-dek">Ember protects contrast, hierarchy, and color identity after a warm filter removes much of the green and blue signal. It then uses the remaining RGB freedom to improve the unfiltered palette.</p>
+    <pre class="gain-equation"><code>[display R, display G, display B]
+= [commanded R, commanded G, commanded B] × [gain R, gain G, gain B]</code></pre>
+    <table class="profile-table" aria-label="Warm-filter signal gains">
+      <thead><tr><th scope="col">Profile</th><th scope="col">Encoded-sRGB gains</th><th scope="col">Basis</th></tr></thead>
+      <tbody>
+        <tr><td>3400K</td><td>[1.00, 0.74, 0.53]</td><td>engineering surrogate</td></tr>
+        <tr><td>2000K</td><td>[1.0000, 0.5436, 0.0868]</td><td>pinned Redshift signal LUT</td></tr>
+        <tr><td>1200K</td><td>[1.0000, 0.3094, 0.0000]</td><td>pinned Redshift signal LUT</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="science-grid">
+    <article class="science-card"><h3>The model is a shared test.</h3><p>It defines signal relationships. It does not predict a calibrated physical Kelvin value. Hardware, calibration, brightness, and ambient light still matter.</p></article>
+    <article class="science-card"><h3>The filtered state sets the floors.</h3><p>A strong daytime result cannot pay for a filtered collision. Commanded colors must first preserve the required filtered contrast and separation.</p></article>
+    <article class="science-card"><h3>Six roles can use fewer surfaces.</h3><p>All families export bg-0 through bg-5. The dark palettes record four or five unique surfaces plus explicit role aliases.</p></article>
+    <article class="science-card"><h3>Each color has one job.</h3><p>Foregrounds carry text hierarchy. Categorical colors carry data identity. Terminal colors carry ANSI semantics. Capacity falls from six to four to three.</p></article>
+    <article class="science-card"><h3>Metrics stay separate.</h3><p>Oklab measures commanded geometry. Flare-aware CAM16-UCS measures filtered distinction and ramp spacing. WCAG contrast remains independent.</p></article>
+    <article class="science-card"><h3>Scalar meaning stays ordered.</h3><p>Every 256-sample map runs from dark low values to bright high values. Photographs use Oklab lightness; measured fields use their real normalized values.</p></article>
+  </div>
+  <p class="science-links"><a href="https://github.com/carpdiem/ember#the-science-behind-ember">Full explanation</a><a href="https://github.com/carpdiem/ember/blob/main/docs/validation.md">Measured release gates</a></p>
+</section>
+
+<!-- ================= RULES ================= -->
+<section class="rules scene" id="rules" aria-label="Ember Do's and Don'ts" data-redshift-label="Do's and Don'ts examples">
+  <div class="rules-head information-plane">
+    <p class="kicker">Use the roles as specified</p>
+    <h2>Ember Do's and Don'ts.</h2>
+    <p class="rules-dek">Six rules keep interfaces legible when a warm filter removes the colors you were counting on. Change the palette in the header, then simulate its exact signal transform here.</p>
+    <ol class="quick-contract">
+      <li>Use explicit foreground and background roles.</li>
+      <li>Never dim text with opacity or alpha.</li>
+      <li>Respect category capacity: 6, 4, or 3.</li>
+      <li>Mark aliased boundaries with structure.</li>
+      <li>Repeat critical identity with a label or shape.</li>
+    </ol>
+  </div>
+  <div class="rules-demo demonstration-plane">
+    <div class="rule-grid">
+      <article class="rule-card">
+        <header><h3>1. Use foreground roles by meaning.</h3><p>Use fg-0 for body text, fg-1 for support, and fg-2 for nonessential metadata.</p></header>
+        <div class="rule-compare">
+          <section class="rule-example good"><h4>Do</h4><div class="mini-ui"><strong class="mini-primary">Deploy completed</strong><span class="mini-support">Production is healthy.</span><span class="mini-meta">02:14 UTC · 8f31c2</span></div><p>Keep the message in fg-0, support in fg-1, and the timestamp in fg-2.</p></section>
+          <section class="rule-example bad"><h4>Don't</h4><div class="mini-ui"><strong class="mini-primary">Account security</strong><span class="bad-body">Use a security key to protect this account from phishing.</span></div><p class="rule-failure">Body copy in fg-2 becomes metadata-like and can disappear into the surface.</p></section>
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <header><h3>2. Keep text at full opacity.</h3><p>Choose an explicit role and add a structural disabled-state cue.</p></header>
+        <div class="rule-compare">
+          <section class="rule-example good"><h4>Do</h4><div class="mini-ui"><span class="good-disabled" aria-disabled="true">Export unavailable</span></div><p>Use fg-1 with a dashed border and an explicit disabled state.</p></section>
+          <section class="rule-example bad"><h4>Don't</h4><div class="mini-ui"><span class="bad-opacity">Export unavailable</span></div><p class="rule-failure">Opacity creates an unaudited composite that can fall below the contrast floor.</p></section>
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <header><h3>3. Mark aliased state boundaries.</h3><p>Use a border, spacing, icon, or state mark where adjacent roles share one surface.</p></header>
+        <div class="rule-compare">
+          <section class="rule-example good"><h4>Do</h4><div class="layer-stack"><span class="layer base">active panel</span><span class="layer top good-top">focused item ●</span></div><p>The accent bar and marker preserve the state boundary.</p></section>
+          <section class="rule-example bad"><h4>Don't</h4><div class="layer-stack"><span class="layer base bad-base">bg-4</span><span class="layer top bad-top">bg-5</span></div><p class="rule-failure">At deep profiles, bg-4 and bg-5 are identical. The layers merge.</p></section>
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <header><h3>4. Stay within category capacity.</h3><p>Use no more than six identities at 3400K, four at 2000K, or three at 1200K.</p></header>
+        <div class="rule-compare">
+          <section class="rule-example good"><h4>Do</h4><div class="rule-cat-row" aria-label="Supported categories for the selected profile"><i class="rule-cat" data-rule-good-cat data-cat="1"></i><i class="rule-cat" data-rule-good-cat data-cat="2"></i><i class="rule-cat" data-rule-good-cat data-cat="3"></i><i class="rule-cat" data-rule-good-cat data-cat="4"></i><i class="rule-cat" data-rule-good-cat data-cat="5"></i><i class="rule-cat" data-rule-good-cat data-cat="6"></i></div><p>Show only the selected profile's supported identities.</p></section>
+          <section class="rule-example bad"><h4>Don't</h4><div class="rule-cat-row" aria-label="Six forced series that repeat when capacity is lower"><i class="rule-cat" data-rule-bad-cat></i><i class="rule-cat" data-rule-bad-cat></i><i class="rule-cat" data-rule-bad-cat></i><i class="rule-cat" data-rule-bad-cat></i><i class="rule-cat" data-rule-bad-cat></i><i class="rule-cat" data-rule-bad-cat></i></div><p class="rule-failure">Extra series repeat existing colors. Two series become one visual identity.</p></section>
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <header><h3>5. Keep terminal colors out of charts.</h3><p>Use the categorical bank for data and the terminal bank for ANSI semantics.</p></header>
+        <div class="rule-compare">
+          <section class="rule-example good"><h4>Do</h4><div class="bank-split"><div class="term">ERROR · terminal red</div><div class="cat">Series A · category one</div></div><p>Separate the two identity systems.</p></section>
+          <section class="rule-example bad"><h4>Don't</h4><div class="bad-terminal-chart" aria-label="Chart bars using terminal red, green, and yellow"><i></i><i></i><i></i></div><p class="rule-failure">ANSI aliases can merge chart series with unrelated terminal meaning.</p></section>
+        </div>
+      </article>
+
+      <article class="rule-card">
+        <header><h3>6. Map scalars and photographs differently.</h3><p>Map measured fields by real values. Map photographs through Oklab lightness.</p></header>
+        <div class="rule-compare">
+          <section class="rule-example good"><h4>Do</h4><div class="mapping-demo"><span>Elevation · linear meters</span><div class="mapping-bar"></div><div class="mapping-ticks"><span>−5 km</span><span>0</span><span>+6 km</span></div></div><p>Keep value intervals tied to the measured quantity.</p></section>
+          <section class="rule-example bad"><h4>Don't</h4><div class="mapping-demo"><span>Elevation · photo stretch</span><div class="mapping-bar"></div><div class="mapping-ticks bad"><span>−5</span><span>0</span><span>+6</span></div></div><p class="rule-failure">A photographic stretch changes the value-to-color relationship and misstates the data.</p></section>
+        </div>
+      </article>
+    </div>
+  </div>
+  <aside class="rules-note information-plane"><h3>When color needs help</h3><p>Add a direct label, position, marker shape, dash pattern, texture, border, or spacing. Plan this redundancy explicitly at 1200K. Ember currently provides three color identities there; it does not automate a style cycle.</p></aside>
 </section>
 
 <!-- ================= ADOPTION ================= -->
@@ -1591,6 +1816,19 @@ cmap = sequential("1200k-dark")  # 256 samples</code></pre>
     if (conInline) conInline.textContent = String(info.cats);
 
     refreshColors();
+    document.querySelectorAll("[data-rule-good-cat]").forEach(function(mark, index){
+      mark.hidden = index >= info.cats;
+    });
+    document.querySelectorAll("[data-rule-bad-cat]").forEach(function(mark, index){
+      for (var cycle = 1; cycle <= 6; cycle++) mark.classList.remove("cycle-" + cycle);
+      mark.classList.add("cycle-" + (index % info.cats + 1));
+    });
+    var firstRuleMark = document.querySelector("[data-rule-good-cat]");
+    var supportedRuleRow = firstRuleMark ? firstRuleMark.parentElement : null;
+    if (supportedRuleRow){
+      supportedRuleRow.setAttribute("aria-label", info.label + " supports " + info.cats +
+        " categorical identities");
+    }
     buildSparklines(info.cats);
     drawEM();
     drawScope();
