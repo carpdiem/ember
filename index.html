@@ -797,19 +797,6 @@ code, pre, kbd{ font-family:var(--font-mono); }
 
 .rules{ padding:0 0 clamp(2.5rem,7vh,5rem); }
 .rules-head{ padding:clamp(2.5rem,7vh,5rem) clamp(1rem,5vw,5rem) 1.5rem; }
-.quick-contract{
-  list-style:none; counter-reset:contract; padding:0; margin:1.2rem 0 0;
-  display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:1px;
-  background:var(--ember-bg-4); border:1px solid var(--ember-bg-4);
-}
-.quick-contract li{
-  counter-increment:contract; background:var(--ember-bg-1); padding:.75rem;
-  color:var(--ember-fg-1); font-size:.76rem;
-}
-.quick-contract li::before{
-  content:counter(contract,decimal-leading-zero); display:block; margin-bottom:.3rem;
-  color:var(--ember-category-one); font:700 .62rem var(--font-mono);
-}
 .rules-demo{
   margin:0 clamp(1rem,5vw,5rem); padding:clamp(1rem,3vw,2rem);
   background:var(--ember-bg-1); border:1px solid var(--ember-bg-4);
@@ -880,11 +867,10 @@ code, pre, kbd{ font-family:var(--font-mono); }
 .rules-note p{ margin:0; color:var(--ember-fg-1); }
 @media(max-width:1000px){
   .science-grid{ grid-template-columns:1fr 1fr; }
-  .quick-contract{ grid-template-columns:1fr 1fr; }
 }
 @media(max-width:700px){
   .rules{ display:block; }
-  .science-grid,.rule-grid,.quick-contract{ grid-template-columns:1fr; }
+  .science-grid,.rule-grid{ grid-template-columns:1fr; }
   .rules-demo{ margin:0 .75rem; padding:.65rem; }
   .rules-head{ padding-left:1rem; padding-right:1rem; }
   .rule-compare{ grid-template-columns:1fr; }
@@ -995,7 +981,7 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
     <div class="hero-ctas">
       <a class="btn primary" href="https://github.com/carpdiem/ember">View source on GitHub</a>
       <a class="btn" href="#use">Use Ember</a>
-      <a class="btn" href="#rules">Use it correctly</a>
+      <a class="btn" href="#rules">Do's and Don'ts</a>
     </div>
     <div class="clone-wrap">
       <pre class="hero-clone"><code id="clone-command">git clone https://github.com/carpdiem/ember.git</code></pre>
@@ -1505,13 +1491,6 @@ ax.imshow(field, cmap=<span class="t-f">sequential</span>(palette))  <span class
     <p class="kicker">Use the roles as specified</p>
     <h2>Ember Do's and Don'ts.</h2>
     <p class="rules-dek">Six rules keep interfaces legible when a warm filter removes the colors you were counting on. Change the palette in the header, then simulate its exact signal transform here.</p>
-    <ol class="quick-contract">
-      <li>Use explicit foreground and background roles.</li>
-      <li>Never dim text with opacity or alpha.</li>
-      <li>Respect category capacity: 6, 4, or 3.</li>
-      <li>Mark aliased boundaries with structure.</li>
-      <li>Repeat critical identity with a label or shape.</li>
-    </ol>
   </div>
   <div class="rules-demo demonstration-plane">
     <div class="rule-grid">

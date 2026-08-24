@@ -42,6 +42,8 @@ def test_science_and_rules_are_first_class_live_page_sections() -> None:
     assert "href=\"#rules\">Do's and Don'ts" in landing
     assert "The science behind Ember." in landing
     assert "Ember Do's and Don'ts." in landing
+    assert ">Do's and Don'ts</a>" in landing
+    assert "quick-contract" not in landing
 
 
 def test_rules_share_the_normal_profile_and_section_local_simulation_controls() -> None:
