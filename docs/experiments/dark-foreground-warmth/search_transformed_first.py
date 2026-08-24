@@ -106,11 +106,11 @@ CATEGORICAL_SEMANTIC_SLOTS = (
 )
 
 BACKGROUND_ROLE_ALIAS_INDICES = {
-    # Preserve the consumer-facing canvas / panel / raised-panel / rule / border
-    # contract.  Missing subtle bg_1 aliases canvas; missing bg_4 aliases border.
-    3: (0, 0, 1, 1, 2, 2),
-    4: (0, 0, 1, 2, 3, 3),
-    5: (0, 0, 1, 2, 3, 4),
+    # Preserve the high-use canvas/sidebar distinction and bg_2→bg_3 active-state
+    # edge.  Missing roles collapse bg_1→bg_2 first, then bg_4→bg_5.
+    3: (0, 1, 1, 1, 2, 2),
+    4: (0, 1, 1, 2, 3, 3),
+    5: (0, 1, 2, 3, 4, 4),
     6: (0, 1, 2, 3, 4, 5),
 }
 
@@ -1156,7 +1156,7 @@ def background_role_contract(count: int) -> dict[str, str]:
 
 FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
 APPROVED_ARTIFACT_SHA256: str | None = (
-    "3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe"
+    "33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa"
 )
 
 

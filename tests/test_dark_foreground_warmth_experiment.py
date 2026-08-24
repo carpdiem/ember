@@ -29,12 +29,12 @@ UNIVERSAL_FLOORS = (4.5, 3.5, 2.4)
 TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_RATIO = 1.7
 FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
-APPROVED_ARTIFACT_SHA256 = "3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe"
+APPROVED_ARTIFACT_SHA256 = "33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa"
 FROZEN_CATEGORICAL_SET_SHA256 = "3cef5e1cbb615ba1e29060b3a63bf322736df03abb11d5bfc969d594d583a059"
 FROZEN_TERMINAL_SHA256 = "1a005af88f35c4b810d4ebad0898a0a4353628e240f03d48d9204d2a8af91f8c"
 EXPECTED_BACKGROUND_ALIAS_INDICES = {
-    4: [0, 0, 1, 2, 3, 3],
-    5: [0, 0, 1, 2, 3, 4],
+    4: [0, 1, 1, 2, 3, 3],
+    5: [0, 1, 2, 3, 4, 4],
     6: [0, 1, 2, 3, 4, 5],
 }
 
@@ -333,6 +333,25 @@ def test_sequential_maps_recompute_independently() -> None:
             assert record["sequential_anchors"] == list(anchors)
             assert metrics["transformed_minimum_signed_j_step"] > 0
             assert metrics["normal_cv"] <= 0.18 + 1e-12
+
+
+def test_six_role_aliases_are_defined_in_rendered_css_and_candidates() -> None:
+    data = load()
+    renderer = renderer_module()
+    for slug in PROFILES:
+        gains = tuple(data["profiles"][slug]["gains"])
+        for lane in LANES:
+            record = lane_record(data, slug, lane)
+            values = lane_surfaces(record)
+            expanded = tuple(values[index] for index in record["background_role_alias_indices"])
+            candidate = renderer["candidate_definition"](slug, record)
+            for index, value in enumerate(expanded):
+                assert candidate.surfaces[f"bg_{index}"] == value
+            for simulated in (False, True):
+                css = renderer["css_variables"](slug, lane, record, gains, simulated)
+                for index, value in enumerate(expanded):
+                    expected = renderer["transform_hex"](value, gains) if simulated else value
+                    assert f"--bg-{index}:{expected}" in css
 
 
 def test_canonical_outputs_are_unchanged() -> None:

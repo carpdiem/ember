@@ -9,7 +9,7 @@
 
 Design the seen state first: even transformed distinctness binds before commanded warmth; leftover exact-Hex8 freedom buys the halfway hue step for ink and surfaces.
 
-The complete approved artifact is freeze-locked at `3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe`. It covers profile gains; current and halfway backgrounds/foregrounds; ordered categorical semantic slots; terminal banks and aliases; canonical float and Hex8 sequential ramps; and their metric/selection contracts. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
+The complete approved artifact is freeze-locked at `33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa`. It covers profile gains; current and halfway backgrounds/foregrounds; ordered categorical semantic slots; terminal banks and aliases; canonical float and Hex8 sequential ramps; and their metric/selection contracts. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
 
 ## Methodology
 

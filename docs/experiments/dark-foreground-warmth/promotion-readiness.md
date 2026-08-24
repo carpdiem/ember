@@ -1,11 +1,11 @@
 # Dark palette promotion readiness — roles, aliases, and remaining work
 
-> **Approved artifact SHA:** `3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe`
+> **Approved artifact SHA:** `33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa`
 > **Status:** experiment contract; canonical production definitions are unchanged
 
 ## Consumer audit verdict
 
-Production and publication consumers require six exported `bg_0…bg_5` keys, but only five roles carry distinct named semantics in the codebase:
+Production and publication consumers require six exported `bg_0…bg_5` keys. All six carry named semantics, but usage is uneven:
 
 | Exported role | Observed semantic usage | Evidence |
 |---|---|---|
@@ -20,22 +20,24 @@ All six roles are part of the public manifest/CSS contract (`src/ember/definitio
 
 ## Approved six-role alias contract
 
-Alias the least structurally important intermediate roles while preserving distinct canvas, panel, raised-panel, and border/selection planes:
+Alias the least damaging adjacent semantic pairs while preserving the most frequently exercised boundaries:
 
 | Real count | Export mapping `bg_0…bg_5 → surface index` | Meaning |
 |---:|---|---|
 | 6 | `[0,1,2,3,4,5]` | no aliases |
-| 5 | `[0,0,1,2,3,4]` | `bg_1` aliases canvas; panel/raised/rule/border stay distinct |
-| 4 | `[0,0,1,2,3,3]` | `bg_1` aliases canvas; rule aliases border; panel and raised stay distinct |
-| 3 | `[0,0,1,1,2,2]` | reserved fallback: panel/raised share; rule/border share |
+| 5 | `[0,1,2,3,4,4]` | rule and border/selection share the strongest surface |
+| 4 | `[0,1,1,2,3,3]` | low-emphasis/sidebar and ordinary panel share; rule and border share |
+| 3 | `[0,1,1,1,2,2]` | reserved fallback: low/panel/raised share; rule/border share |
 
 Applied halfway contracts:
 
-- 3400K N=5: `[0,0,1,2,3,4]`
-- 2000K N=4: `[0,0,1,2,3,3]`
-- 1200K N=4: `[0,0,1,2,3,3]`
+- 3400K N=5: `[0,1,2,3,4,4]`
+- 2000K N=4: `[0,1,1,2,3,3]`
+- 1200K N=4: `[0,1,1,2,3,3]`
 
-This replaces the experiment’s former trailing-repeat padding, which collapsed the most semantically important raised/rule/border end of the ladder.
+The root landing page directly references `bg_0…bg_5` approximately `21/15/7/12/14/3` times, while `bg_4` also feeds 35 shared rule declarations. That favors keeping `bg_0 != bg_1`, `bg_2 != bg_3`, and `bg_3 != bg_4`, while allowing sparse `bg_5` to alias `bg_4`. At N=4, `bg_1 == bg_2` is less damaging than erasing hover/active `bg_2→bg_3` or panel-border `bg_3→bg_4` feedback.
+
+The renderer now exports all six CSS variables from this explicit mapping. No candidate card relies on undefined trailing `--bg-*` variables.
 
 ## Cross-profile categorical identity contract
 

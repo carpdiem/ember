@@ -4267,18 +4267,18 @@
           "bg_count": 5,
           "background_role_alias_indices": [
             0,
-            0,
             1,
             2,
             3,
+            4,
             4
           ],
           "background_role_contract": {
             "bg_0": "surface_0",
-            "bg_1": "surface_0",
-            "bg_2": "surface_1",
-            "bg_3": "surface_2",
-            "bg_4": "surface_3",
+            "bg_1": "surface_1",
+            "bg_2": "surface_2",
+            "bg_3": "surface_3",
+            "bg_4": "surface_4",
             "bg_5": "surface_4"
           },
           "surfaces": {
@@ -13473,7 +13473,7 @@
           "bg_count": 4,
           "background_role_alias_indices": [
             0,
-            0,
+            1,
             1,
             2,
             3,
@@ -13481,7 +13481,7 @@
           ],
           "background_role_contract": {
             "bg_0": "surface_0",
-            "bg_1": "surface_0",
+            "bg_1": "surface_1",
             "bg_2": "surface_1",
             "bg_3": "surface_2",
             "bg_4": "surface_3",
@@ -21519,7 +21519,7 @@
           "bg_count": 4,
           "background_role_alias_indices": [
             0,
-            0,
+            1,
             1,
             2,
             3,
@@ -21527,7 +21527,7 @@
           ],
           "background_role_contract": {
             "bg_0": "surface_0",
-            "bg_1": "surface_0",
+            "bg_1": "surface_1",
             "bg_2": "surface_1",
             "bg_3": "surface_2",
             "bg_4": "surface_3",
@@ -24643,7 +24643,7 @@
   },
   "approved_artifact_freeze": {
     "schema": 1,
-    "sha256": "3f319ce37d25f740f1762cfdd2f812c8d57dc74a75178e8bf86a77ccef94f5fe",
+    "sha256": "33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa",
     "covers": "profile gains; current+halfway bg counts/surfaces/foregrounds and production aliases; ordered categorical semantic slots; terminal banks/aliases; canonical float and Hex8 sequential ramps; dependent metric and sequential selection contracts"
   }
 }
