@@ -35,7 +35,7 @@ uv run python docs/experiments/3400k-light-thin-marks/harness.py  # bind report 
 EMBER_RUN_BROWSER_TESTS=1 uv run pytest -q tests/test_3400k_light_thin_marks.py
 ```
 
-When GStack/Chromium is unavailable, the browser validator writes a clear `SKIP` result rather than failing deterministic CI. The committed current-baseline browser result compares sampled raster pixels and per-pixel Oklab distances; no full-image hash is a permanent metric.
+When GStack/Chromium is unavailable, the browser validator writes a clear `SKIP` result rather than failing deterministic CI. The committed current-baseline browser result compares sampled raster pixels and per-pixel Oklab distances. Its 0.95 correlation floor applies only to the global sample pool; local DPR/pair/background correlations are disclosed but not gated. Every local row, including the categorical contract pair, is separately gated at MAE ≤ 0.75 ΔE_OK. No full-image hash is a permanent metric. Provenance hashes bind the browser probe, validator source, and GStack browse binary; sanitized status/mode is recorded, while an unavailable Chromium version is not claimed.
 
 ## Files
 

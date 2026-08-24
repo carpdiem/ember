@@ -178,9 +178,13 @@ def _pair_rows(
 
 
 def _proxy_delta(
-    left: np.ndarray, right: np.ndarray, background: np.ndarray, coverage: float
+    left: np.ndarray,
+    right: np.ndarray,
+    background: np.ndarray,
+    coverage: float,
+    metric: Callable[[np.ndarray, np.ndarray], float],
 ) -> float:
-    return delta_e_ok(
+    return metric(
         blend(transform(left), transform(background), coverage),
         blend(transform(right), transform(background), coverage),
     )
@@ -244,7 +248,7 @@ def compute_metrics(
                     intra = _pair_rows(
                         categories,
                         lambda left, right, bg=background, alpha=coverage: _proxy_delta(
-                            left, right, bg, alpha
+                            left, right, bg, alpha, metric
                         ),
                     )[0]
                     row = {
@@ -255,10 +259,10 @@ def compute_metrics(
                         "representative_edge_coverage": coverage,
                         "intra_categorical_minimum": intra,
                         "cat.two_vs_terminal.red": _proxy_delta(
-                            categories["cat.two"], terminal_red, background, coverage
+                            categories["cat.two"], terminal_red, background, coverage, metric
                         ),
                         "cat.two_vs_fg_1": _proxy_delta(
-                            categories["cat.two"], foreground_1, background, coverage
+                            categories["cat.two"], foreground_1, background, coverage, metric
                         ),
                     }
                     detailed.append(row)
@@ -286,11 +290,15 @@ def compute_metrics(
         and row["dpr"] == 1
         and row["geometry"] == "diagonal"
     )
+
+    def failure_status(delta: float) -> str:
+        return "FAIL" if delta < FAILURE_FLOOR else "PASS"
+
     failures = [
         {
-            "id": "intra-cat-five-vs-six",
+            "id": "intra-categorical-minimum",
             "scope": "categorical-contract",
-            "status": "FAIL",
+            "status": failure_status(failure_case["intra_categorical_minimum"]["delta"]),
             "roles": failure_case["intra_categorical_minimum"]["roles"],
             "diagnostic_delta": failure_case["intra_categorical_minimum"]["delta"],
             "diagnostic_floor": FAILURE_FLOOR,
@@ -300,7 +308,7 @@ def compute_metrics(
         {
             "id": "cross-cat-two-vs-terminal-red",
             "scope": "diagnostic-non-contract",
-            "status": "FAIL",
+            "status": failure_status(failure_case["cat.two_vs_terminal.red"]),
             "roles": ["cat.two", "terminal.red"],
             "diagnostic_delta": failure_case["cat.two_vs_terminal.red"],
             "diagnostic_floor": FAILURE_FLOOR,
@@ -309,7 +317,7 @@ def compute_metrics(
         {
             "id": "cross-cat-two-vs-fg-1",
             "scope": "diagnostic-non-contract",
-            "status": "FAIL",
+            "status": failure_status(failure_case["cat.two_vs_fg_1"]),
             "roles": ["cat.two", "fg_1"],
             "diagnostic_delta": failure_case["cat.two_vs_fg_1"],
             "diagnostic_floor": FAILURE_FLOOR,
@@ -586,14 +594,41 @@ def _report(metrics: dict[str, Any]) -> str:
         json.loads(browser_path.read_text()) if browser_path.exists() else {"status": "NOT RUN"}
     )
     failures = metrics["g0_failures"]
-    browser_text = (
-        f"PASS at DPR 1 and 2; Oklab-distance correlation "
-        f"{browser['comparison']['oklab_distance_correlation']:.4f}, mean absolute error "
-        f"{browser['comparison']['oklab_distance_mean_absolute_error']:.4f} ΔE_OK, "
-        f"95th-percentile error {browser['comparison']['oklab_distance_p95_absolute_error']:.4f}."
-        if browser.get("status") == "PASS"
-        else f"{browser.get('status')}: {browser.get('reason', 'browser validation not generated')}"
-    )
+    if "acceptance_statuses" in browser:
+        comparison = browser["comparison"]
+        global_acceptance = browser["acceptance_statuses"]["global"]
+        pair_acceptance = browser["acceptance_statuses"]["pair_background"]
+        contract_dpr_2 = [
+            pair
+            for dpr_row in browser["by_dpr"]
+            if dpr_row["dpr"] == 2
+            for pair in dpr_row["pairs"]
+            if pair["roles"] == ["cat.five", "cat.six"]
+        ]
+        contract_text = "; ".join(
+            f"{pair['background']} r={pair['correlation']:.4f}, MAE={pair['mean_absolute_error']:.4f}"
+            for pair in contract_dpr_2
+        )
+        browser_text = (
+            f"Overall **{browser['status']}**. Global pooled acceptance: "
+            f"**{global_acceptance['status']}**; Oklab-distance correlation "
+            f"{comparison['pooled_oklab_distance_correlation']:.4f} "
+            f"(floor {global_acceptance['minimum_correlation']:.2f}), mean absolute error "
+            f"{comparison['pooled_oklab_distance_mean_absolute_error']:.4f} ΔE_OK "
+            f"(ceiling {global_acceptance['maximum_mean_absolute_error']:.2f}), and pooled "
+            f"95th-percentile error {comparison['pooled_oklab_distance_p95_absolute_error']:.4f}.\n\n"
+            f"Pair/background MAE acceptance: **{pair_acceptance['status']}**; every DPR × "
+            f"background × named-pair row is gated at MAE ≤ "
+            f"{pair_acceptance['maximum_mean_absolute_error']:.2f} ΔE_OK; worst observed MAE "
+            f"is {pair_acceptance['worst_mean_absolute_error']:.4f}. Pair/background "
+            f"correlations are disclosed diagnostics, not a local 0.95 gate; the minimum is "
+            f"{pair_acceptance['minimum_observed_correlation']:.4f}. The contract pair at "
+            f"DPR 2 is: {contract_text}."
+        )
+    else:
+        browser_text = (
+            f"{browser.get('status')}: {browser.get('reason', 'browser validation not generated')}"
+        )
     rows = "\n".join(
         f"| {item['scope']} | {' vs '.join(item['roles'])} | {item['diagnostic_delta']:.4f} | {item['diagnostic_floor']:.1f} | **{item['status']}** |"
         for item in failures
@@ -636,7 +671,7 @@ For {metrics["commutation"]["sample_count"]:,} diagonal-model samples, `transfor
 
 {browser_text}
 
-No full-image hash is a metric. The browser check compares sampled line pixels and per-pixel pair distances. It skips cleanly when the project-supported GStack browser binary is unavailable.
+No full-image hash is a metric. The browser check compares sampled line pixels and per-pixel pair distances. Its JSON provenance hashes the exact browser probe, validator source, and GStack browse binary, and records sanitized browser status/mode. Chromium version is unavailable and is not claimed. The check skips cleanly when the project-supported GStack browser binary is unavailable.
 
 ## Metric boundary and unresolved calibration
 

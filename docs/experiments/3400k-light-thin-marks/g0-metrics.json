@@ -1050,7 +1050,7 @@
       "diagnostic_delta": 6.32795745,
       "diagnostic_floor": 8.0,
       "human_evidence": "review/transformed.svg: short legend, crossing, and sparkline panels",
-      "id": "intra-cat-five-vs-six",
+      "id": "intra-categorical-minimum",
       "roles": [
         "cat.five",
         "cat.six"

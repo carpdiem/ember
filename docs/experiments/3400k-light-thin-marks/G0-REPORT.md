@@ -36,9 +36,11 @@ For 30,528 diagonal-model samples, `transform(blend())` and `blend(transform())`
 
 ## Proxy vs real Chromium raster
 
-PASS at DPR 1 and 2; Oklab-distance correlation 0.9612, mean absolute error 0.4223 ΔE_OK, 95th-percentile error 0.7319.
+Overall **PASS**. Global pooled acceptance: **PASS**; Oklab-distance correlation 0.9685 (floor 0.95), mean absolute error 0.4223 ΔE_OK (ceiling 0.75), and pooled 95th-percentile error 0.7319.
 
-No full-image hash is a metric. The browser check compares sampled line pixels and per-pixel pair distances. It skips cleanly when the project-supported GStack browser binary is unavailable.
+Pair/background MAE acceptance: **PASS**; every DPR × background × named-pair row is gated at MAE ≤ 0.75 ΔE_OK; worst observed MAE is 0.5864. Pair/background correlations are disclosed diagnostics, not a local 0.95 gate; the minimum is 0.9408. The contract pair at DPR 2 is: bg_0 r=0.9410, MAE=0.4540; bg_1 r=0.9408, MAE=0.4555.
+
+No full-image hash is a metric. The browser check compares sampled line pixels and per-pixel pair distances. Its JSON provenance hashes the exact browser probe, validator source, and GStack browse binary, and records sanitized browser status/mode. Chromium version is unavailable and is not claimed. The check skips cleanly when the project-supported GStack browser binary is unavailable.
 
 ## Metric boundary and unresolved calibration
 

@@ -7,6 +7,7 @@ report contains sampled-pixel statistics, never a full-image hash.
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import os
@@ -21,6 +22,8 @@ from PIL import Image
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
+GLOBAL_MINIMUM_CORRELATION = 0.95
+MAXIMUM_MEAN_ABSOLUTE_ERROR = 0.75
 
 
 def _load_harness():
@@ -51,7 +54,7 @@ def _browse_binary() -> Path | None:
     )
 
 
-def _run(browse: Path, cwd: Path, *arguments: str) -> None:
+def _run(browse: Path, cwd: Path, *arguments: str) -> str:
     completed = subprocess.run(
         [str(browse), *arguments],
         cwd=cwd,
@@ -63,6 +66,35 @@ def _run(browse: Path, cwd: Path, *arguments: str) -> None:
     if completed.returncode:
         detail = (completed.stderr or completed.stdout).strip()
         raise RuntimeError(f"gstack browse {' '.join(arguments)} failed: {detail}")
+    return completed.stdout.strip()
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _browser_status_identity(browse: Path, cwd: Path) -> dict[str, str]:
+    fields = {}
+    for line in _run(browse, cwd, "status").splitlines():
+        key, separator, value = line.partition(":")
+        if separator and key in {"Status", "Mode"}:
+            fields[key.lower()] = value.strip().lower()
+    if set(fields) != {"status", "mode"}:
+        raise RuntimeError("gstack browse status omitted stable Status/Mode identity")
+    return fields
+
+
+def _provenance(browse: Path, browser_status: dict[str, str]) -> dict[str, Any]:
+    return {
+        "sha256": {
+            "browser_probe_html": _sha256(HERE / "review/browser-probe.html"),
+            "browser_validate_py": _sha256(Path(__file__)),
+            "gstack_browse_binary": _sha256(browse),
+        },
+        "browser_status": browser_status,
+        "chromium_version": None,
+        "chromium_version_status": "unavailable-not-claimed",
+    }
 
 
 def _safe_correlation(left: np.ndarray, right: np.ndarray) -> float:
@@ -71,7 +103,9 @@ def _safe_correlation(left: np.ndarray, right: np.ndarray) -> float:
     return float(np.corrcoef(left, right)[0, 1])
 
 
-def _analyze(path: Path, dpr: int, baseline: dict[str, Any]) -> dict[str, Any]:
+def _analyze(
+    path: Path, dpr: int, baseline: dict[str, Any]
+) -> tuple[dict[str, Any], np.ndarray, np.ndarray]:
     harness = _load_harness()
     with Image.open(path) as image:
         rgb = np.asarray(image.convert("RGB"), dtype=float) / 255.0
@@ -154,15 +188,19 @@ def _analyze(path: Path, dpr: int, baseline: dict[str, Any]) -> dict[str, Any]:
     predicted_array = np.asarray(predicted_distances)
     observed_array = np.asarray(observed_distances)
     errors = np.abs(predicted_array - observed_array)
-    return {
-        "dpr": dpr,
-        "sampled_pair_distance_count": len(errors),
-        "oklab_distance_correlation": _safe_correlation(predicted_array, observed_array),
-        "oklab_distance_mean_absolute_error": float(np.mean(errors)),
-        "oklab_distance_p95_absolute_error": float(np.quantile(errors, 0.95)),
-        "encoded_channel_mean_absolute_error_8bit": float(np.mean(channel_errors) * 255.0),
-        "pairs": pair_rows,
-    }
+    return (
+        {
+            "dpr": dpr,
+            "sampled_pair_distance_count": len(errors),
+            "oklab_distance_correlation": _safe_correlation(predicted_array, observed_array),
+            "oklab_distance_mean_absolute_error": float(np.mean(errors)),
+            "oklab_distance_p95_absolute_error": float(np.quantile(errors, 0.95)),
+            "encoded_channel_mean_absolute_error_8bit": float(np.mean(channel_errors) * 255.0),
+            "pairs": pair_rows,
+        },
+        predicted_array,
+        observed_array,
+    )
 
 
 def _rounded(value: Any) -> Any:
@@ -173,6 +211,62 @@ def _rounded(value: Any) -> Any:
     if isinstance(value, list):
         return [_rounded(item) for item in value]
     return value
+
+
+def _acceptance_statuses(
+    comparison: dict[str, float], rows: list[dict[str, Any]]
+) -> dict[str, Any]:
+    pair_rows = [(row["dpr"], pair) for row in rows for pair in row["pairs"]]
+    failed_pairs = []
+    for dpr, pair in pair_rows:
+        pair["mae_acceptance_status"] = (
+            "PASS"
+            if pair["mean_absolute_error"] <= MAXIMUM_MEAN_ABSOLUTE_ERROR
+            else "FAIL"
+        )
+        if pair["mae_acceptance_status"] == "FAIL":
+            failed_pairs.append(
+                {
+                    "background": pair["background"],
+                    "dpr": dpr,
+                    "mean_absolute_error": pair["mean_absolute_error"],
+                    "roles": pair["roles"],
+                }
+            )
+
+    global_pass = (
+        comparison["pooled_oklab_distance_correlation"] >= GLOBAL_MINIMUM_CORRELATION
+        and comparison["pooled_oklab_distance_mean_absolute_error"]
+        <= MAXIMUM_MEAN_ABSOLUTE_ERROR
+    )
+    return {
+        "global": {
+            "status": "PASS" if global_pass else "FAIL",
+            "scope": "pooled samples across all DPRs, backgrounds, and pairs",
+            "minimum_correlation": GLOBAL_MINIMUM_CORRELATION,
+            "maximum_mean_absolute_error": MAXIMUM_MEAN_ABSOLUTE_ERROR,
+        },
+        "pair_background": {
+            "status": "PASS" if not failed_pairs else "FAIL",
+            "scope": "each DPR, background, and named pair",
+            "maximum_mean_absolute_error": MAXIMUM_MEAN_ABSOLUTE_ERROR,
+            "correlation_gate": None,
+            "correlation_reporting": "diagnostic-disclosure-only",
+            "minimum_observed_correlation": min(pair["correlation"] for _, pair in pair_rows),
+            "worst_mean_absolute_error": max(
+                pair["mean_absolute_error"] for _, pair in pair_rows
+            ),
+            "failed_pairs": failed_pairs,
+        },
+    }
+
+
+def _overall_status(acceptance_statuses: dict[str, Any]) -> str:
+    return (
+        "PASS"
+        if all(section["status"] == "PASS" for section in acceptance_statuses.values())
+        else "FAIL"
+    )
 
 
 def run_validation(output_dir: Path = HERE) -> dict[str, Any]:
@@ -196,13 +290,19 @@ def run_validation(output_dir: Path = HERE) -> dict[str, Any]:
             scratch = Path(temporary)
             probe = scratch / "browser-probe.html"
             shutil.copyfile(HERE / "review/browser-probe.html", probe)
+            browser_status = _browser_status_identity(browse, scratch)
             rows = []
+            predicted_samples = []
+            observed_samples = []
             for dpr in (1, 2):
                 screenshot = scratch / f"probe-dpr-{dpr}.png"
                 _run(browse, scratch, "viewport", "320x128", "--scale", str(dpr))
                 _run(browse, scratch, "goto", probe.as_uri())
                 _run(browse, scratch, "screenshot", str(screenshot), "--selector", "#probe")
-                rows.append(_analyze(screenshot, dpr, baseline))
+                row, predicted, observed = _analyze(screenshot, dpr, baseline)
+                rows.append(row)
+                predicted_samples.append(predicted)
+                observed_samples.append(observed)
     except (OSError, RuntimeError, subprocess.SubprocessError) as error:
         result = {
             "status": "SKIP",
@@ -212,29 +312,17 @@ def run_validation(output_dir: Path = HERE) -> dict[str, Any]:
         report_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
         return result
 
-    predicted = []
-    observed_error = []
-    # Aggregate by weighted sample count. Correlation is recomputed conservatively as the
-    # minimum per-DPR correlation so one scale cannot hide the other.
-    for row in rows:
-        predicted.append(row["oklab_distance_correlation"])
-        observed_error.extend(
-            [row["oklab_distance_mean_absolute_error"]] * row["sampled_pair_distance_count"]
-        )
+    predicted = np.concatenate(predicted_samples)
+    observed = np.concatenate(observed_samples)
+    errors = np.abs(predicted - observed)
     comparison = {
-        "oklab_distance_correlation": min(predicted),
-        "oklab_distance_mean_absolute_error": float(np.mean(observed_error)),
-        "oklab_distance_p95_absolute_error": max(
-            row["oklab_distance_p95_absolute_error"] for row in rows
-        ),
-        "acceptance": {"minimum_correlation": 0.95, "maximum_mean_absolute_error": 0.75},
+        "sample_count": len(errors),
+        "pooled_oklab_distance_correlation": _safe_correlation(predicted, observed),
+        "pooled_oklab_distance_mean_absolute_error": float(np.mean(errors)),
+        "pooled_oklab_distance_p95_absolute_error": float(np.quantile(errors, 0.95)),
     }
-    status = (
-        "PASS"
-        if comparison["oklab_distance_correlation"] >= 0.95
-        and comparison["oklab_distance_mean_absolute_error"] <= 0.75
-        else "FAIL"
-    )
+    acceptance_statuses = _acceptance_statuses(comparison, rows)
+    status = _overall_status(acceptance_statuses)
     result = _rounded(
         {
             "status": status,
@@ -243,7 +331,9 @@ def run_validation(output_dir: Path = HERE) -> dict[str, Any]:
             "model": "encoded-sRGB 1.5 CSS px diagonal area-coverage proxy",
             "full_image_hash_used": False,
             "comparison": comparison,
+            "acceptance_statuses": acceptance_statuses,
             "by_dpr": rows,
+            "provenance": _provenance(browse, browser_status),
         }
     )
     report_path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")

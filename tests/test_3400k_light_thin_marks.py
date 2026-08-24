@@ -93,7 +93,9 @@ def test_dedicated_cat_five_six_crossings_are_structurally_color_only() -> None:
 
     for state in ("commanded", "transformed"):
         root = ET.fromstring((EXPERIMENT / "review" / f"{state}.svg").read_text())
-        geometry = root.find("svg:defs/svg:path[@id='cat-five-six-crossing-geometry']", svg_namespace)
+        geometry = root.find(
+            "svg:defs/svg:path[@id='cat-five-six-crossing-geometry']", svg_namespace
+        )
         assert geometry is not None
         assert geometry.attrib["d"]
 
@@ -101,7 +103,9 @@ def test_dedicated_cat_five_six_crossings_are_structurally_color_only() -> None:
             ".//svg:g[@data-evidence='color-only-cat-five-six-crossing']", svg_namespace
         )
         assert len(groups) == 6
-        assert {(group.attrib["data-background"], group.attrib["data-width"]) for group in groups} == {
+        assert {
+            (group.attrib["data-background"], group.attrib["data-width"]) for group in groups
+        } == {
             (background, f"{width:g}")
             for background in ("bg_0", "bg_1")
             for width in (1.5, 2.0, 3.0)
@@ -120,16 +124,12 @@ def test_dedicated_cat_five_six_crossings_are_structurally_color_only() -> None:
             assert len(marks) == 2
             marks_by_role = {mark.attrib["data-role"]: mark for mark in marks}
             assert set(marks_by_role) == set(expected_colors)
-            assert {
-                mark.attrib.get("href", mark.attrib.get(href_attribute)) for mark in marks
-            } == {"#cat-five-six-crossing-geometry"}
-            assert marks_by_role["cat.five"].attrib.get("transform") is None
-            assert marks_by_role["cat.six"].attrib["transform"] == (
-                "translate(0 38) scale(1 -1)"
-            )
-            assert {mark.attrib["stroke-width"] for mark in marks} == {
-                group.attrib["data-width"]
+            assert {mark.attrib.get("href", mark.attrib.get(href_attribute)) for mark in marks} == {
+                "#cat-five-six-crossing-geometry"
             }
+            assert marks_by_role["cat.five"].attrib.get("transform") is None
+            assert marks_by_role["cat.six"].attrib["transform"] == ("translate(0 38) scale(1 -1)")
+            assert {mark.attrib["stroke-width"] for mark in marks} == {group.attrib["data-width"]}
             assert {mark.attrib["fill"] for mark in marks} == {"none"}
             assert {mark.attrib["stroke"] for mark in marks} == set(expected_colors.values())
             for mark in marks:
@@ -166,8 +166,8 @@ def test_metrics_reproduce_current_failures_without_claiming_light_cam16() -> No
     assert "CAM16" not in transformed["backend"]
 
     failures = {row["id"]: row for row in metrics["g0_failures"]}
-    assert failures["intra-cat-five-vs-six"]["scope"] == "categorical-contract"
-    assert failures["intra-cat-five-vs-six"]["status"] == "FAIL"
+    assert failures["intra-categorical-minimum"]["scope"] == "categorical-contract"
+    assert failures["intra-categorical-minimum"]["status"] == "FAIL"
     assert failures["cross-cat-two-vs-terminal-red"]["scope"] == "diagnostic-non-contract"
     assert failures["cross-cat-two-vs-terminal-red"]["status"] == "FAIL"
     assert failures["cross-cat-two-vs-fg-1"]["scope"] == "diagnostic-non-contract"
@@ -179,24 +179,74 @@ def test_metrics_reproduce_current_failures_without_claiming_light_cam16() -> No
     }
 
 
-def test_transformed_metric_backend_is_pluggable() -> None:
+def test_transformed_metric_owns_all_transformed_proxy_distances() -> None:
     harness = load_module("harness.py", "thin_marks_harness_plugin")
     baseline = harness.load_baseline()
+    committed = json.loads((EXPERIMENT / "g0-metrics.json").read_text())
 
-    def encoded_rgb_metric(left: np.ndarray, right: np.ndarray) -> float:
-        return float(np.linalg.norm(left - right) * 100.0)
+    def red_channel_metric(left: np.ndarray, right: np.ndarray) -> float:
+        return float(abs(left[0] - right[0]) * 100.0)
 
-    metrics = harness.compute_metrics(
+    def blue_channel_metric(left: np.ndarray, right: np.ndarray) -> float:
+        return float(abs(left[2] - right[2]) * 10_000.0)
+
+    assert harness.compute_metrics(baseline) == committed
+    red_metrics = harness.compute_metrics(
         baseline,
-        transformed_metric=encoded_rgb_metric,
+        transformed_metric=red_channel_metric,
         transformed_metric_metadata={
-            "backend": "test-encoded-rgb",
+            "backend": "test-red-channel",
             "status": "test-only",
             "final_light_metric": None,
         },
     )
-    assert metrics["transformed_metric"]["backend"] == "test-encoded-rgb"
-    assert metrics["transformed_metric"]["solid_minimum_pair"]["delta"] > 0
+    blue_metrics = harness.compute_metrics(
+        baseline,
+        transformed_metric=blue_channel_metric,
+        transformed_metric_metadata={
+            "backend": "test-blue-channel",
+            "status": "test-only",
+            "final_light_metric": None,
+        },
+    )
+
+    assert red_metrics["transformed_metric"]["backend"] == "test-red-channel"
+    assert blue_metrics["transformed_metric"]["backend"] == "test-blue-channel"
+    assert (
+        red_metrics["transformed_metric"]["solid_minimum_pair"]
+        != blue_metrics["transformed_metric"]["solid_minimum_pair"]
+    )
+    assert red_metrics["coverage_proxy"]["matrix"] != blue_metrics["coverage_proxy"]["matrix"]
+    assert red_metrics["g0_failures"] != blue_metrics["g0_failures"]
+    assert {row["status"] for row in red_metrics["g0_failures"]} == {"FAIL"}
+    assert {row["status"] for row in blue_metrics["g0_failures"]} == {"PASS"}
+    assert red_metrics["g0_failures"][0]["roles"] != blue_metrics["g0_failures"][0]["roles"]
+
+    for metrics in (red_metrics, blue_metrics):
+        failure_case = next(
+            row
+            for row in metrics["coverage_proxy"]["matrix"]
+            if row["background"] == "bg_0"
+            and row["width_css_px"] == 1.5
+            and row["dpr"] == 1
+            and row["geometry"] == "diagonal"
+        )
+        failures = {row["id"]: row for row in metrics["g0_failures"]}
+        assert (
+            failures["intra-categorical-minimum"]["roles"]
+            == failure_case["intra_categorical_minimum"]["roles"]
+        )
+        assert (
+            failures["intra-categorical-minimum"]["diagnostic_delta"]
+            == failure_case["intra_categorical_minimum"]["delta"]
+        )
+        assert (
+            failures["cross-cat-two-vs-terminal-red"]["diagnostic_delta"]
+            == failure_case["cat.two_vs_terminal.red"]
+        )
+        assert (
+            failures["cross-cat-two-vs-fg-1"]["diagnostic_delta"] == failure_case["cat.two_vs_fg_1"]
+        )
 
 
 def test_committed_browser_validation_is_sample_based_and_passes() -> None:
@@ -204,12 +254,43 @@ def test_committed_browser_validation_is_sample_based_and_passes() -> None:
     assert result["status"] == "PASS"
     assert result["full_image_hash_used"] is False
     assert {row["dpr"] for row in result["by_dpr"]} == {1, 2}
-    assert result["comparison"]["oklab_distance_correlation"] >= 0.95
-    assert result["comparison"]["oklab_distance_mean_absolute_error"] <= 0.75
+    acceptance = result["acceptance_statuses"]
+    assert acceptance["global"]["status"] == "PASS"
+    assert acceptance["global"]["scope"] == "pooled samples across all DPRs, backgrounds, and pairs"
+    assert acceptance["global"]["minimum_correlation"] == 0.95
+    assert acceptance["global"]["maximum_mean_absolute_error"] == 0.75
+    assert acceptance["pair_background"]["status"] == "PASS"
+    assert acceptance["pair_background"]["maximum_mean_absolute_error"] == 0.75
+    assert acceptance["pair_background"]["correlation_gate"] is None
+    assert result["comparison"]["pooled_oklab_distance_correlation"] >= 0.95
+    assert result["comparison"]["pooled_oklab_distance_mean_absolute_error"] <= 0.75
+
+    pair_rows = [pair for row in result["by_dpr"] for pair in row["pairs"]]
+    assert min(pair["correlation"] for pair in pair_rows) < 0.95
+    assert all(pair["mae_acceptance_status"] == "PASS" for pair in pair_rows)
+    assert all(pair["mean_absolute_error"] <= 0.75 for pair in pair_rows)
+
+    provenance = result["provenance"]
+    assert (
+        provenance["sha256"]["browser_probe_html"]
+        == hashlib.sha256((EXPERIMENT / "review/browser-probe.html").read_bytes()).hexdigest()
+    )
+    assert (
+        provenance["sha256"]["browser_validate_py"]
+        == hashlib.sha256((EXPERIMENT / "browser_validate.py").read_bytes()).hexdigest()
+    )
+    assert len(provenance["sha256"]["gstack_browse_binary"]) == 64
+    assert provenance["browser_status"] == {"mode": "launched", "status": "healthy"}
+    assert provenance["chromium_version"] is None
+    assert provenance["chromium_version_status"] == "unavailable-not-claimed"
 
     report = (EXPERIMENT / "G0-REPORT.md").read_text()
     assert "review/commanded.svg" in report
     assert "review/transformed.svg" in report
+    assert "Global pooled acceptance: **PASS**" in report
+    assert "Pair/background MAE acceptance: **PASS**" in report
+    assert "not a local 0.95 gate" in report
+    assert "Chromium version is unavailable and is not claimed" in report
     assert "genuinely ready **for the human stop-gate decision**" in report
 
 
@@ -229,6 +310,47 @@ def test_browser_validation_skip_is_clean(monkeypatch: pytest.MonkeyPatch, tmp_p
     assert result["reason"] == "gstack browse binary unavailable"
 
 
+def test_bad_contract_pair_mae_blocks_browser_acceptance() -> None:
+    browser = load_module("browser_validate.py", "thin_marks_browser_acceptance")
+    comparison = {
+        "pooled_oklab_distance_correlation": 0.99,
+        "pooled_oklab_distance_mean_absolute_error": 0.2,
+    }
+    rows = [
+        {
+            "dpr": 2,
+            "pairs": [
+                {
+                    "background": "bg_0",
+                    "roles": ["cat.five", "cat.six"],
+                    "correlation": 0.99,
+                    "mean_absolute_error": 0.8,
+                },
+                {
+                    "background": "bg_0",
+                    "roles": ["cat.two", "terminal.red"],
+                    "correlation": 0.99,
+                    "mean_absolute_error": 0.1,
+                },
+            ],
+        }
+    ]
+
+    statuses = browser._acceptance_statuses(comparison, rows)
+
+    assert statuses["global"]["status"] == "PASS"
+    assert statuses["pair_background"]["status"] == "FAIL"
+    assert statuses["pair_background"]["failed_pairs"] == [
+        {
+            "background": "bg_0",
+            "dpr": 2,
+            "mean_absolute_error": 0.8,
+            "roles": ["cat.five", "cat.six"],
+        }
+    ]
+    assert browser._overall_status(statuses) == "FAIL"
+
+
 @pytest.mark.skipif(
     __import__("os").environ.get("EMBER_RUN_BROWSER_TESTS") != "1",
     reason="set EMBER_RUN_BROWSER_TESTS=1 for local GStack/Chromium validation",
@@ -239,5 +361,7 @@ def test_optional_real_browser_proxy_validation(tmp_path: Path) -> None:
     if result["status"] == "SKIP":
         pytest.skip(result["reason"])
     assert result["status"] == "PASS"
-    assert result["comparison"]["oklab_distance_correlation"] >= 0.95
-    assert result["comparison"]["oklab_distance_mean_absolute_error"] <= 0.75
+    assert result["acceptance_statuses"]["global"]["status"] == "PASS"
+    assert result["acceptance_statuses"]["pair_background"]["status"] == "PASS"
+    assert result["comparison"]["pooled_oklab_distance_correlation"] >= 0.95
+    assert result["comparison"]["pooled_oklab_distance_mean_absolute_error"] <= 0.75

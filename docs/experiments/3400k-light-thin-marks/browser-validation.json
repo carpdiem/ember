@@ -1,4 +1,22 @@
 {
+  "acceptance_statuses": {
+    "global": {
+      "maximum_mean_absolute_error": 0.75,
+      "minimum_correlation": 0.95,
+      "scope": "pooled samples across all DPRs, backgrounds, and pairs",
+      "status": "PASS"
+    },
+    "pair_background": {
+      "correlation_gate": null,
+      "correlation_reporting": "diagnostic-disclosure-only",
+      "failed_pairs": [],
+      "maximum_mean_absolute_error": 0.75,
+      "minimum_observed_correlation": 0.94078556,
+      "scope": "each DPR, background, and named pair",
+      "status": "PASS",
+      "worst_mean_absolute_error": 0.5864128
+    }
+  },
   "baseline_source_commit": "c4c25e480912f8f54cbd8c992c0b6eb520dc0b8f",
   "browser": "GStack-managed Chromium",
   "by_dpr": [
@@ -12,6 +30,7 @@
         {
           "background": "bg_0",
           "correlation": 0.98030391,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.4483479,
           "roles": [
             "cat.five",
@@ -22,6 +41,7 @@
         {
           "background": "bg_0",
           "correlation": 0.99325155,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.32948885,
           "roles": [
             "cat.two",
@@ -32,6 +52,7 @@
         {
           "background": "bg_0",
           "correlation": 0.98696097,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.58107773,
           "roles": [
             "cat.two",
@@ -42,6 +63,7 @@
         {
           "background": "bg_1",
           "correlation": 0.97958601,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.44403169,
           "roles": [
             "cat.five",
@@ -52,6 +74,7 @@
         {
           "background": "bg_1",
           "correlation": 0.99297772,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.32900743,
           "roles": [
             "cat.two",
@@ -62,6 +85,7 @@
         {
           "background": "bg_1",
           "correlation": 0.98664142,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.5864128,
           "roles": [
             "cat.two",
@@ -82,6 +106,7 @@
         {
           "background": "bg_0",
           "correlation": 0.94102463,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.45397471,
           "roles": [
             "cat.five",
@@ -92,6 +117,7 @@
         {
           "background": "bg_0",
           "correlation": 0.95802115,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.31005371,
           "roles": [
             "cat.two",
@@ -102,6 +128,7 @@
         {
           "background": "bg_0",
           "correlation": 0.9461854,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.47366772,
           "roles": [
             "cat.two",
@@ -112,6 +139,7 @@
         {
           "background": "bg_1",
           "correlation": 0.94078556,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.45545787,
           "roles": [
             "cat.five",
@@ -122,6 +150,7 @@
         {
           "background": "bg_1",
           "correlation": 0.95763644,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.31286101,
           "roles": [
             "cat.two",
@@ -132,6 +161,7 @@
         {
           "background": "bg_1",
           "correlation": 0.94605067,
+          "mae_acceptance_status": "PASS",
           "mean_absolute_error": 0.47229439,
           "roles": [
             "cat.two",
@@ -144,15 +174,25 @@
     }
   ],
   "comparison": {
-    "acceptance": {
-      "maximum_mean_absolute_error": 0.75,
-      "minimum_correlation": 0.95
-    },
-    "oklab_distance_correlation": 0.96120086,
-    "oklab_distance_mean_absolute_error": 0.42230377,
-    "oklab_distance_p95_absolute_error": 0.73189194
+    "pooled_oklab_distance_correlation": 0.96852148,
+    "pooled_oklab_distance_mean_absolute_error": 0.42230377,
+    "pooled_oklab_distance_p95_absolute_error": 0.73189194,
+    "sample_count": 3840
   },
   "full_image_hash_used": false,
   "model": "encoded-sRGB 1.5 CSS px diagonal area-coverage proxy",
+  "provenance": {
+    "browser_status": {
+      "mode": "launched",
+      "status": "healthy"
+    },
+    "chromium_version": null,
+    "chromium_version_status": "unavailable-not-claimed",
+    "sha256": {
+      "browser_probe_html": "f1379e6f14500848230b12f0ffd008df33c605dfac0097369a9cdf0a7c3795d8",
+      "browser_validate_py": "78d46a47deb3564871206bb9858accfd4b52b58f878fe0959ca37c1e87724589",
+      "gstack_browse_binary": "dc055b15f24c3d152032ff1c83fcf600b1b9619f47050998b258c9a4673061af"
+    }
+  },
   "status": "PASS"
 }
