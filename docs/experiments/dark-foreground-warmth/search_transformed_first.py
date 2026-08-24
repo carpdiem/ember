@@ -107,7 +107,7 @@ CATEGORICAL_SEMANTIC_SLOTS = (
 
 BACKGROUND_ROLE_ALIAS_INDICES = {
     # Preserve the high-use canvas/sidebar distinction and bg_2→bg_3 active-state
-    # edge.  Missing roles collapse bg_1→bg_2 first, then bg_4→bg_5.
+    # edge.  Missing roles collapse bg_4→bg_5 first, then bg_1→bg_2.
     3: (0, 1, 1, 1, 2, 2),
     4: (0, 1, 1, 2, 3, 3),
     5: (0, 1, 2, 3, 4, 4),

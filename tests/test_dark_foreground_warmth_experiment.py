@@ -33,6 +33,7 @@ APPROVED_ARTIFACT_SHA256 = "33f79207c64d9c3b7d49534ed1bac0f8e9f37963599972061585
 FROZEN_CATEGORICAL_SET_SHA256 = "3cef5e1cbb615ba1e29060b3a63bf322736df03abb11d5bfc969d594d583a059"
 FROZEN_TERMINAL_SHA256 = "1a005af88f35c4b810d4ebad0898a0a4353628e240f03d48d9204d2a8af91f8c"
 EXPECTED_BACKGROUND_ALIAS_INDICES = {
+    3: [0, 1, 1, 1, 2, 2],
     4: [0, 1, 1, 2, 3, 3],
     5: [0, 1, 2, 3, 4, 4],
     6: [0, 1, 2, 3, 4, 5],
@@ -97,6 +98,9 @@ def test_dependent_bank_schema_and_frozen_lane_structure() -> None:
     assert hashlib.sha256(payload).hexdigest() == FROZEN_SYSTEM_SHA256
     search = runpy.run_path(str(EXPERIMENT / "search_transformed_first.py"))
     assert search["approved_artifact_sha256"](data) == APPROVED_ARTIFACT_SHA256
+    assert {
+        count: list(indices) for count, indices in search["BACKGROUND_ROLE_ALIAS_INDICES"].items()
+    } == EXPECTED_BACKGROUND_ALIAS_INDICES
     for slug in PROFILES:
         profile = data["profiles"][slug]
         assert set(profile["lanes"]) == set(LANES)
