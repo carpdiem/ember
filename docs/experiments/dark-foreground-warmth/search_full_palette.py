@@ -836,6 +836,11 @@ def construct_sequential(
         for index in np.rint(np.linspace(0, count - 1, 6)).astype(int)
     )
     metrics, chosen_sequence = sequential_metrics(base, chosen_sequence)
+    sequence_chroma = np.linalg.norm(srgb_to_oklab(chosen_sequence)[:, 1:], axis=1)
+    chroma_envelope_preserved = bool(
+        float(sequence_chroma.min()) >= float(path_chroma.min()) - 1e-6
+        and float(sequence_chroma.max()) <= float(path_chroma.max()) + 1e-6
+    )
     provenance = {
         "construction": (
             "approved commanded OkLCh trajectory; profile-specific nominal/robust "
@@ -855,7 +860,7 @@ def construct_sequential(
         "canonical_chroma_min": float(sequence_chroma.min()),
         "canonical_chroma_mean": float(sequence_chroma.mean()),
         "canonical_chroma_max": float(sequence_chroma.max()),
-        "chroma_envelope_preserved": True,
+        "chroma_envelope_preserved": chroma_envelope_preserved,
         "transformed_cam16_cv_target": SEQUENTIAL_TRANSFORMED_CV_TARGET,
         "transformed_cam16_cv_target_met": (
             metrics["transformed_cam16_cv"] <= SEQUENTIAL_TRANSFORMED_CV_TARGET

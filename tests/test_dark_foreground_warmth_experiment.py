@@ -271,7 +271,7 @@ def test_profile_specific_sequential_optimization_contracts() -> None:
         assert current["continuous_float_srgb"] == halfway["continuous_float_srgb"]
         assert current["sequential_anchors"] == halfway["sequential_anchors"]
         metrics = halfway["sequential_metrics"]
-        assert metrics["transformed_arc_weight"] == expected_weights[slug]
+        assert np.isclose(metrics["transformed_arc_weight"], expected_weights[slug])
         assert metrics["normal_cv"] <= 0.18 + 1e-12
         assert metrics["sampled_gain_minimum_signed_j_step"] > 0.0
         assert metrics["chroma_envelope_preserved"]
