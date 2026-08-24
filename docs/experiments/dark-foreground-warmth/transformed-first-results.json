@@ -1018,7 +1018,10 @@
               "count": 6,
               "sampled_grid_pair_cam16_ucs": 15.779196901217356,
               "passes": true,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": true,
+              "selected_trial": true,
+              "selected_bank_sampled_grid_pair_cam16_ucs": 15.779196901217356
             }
           ],
           "categorical_adoption": "shipped count retained after categorical-only validation",
@@ -5194,7 +5197,10 @@
               "count": 6,
               "sampled_grid_pair_cam16_ucs": 15.96220202810231,
               "passes": true,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": true,
+              "selected_trial": true,
+              "selected_bank_sampled_grid_pair_cam16_ucs": 15.96220202810231
             }
           ],
           "categorical_adoption": "shipped count retained after categorical-only validation",
@@ -10082,19 +10088,24 @@
               "count": 4,
               "sampled_grid_pair_cam16_ucs": 16.420085769813202,
               "passes": true,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": true,
+              "selected_trial": true,
+              "selected_bank_sampled_grid_pair_cam16_ucs": 16.420085769813202
             },
             {
               "count": 5,
               "sampled_grid_pair_cam16_ucs": 14.831090321402641,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": false
             },
             {
               "count": 6,
               "sampled_grid_pair_cam16_ucs": 14.138257035986385,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": false
             }
           ],
           "categorical_adoption": "shipped count retained after categorical-only validation",
@@ -14927,19 +14938,24 @@
               "count": 4,
               "sampled_grid_pair_cam16_ucs": 16.76814320564736,
               "passes": true,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": true,
+              "selected_trial": true,
+              "selected_bank_sampled_grid_pair_cam16_ucs": 16.76814320564736
             },
             {
               "count": 5,
               "sampled_grid_pair_cam16_ucs": 15.813240238068826,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": false
             },
             {
               "count": 6,
               "sampled_grid_pair_cam16_ucs": 10.276436600948825,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": false
             }
           ],
           "categorical_adoption": "shipped count retained after categorical-only validation",
@@ -18912,19 +18928,24 @@
               "count": 3,
               "sampled_grid_pair_cam16_ucs": 12.51335069435474,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": true,
+              "selected_trial": false,
+              "selected_bank_sampled_grid_pair_cam16_ucs": 11.081552392874142
             },
             {
               "count": 4,
               "sampled_grid_pair_cam16_ucs": 7.9052431690617535,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": false
             },
             {
               "count": 5,
               "sampled_grid_pair_cam16_ucs": 5.315795658378916,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": false
             }
           ],
           "categorical_adoption": "optimized shipped-count trial infeasible; shipped bank retained",
@@ -21957,19 +21978,24 @@
               "count": 3,
               "sampled_grid_pair_cam16_ucs": 13.714074566763596,
               "passes": true,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": true,
+              "selected_trial": true,
+              "selected_bank_sampled_grid_pair_cam16_ucs": 13.714074566763596
             },
             {
               "count": 4,
               "sampled_grid_pair_cam16_ucs": 7.236720182822214,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": false
             },
             {
               "count": 5,
               "sampled_grid_pair_cam16_ucs": 4.652224886178169,
               "passes": false,
-              "five_percent_margin_pass": false
+              "five_percent_margin_pass": false,
+              "selected_bank": false
             }
           ],
           "categorical_adoption": "shipped count retained after categorical-only validation",

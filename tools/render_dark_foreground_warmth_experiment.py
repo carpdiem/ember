@@ -330,11 +330,22 @@ def dependent_frontiers_html(data: dict[str, Any]) -> str:
     for profile in PROFILE_SLUGS:
         for lane in LANES:
             record = data["profiles"][profile]["lanes"][lane]
-            frontier = "; ".join(
-                f"N={entry['count']}: {entry['sampled_grid_pair_cam16_ucs']:.2f} "
-                f"({'pass' if entry['passes'] else 'blocked'})"
-                for entry in record["categorical_frontier"]
-            )
+            frontier_cells = []
+            for entry in record["categorical_frontier"]:
+                rendered = (
+                    f"N={entry['count']}: {entry['sampled_grid_pair_cam16_ucs']:.2f} "
+                    f"({'pass' if entry['passes'] else 'blocked'})"
+                )
+                if entry.get("selected_bank"):
+                    if entry.get("selected_trial"):
+                        rendered += " · selected"
+                    else:
+                        rendered += (
+                            " · trial rejected; shipped bank selected at "
+                            f"{entry['selected_bank_sampled_grid_pair_cam16_ucs']:.2f} (pass)"
+                        )
+                frontier_cells.append(rendered)
+            frontier = "; ".join(frontier_cells)
             terminal = record["terminal_metrics"]
             sequential = record["sequential_metrics"]
             rows.append(
@@ -684,11 +695,22 @@ def dependent_frontiers_markdown(data: dict[str, Any]) -> str:
     for profile in PROFILE_SLUGS:
         for lane in LANES:
             record = data["profiles"][profile]["lanes"][lane]
-            frontier = ", ".join(
-                f"{row['count']}: {row['sampled_grid_pair_cam16_ucs']:.2f} / "
-                f"{'PASS' if row['passes'] else 'FAIL'}"
-                for row in record["categorical_frontier"]
-            )
+            frontier_cells = []
+            for row in record["categorical_frontier"]:
+                rendered = (
+                    f"{row['count']}: {row['sampled_grid_pair_cam16_ucs']:.2f} / "
+                    f"{'PASS' if row['passes'] else 'FAIL'}"
+                )
+                if row.get("selected_bank"):
+                    if row.get("selected_trial"):
+                        rendered += " / selected"
+                    else:
+                        rendered += (
+                            " / trial rejected; shipped selected at "
+                            f"{row['selected_bank_sampled_grid_pair_cam16_ucs']:.2f} / PASS"
+                        )
+                frontier_cells.append(rendered)
+            frontier = ", ".join(frontier_cells)
             lines.append(
                 f"| {profile} | {LANE_LABELS[lane][0]} | {frontier} | "
                 f"{record['terminal_metrics']['sampled_gain_pair_min_cam16_ucs']:.2f} | "

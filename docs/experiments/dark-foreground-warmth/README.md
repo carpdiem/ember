@@ -40,12 +40,12 @@ This dependent-bank pass freeze-locks the already approved current and halfway b
 
 | Profile | Lane | Categorical frontier (N: sampled-grid CAM16 pair / status) | Terminal sampled-grid pair | Sequential CAM16 CV |
 |---|---|---|---:|---:|
-| 3400k-dark | Current | 6: 15.78 / PASS | 13.83 | 0.0001 |
-| 3400k-dark | Halfway | 6: 15.96 / PASS | 14.45 | 0.0001 |
-| 2000k-dark | Current | 4: 16.42 / PASS, 5: 14.83 / FAIL, 6: 14.14 / FAIL | 13.04 | 0.0000 |
-| 2000k-dark | Halfway | 4: 16.77 / PASS, 5: 15.81 / FAIL, 6: 10.28 / FAIL | 12.86 | 0.0000 |
-| 1200k-dark | Current | 3: 12.51 / FAIL, 4: 7.91 / FAIL, 5: 5.32 / FAIL | 6.48 | 0.0911 |
-| 1200k-dark | Halfway | 3: 13.71 / PASS, 4: 7.24 / FAIL, 5: 4.65 / FAIL | 6.46 | 0.0911 |
+| 3400k-dark | Current | 6: 15.78 / PASS / selected | 13.83 | 0.0001 |
+| 3400k-dark | Halfway | 6: 15.96 / PASS / selected | 14.45 | 0.0001 |
+| 2000k-dark | Current | 4: 16.42 / PASS / selected, 5: 14.83 / FAIL, 6: 14.14 / FAIL | 13.04 | 0.0000 |
+| 2000k-dark | Halfway | 4: 16.77 / PASS / selected, 5: 15.81 / FAIL, 6: 10.28 / FAIL | 12.86 | 0.0000 |
+| 1200k-dark | Current | 3: 12.51 / FAIL / trial rejected; shipped selected at 11.08 / PASS, 4: 7.91 / FAIL, 5: 5.32 / FAIL | 6.48 | 0.0911 |
+| 1200k-dark | Halfway | 3: 13.71 / PASS / selected, 4: 7.24 / FAIL, 5: 4.65 / FAIL | 6.46 | 0.0911 |
 
 ## Distinctness vs universal text badges
 

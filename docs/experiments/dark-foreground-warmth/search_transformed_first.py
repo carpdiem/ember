@@ -249,8 +249,7 @@ def system_violations(
     soft_terms.extend([violation(float(d), MIN_ADJACENT_DJ_TARGET) * 10 for d in dj])
     # Transformed J' must increase strictly up the ladder.
     values.extend(violation(float(d), floor=0.0) for d in np.diff(t_surf_ucs[:, 0]))
-    fg_floor = max(FG_STEP_FLOOR_CURRENT_REFERENCE, globals().get("FG_STEP_FLOOR_RUNTIME", 0.0))
-    values.extend(violation(v, fg_floor) for v in metrics["fg_adjacent"])
+    values.extend(violation(v, FG_STEP_FLOOR_CURRENT_REFERENCE) for v in metrics["fg_adjacent"])
     values.append(violation(metrics["uniformity_ratio"], ceiling=TRANSFORMED_UNIFORMITY_RATIO))
     values.append(violation(metrics["span"], 6.0))
     primary_floor = max(4.5, DARK_MINIMUM_SHIFTED_PRIMARY_TEXT_CONTRAST.get(base.slug, 4.5))
@@ -327,11 +326,7 @@ def system_violations(
                 ceiling=FOREGROUND_LIGHTNESS_RADIUS,
             )
         )
-        values.append(
-            violation(float(shipped_fg[index, 0] - fg_lab[index, 0]), 0.0)
-            if fg_lab[index, 0] < shipped_fg[index, 0]
-            else 0.0
-        )
+
     soft_terms.append(float(np.linalg.norm(fg_lab[:, 1:] - fg_target)))
 
     direction = 1.0
@@ -394,15 +389,11 @@ def system_violations(
         * 0.5
         + np.linalg.norm(shipped_surf[:, 1:], axis=1) * 0.5,
     )
-    chroma_ceiling = globals().get("BG_CHROMA_CEILING_RUNTIME", None)
     for index in range(count):
         values.append(
             violation(
                 float(proposed_chroma[index]),
-                ceiling=min(
-                    float(halfway_chroma[index]) * 1.3 + 0.003,
-                    float(chroma_ceiling) if chroma_ceiling is not None else 10.0,
-                ),
+                ceiling=float(halfway_chroma[index]) * 1.3 + 0.003,
             )
         )
         soft_terms.append(40.0 * abs(float(proposed_chroma[index] - halfway_chroma[index])))
@@ -886,7 +877,7 @@ def search_dependent_banks(
     if next_trial and not next_trial["failures"] and next_trial["five_percent_margin_pass"]:
         pair_required = max(
             floors["categorical"]["transformed_pair_cam16_ucs"],
-            0.90 * base_trial["metrics"]["sampled_gain_pair_min_cam16_ucs"],
+            0.90 * categorical_metrics["sampled_gain_pair_min_cam16_ucs"],
         )
         pair_actual = next_trial["metrics"]["sampled_gain_pair_min_cam16_ucs"]
         if pair_actual + 1e-12 >= pair_required:
@@ -896,6 +887,17 @@ def search_dependent_banks(
                 f"count {shipped_count + 1} adopted: all gates have >=5% margin and "
                 f"sampled-grid pair {pair_actual:.3f} >= {pair_required:.3f}"
             )
+
+    for entry in frontiers:
+        entry["selected_bank"] = entry["count"] == len(categorical)
+        if entry["selected_bank"]:
+            trial = cat_trials[str(entry["count"])]
+            entry["selected_trial"] = not trial["failures"] and tuple(trial["selected"]) == tuple(
+                categorical
+            )
+            entry["selected_bank_sampled_grid_pair_cam16_ucs"] = categorical_metrics[
+                "sampled_gain_pair_min_cam16_ucs"
+            ]
 
     term_runs = [
         full["bounded_exact_search"](
