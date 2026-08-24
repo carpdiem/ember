@@ -1,6 +1,6 @@
 # Dark palette promotion readiness — roles, aliases, and remaining work
 
-> **Approved artifact SHA:** `33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa`
+> **Approved artifact SHA:** `faab1e2cb460b618aaca56846ba487b90229b9714e0a14feedfb51de67ffe779`
 > **Status:** experiment contract; canonical production definitions are unchanged
 
 ## Consumer audit verdict
@@ -45,14 +45,14 @@ The same broad category families now occupy the same slot when users change prof
 
 | Slot | Semantic family | 3400K | 2000K | 1200K |
 |---:|---|---|---|---|
-| 1 | warm amber | orange | rust/amber | apricot |
+| 1 | primary warm | orange | rose (human-reviewed transformed identity) | apricot |
 | 2 | cool blue/cyan | blue | blue | cyan |
-| 3 | rose/magenta | pink | rose | rose |
+| 3 | secondary warm/red | pink | rust/amber | rose |
 | 4 | green/mint | green | mint | — |
 | 5 | teal | teal | — | — |
 | 6 | earth/brown | brown | — | — |
 
-Current and halfway use one identical permutation within each profile. Broad commanded-hue identity is the primary ordering objective; paired current/halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties. The full bank colors and release metrics are unchanged by ordering.
+Current and halfway use one identical permutation within each profile. Broad commanded-hue identity produces the initial assignment; paired current/halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties. Human review then swaps 2000K slots 1 and 3: its lighter rose preimage better preserves primary-warm identity under transformation, while rust becomes the secondary warm identity. The full bank colors and release metrics are unchanged by ordering.
 
 ## Promotion requirements
 

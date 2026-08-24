@@ -9,7 +9,7 @@
 
 Design the seen state first: even transformed distinctness binds before commanded warmth; leftover exact-Hex8 freedom buys the halfway hue step for ink and surfaces.
 
-The complete approved artifact is freeze-locked at `33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa`. It covers profile gains; current and halfway backgrounds/foregrounds; ordered categorical semantic slots; terminal banks and aliases; canonical float and Hex8 sequential ramps; and their metric/selection contracts. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
+The complete approved artifact is freeze-locked at `faab1e2cb460b618aaca56846ba487b90229b9714e0a14feedfb51de67ffe779`. It covers profile gains; current and halfway backgrounds/foregrounds; ordered categorical semantic slots; terminal banks and aliases; canonical float and Hex8 sequential ramps; and their metric/selection contracts. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
 
 ## Methodology
 
@@ -145,7 +145,7 @@ Sequential:  282527 4D3D4A 765863 9D796C C39E75 E2CDA1
 ```text
 Surfaces:    070504 0D0A09 15110E 1E1814 271F1B 30221B
 Foregrounds: EED5AE D3BB99 AA9D8B
-Categorical: A36140 5BAEDE E98FA0 9FE5AF
+Categorical: E98FA0 5BAEDE A36140 9FE5AF
 Terminal:    F490AB 7BEEC0 C2A039 A3C2FC
 Sequential:  17110F 3D2B31 684657 986979 C79B8E F2D9AE
 ```
@@ -155,7 +155,7 @@ Sequential:  17110F 3D2B31 684657 986979 C79B8E F2D9AE
 ```text
 Surfaces:    050404 171312 251F1D 322926
 Foregrounds: ECDCBF B4AA8E 8D8570
-Categorical: A36043 54B7E2 E99894 A8EDB1
+Categorical: E99894 54B7E2 A36043 A8EDB1
 Terminal:    F490AC 85EEB8 C29E39 A9C6FC
 Sequential:  17110F 3D2B31 684657 986979 C79B8E F2D9AE
 ```

@@ -29,7 +29,7 @@ UNIVERSAL_FLOORS = (4.5, 3.5, 2.4)
 TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_RATIO = 1.7
 FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
-APPROVED_ARTIFACT_SHA256 = "33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa"
+APPROVED_ARTIFACT_SHA256 = "faab1e2cb460b618aaca56846ba487b90229b9714e0a14feedfb51de67ffe779"
 FROZEN_CATEGORICAL_SET_SHA256 = "3cef5e1cbb615ba1e29060b3a63bf322736df03abb11d5bfc969d594d583a059"
 FROZEN_TERMINAL_SHA256 = "1a005af88f35c4b810d4ebad0898a0a4353628e240f03d48d9204d2a8af91f8c"
 EXPECTED_BACKGROUND_ALIAS_INDICES = {
@@ -259,7 +259,7 @@ def test_categorical_ordering_changes_only_slot_order() -> None:
         serialized = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
         assert hashlib.sha256(serialized).hexdigest() == expected
 
-    for profile in data["profiles"].values():
+    for slug, profile in data["profiles"].items():
         permutations = {
             tuple(record["categorical_ordering"]["permutation_from_search_order"])
             for record in profile["lanes"].values()
@@ -271,17 +271,33 @@ def test_categorical_ordering_changes_only_slot_order() -> None:
         )
         assert all(
             record["categorical_ordering"]["semantic_families"][:3]
-            == ["warm amber", "cool blue/cyan", "rose/magenta"]
+            == ["primary warm", "cool blue/cyan", "secondary warm/red"]
             for record in profile["lanes"].values()
         )
         ordering = profile["lanes"]["halfway"]["categorical_ordering"]
-        for assigned, target in zip(
-            ordering["assigned_mean_commanded_hues_degrees"],
-            ordering["semantic_target_hues_degrees"],
-            strict=True,
-        ):
-            angular_error = abs((assigned - target + 180.0) % 360.0 - 180.0)
-            assert angular_error <= 30.0
+        if slug == "2000k-dark":
+            assert ordering["human_review_override"]
+            assert profile["lanes"]["current"]["categorical"] == [
+                "#E98FA0",
+                "#5BAEDE",
+                "#A36140",
+                "#9FE5AF",
+            ]
+            assert profile["lanes"]["halfway"]["categorical"] == [
+                "#E99894",
+                "#54B7E2",
+                "#A36043",
+                "#A8EDB1",
+            ]
+        else:
+            assert ordering["human_review_override"] is None
+            for assigned, target in zip(
+                ordering["assigned_mean_commanded_hues_degrees"],
+                ordering["semantic_target_hues_degrees"],
+                strict=True,
+            ):
+                angular_error = abs((assigned - target + 180.0) % 360.0 - 180.0)
+                assert angular_error <= 30.0
 
 
 def test_profile_specific_sequential_optimization_contracts() -> None:

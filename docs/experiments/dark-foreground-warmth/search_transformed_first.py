@@ -97,9 +97,9 @@ TERMINAL_SEED_BASE = 27000
 SEQUENTIAL_SEED_BASE = 37000
 
 CATEGORICAL_SEMANTIC_SLOTS = (
-    ("warm amber", 65.0),
+    ("primary warm", 65.0),
     ("cool blue/cyan", 225.0),
-    ("rose/magenta", 350.0),
+    ("secondary warm/red", 350.0),
     ("green/mint", 150.0),
     ("teal", 185.0),
     ("earth/brown", 45.0),
@@ -864,6 +864,13 @@ def apply_paired_categorical_ordering(
         return (semantic_error, *prefix_tiebreakers, order)
 
     order = list(min(permutations(range(count)), key=order_key))
+    human_review_override = None
+    if base.slug == "2000k-dark":
+        order[0], order[2] = order[2], order[0]
+        human_review_override = (
+            "human perceptual review: swap semantic slots 1 and 3 so the lighter rose "
+            "preimage carries primary-warm identity and rust carries secondary-warm identity"
+        )
 
     prefix_pair_minima = []
     for prefix_count in range(2, count + 1):
@@ -916,6 +923,7 @@ def apply_paired_categorical_ordering(
             "semantic_families": [name for name, _hue in semantic_slots],
             "semantic_target_hues_degrees": [hue for _name, hue in semantic_slots],
             "assigned_mean_commanded_hues_degrees": [float(mean_hues[index]) for index in order],
+            "human_review_override": human_review_override,
             "prefix_transformed_pair_minima_cam16_ucs": prefix_pair_minima,
         }
 
@@ -1156,7 +1164,7 @@ def background_role_contract(count: int) -> dict[str, str]:
 
 FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
 APPROVED_ARTIFACT_SHA256: str | None = (
-    "33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa"
+    "faab1e2cb460b618aaca56846ba487b90229b9714e0a14feedfb51de67ffe779"
 )
 
 

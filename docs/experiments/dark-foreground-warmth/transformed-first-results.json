@@ -4230,9 +4230,9 @@
             ],
             "stable_across_lanes": true,
             "semantic_families": [
-              "warm amber",
+              "primary warm",
               "cool blue/cyan",
-              "rose/magenta",
+              "secondary warm/red",
               "green/mint",
               "teal",
               "earth/brown"
@@ -4253,6 +4253,7 @@
               182.67429490448598,
               46.670551516396664
             ],
+            "human_review_override": null,
             "prefix_transformed_pair_minima_cam16_ucs": [
               38.179993740273694,
               15.96220202810231,
@@ -8519,9 +8520,9 @@
             ],
             "stable_across_lanes": true,
             "semantic_families": [
-              "warm amber",
+              "primary warm",
               "cool blue/cyan",
-              "rose/magenta",
+              "secondary warm/red",
               "green/mint",
               "teal",
               "earth/brown"
@@ -8542,6 +8543,7 @@
               182.67429490448598,
               46.670551516396664
             ],
+            "human_review_override": null,
             "prefix_transformed_pair_minima_cam16_ucs": [
               38.179993740273694,
               15.96220202810231,
@@ -9242,9 +9244,9 @@
             }
           },
           "categorical": [
-            "#A36140",
-            "#5BAEDE",
             "#E98FA0",
+            "#5BAEDE",
+            "#A36140",
             "#9FE5AF"
           ],
           "categorical_trials": {
@@ -13437,16 +13439,16 @@
           "categorical_ordering": {
             "strategy": "cross-profile broad commanded-hue identity first; paired current+halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties",
             "permutation_from_search_order": [
-              2,
-              0,
               1,
+              0,
+              2,
               3
             ],
             "stable_across_lanes": true,
             "semantic_families": [
-              "warm amber",
+              "primary warm",
               "cool blue/cyan",
-              "rose/magenta",
+              "secondary warm/red",
               "green/mint"
             ],
             "semantic_target_hues_degrees": [
@@ -13456,13 +13458,14 @@
               150.0
             ],
             "assigned_mean_commanded_hues_degrees": [
-              45.20481679886099,
-              232.86092681202052,
               15.290047327038025,
+              232.86092681202052,
+              45.20481679886099,
               149.44660116950246
             ],
+            "human_review_override": "human perceptual review: swap semantic slots 1 and 3 so the lighter rose preimage carries primary-warm identity and rust carries secondary-warm identity",
             "prefix_transformed_pair_minima_cam16_ucs": [
-              39.323219734994105,
+              47.62066579675576,
               16.420085769813202,
               16.420085769813202
             ]
@@ -14147,9 +14150,9 @@
             }
           },
           "categorical": [
-            "#A36043",
-            "#54B7E2",
             "#E99894",
+            "#54B7E2",
+            "#A36043",
             "#A8EDB1"
           ],
           "categorical_trials": {
@@ -18366,16 +18369,16 @@
           "categorical_ordering": {
             "strategy": "cross-profile broad commanded-hue identity first; paired current+halfway transformed CAM16-UCS and commanded Oklab prefix separation break ties",
             "permutation_from_search_order": [
-              2,
-              0,
               1,
+              0,
+              2,
               3
             ],
             "stable_across_lanes": true,
             "semantic_families": [
-              "warm amber",
+              "primary warm",
               "cool blue/cyan",
-              "rose/magenta",
+              "secondary warm/red",
               "green/mint"
             ],
             "semantic_target_hues_degrees": [
@@ -18385,13 +18388,14 @@
               150.0
             ],
             "assigned_mean_commanded_hues_degrees": [
-              45.20481679886099,
-              232.86092681202052,
               15.290047327038025,
+              232.86092681202052,
+              45.20481679886099,
               149.44660116950246
             ],
+            "human_review_override": "human perceptual review: swap semantic slots 1 and 3 so the lighter rose preimage carries primary-warm identity and rust carries secondary-warm identity",
             "prefix_transformed_pair_minima_cam16_ucs": [
-              39.323219734994105,
+              47.62066579675576,
               16.420085769813202,
               16.420085769813202
             ]
@@ -21494,9 +21498,9 @@
             ],
             "stable_across_lanes": true,
             "semantic_families": [
-              "warm amber",
+              "primary warm",
               "cool blue/cyan",
-              "rose/magenta"
+              "secondary warm/red"
             ],
             "semantic_target_hues_degrees": [
               65.0,
@@ -21508,6 +21512,7 @@
               209.14102285818615,
               10.88169870072309
             ],
+            "human_review_override": null,
             "prefix_transformed_pair_minima_cam16_ucs": [
               26.03556454045657,
               11.081552392874142
@@ -24618,9 +24623,9 @@
             ],
             "stable_across_lanes": true,
             "semantic_families": [
-              "warm amber",
+              "primary warm",
               "cool blue/cyan",
-              "rose/magenta"
+              "secondary warm/red"
             ],
             "semantic_target_hues_degrees": [
               65.0,
@@ -24632,6 +24637,7 @@
               209.14102285818615,
               10.88169870072309
             ],
+            "human_review_override": null,
             "prefix_transformed_pair_minima_cam16_ucs": [
               26.03556454045657,
               11.081552392874142
@@ -24643,7 +24649,7 @@
   },
   "approved_artifact_freeze": {
     "schema": 1,
-    "sha256": "33f79207c64d9c3b7d49534ed1bac0f8e9f379635999720615852323d9e185fa",
+    "sha256": "faab1e2cb460b618aaca56846ba487b90229b9714e0a14feedfb51de67ffe779",
     "covers": "profile gains; current+halfway bg counts/surfaces/foregrounds and production aliases; ordered categorical semantic slots; terminal banks/aliases; canonical float and Hex8 sequential ramps; dependent metric and sequential selection contracts"
   }
 }
