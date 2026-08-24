@@ -48,17 +48,18 @@ TERM_NAMES = ("red", "green", "yellow", "blue", "magenta", "cyan")
 TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_CEILING = 1.65
 TRANSFORMED_SPAN_FLOOR = 6.0
-CAM16_ADAPTATION_LUMINANCE = 50.0
-CAM16_BACKGROUND_LUMINANCE = 20.0
+CAM16_ADAPTATION_LUMINANCE = 8.0
+CAM16_BACKGROUND_LUMINANCE = 3.0
+CAM16_FLARE_FRACTION = 0.0075
 UNIVERSAL_FOREGROUND_FLOORS = (4.5, 3.5, 2.4)
 
 # Pareto-ranked competing directions. Every value is recomputed in this renderer
 # from the serialized exact Hex8 records; nothing is trusted from upstream caches.
 METRICS = (
     ("Background surface count", "bg_count", "higher", ".0f"),
-    ("Transformed adjacent ΔEOK minimum", "adjacent_min", "higher", ".2f"),
+    ("Transformed adjacent CAM16-UCS minimum", "adjacent_min", "higher", ".2f"),
     ("Transformed uniformity ratio, max:min step", "uniformity_ratio", "lower", ".3f"),
-    ("Transformed surface span ΔEOK", "span", "higher", ".2f"),
+    ("Transformed surface span CAM16-UCS", "span", "higher", ".2f"),
     ("Transformed fg-background clearance minimum", "clearance_min", "higher", ".2f"),
     ("FG-0 transformed worst-surface contrast", "fg0_contrast", "higher", ".2f"),
     ("FG-1 transformed worst-surface contrast", "fg1_contrast", "higher", ".2f"),
@@ -141,7 +142,11 @@ def render_candidate_assets(data: dict[str, Any]) -> None:
         gains = tuple(data["profiles"][profile]["gains"])
         for lane in LANES:
             record = data["profiles"][profile]["lanes"][lane]
-            generated = generate_family(candidate_definition(profile, record))
+            generated = dict(generate_family(candidate_definition(profile, record)))
+            # The float ramp in the experiment result is canonical. Six Hex8
+            # anchors are previews/compatibility exports only; both scalar and
+            # photographic renderers consume this one float ramp.
+            generated["continuous_rgb"] = record["continuous_float_srgb"]
             stem = asset_stem(profile, lane)
             for subject, renderer in (
                 ("mars", _mars_topography_colormap_image),
@@ -194,9 +199,11 @@ def cam16_ucs(rgb01: np.ndarray, gains) -> np.ndarray:
     """CAM16-UCS coordinates under transformed sRGB and night viewing conditions."""
 
     transformed = np.clip(rgb01 * np.asarray(gains), 0.0, 1.0)
+    xyz = colour.sRGB_to_XYZ(transformed)
+    flare = CAM16_FLARE_FRACTION * colour.sRGB_to_XYZ(np.ones_like(transformed))
     return np.asarray(
         colour.XYZ_to_CAM16UCS(
-            colour.sRGB_to_XYZ(transformed),
+            xyz + flare,
             L_A=CAM16_ADAPTATION_LUMINANCE,
             Y_b=CAM16_BACKGROUND_LUMINANCE,
         )
@@ -353,6 +360,28 @@ def anatomy(slug: str, lane: str, record: dict[str, Any], metrics: dict[str, flo
             ),
         ]
     provenance.append(escape(f"categorical adoption: {record['categorical_adoption']}"))
+    for frontier in record.get("categorical_frontier", []):
+        trial = record["categorical_trials"][str(frontier["count"])]
+        failure_text = "; ".join(trial["failures"]) if trial["failures"] else "all bank gates pass"
+        provenance.append(
+            escape(
+                f"categorical N={frontier['count']}: sampled-grid pair "
+                f"{frontier['sampled_grid_pair_cam16_ucs']:.2f} CAM16-UCS; {failure_text}"
+            )
+        )
+    provenance.append(escape(f"terminal adoption: {record['terminal_adoption']}"))
+    sequential_metrics = record["sequential_metrics"]
+    target_note = (
+        "target met"
+        if sequential_metrics["transformed_cam16_cv_target_met"]
+        else sequential_metrics["target_deviation_reason"]
+    )
+    provenance.append(
+        escape(
+            f"sequential canonical float ramp: transformed CAM16-UCS CV "
+            f"{sequential_metrics['transformed_cam16_cv']:.4f}; {target_note}"
+        )
+    )
     details = "".join(f"<li>{item}</li>" for item in provenance)
     return f"""
 <header class="card-head"><div><p>{LANE_LABELS[lane][1]}</p><h3>{LANE_LABELS[lane][0]}</h3></div><div class="status"><span class="status-{distinct.lower()}">Distinctness {distinct}</span><span class="status-{universal.lower()}">Universal text {universal}</span></div></header>
@@ -611,6 +640,30 @@ def categorical_adoption_markdown(data: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def dependent_frontiers_markdown(data: dict[str, Any]) -> str:
+    lines = [
+        (
+            "| Profile | Lane | Categorical frontier (N: sampled-grid CAM16 pair / status) | "
+            "Terminal sampled-grid pair | Sequential CAM16 CV |"
+        ),
+        "|---|---|---|---:|---:|",
+    ]
+    for profile in PROFILE_SLUGS:
+        for lane in LANES:
+            record = data["profiles"][profile]["lanes"][lane]
+            frontier = ", ".join(
+                f"{row['count']}: {row['sampled_grid_pair_cam16_ucs']:.2f} / "
+                f"{'PASS' if row['passes'] else 'FAIL'}"
+                for row in record["categorical_frontier"]
+            )
+            lines.append(
+                f"| {profile} | {LANE_LABELS[lane][0]} | {frontier} | "
+                f"{record['terminal_metrics']['sampled_gain_pair_min_cam16_ucs']:.2f} | "
+                f"{record['sequential_metrics']['transformed_cam16_cv']:.4f} |"
+            )
+    return "\n".join(lines)
+
+
 def render_readme(data: dict[str, Any]) -> str:
     computed = computed_lane_metrics(data)
     return f"""# Dark foreground warmth exploration
@@ -623,13 +676,15 @@ def render_readme(data: dict[str, Any]) -> str:
 
 Design the seen state first: even transformed distinctness binds before commanded warmth; leftover exact-Hex8 freedom buys the halfway hue step for ink and surfaces.
 
-This fourth pass compares all three shipped dark profiles under two commanded philosophies: **current** (each shipped dark palette scored verbatim) and **halfway** (ink *and* surfaces moved 50% of the way toward the 3400K Light Mid-Depth warmth step). The optimizer scores every candidate only after exact Hex8 quantization, with transformed adjacent ΔE ≥ 2.5, a uniformity ratio ≤ 1.6, transformed span ≥ 6.0, and text contrast floors as hard gates. Warmth closeness, chroma, and movement compete only after usability, so there is **no single scalar winner**.
+This dependent-bank pass freeze-locks the already approved current and halfway backgrounds/foregrounds, then redesigns only categorical, terminal, and sequential banks. Transformed perceptual metrics use flare-aware CAM16-UCS (`L_A=8`, `Y_b=3`, flare `0.0075` of untransformed white); commanded identity remains in Oklab and WCAG contrast remains an independent hard gate.
 
 ## Methodology
 
 - **Transformed-first gating.** Even the *transformed* (warm-display simulated) appearance must keep distinct surfaces and readable text before any commanded-warmth objective is scored. This is the pass's central discipline: the seen state is designed first.
 - **Variable surface count.** The halfway lane searches background counts 3–6 per profile; each count gets a bounded exact-Hex8 search with deterministic seeds. Leftover byte freedom inside the ±24-byte radius is what buys the hue step.
-- **Fresh dependent banks.** Categorical (with a larger-count bonus), terminal, and sequential banks are re-searched against each lane's selected exact system — never copied across lanes.
+- **Independent dependent banks.** Categorical count trials are validated only by categorical gates; terminal and sequential gates cannot veto them. The complete selected assembly receives one final combined validation.
+- **Sampled gain evidence.** Final candidates receive a unique 3×3 grid over nonzero gain axes (blue-zero duplicates are removed). These are sampled-grid diagnostics, not continuous worst-case claims; near-floor candidates receive a denser adaptive scan.
+- **Constructed scalar ramps.** The approved commanded path is densely sampled and resampled by transformed CAM16-UCS arc length, blended only when required to keep commanded CV ≤ 0.18. The 256 float samples are canonical; six Hex8 anchors are previews.
 - **Recomputed evidence.** The renderer recomputes every published metric and both badge families from the serialized Hex8 values; no upstream release-status field exists in this schema to trust.
 
 ## Chosen surface counts
@@ -640,11 +695,15 @@ This fourth pass compares all three shipped dark profiles under two commanded ph
 
 {categorical_adoption_markdown(data)}
 
+## Dependent-bank frontiers
+
+{dependent_frontiers_markdown(data)}
+
 ## Distinctness vs universal text badges
 
 The third pass serialized a strict release status per lane; this schema does not. Instead the renderer computes two lightweight lenses from the Hex8 values themselves:
 
-- **Distinctness** — transformed adjacent ΔE ≥ 2.5 on every step, uniformity ratio ≤ 1.6, and span ≥ 6.0;
+- **Distinctness** — transformed adjacent CAM16-UCS distance ≥ 2.5 on every step, uniformity ratio ≤ 1.6, and span ≥ 6.0;
 - **Universal text** — transformed worst-surface contrast floors of `4.5 / 3.5 / 2.4` for `fg_0 / fg_1 / fg_2`, with `fg_0` raised to each family's own primary-text floor when stricter.
 
 {badges_markdown(computed)}

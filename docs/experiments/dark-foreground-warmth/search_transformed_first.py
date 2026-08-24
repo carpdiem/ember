@@ -712,6 +712,91 @@ def load_full_palette_module() -> dict[str, Any]:
     return runpy.run_path(str(EXPERIMENT / "search_full_palette.py"))
 
 
+def categorical_seed_origins(
+    full: dict[str, Any],
+    base: Any,
+    foregrounds: tuple[str, ...],
+    count: int,
+) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """Deterministic transformed-CAM16 maximin seeds over an admissible OkLCh shell."""
+
+    labs = []
+    for lightness in np.linspace(0.48, 0.78, 7):
+        for chroma in np.linspace(0.09, 0.105, 4):
+            for hue in np.arange(0.0, 360.0, 10.0):
+                radians = np.radians(hue)
+                lab = np.asarray((lightness, chroma * np.cos(radians), chroma * np.sin(radians)))
+                rgb = oklab_to_srgb(lab.reshape(1, 3))[0]
+                if np.all((rgb >= 0.0) & (rgb <= 1.0)):
+                    labs.append(lab)
+    pool_lab = np.asarray(labs)
+    pool_rgb = np.clip(oklab_to_srgb(pool_lab), 0.0, 1.0)
+    transformed = full["cam16_ucs"](pool_rgb, base.profile.gains)
+    fg_transformed = full["cam16_ucs"](hex_array(foregrounds), base.profile.gains)
+    transformed_bg0 = warm_transform(hex_to_srgb(base.surfaces["bg_0"]), base.profile.gains)
+    contrast = np.asarray(
+        [
+            contrast_ratio(warm_transform(color, base.profile.gains), transformed_bg0)
+            for color in pool_rgb
+        ]
+    )
+    eligible = contrast >= 3.0
+    pool_lab = pool_lab[eligible]
+    pool_rgb = pool_rgb[eligible]
+    transformed = transformed[eligible]
+
+    def select(first_offset: int) -> tuple[str, ...]:
+        clearance = np.linalg.norm(
+            transformed[:, None, :] - fg_transformed[None, :, :], axis=2
+        ).min(axis=1)
+        ordered = np.argsort(-clearance, kind="stable")
+        chosen = [int(ordered[first_offset % min(24, len(ordered))])]
+        while len(chosen) < count:
+            transformed_pair = np.linalg.norm(
+                transformed[:, None, :] - transformed[chosen][None, :, :], axis=2
+            ).min(axis=1)
+            day_pair = (
+                np.linalg.norm(pool_lab[:, None, :] - pool_lab[chosen][None, :, :], axis=2).min(
+                    axis=1
+                )
+                * 100.0
+            )
+            score = np.minimum(transformed_pair, clearance) + 0.15 * day_pair
+            score[chosen] = -np.inf
+            chosen.append(int(np.argmax(score)))
+        return tuple(srgb_to_hex(pool_rgb[index]) for index in chosen)
+
+    return select(0), select(11)
+
+
+def _categorical_has_five_percent_margin(
+    base: Any, metrics: dict[str, Any], floors: dict[str, Any]
+) -> tuple[bool, list[str]]:
+    misses = []
+    bank = floors["categorical"]
+
+    def floor(label: str, actual: float, required: float) -> None:
+        if actual + 1e-12 < required * 1.05:
+            misses.append(f"{label} {actual:.4f} < 105% of {required:.4f}")
+
+    def ceiling(label: str, actual: float, required: float) -> None:
+        if actual > required / 1.05 + 1e-12:
+            misses.append(f"{label} {actual:.4f} > 95.24% of {required:.4f}")
+
+    floor("day pair", metrics["normal_pair_delta_e_ok"], base.daylight_minimum_delta_e_ok)
+    floor(
+        "transformed sampled-grid pair",
+        metrics["sampled_gain_pair_min_cam16_ucs"],
+        bank["transformed_pair_cam16_ucs"],
+    )
+    floor("transformed bg contrast", metrics["transformed_background_contrast_bg0_min"], 3.0)
+    for index, value in enumerate(metrics["normal_foreground_clearance_by_role"]):
+        floor(f"day fg_{index}", value, base.categorical_daylight_minimum_foreground_delta_e_ok)
+    ceiling("mean chroma", metrics["normal_mean_chroma"], 0.105)
+    ceiling("maximum chroma", metrics["normal_max_chroma"], 0.111)
+    return not misses, misses
+
+
 def search_dependent_banks(
     full: dict[str, Any],
     base: Any,
@@ -720,92 +805,104 @@ def search_dependent_banks(
     profile_index: int,
     iterations: dict[str, int],
 ) -> dict[str, Any]:
-    """Fresh categorical (with count bonus), terminal, and sequential searches."""
+    """Optimize three independent dependent banks, then validate their assembly."""
 
     surfaces_six = expand_to_six(surfaces)
     lane_base = full["candidate_family"](base, surfaces_six, foregrounds)
-    categorical_shipped = len(base.categorical_colors)
+    floors = full["dependent_bank_floors"](lane_base, foregrounds)
+    shipped_count = len(base.categorical_colors)
     cat_trials: dict[str, Any] = {}
-    categorical: tuple[str, ...] | None = None
-    categorical_metrics = None
-    adopted_reason = "shipped count retained"
+    frontiers: list[dict[str, Any]] = []
 
-    def extended_origin(count: int) -> tuple[str, ...]:
-        """Shipped palette extended to `count` entries with deterministic hue-shifted seeds."""
-
-        shipped = list(base.categorical_colors)
-        if count <= len(shipped):
-            return tuple(shipped[:count])
-        extra = []
-        lab = srgb_to_oklab(hex_array(tuple(shipped)))
-        for index in range(count - len(shipped)):
-            source = lab[(index * 2 + 1) % len(lab)]
-            shifted = source.copy()
-            shifted[2] += 0.035 * (1 if index % 2 == 0 else -1)
-            rgb = oklab_to_srgb(shifted.reshape(1, 3))[0]
-            extra.append(srgb_to_hex(np.clip(rgb, 0.0, 1.0)))
-        return tuple(shipped) + tuple(extra)
-
-    for count in range(categorical_shipped, min(categorical_shipped + 3, 7)):
-        origin = extended_origin(count)
-        runs = []
-        for seed_add in (0, 1):
-            runs.append(
-                full["bounded_exact_search"](
-                    origin,
-                    lambda values, lb=lane_base, fg=foregrounds: full["categorical_objective"](
-                        lb, fg, values
-                    ),
-                    seed=CATEGORY_SEED_BASE + profile_index * 100 + seed_add,
-                    iterations=iterations["categorical"],
-                    radius=18,
-                )
+    for count in range(shipped_count, min(shipped_count + 3, 7)):
+        origins = (
+            (tuple(base.categorical_colors), tuple(base.categorical_colors))
+            if count == shipped_count
+            else categorical_seed_origins(full, lane_base, foregrounds, count)
+        )
+        runs = [
+            full["bounded_exact_search"](
+                origin,
+                lambda values, lb=lane_base, fg=foregrounds, f=floors: full[
+                    "categorical_objective"
+                ](lb, fg, values, f),
+                seed=CATEGORY_SEED_BASE + profile_index * 100 + seed_add,
+                iterations=iterations["categorical"],
+                radius=18,
             )
-        best, _ = full["select_two_seed_runs"](runs)
-        values = tuple(best)
-        metrics = full["accent_metrics"](lane_base, values, foregrounds, terminal=False)
-        shipped_terminal_metrics = full["accent_metrics"](
-            lane_base, base.terminal_colors, foregrounds, terminal=True
+            for seed_add, origin in enumerate(origins)
+        ]
+        values, selected_run = full["select_two_seed_runs"](runs)
+        metrics = full["accent_metrics"](
+            lane_base, values, foregrounds, terminal=False, sample_grid=True
         )
-        shipped_sequential_metrics, _ = full["sequential_metrics"](
-            lane_base, base.sequential_anchors
-        )
-        failures = full["dependent_failures"](
-            lane_base,
-            values,
-            metrics,
-            base.terminal_colors,
-            shipped_terminal_metrics,
-            shipped_sequential_metrics,
-            shipped_sequential_metrics,
+        failures = full["categorical_failures"](lane_base, values, metrics, floors)
+        margin_pass, margin_failures = _categorical_has_five_percent_margin(
+            lane_base, metrics, floors
         )
         cat_trials[str(count)] = {
             "selected": list(values),
-            "objective": best["objective"] if isinstance(best, dict) else None,
+            "objective": selected_run["objective"],
+            "selected_run": {k: v for k, v in selected_run.items() if k != "selected"},
+            "metrics": metrics,
             "failures": failures,
+            "five_percent_margin_pass": margin_pass,
+            "five_percent_margin_failures": margin_failures,
         }
-        if not failures and categorical is None:
-            categorical = values
-            categorical_metrics = metrics
-            if count > categorical_shipped:
-                adopted_reason = f"count {count} adopted: every categorical release gate passes"
-        elif not failures and categorical is not None and count > len(categorical):
-            categorical = values
-            categorical_metrics = metrics
-            adopted_reason = (
-                f"count {count} adopted over {len(categorical)}: gates pass with margin"
-            )
-    if categorical is None:
-        categorical = base.categorical_colors
-        categorical_metrics = full["accent_metrics"](
-            lane_base, categorical, foregrounds, terminal=False
+        frontiers.append(
+            {
+                "count": count,
+                "sampled_grid_pair_cam16_ucs": metrics["sampled_gain_pair_min_cam16_ucs"],
+                "passes": not failures,
+                "five_percent_margin_pass": margin_pass,
+            }
         )
-        adopted_reason = "no larger count passed all gates; shipped retained"
+
+    base_trial = cat_trials[str(shipped_count)]
+    if base_trial["failures"]:
+        shipped_metrics = full["accent_metrics"](
+            lane_base,
+            tuple(base.categorical_colors),
+            foregrounds,
+            terminal=False,
+            sample_grid=True,
+        )
+        shipped_failures = full["categorical_failures"](
+            lane_base, tuple(base.categorical_colors), shipped_metrics, floors
+        )
+        if shipped_failures:
+            raise RuntimeError(
+                f"shipped categorical bank infeasible for {base.slug}: {shipped_failures}"
+            )
+        categorical = tuple(base.categorical_colors)
+        categorical_metrics = shipped_metrics
+        adopted_reason = "optimized shipped-count trial infeasible; shipped bank retained"
+    else:
+        categorical = tuple(base_trial["selected"])
+        categorical_metrics = base_trial["metrics"]
+        adopted_reason = "shipped count retained after categorical-only validation"
+
+    next_trial = cat_trials.get(str(shipped_count + 1))
+    if next_trial and not next_trial["failures"] and next_trial["five_percent_margin_pass"]:
+        pair_required = max(
+            floors["categorical"]["transformed_pair_cam16_ucs"],
+            0.90 * base_trial["metrics"]["sampled_gain_pair_min_cam16_ucs"],
+        )
+        pair_actual = next_trial["metrics"]["sampled_gain_pair_min_cam16_ucs"]
+        if pair_actual + 1e-12 >= pair_required:
+            categorical = tuple(next_trial["selected"])
+            categorical_metrics = next_trial["metrics"]
+            adopted_reason = (
+                f"count {shipped_count + 1} adopted: all gates have >=5% margin and "
+                f"sampled-grid pair {pair_actual:.3f} >= {pair_required:.3f}"
+            )
 
     term_runs = [
         full["bounded_exact_search"](
-            base.terminal_colors,
-            lambda values, lb=lane_base, fg=foregrounds: full["terminal_objective"](lb, fg, values),
+            tuple(base.terminal_colors),
+            lambda values, lb=lane_base, fg=foregrounds, f=floors: full["terminal_objective"](
+                lb, fg, values, f
+            ),
             seed=TERMINAL_SEED_BASE + profile_index * 100 + seed_add,
             iterations=iterations["terminal"],
             radius=36 if slug_has_deep_transform(base.slug) else 16,
@@ -813,44 +910,94 @@ def search_dependent_banks(
         )
         for seed_add in (0, 1)
     ]
-    terminal, _ = full["select_two_seed_runs"](term_runs)
-
-    sequential_baseline, _ = full["sequential_metrics"](lane_base, base.sequential_anchors)
-    seq_runs = [
-        full["bounded_exact_search"](
-            base.sequential_anchors,
-            lambda values, lb=lane_base, baseline=sequential_baseline: full["sequential_objective"](
-                lb, baseline, values
-            ),
-            seed=SEQUENTIAL_SEED_BASE + profile_index * 100 + seed_add,
-            iterations=iterations["sequential"],
-            radius=10,
+    feasible_terminal = []
+    for run in term_runs:
+        values = tuple(run["selected"])
+        metrics = full["accent_metrics"](
+            lane_base, values, foregrounds, terminal=True, sample_grid=True
         )
-        for seed_add in (0, 1)
-    ]
-    sequential, _ = full["select_two_seed_runs"](seq_runs)
-    sequential_record, sequence = full["sequential_metrics"](lane_base, sequential)
+        failures = full["terminal_failures"](lane_base, values, metrics, floors)
+        run["failures"] = failures
+        run["metrics"] = metrics
+        if not failures:
+            feasible_terminal.append(run)
+    if feasible_terminal:
+        selected_term_run = min(
+            feasible_terminal, key=lambda row: (row["objective"], tuple(row["selected"]))
+        )
+        terminal = tuple(selected_term_run["selected"])
+        terminal_metrics = selected_term_run["metrics"]
+        terminal_adoption = "feasible optimized terminal bank selected"
+    else:
+        terminal = tuple(base.terminal_colors)
+        terminal_metrics = full["accent_metrics"](
+            lane_base, terminal, foregrounds, terminal=True, sample_grid=True
+        )
+        terminal_fallback_failures = full["terminal_failures"](
+            lane_base, terminal, terminal_metrics, floors
+        )
+        if terminal_fallback_failures:
+            raise RuntimeError(
+                f"no feasible terminal selection for {base.slug}; optimized failures="
+                f"{[run['failures'] for run in term_runs]}; shipped failures="
+                f"{terminal_fallback_failures}"
+            )
+        terminal_adoption = "optimized selections infeasible; shipped terminal bank retained"
+
+    sequence, sequential, sequential_record = full["construct_sequential"](lane_base)
+    sequential_bank_failures = full["sequential_failures"](sequential_record)
+    if sequential_bank_failures:
+        raise RuntimeError(
+            f"constructive sequential ramp infeasible for {base.slug}: {sequential_bank_failures}"
+        )
     dependency_payload = {
         "surfaces": list(surfaces),
+        "foregrounds": list(foregrounds),
         "gains": list(base.profile.gains),
-        "baseline": sequential_baseline,
-        "objective": "transformed-first-v1",
+        "metric": {
+            "space": "CAM16-UCS",
+            "L_A": 8.0,
+            "Y_b": 3.0,
+            "flare_fraction_untransformed_white": 0.0075,
+        },
+        "objective": "constructive-transformed-cam16-arc-v2",
     }
     fingerprint = hashlib.sha256(
         json.dumps(dependency_payload, sort_keys=True).encode()
     ).hexdigest()
+    final_failures = full["final_assembled_dependent_failures"](
+        lane_base,
+        categorical,
+        categorical_metrics,
+        terminal,
+        terminal_metrics,
+        sequential_record,
+        floors,
+    )
+    if final_failures:
+        raise RuntimeError(f"final dependent assembly infeasible for {base.slug}: {final_failures}")
     return {
+        "dependent_metric_model": dependency_payload["metric"],
+        "dependent_floors": floors,
         "categorical": list(categorical),
         "categorical_trials": cat_trials,
+        "categorical_frontier": frontiers,
         "categorical_adoption": adopted_reason,
         "categorical_metrics": categorical_metrics,
+        "categorical_failures": [],
         "terminal": list(terminal),
-        "terminal_runs": [{k: v for k, v in r.items() if k != "selected"} for r in term_runs],
+        "terminal_role_contract": full["terminal_role_contract"](lane_base),
+        "terminal_adoption": terminal_adoption,
+        "terminal_runs": term_runs,
+        "terminal_metrics": terminal_metrics,
+        "terminal_failures": [],
         "sequential_anchors": list(sequential),
         "sequential_metrics": sequential_record,
+        "sequential_failures": [],
+        "final_assembled_dependent_failures": final_failures,
         "sequential_dependency_fingerprint": fingerprint,
         "continuous_float_srgb": sequence.tolist(),
-        "continuous_hex8": [srgb_to_hex(v) for v in sequence],
+        "continuous_hex8": [srgb_to_hex(value) for value in sequence],
     }
 
 
@@ -859,225 +1006,107 @@ def slug_has_deep_transform(slug: str) -> bool:
 
 
 def expand_to_six(surfaces: tuple[str, ...]) -> tuple[str, ...]:
-    """Resample N selected surfaces to the six-role ladder by Oklab interpolation."""
+    """Preserve designed roles and repeat the lightest role for unused slots."""
 
-    if len(surfaces) == 6:
-        return surfaces
-    lab = srgb_to_oklab(hex_array(surfaces))
-    anchors = np.linspace(0.0, 1.0, len(surfaces))
-    positions = np.linspace(0.0, 1.0, 6)
-    expanded = np.column_stack(
-        [np.interp(positions, anchors, lab[:, channel]) for channel in range(3)]
-    )
-    rgb = oklab_to_srgb(expanded)
-    return tuple(srgb_to_hex(v) for v in np.clip(rgb, 0.0, 1.0))
+    if len(surfaces) >= 6:
+        return surfaces[:6]
+    return surfaces + (surfaces[-1],) * (6 - len(surfaces))
+
+
+FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
+
+
+def frozen_system_subset(data: dict[str, Any]) -> dict[str, Any]:
+    return {
+        slug: {
+            lane: {
+                "bg_count": record["bg_count"],
+                "surfaces": record["surfaces"],
+                "foregrounds": record["foregrounds"],
+            }
+            for lane, record in profile["lanes"].items()
+        }
+        for slug, profile in data["profiles"].items()
+    }
+
+
+def frozen_system_sha256(data: dict[str, Any]) -> str:
+    payload = json.dumps(frozen_system_subset(data), sort_keys=True, separators=(",", ":")).encode()
+    return hashlib.sha256(payload).hexdigest()
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--quick", action="store_true")
     args = parser.parse_args()
+    previous = json.loads(RESULTS_PATH.read_text(encoding="utf-8"))
+    frozen_sha = frozen_system_sha256(previous)
+    if frozen_sha != FROZEN_SYSTEM_SHA256:
+        raise RuntimeError(
+            f"refusing dependent-bank search: frozen bg/fg hash {frozen_sha} != "
+            f"{FROZEN_SYSTEM_SHA256}"
+        )
     full = load_full_palette_module()
     iterations = {
-        "system": 300 if args.quick else 2400,
-        "categorical": 300 if args.quick else 900,
-        "terminal": 600 if args.quick else (4000 if True else 900),
-        "sequential": 60 if args.quick else 180,
+        "categorical": 120 if args.quick else 1200,
+        "terminal": 240 if args.quick else 2500,
     }
     output: dict[str, Any] = {
-        "schema": 4,
+        "schema": 5,
         "method": (
-            "transformed-first: even transformed distinctness gates bind before commanded "
-            "warmth; variable surface count (>=3); dependent banks searched fresh per lane"
+            "dependent-bank-only transformed-first redesign: flare-aware CAM16-UCS; "
+            "independent categorical/terminal/sequential validators; constructive scalar ramps"
         ),
+        "frozen_system": {
+            "source": "schema-4 transformed-first-results.json at 55760e8",
+            "sha256": FROZEN_SYSTEM_SHA256,
+            "covers": "all current+halfway bg counts, surfaces, and foregrounds",
+        },
         "profiles": {},
     }
     for profile_index, slug in enumerate(PROFILES):
         base = family(slug)
-        record: dict[str, Any] = {"name": base.name, "gains": list(base.profile.gains), "lanes": {}}
-        shipped_surfaces = tuple(base.surfaces[f"bg_{i}"] for i in range(6))
-        shipped_fg = tuple(base.surfaces[f"fg_{i}"] for i in range(3))
+        previous_profile = previous["profiles"][slug]
+        profile_record: dict[str, Any] = {
+            "name": previous_profile["name"],
+            "gains": previous_profile["gains"],
+            "lanes": {},
+        }
         for lane, weight in LANES.items():
             print(f"{slug} / {lane}", flush=True)
-            if weight == 0.0:
-                banks = search_dependent_banks(
-                    full, base, shipped_surfaces, shipped_fg, profile_index, iterations
+            frozen_lane = previous_profile["lanes"][lane]
+            surfaces = tuple(
+                frozen_lane["surfaces"][key]
+                for key in sorted(
+                    frozen_lane["surfaces"], key=lambda value: int(value.split("_")[1])
                 )
-                current_fg_ucs = cam16_ucs(hex_array(shipped_fg), base.profile.gains)
-                current_fg_steps = np.linalg.norm(np.diff(current_fg_ucs, axis=0), axis=1)
-                current_bg_ucs = cam16_ucs(hex_array(shipped_surfaces), base.profile.gains)
-                current_bg_steps = np.linalg.norm(np.diff(current_bg_ucs, axis=0), axis=1)
-                current_bg_lab = srgb_to_oklab(hex_array(shipped_surfaces))
-                global FG_STEP_FLOOR_RUNTIME, BG_STEP_FLOOR_RUNTIME
-                global BG_CHROMA_CEILING_RUNTIME
-                FG_STEP_FLOOR_RUNTIME = FG_STEP_PARITY_RATIO * float(current_fg_steps.min())
-                BG_STEP_FLOOR_RUNTIME = BG_STEP_PARITY_RATIO * float(current_bg_steps.min())
-                BG_CHROMA_CEILING_RUNTIME = (
-                    1.15 * float(np.max(np.linalg.norm(current_bg_lab[:, 1:], axis=1))) + 0.007
-                )
-                lane_record: dict[str, Any] = {
-                    "weight": weight,
-                    "bg_count": 6,
-                    "surfaces": {f"bg_{i}": shipped_surfaces[i] for i in range(6)},
-                    "foregrounds": list(shipped_fg),
-                    **banks,
-                    "search": {
-                        "per_count": {},
-                        "note": "current lane is the shipped palette scored verbatim; "
-                        "no surface search applied",
-                    },
-                }
-                record["lanes"][lane] = lane_record
-                continue
-            if True:
-                # Fable-plan halfway: geometric commanded-L ladder (bottom gap
-                # widest), endpoints anchored at the shared dark and the profile's
-                # ceiling-respecting light anchor, interiors + fg refined.
-                dark_anchor = SHARED_DARK_ANCHOR
-                light_anchor = (
-                    FLOATING_LIGHT_ANCHOR if slug == "3400k-dark" else SHARED_LIGHT_ANCHOR
-                )
-                plans = tuple(
-                    (count, dark_anchor, light_anchor)
-                    for count in ((4, 5) if slug == "3400k-dark" else (4,))
-                )
-                best_overall = None
-                per_count: dict[str, Any] = {}
-                chosen_count = None
-                choice_rule = ""
-                for count, d_a, l_a in plans:
-                    # Fable constructive algorithm: even transformed J' targets,
-                    # per-role halfway chroma, anchor hue axis, bisection on L.
-                    pinned = constructive_halfway_ladder(base, count, d_a, l_a)
-                    # Fable direct construction: surfaces fixed at the geometric
-                    # ladder; only foregrounds are searched against them.
-                    fg_refine = [
-                        refine_foregrounds(
-                            base,
-                            pinned,
-                            tuple(base.surfaces[f"fg_{i}"] for i in range(3)),
-                            seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
-                            iterations=max(iterations["system"], 4000),
-                        )
-                        for add in (0, 1)
-                    ]
-                    feasible = [r for r in fg_refine if r["objective"] < 1e13]
-                    if not feasible:
-                        raise RuntimeError(
-                            f"no feasible halfway fg for {slug} N={count}; "
-                            "direct construction missed gates"
-                        )
-                    best, _ = select_two_seed_runs(feasible)
-                    fg_refine = [
-                        refine_foregrounds(
-                            base,
-                            tuple(best["selected"]["surfaces"]),
-                            tuple(best["selected"]["foregrounds"]),
-                            seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
-                            iterations=iterations["system"],
-                        )
-                        for add in (0, 1)
-                    ]
-                    fg_refine.extend(
-                        [
-                            refine_foregrounds(
-                                base,
-                                tuple(best["selected"]["surfaces"]),
-                                tuple(shipped_fg),
-                                seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
-                                iterations=iterations["system"],
-                            )
-                            for add in (0, 1)
-                        ]
-                    )
-                    feasible_runs = [r for r in fg_refine if r["objective"] < 1e13]
-                    pool = feasible_runs or fg_refine
-                    best, _ = select_two_seed_runs(pool)
-                    per_count[str(count)] = runs_summary(best)
-                    if best["objective"] < 1e13:
-                        best_overall = best
-                        chosen_count = count
-                if best_overall is None:
-                    fallback_key = min(per_count, key=lambda k: per_count[k]["objective"])
-                    raise RuntimeError(
-                        f"no feasible halfway count for {slug}; weakest was N={fallback_key}"
-                    )
-                choice_rule = (
-                    "shared dark anchor; "
-                    + (
-                        "floating warm light anchor; "
-                        if chosen_count == 5
-                        else "shared light anchor; "
-                    )
-                    + "interiors refined to even CAM16-UCS steps >=3.84"
-                )
-                lane_record = {
-                    "weight": weight,
-                    "bg_count": chosen_count,
-                    "count_choice_rule": choice_rule,
-                    "surfaces": {
-                        f"bg_{i}": v for i, v in enumerate(best_overall["selected"]["surfaces"])
-                    },
-                    "foregrounds": list(best_overall["selected"]["foregrounds"]),
-                    **search_dependent_banks(
-                        full,
-                        base,
-                        tuple(best_overall["selected"]["surfaces"]),
-                        tuple(best_overall["selected"]["foregrounds"]),
-                        profile_index,
-                        iterations,
-                    ),
-                    "search": {
-                        "per_count": per_count,
-                        "count_choice_rule": choice_rule,
-                    },
-                }
-                record["lanes"][lane] = lane_record
-                continue
-            counts = {}
-            for count in range(MINIMUM_BG_COUNT, MAXIMUM_BG_COUNT + 1):
-                runs = [
-                    bounded_system_search(
-                        base,
-                        count,
-                        weight,
-                        seed=SYSTEM_SEED_BASE + profile_index * 100 + add,
-                        iterations=iterations["system"],
-                    )
-                    for add in (0, 1)
-                ]
-                best, _ = select_two_seed_runs(runs)
-                counts[count] = best
-            feasible = [n for n in counts if counts[n]["objective"] < 1e13]
-            if feasible:
-                chosen_count = min(feasible, key=lambda n: (counts[n]["objective"], -n))
-                choice_rule = "best feasible objective; larger N wins ties"
-            else:
-                chosen_count = min(counts, key=lambda n: (counts[n]["objective"], -n))
-                choice_rule = "no feasible count; best penalty objective"
-            lane_record = {
+            )
+            foregrounds = tuple(frozen_lane["foregrounds"])
+            banks = search_dependent_banks(
+                full,
+                base,
+                surfaces,
+                foregrounds,
+                profile_index,
+                iterations,
+            )
+            lane_record: dict[str, Any] = {
                 "weight": weight,
-                "bg_count": chosen_count,
-                "count_choice_rule": choice_rule,
-                "surfaces": {
-                    f"bg_{i}": v for i, v in enumerate(counts[chosen_count]["selected"]["surfaces"])
-                },
-                "foregrounds": list(counts[chosen_count]["selected"]["foregrounds"]),
-                **search_dependent_banks(
-                    full,
-                    base,
-                    tuple(counts[chosen_count]["selected"]["surfaces"]),
-                    tuple(counts[chosen_count]["selected"]["foregrounds"]),
-                    profile_index,
-                    iterations,
-                ),
-                "search": {
-                    "per_count": {str(n): runs_summary(counts[n]) for n in counts},
-                    "count_choice_rule": choice_rule,
-                },
+                "bg_count": frozen_lane["bg_count"],
+                "surfaces": dict(frozen_lane["surfaces"]),
+                "foregrounds": list(foregrounds),
+                **banks,
+                "search": frozen_lane["search"],
             }
-            record["lanes"][lane] = lane_record
-        output["profiles"][slug] = record
+            if "count_choice_rule" in frozen_lane:
+                lane_record["count_choice_rule"] = frozen_lane["count_choice_rule"]
+            profile_record["lanes"][lane] = lane_record
+        output["profiles"][slug] = profile_record
+    output_frozen_sha = frozen_system_sha256(output)
+    if output_frozen_sha != FROZEN_SYSTEM_SHA256:
+        raise RuntimeError(
+            f"generated output moved frozen bg/fg: {output_frozen_sha} != {FROZEN_SYSTEM_SHA256}"
+        )
     RESULTS_PATH.write_text(json.dumps(output, indent=2, sort_keys=False) + "\n")
     print(RESULTS_PATH)
     return 0

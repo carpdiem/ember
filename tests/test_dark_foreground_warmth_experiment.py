@@ -4,7 +4,6 @@ import hashlib
 import json
 import re
 import runpy
-from dataclasses import replace
 from pathlib import Path
 
 import colour
@@ -14,13 +13,11 @@ from ember.color import (
     contrast_ratio,
     hex_to_srgb,
     srgb_to_hex,
-    srgb_to_oklab,
     warm_transform,
 )
 from ember.definitions import (
     FAMILIES,
 )
-from ember.generate import _sequential_colors
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPERIMENT = ROOT / "docs/experiments/dark-foreground-warmth"
@@ -31,7 +28,7 @@ LANE_WEIGHTS = {"current": 0.0, "halfway": 0.5}
 UNIVERSAL_FLOORS = (4.5, 3.5, 2.4)
 TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_RATIO = 1.7
-SURFACE_LIGHTNESS_DRIFT = 0.02
+FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
 
 
 def family(slug: str):
@@ -58,16 +55,11 @@ def lane_surfaces(record: dict) -> tuple[str, ...]:
     return tuple(record["surfaces"][key] for key in sorted(record["surfaces"]))
 
 
-def resampled_ladder(base, count: int) -> np.ndarray:
-    shipped = srgb_to_oklab(rgb([base.surfaces[f"bg_{i}"] for i in range(6)]))[:, 0]
-    positions = np.linspace(0.0, 1.0, count)
-    anchors = np.linspace(0.0, 1.0, len(shipped))
-    return np.interp(positions, anchors, shipped)
-
-
 def transformed_adjacent(surfaces: tuple[str, ...], gains) -> np.ndarray:
     transformed = np.clip(rgb(surfaces) * np.asarray(gains), 0.0, 1.0)
-    ucs = np.asarray(colour.XYZ_to_CAM16UCS(colour.sRGB_to_XYZ(transformed), L_A=50.0, Y_b=20.0))
+    xyz = colour.sRGB_to_XYZ(transformed)
+    flare = 0.0075 * colour.sRGB_to_XYZ(np.ones_like(transformed))
+    ucs = np.asarray(colour.XYZ_to_CAM16UCS(xyz + flare, L_A=8.0, Y_b=3.0))
     return np.linalg.norm(np.diff(ucs, axis=0), axis=1)
 
 
@@ -77,9 +69,23 @@ def worst_contrasts(surfaces: tuple[str, ...], fg: tuple[str, ...], gains) -> li
     return [min(contrast_ratio(f, b) for b in t_surf) for f in t_fg]
 
 
-def test_fourth_pass_schema_and_lane_structure() -> None:
+def test_dependent_bank_schema_and_frozen_lane_structure() -> None:
     data = load()
-    assert data["schema"] == 4
+    assert data["schema"] == 5
+    assert data["frozen_system"]["sha256"] == FROZEN_SYSTEM_SHA256
+    frozen = {
+        slug: {
+            lane: {
+                "bg_count": record["bg_count"],
+                "surfaces": record["surfaces"],
+                "foregrounds": record["foregrounds"],
+            }
+            for lane, record in profile["lanes"].items()
+        }
+        for slug, profile in data["profiles"].items()
+    }
+    payload = json.dumps(frozen, sort_keys=True, separators=(",", ":")).encode()
+    assert hashlib.sha256(payload).hexdigest() == FROZEN_SYSTEM_SHA256
     for slug in PROFILES:
         profile = data["profiles"][slug]
         assert set(profile["lanes"]) == set(LANES)
@@ -208,40 +214,37 @@ def test_dependent_banks_present_with_adoption_provenance() -> None:
             assert record["categorical_adoption"]
             trials = record.get("categorical_trials") or {}
             assert trials or "shipped" in record["categorical_adoption"].lower()
+            assert not record["categorical_failures"]
+            assert not record["terminal_failures"]
+            assert not record["sequential_failures"]
+            assert not record["final_assembled_dependent_failures"]
+            for trial in trials.values():
+                assert not any("terminal" in failure for failure in trial["failures"])
 
 
 def test_sequential_maps_recompute_independently() -> None:
     data = load()
+    full = runpy.run_path(str(EXPERIMENT / "search_full_palette.py"))
     for slug in PROFILES:
         base = family(slug)
         for lane in LANES:
             record = lane_record(data, slug, lane)
             surfaces_six = lane_surfaces(record)
             if len(surfaces_six) < 6:
-                lab = srgb_to_oklab(rgb(surfaces_six))
-                anchors = np.linspace(0.0, 1.0, len(surfaces_six))
-                positions = np.linspace(0.0, 1.0, 6)
-                expanded_lab = np.column_stack(
-                    [np.interp(positions, anchors, lab[:, c]) for c in range(3)]
-                )
-                from ember.color import oklab_to_srgb
-
-                rgb6 = oklab_to_srgb(expanded_lab)
-                surfaces_six = tuple(srgb_to_hex(v) for v in np.clip(rgb6, 0.0, 1.0))
-            candidate = replace(
+                surfaces_six = surfaces_six + (surfaces_six[-1],) * (6 - len(surfaces_six))
+            candidate = full["candidate_family"](
                 base,
-                surfaces={
-                    **base.surfaces,
-                    **{f"bg_{i}": v for i, v in enumerate(surfaces_six)},
-                    **{f"fg_{i}": v for i, v in enumerate(record["foregrounds"])},
-                },
-                categorical_colors=tuple(record["categorical"]),
-                terminal_colors=tuple(record["terminal"]),
-                sequential_anchors=tuple(record["sequential_anchors"]),
+                surfaces_six,
+                tuple(record["foregrounds"]),
+                categorical=tuple(record["categorical"]),
+                terminal=tuple(record["terminal"]),
             )
-            sequence = np.round(_sequential_colors(candidate), 10)
+            sequence, anchors, metrics = full["construct_sequential"](candidate)
             assert np.array_equal(np.asarray(record["continuous_float_srgb"]), sequence)
             assert record["continuous_hex8"] == [srgb_to_hex(v) for v in sequence]
+            assert record["sequential_anchors"] == list(anchors)
+            assert metrics["transformed_minimum_signed_j_step"] > 0
+            assert metrics["normal_cv"] <= 0.18 + 1e-12
 
 
 def test_canonical_outputs_are_unchanged() -> None:

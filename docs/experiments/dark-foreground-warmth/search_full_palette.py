@@ -16,9 +16,11 @@ import json
 import sys
 from collections.abc import Callable
 from dataclasses import replace
+from itertools import product
 from pathlib import Path
 from typing import Any
 
+import colour
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -45,7 +47,7 @@ from ember.definitions import (
     MINIMUM_SHIFTED_FOREGROUND_CONTRAST,
     FamilyDefinition,
 )
-from ember.generate import _sequential_colors
+from ember.generate import _interpolate_polyline, _sequential_colors, _smooth_polyline
 
 PROFILE_SLUGS = ("3400k-dark", "2000k-dark", "1200k-dark")
 LANES = {"current": 0.0, "halfway": 0.5, "full": 1.0}
@@ -68,7 +70,32 @@ FOREGROUND_BYTE_RADIUS = 48
 FOREGROUND_LIGHTNESS_RADIUS = 0.06
 SURFACE_LIGHTNESS_DRIFT = 0.0125
 TERMINAL_HUE_CENTERS = np.asarray((20.0, 140.0, 82.0, 275.0, 335.0, 185.0))
+TERMINAL_ROLE_NAMES = ("red", "green", "yellow", "blue", "magenta", "cyan")
+TERMINAL_HUE_BY_ROLE = dict(zip(TERMINAL_ROLE_NAMES, TERMINAL_HUE_CENTERS, strict=True))
 FULL_TARGET_CHROMA_SCALES = np.asarray((1.2, 1.0, 0.8))
+CAM16_ADAPTATION_LUMINANCE = 8.0
+CAM16_BACKGROUND_LUMINANCE = 3.0
+CAM16_FLARE_FRACTION = 0.0075
+DEPENDENT_PARITY_RATIO = 0.90
+SAMPLED_GAIN_MARGIN = 0.05
+SEQUENTIAL_PLOT_CANVAS_ROLE = "bg_0"
+SEQUENTIAL_COMMANDED_CV_CEILING = 0.18
+SEQUENTIAL_TRANSFORMED_CV_TARGET = 0.05
+SEQUENTIAL_TRANSFORMED_CV_CEILING = 0.12
+TERMINAL_CHROMA_CEILINGS = {
+    # Absolute maturity ceiling: permits modest redistribution above each
+    # shipped bank's 0.115–0.118 maximum without admitting candy-like fronts.
+    "3400k-dark": 0.125,
+    "2000k-dark": 0.125,
+    "1200k-dark": 0.125,
+}
+# Exact maturity vetoes carried forward from visual review.  These prevent the
+# maximin search from buying a small CAM16 gain by clipping key terminal roles.
+TERMINAL_CHANNEL_CEILINGS = {
+    "3400k-dark": {(0, 0): 247, (3, 2): 252},
+    "2000k-dark": {(0, 0): 244, (3, 2): 252},
+    "1200k-dark": {(0, 0): 246},
+}
 TERMINAL_INITIAL_PROPOSALS = {
     # Deterministic feasible fronts discovered in the bounded deep-profile
     # probe. They are proposals only: every lane/seed still scores them from
@@ -319,14 +346,61 @@ def surface_lightness_drift(base: FamilyDefinition, surfaces: tuple[str, ...]) -
     return float(np.max(np.abs(proposed[:, 0] - shipped[:, 0])))
 
 
-def gain_corners(gains: tuple[float, float, float]) -> list[tuple[float, float, float]]:
-    red, green, blue = gains
-    scales = (1.0 - GAIN_SENSITIVITY_FRACTION, 1.0 + GAIN_SENSITIVITY_FRACTION)
-    return [
-        (red, green * green_scale, blue * blue_scale if blue else 0.0)
-        for green_scale in scales
-        for blue_scale in scales
+def cam16_ucs(rgb01: np.ndarray, gains: tuple[float, ...]) -> np.ndarray:
+    """Flare-aware CAM16-UCS for the exact transformed encoded-sRGB signal."""
+
+    rgb = np.asarray(rgb01, dtype=float)
+    transformed = np.clip(rgb * np.asarray(gains, dtype=float), 0.0, 1.0)
+    xyz = colour.sRGB_to_XYZ(transformed)
+    flare = CAM16_FLARE_FRACTION * colour.sRGB_to_XYZ(np.ones_like(transformed))
+    return np.asarray(
+        colour.XYZ_to_CAM16UCS(
+            xyz + flare,
+            L_A=CAM16_ADAPTATION_LUMINANCE,
+            Y_b=CAM16_BACKGROUND_LUMINANCE,
+        )
+    )
+
+
+def sampled_gain_grid(
+    gains: tuple[float, float, float], *, dense: bool = False
+) -> list[tuple[float, ...]]:
+    """Unique sampled gain grid; diagnostic evidence, not a continuous box bound."""
+
+    delta = GAIN_SENSITIVITY_FRACTION
+    scales = np.linspace(1.0 - delta, 1.0 + delta, 5 if dense else 3)
+    axes = [scales if gain != 0.0 else np.asarray((1.0,)) for gain in gains]
+    rows = {
+        tuple(float(gain * scale) for gain, scale in zip(gains, combo, strict=True))
+        for combo in product(*axes)
+    }
+    return [tuple(row) for row in sorted(rows)]
+
+
+def _minimum_pair(points: np.ndarray) -> float:
+    distances = [
+        float(np.linalg.norm(points[left] - points[right]))
+        for left in range(len(points))
+        for right in range(left + 1, len(points))
     ]
+    return min(distances) if distances else 0.0
+
+
+def terminal_role_contract(base: FamilyDefinition) -> dict[str, Any]:
+    """Explicit authored-role and ANSI-alias contract for one profile."""
+
+    authored_roles = TERMINAL_ROLE_NAMES[: len(base.terminal_colors)]
+    ansi_mapping = {
+        role: authored_roles[index]
+        for role, index in zip(TERMINAL_ROLE_NAMES, base.terminal_ansi_indices, strict=True)
+    }
+    return {
+        "authored_roles": list(authored_roles),
+        "ansi_mapping": ansi_mapping,
+        "intentional_aliases": {
+            role: target for role, target in ansi_mapping.items() if role != target
+        },
+    }
 
 
 def accent_metrics(
@@ -335,75 +409,69 @@ def accent_metrics(
     foregrounds: tuple[str, ...],
     *,
     terminal: bool,
+    sample_grid: bool | str = False,
 ) -> dict[str, Any]:
     rgb = hex_array(values)
     foreground_rgb = hex_array(foregrounds)
     backgrounds = hex_array(tuple(base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES))
     day = srgb_to_oklab(rgb)
-    night = perceived_lab(rgb, base.profile.gains)
+    transformed_ucs = cam16_ucs(rgb, base.profile.gains)
     foreground_day = srgb_to_oklab(foreground_rgb)
-    foreground_night = perceived_lab(foreground_rgb, base.profile.gains)
+    foreground_ucs = cam16_ucs(foreground_rgb, base.profile.gains)
     day_fg = np.linalg.norm(day[:, None] - foreground_day[None, :], axis=2).min(axis=0) * 100.0
-    night_fg = (
-        np.linalg.norm(night[:, None] - foreground_night[None, :], axis=2).min(axis=0) * 100.0
+    transformed_fg = np.linalg.norm(transformed_ucs[:, None] - foreground_ucs[None, :], axis=2).min(
+        axis=0
     )
     transformed = warm_transform(rgb, base.profile.gains)
     transformed_backgrounds = warm_transform(backgrounds, base.profile.gains)
     day_contrast = np.asarray(
         [[contrast_ratio(color, background) for background in backgrounds] for color in rgb]
     )
-    night_contrast = np.asarray(
+    transformed_contrast = np.asarray(
         [
             [contrast_ratio(color, background) for background in transformed_backgrounds]
             for color in transformed
         ]
     )
-    if terminal:
-        groups = np.asarray(base.terminal_night_groups)
-        centers = np.asarray(
-            [night[groups == group].mean(axis=0) for group in sorted(set(groups.tolist()))]
-        )
-        night_pair = float(pairwise_distances(centers).min()) if len(centers) > 1 else 0.0
-    else:
-        night_pair = float(pairwise_distances(night).min())
-    corner_rows = []
-    for corner in gain_corners(base.profile.gains):
-        corner_lab = perceived_lab(rgb, corner)
-        if terminal:
-            groups = np.asarray(base.terminal_night_groups)
-            corner_centers = np.asarray(
-                [corner_lab[groups == group].mean(axis=0) for group in sorted(set(groups.tolist()))]
-            )
-            corner_pair = (
-                float(pairwise_distances(corner_centers).min()) if len(corner_centers) > 1 else 0.0
-            )
-        else:
-            corner_pair = float(pairwise_distances(corner_lab).min())
-        corner_fg = perceived_lab(foreground_rgb, corner)
-        shifted_background = warm_transform(backgrounds[0], corner)
-        corner_rows.append(
+    sampled_rows = []
+    gains_to_sample = (
+        sampled_gain_grid(base.profile.gains, dense=sample_grid == "dense")
+        if sample_grid
+        else [base.profile.gains]
+    )
+    for sampled_gains in gains_to_sample:
+        sampled_ucs = cam16_ucs(rgb, sampled_gains)
+        sampled_fg = cam16_ucs(foreground_rgb, sampled_gains)
+        sampled_background = warm_transform(backgrounds[0], sampled_gains)
+        sampled_rows.append(
             {
-                "gains": list(corner),
-                "pair_delta_e_ok": corner_pair,
-                "foreground_clearance_delta_e_ok": float(
-                    np.linalg.norm(corner_lab[:, None] - corner_fg[None, :], axis=2).min() * 100.0
+                "gains": list(sampled_gains),
+                "pair_cam16_ucs": _minimum_pair(sampled_ucs),
+                "foreground_clearance_cam16_ucs": float(
+                    np.linalg.norm(sampled_ucs[:, None] - sampled_fg[None, :], axis=2).min()
                 ),
                 "background_contrast": min(
-                    contrast_ratio(warm_transform(color, corner), shifted_background)
+                    contrast_ratio(warm_transform(color, sampled_gains), sampled_background)
                     for color in rgb
                 ),
             }
         )
+    role_contract = terminal_role_contract(base) if terminal else None
+    semantic_centers = (
+        np.asarray([TERMINAL_HUE_BY_ROLE[role] for role in role_contract["authored_roles"]])
+        if terminal
+        else None
+    )
     return {
         "normal_pair_delta_e_ok": float(pairwise_distances(day).min()),
-        "shifted_pair_delta_e_ok": night_pair,
+        "transformed_pair_cam16_ucs": _minimum_pair(transformed_ucs),
         "normal_foreground_clearance_by_role": day_fg.tolist(),
-        "shifted_foreground_clearance_by_role": night_fg.tolist(),
+        "transformed_foreground_clearance_by_role_cam16_ucs": transformed_fg.tolist(),
         "normal_foreground_clearance_min": float(day_fg.min()),
-        "shifted_foreground_clearance_min": float(night_fg.min()),
+        "transformed_foreground_clearance_min_cam16_ucs": float(transformed_fg.min()),
         "normal_background_contrast_min": float(day_contrast.min()),
-        "shifted_background_contrast_bg0_min": float(night_contrast[:, 0].min()),
-        "shifted_background_contrast_all_surfaces_min": float(night_contrast.min()),
+        "transformed_background_contrast_bg0_min": float(transformed_contrast[:, 0].min()),
+        "transformed_background_contrast_all_surfaces_min": float(transformed_contrast.min()),
         "normal_hue_gap_degrees": float(hue_gap(day)),
         "normal_mean_chroma": float(np.linalg.norm(day[:, 1:], axis=1).mean()),
         "normal_max_chroma": float(np.linalg.norm(day[:, 1:], axis=1).max()),
@@ -412,7 +480,7 @@ def accent_metrics(
                 np.abs(
                     (
                         (np.degrees(np.arctan2(day[:, 2], day[:, 1])) % 360.0)
-                        - TERMINAL_HUE_CENTERS[: len(day)]
+                        - semantic_centers
                         + 180.0
                     )
                     % 360.0
@@ -422,136 +490,170 @@ def accent_metrics(
             if terminal
             else None
         ),
-        "gain_corner_samples": corner_rows,
-        "gain_corner_pair_min": min(row["pair_delta_e_ok"] for row in corner_rows),
-        "gain_corner_foreground_clearance_min": min(
-            row["foreground_clearance_delta_e_ok"] for row in corner_rows
+        "terminal_role_contract": role_contract,
+        "sampled_gain_grid_kind": (
+            "unique 5x5 adaptive scan per nonzero gain axis"
+            if sample_grid == "dense"
+            else "unique 3x3 per nonzero gain axis"
+            if sample_grid
+            else "nominal"
         ),
-        "gain_corner_background_contrast_min": min(
-            row["background_contrast"] for row in corner_rows
+        "sampled_gain_grid": sampled_rows,
+        "sampled_gain_pair_min_cam16_ucs": min(row["pair_cam16_ucs"] for row in sampled_rows),
+        "sampled_gain_foreground_clearance_min_cam16_ucs": min(
+            row["foreground_clearance_cam16_ucs"] for row in sampled_rows
+        ),
+        "sampled_gain_background_contrast_min": min(
+            row["background_contrast"] for row in sampled_rows
         ),
     }
 
 
 def sequential_metrics(
-    base: FamilyDefinition, anchors: tuple[str, ...]
+    base: FamilyDefinition, sequence_or_anchors: np.ndarray | tuple[str, ...]
 ) -> tuple[dict[str, Any], np.ndarray]:
-    candidate = replace(base, sequential_anchors=anchors)
-    sequence = np.round(_sequential_colors(candidate), 10)
+    if isinstance(sequence_or_anchors, np.ndarray):
+        sequence = np.asarray(sequence_or_anchors, dtype=float)
+    else:
+        candidate = replace(base, sequential_anchors=sequence_or_anchors)
+        sequence = _sequential_colors(candidate)
+    sequence = np.round(sequence, 10)
     day = srgb_to_oklab(sequence)
-    night = perceived_lab(sequence, base.profile.gains)
+    transformed_ucs = cam16_ucs(sequence, base.profile.gains)
     day_steps = np.linalg.norm(np.diff(day, axis=0), axis=1) * 100.0
-    night_steps = np.linalg.norm(np.diff(night, axis=0), axis=1) * 100.0
+    transformed_steps = np.linalg.norm(np.diff(transformed_ucs, axis=0), axis=1)
     day_direction = 1.0 if day[-1, 0] >= day[0, 0] else -1.0
-    night_direction = 1.0 if night[-1, 0] >= night[0, 0] else -1.0
-    transformed_surfaces = warm_transform(
-        hex_array(tuple(base.surfaces[role] for role in BACKGROUND_SURFACE_ROLES)),
-        base.profile.gains,
+    plot_canvas = warm_transform(
+        hex_to_srgb(base.surfaces[SEQUENTIAL_PLOT_CANVAS_ROLE]), base.profile.gains
     )
-    light_endpoint = warm_transform(sequence[int(np.argmax(night[:, 0]))], base.profile.gains)
-    corner_rows = []
-    for corner in gain_corners(base.profile.gains):
-        lab = perceived_lab(sequence, corner)
-        steps = np.linalg.norm(np.diff(lab, axis=0), axis=1) * 100.0
-        direction = 1.0 if lab[-1, 0] >= lab[0, 0] else -1.0
-        corner_rows.append(
+    sampled_rows = []
+    for sampled_gains in sampled_gain_grid(base.profile.gains):
+        sampled_ucs = cam16_ucs(sequence, sampled_gains)
+        steps = np.linalg.norm(np.diff(sampled_ucs, axis=0), axis=1)
+        sampled_rows.append(
             {
-                "gains": list(corner),
+                "gains": list(sampled_gains),
                 "cv": float(steps.std() / steps.mean()),
                 "max_to_min": float(steps.max() / steps.min()),
-                "minimum_signed_lightness_step": float((np.diff(lab[:, 0]) * direction).min()),
+                "minimum_signed_j_step": float(np.diff(sampled_ucs[:, 0]).min()),
             }
         )
     metrics = {
         "normal_cv": float(day_steps.std() / day_steps.mean()),
         "normal_max_to_min": float(day_steps.max() / day_steps.min()),
-        "shifted_cv": float(night_steps.std() / night_steps.mean()),
-        "shifted_max_to_min": float(night_steps.max() / night_steps.min()),
+        "transformed_cam16_cv": float(transformed_steps.std() / transformed_steps.mean()),
+        "transformed_cam16_max_to_min": float(transformed_steps.max() / transformed_steps.min()),
         "normal_lightness_range": float(np.ptp(day[:, 0])),
-        "shifted_lightness_range": float(np.ptp(night[:, 0])),
-        "shifted_light_endpoint_background_contrast_min": min(
-            contrast_ratio(light_endpoint, background) for background in transformed_surfaces
+        "transformed_j_range": float(np.ptp(transformed_ucs[:, 0])),
+        "plot_canvas_role": SEQUENTIAL_PLOT_CANVAS_ROLE,
+        "dark_endpoint_plot_canvas_contrast": contrast_ratio(
+            warm_transform(sequence[0], base.profile.gains), plot_canvas
+        ),
+        "light_endpoint_plot_canvas_contrast": contrast_ratio(
+            warm_transform(sequence[-1], base.profile.gains), plot_canvas
         ),
         "normal_minimum_signed_lightness_step": float((np.diff(day[:, 0]) * day_direction).min()),
-        "shifted_minimum_signed_lightness_step": float(
-            (np.diff(night[:, 0]) * night_direction).min()
-        ),
-        "gain_corner_samples": corner_rows,
-        "gain_corner_cv_max": max(row["cv"] for row in corner_rows),
-        "gain_corner_max_to_min_max": max(row["max_to_min"] for row in corner_rows),
-        "gain_corner_minimum_signed_lightness_step": min(
-            row["minimum_signed_lightness_step"] for row in corner_rows
+        "transformed_minimum_signed_j_step": float(np.diff(transformed_ucs[:, 0]).min()),
+        "sampled_gain_grid_kind": "unique 3x3 per nonzero gain axis",
+        "sampled_gain_grid": sampled_rows,
+        "sampled_gain_cv_max": max(row["cv"] for row in sampled_rows),
+        "sampled_gain_max_to_min_max": max(row["max_to_min"] for row in sampled_rows),
+        "sampled_gain_minimum_signed_j_step": min(
+            row["minimum_signed_j_step"] for row in sampled_rows
         ),
     }
     return metrics, sequence
+
+
+def dependent_bank_floors(base: FamilyDefinition, foregrounds: tuple[str, ...]) -> dict[str, Any]:
+    """Parity floors calibrated from the shipped bank under this lane's fixed fg."""
+
+    categorical = accent_metrics(
+        base, base.categorical_colors, foregrounds, terminal=False, sample_grid=True
+    )
+    terminal = accent_metrics(
+        base, base.terminal_colors, foregrounds, terminal=True, sample_grid=True
+    )
+    return {
+        "parity_ratio": DEPENDENT_PARITY_RATIO,
+        "categorical": {
+            "transformed_pair_cam16_ucs": DEPENDENT_PARITY_RATIO
+            * categorical["sampled_gain_pair_min_cam16_ucs"],
+            "transformed_foreground_by_role_cam16_ucs": [
+                DEPENDENT_PARITY_RATIO * value
+                for value in categorical["transformed_foreground_clearance_by_role_cam16_ucs"]
+            ],
+            "sampled_gain_foreground_clearance_min_cam16_ucs": DEPENDENT_PARITY_RATIO
+            * categorical["sampled_gain_foreground_clearance_min_cam16_ucs"],
+        },
+        "terminal": {
+            "transformed_pair_cam16_ucs": DEPENDENT_PARITY_RATIO
+            * terminal["sampled_gain_pair_min_cam16_ucs"],
+            "transformed_foreground_by_role_cam16_ucs": [
+                DEPENDENT_PARITY_RATIO * value
+                for value in terminal["transformed_foreground_clearance_by_role_cam16_ucs"]
+            ],
+            "sampled_gain_foreground_clearance_min_cam16_ucs": DEPENDENT_PARITY_RATIO
+            * terminal["sampled_gain_foreground_clearance_min_cam16_ucs"],
+        },
+        "shipped_probe": {"categorical": categorical, "terminal": terminal},
+    }
 
 
 def categorical_objective(
     base: FamilyDefinition,
     foregrounds: tuple[str, ...],
     values: tuple[str, ...],
+    floors: dict[str, Any] | None = None,
 ) -> float:
+    floors = floors or dependent_bank_floors(base, foregrounds)
     metrics = accent_metrics(base, values, foregrounds, terminal=False)
-    intrinsic_violations = [
+    bank_floors = floors["categorical"]
+    violations = [
         violation(metrics["normal_pair_delta_e_ok"], base.daylight_minimum_delta_e_ok),
-        violation(metrics["shifted_pair_delta_e_ok"], base.profile.categorical_threshold),
+        violation(
+            metrics["transformed_pair_cam16_ucs"],
+            bank_floors["transformed_pair_cam16_ucs"],
+        ),
         violation(
             metrics["normal_hue_gap_degrees"],
             base.daylight_minimum_hue_gap_degrees or 0.0,
         ),
-        violation(
-            metrics["shifted_background_contrast_bg0_min"],
-            base.categorical_shifted_background_contrast_minimum or 0.0,
-        ),
+        violation(metrics["transformed_background_contrast_bg0_min"], 3.0),
         violation(metrics["normal_mean_chroma"], 0.09),
         violation(metrics["normal_mean_chroma"], ceiling=0.105),
+        violation(metrics["normal_max_chroma"], ceiling=0.111),
     ]
-    proposed_lab = srgb_to_oklab(hex_array(values))
-    intrinsic_violations.append(
-        violation(float(np.linalg.norm(proposed_lab[:, 1:], axis=1).max()), ceiling=0.111)
-    )
-    proposed_bytes = bytes_from_hex(values)
-    for (color_index, channel_index), ceiling in CATEGORY_CHANNEL_CEILINGS.get(
-        base.slug, {}
-    ).items():
-        intrinsic_violations.append(
-            violation(float(proposed_bytes[color_index, channel_index]), ceiling=float(ceiling))
-        )
-    if base.slug in DEEP_CATEGORY_CORNER_FOREGROUND_FLOORS:
-        intrinsic_violations.extend(
-            (
-                violation(metrics["gain_corner_pair_min"], base.profile.categorical_threshold),
-                violation(metrics["gain_corner_background_contrast_min"], 3.0),
-            )
-        )
-    if any(intrinsic_violations):
-        return 1e14 + penalty(intrinsic_violations)
-    violations = []
-    if base.slug in DEEP_CATEGORY_CORNER_FOREGROUND_FLOORS:
-        violations.append(
-            violation(
-                metrics["gain_corner_foreground_clearance_min"],
-                DEEP_CATEGORY_CORNER_FOREGROUND_FLOORS[base.slug],
-            )
-        )
     violations.extend(
         violation(value, base.categorical_daylight_minimum_foreground_delta_e_ok)
         for value in metrics["normal_foreground_clearance_by_role"]
     )
     violations.extend(
-        violation(value, base.categorical_night_minimum_foreground_delta_e_ok)
-        for value in metrics["shifted_foreground_clearance_by_role"]
+        violation(value, floor)
+        for value, floor in zip(
+            metrics["transformed_foreground_clearance_by_role_cam16_ucs"],
+            bank_floors["transformed_foreground_by_role_cam16_ucs"],
+            strict=True,
+        )
     )
-    current = srgb_to_oklab(hex_array(base.categorical_colors))
+    proposed_bytes = bytes_from_hex(values)
+    for (color_index, channel_index), ceiling in CATEGORY_CHANNEL_CEILINGS.get(
+        base.slug, {}
+    ).items():
+        if color_index < len(values):
+            violations.append(
+                violation(float(proposed_bytes[color_index, channel_index]), ceiling=float(ceiling))
+            )
     proposed = srgb_to_oklab(hex_array(values))
-    move = float(np.linalg.norm(proposed - current, axis=1).mean())
+    move = 0.0
+    if len(values) == len(base.categorical_colors):
+        current = srgb_to_oklab(hex_array(base.categorical_colors))
+        move = float(np.linalg.norm(proposed - current, axis=1).mean())
     soft = (
-        -0.020 * metrics["normal_pair_delta_e_ok"]
-        - 0.055 * metrics["shifted_pair_delta_e_ok"]
-        - 0.030 * metrics["shifted_foreground_clearance_min"]
-        - 0.18 * metrics["shifted_background_contrast_all_surfaces_min"]
-        - 0.020 * metrics["gain_corner_pair_min"]
-        + 9.0 * move
+        -1.0 * metrics["transformed_pair_cam16_ucs"]
+        - 0.25 * metrics["transformed_foreground_clearance_min_cam16_ucs"]
+        - 0.05 * metrics["normal_pair_delta_e_ok"]
+        + 0.5 * move
     )
     return penalty(violations) + soft
 
@@ -560,40 +662,47 @@ def terminal_objective(
     base: FamilyDefinition,
     foregrounds: tuple[str, ...],
     values: tuple[str, ...],
+    floors: dict[str, Any] | None = None,
 ) -> float:
+    floors = floors or dependent_bank_floors(base, foregrounds)
     metrics = accent_metrics(base, values, foregrounds, terminal=True)
+    bank_floors = floors["terminal"]
+    proposed = srgb_to_oklab(hex_array(values))
+    current = srgb_to_oklab(hex_array(base.terminal_colors))
+    role_contract = terminal_role_contract(base)
+    hue_centers = np.asarray(
+        [TERMINAL_HUE_BY_ROLE[role] for role in role_contract["authored_roles"]]
+    )
+    proposed_hues = np.degrees(np.arctan2(proposed[:, 2], proposed[:, 1])) % 360.0
+    hue_errors = np.abs((proposed_hues - hue_centers + 180.0) % 360.0 - 180.0)
     day_floors = (
         base.terminal_daylight_minimum_fg_0_delta_e_ok,
         base.terminal_daylight_minimum_fg_1_delta_e_ok,
         base.terminal_daylight_minimum_fg_2_delta_e_ok,
     )
-    night_floors = (
-        base.terminal_night_minimum_fg_0_delta_e_ok,
-        base.terminal_night_minimum_fg_1_delta_e_ok,
-        base.terminal_night_minimum_fg_2_delta_e_ok,
-    )
-    proposed = srgb_to_oklab(hex_array(values))
-    current = srgb_to_oklab(hex_array(base.terminal_colors))
-    proposed_hues = np.degrees(np.arctan2(proposed[:, 2], proposed[:, 1])) % 360.0
-    hue_errors = np.abs(
-        (proposed_hues - TERMINAL_HUE_CENTERS[: len(values)] + 180.0) % 360.0 - 180.0
-    )
-    terminal_chroma_ceiling = float(np.linalg.norm(current[:, 1:], axis=1).max()) + 1e-12
-    intrinsic_violations = [
+    violations = [
         violation(metrics["normal_pair_delta_e_ok"], base.terminal_daylight_minimum_delta_e_ok),
         violation(
-            metrics["shifted_pair_delta_e_ok"], base.terminal_night_minimum_delta_e_ok or 0.0
+            metrics["transformed_pair_cam16_ucs"],
+            bank_floors["transformed_pair_cam16_ucs"],
         ),
-        violation(metrics["shifted_background_contrast_bg0_min"], 4.5),
+        violation(metrics["transformed_background_contrast_bg0_min"], 4.5),
         violation(float(hue_errors.max()), ceiling=30.0),
         violation(
             float(np.linalg.norm(proposed[:, 1:], axis=1).max()),
-            ceiling=terminal_chroma_ceiling,
+            ceiling=TERMINAL_CHROMA_CEILINGS[base.slug],
         ),
     ]
-    if any(intrinsic_violations):
-        return 1e14 + penalty(intrinsic_violations)
-    violations = []
+    proposed_bytes = bytes_from_hex(values)
+    for (color_index, channel_index), ceiling in TERMINAL_CHANNEL_CEILINGS.get(
+        base.slug, {}
+    ).items():
+        violations.append(
+            violation(
+                float(proposed_bytes[color_index, channel_index]),
+                ceiling=float(ceiling),
+            )
+        )
     violations.extend(
         violation(value, floor or 0.0)
         for value, floor in zip(
@@ -601,21 +710,89 @@ def terminal_objective(
         )
     )
     violations.extend(
-        violation(value, floor or 0.0)
+        violation(value, floor)
         for value, floor in zip(
-            metrics["shifted_foreground_clearance_by_role"], night_floors, strict=True
+            metrics["transformed_foreground_clearance_by_role_cam16_ucs"],
+            bank_floors["transformed_foreground_by_role_cam16_ucs"],
+            strict=True,
         )
     )
     move = float(np.linalg.norm(proposed - current, axis=1).mean())
     soft = (
-        -0.020 * metrics["normal_pair_delta_e_ok"]
-        - 0.060 * metrics["shifted_pair_delta_e_ok"]
-        - 0.035 * metrics["shifted_foreground_clearance_min"]
-        - 0.20 * metrics["shifted_background_contrast_all_surfaces_min"]
-        - 0.020 * metrics["gain_corner_pair_min"]
-        + 10.0 * move
+        -1.0 * metrics["transformed_pair_cam16_ucs"]
+        - 0.3 * metrics["transformed_foreground_clearance_min_cam16_ucs"]
+        - 0.05 * metrics["normal_pair_delta_e_ok"]
+        + 0.5 * move
     )
     return penalty(violations) + soft
+
+
+def construct_sequential(
+    base: FamilyDefinition, *, count: int = 256
+) -> tuple[np.ndarray, tuple[str, ...], dict[str, Any]]:
+    """Resample the approved commanded path by transformed CAM16-UCS arc length."""
+
+    anchor_lab = _smooth_polyline(srgb_to_oklab(hex_array(base.sequential_anchors)))
+    dense_lab = _interpolate_polyline(anchor_lab, samples_per_segment=2048)
+    dense_rgb = np.clip(oklab_to_srgb(dense_lab), 0.0, 1.0)
+    dense_ucs = cam16_ucs(dense_rgb, base.profile.gains)
+    monotone = np.concatenate(([True], np.diff(np.maximum.accumulate(dense_ucs[:, 0])) > 1e-12))
+    monotone[-1] = True
+    dense_lab = dense_lab[monotone]
+    dense_ucs = dense_ucs[monotone]
+    day_steps = np.linalg.norm(np.diff(dense_lab, axis=0), axis=1)
+    transformed_steps = np.linalg.norm(np.diff(dense_ucs, axis=0), axis=1)
+
+    chosen_weight = None
+    chosen_sequence = None
+    for transformed_weight in np.linspace(1.0, 0.0, 21):
+        transformed_norm = transformed_steps / max(float(transformed_steps.mean()), 1e-12)
+        day_norm = day_steps / max(float(day_steps.mean()), 1e-12)
+        blended = transformed_weight * transformed_norm + (1.0 - transformed_weight) * day_norm
+        distance = np.concatenate(([0.0], np.cumsum(blended)))
+        targets = np.linspace(0.0, float(distance[-1]), count)
+        upper = np.clip(np.searchsorted(distance, targets, side="left"), 1, len(dense_lab) - 1)
+        lower = upper - 1
+        span = distance[upper] - distance[lower]
+        fraction = np.divide(
+            targets - distance[lower],
+            span,
+            out=np.zeros_like(targets),
+            where=span > 0,
+        )[:, None]
+        sampled_lab = dense_lab[lower] * (1.0 - fraction) + dense_lab[upper] * fraction
+        sequence = np.clip(oklab_to_srgb(sampled_lab), 0.0, 1.0)
+        metrics, sequence = sequential_metrics(base, sequence)
+        if (
+            metrics["normal_cv"] <= SEQUENTIAL_COMMANDED_CV_CEILING + 1e-12
+            and metrics["transformed_minimum_signed_j_step"] > 0.0
+        ):
+            chosen_weight = float(transformed_weight)
+            chosen_sequence = sequence
+            break
+    if chosen_sequence is None or chosen_weight is None:
+        raise RuntimeError(f"no monotone constructive sequential ramp for {base.slug}")
+    anchors = tuple(
+        srgb_to_hex(chosen_sequence[index])
+        for index in np.rint(np.linspace(0, count - 1, 6)).astype(int)
+    )
+    metrics, chosen_sequence = sequential_metrics(base, chosen_sequence)
+    provenance = {
+        "construction": "approved commanded OkLCh trajectory; equal blended arc-length resampling",
+        "transformed_arc_weight": chosen_weight,
+        "canonical_samples": count,
+        "anchors_are_hex8_preview_exports": True,
+        "transformed_cam16_cv_target": SEQUENTIAL_TRANSFORMED_CV_TARGET,
+        "transformed_cam16_cv_target_met": (
+            metrics["transformed_cam16_cv"] <= SEQUENTIAL_TRANSFORMED_CV_TARGET
+        ),
+        "target_deviation_reason": (
+            None
+            if metrics["transformed_cam16_cv"] <= SEQUENTIAL_TRANSFORMED_CV_TARGET
+            else "blended away from pure transformed arc length to keep commanded CV <= 0.18"
+        ),
+    }
+    return chosen_sequence, anchors, {**metrics, **provenance}
 
 
 def sequential_objective(
@@ -623,41 +800,21 @@ def sequential_objective(
     baseline_metrics: dict[str, Any],
     values: tuple[str, ...],
 ) -> float:
+    """Compatibility scorer; transformed-first production uses construct_sequential."""
+
+    del baseline_metrics
     metrics, _ = sequential_metrics(base, values)
     violations = [
         violation(metrics["normal_lightness_range"], 0.5),
-        violation(metrics["shifted_lightness_range"], 0.5),
+        violation(metrics["transformed_j_range"], 10.0),
         violation(metrics["normal_minimum_signed_lightness_step"], 1e-9),
-        violation(metrics["shifted_minimum_signed_lightness_step"], 1e-9),
-        violation(
-            metrics["normal_cv"],
-            ceiling=max(0.18, baseline_metrics["normal_cv"] + 0.002),
-        ),
-        violation(
-            metrics["normal_max_to_min"],
-            ceiling=max(1.6, baseline_metrics["normal_max_to_min"] + 0.02),
-        ),
-        violation(
-            metrics["shifted_cv"],
-            ceiling=max(0.0001, baseline_metrics["shifted_cv"] + 0.00005),
-        ),
-        violation(
-            metrics["shifted_max_to_min"],
-            ceiling=max(1.001, baseline_metrics["shifted_max_to_min"] + 0.001),
-        ),
+        violation(metrics["transformed_minimum_signed_j_step"], 1e-9),
+        violation(metrics["normal_cv"], ceiling=SEQUENTIAL_COMMANDED_CV_CEILING),
+        violation(metrics["transformed_cam16_cv"], ceiling=SEQUENTIAL_TRANSFORMED_CV_CEILING),
+        violation(metrics["light_endpoint_plot_canvas_contrast"], 4.5),
+        violation(metrics["dark_endpoint_plot_canvas_contrast"], 1.02),
     ]
-    current = srgb_to_oklab(hex_array(base.sequential_anchors))
-    proposed = srgb_to_oklab(hex_array(values))
-    move = float(np.linalg.norm(proposed - current, axis=1).mean())
-    soft = (
-        0.8 * metrics["normal_cv"]
-        + 1.2 * metrics["shifted_cv"]
-        + 5.0 * move
-        - 0.02 * metrics["normal_lightness_range"]
-        - 0.02 * metrics["shifted_lightness_range"]
-        - 0.01 * metrics["shifted_light_endpoint_background_contrast_min"]
-    )
-    return penalty(violations) + soft
+    return penalty(violations) + metrics["transformed_cam16_cv"]
 
 
 def bounded_exact_search(
@@ -695,13 +852,15 @@ def bounded_exact_search(
             accepted += 1
     for iteration in range(iterations):
         progress = iteration / max(1, iterations - 1)
-        step = max(1, round(radius * (1.0 - progress) + 1.0))
+        step = max(1, round(radius * (1.0 - progress)))
         proposal = best.copy()
         edits = 1 + int(rng.integers(0, min(4, proposal.size)))
         flat = proposal.reshape(-1)
         indices = rng.choice(flat.size, size=edits, replace=False)
         flat[indices] += rng.integers(-step, step + 1, size=edits, dtype=np.int16)
-        proposal = np.clip(proposal, origin - radius, origin + radius)
+        proposal = np.clip(
+            proposal, np.maximum(origin - radius, 0), np.minimum(origin + radius, 255)
+        )
         values = hex_from_bytes(proposal)
         score = objective(values)
         evaluated += 1
@@ -976,11 +1135,9 @@ def full_system_violations(
             base.terminal_daylight_minimum_fg_1_delta_e_ok,
             base.terminal_daylight_minimum_fg_2_delta_e_ok,
         )
-        night_floors = (
-            base.terminal_night_minimum_fg_0_delta_e_ok,
-            base.terminal_night_minimum_fg_1_delta_e_ok,
-            base.terminal_night_minimum_fg_2_delta_e_ok,
-        )
+        night_floors = dependent_bank_floors(coupled_base, foregrounds)["terminal"][
+            "transformed_foreground_by_role_cam16_ucs"
+        ]
         values.extend(
             violation(actual, floor or 0.0)
             for actual, floor in zip(
@@ -990,7 +1147,9 @@ def full_system_violations(
         values.extend(
             violation(actual, floor or 0.0)
             for actual, floor in zip(
-                terminal["shifted_foreground_clearance_by_role"], night_floors, strict=True
+                terminal["transformed_foreground_clearance_by_role_cam16_ucs"],
+                night_floors,
+                strict=True,
             )
         )
     return values
@@ -1020,7 +1179,7 @@ def full_system_objective(
     if terminal_values is not None:
         coupled_base = candidate_family(base, surfaces, foregrounds)
         terminal = accent_metrics(coupled_base, terminal_values, foregrounds, terminal=True)
-        terminal_clearance = terminal["shifted_foreground_clearance_min"]
+        terminal_clearance = terminal["transformed_foreground_clearance_min_cam16_ucs"]
     surface_move = float(np.linalg.norm(proposed_surface - shipped_surface, axis=1).mean())
     foreground_move = float(np.linalg.norm(proposed_fg - shipped_fg, axis=1).mean())
     target_error = float(np.linalg.norm(proposed_fg[:, 1:] - target_ab, axis=1).mean())
@@ -1241,6 +1400,261 @@ def full_system_failures(
     return failures
 
 
+def _minimum_failure(failures: list[str], label: str, actual: float, floor: float | None) -> None:
+    if floor is not None and actual + 1e-12 < floor:
+        failures.append(f"{label} {actual:.4f} < {floor:.4f}")
+
+
+def _maximum_failure(failures: list[str], label: str, actual: float, ceiling: float) -> None:
+    if actual > ceiling + 1e-12:
+        failures.append(f"{label} {actual:.6f} > {ceiling:.6f}")
+
+
+def categorical_failures(
+    base: FamilyDefinition,
+    values: tuple[str, ...],
+    metrics: dict[str, Any],
+    floors: dict[str, Any],
+) -> list[str]:
+    """Validate only the categorical bank; no other bank may veto a count trial."""
+
+    failures: list[str] = []
+    bank_floors = floors["categorical"]
+    _minimum_failure(
+        failures,
+        "categorical day pair",
+        metrics["normal_pair_delta_e_ok"],
+        base.daylight_minimum_delta_e_ok,
+    )
+    _minimum_failure(
+        failures,
+        "categorical transformed pair CAM16-UCS",
+        metrics["sampled_gain_pair_min_cam16_ucs"],
+        bank_floors["transformed_pair_cam16_ucs"],
+    )
+    _minimum_failure(
+        failures,
+        "categorical day hue gap",
+        metrics["normal_hue_gap_degrees"],
+        base.daylight_minimum_hue_gap_degrees,
+    )
+    _minimum_failure(failures, "categorical day mean chroma", metrics["normal_mean_chroma"], 0.09)
+    _maximum_failure(failures, "categorical day mean chroma", metrics["normal_mean_chroma"], 0.105)
+    _maximum_failure(
+        failures, "categorical day maximum chroma", metrics["normal_max_chroma"], 0.111
+    )
+    _minimum_failure(
+        failures,
+        "categorical transformed bg_0 contrast",
+        metrics["transformed_background_contrast_bg0_min"],
+        3.0,
+    )
+    for index, value in enumerate(metrics["normal_foreground_clearance_by_role"]):
+        _minimum_failure(
+            failures,
+            f"categorical day fg_{index} clearance",
+            value,
+            base.categorical_daylight_minimum_foreground_delta_e_ok,
+        )
+    for index, (value, floor) in enumerate(
+        zip(
+            metrics["transformed_foreground_clearance_by_role_cam16_ucs"],
+            bank_floors["transformed_foreground_by_role_cam16_ucs"],
+            strict=True,
+        )
+    ):
+        _minimum_failure(
+            failures, f"categorical transformed fg_{index} CAM16-UCS clearance", value, floor
+        )
+    _minimum_failure(
+        failures,
+        "categorical sampled-grid foreground CAM16-UCS clearance",
+        metrics["sampled_gain_foreground_clearance_min_cam16_ucs"],
+        bank_floors["sampled_gain_foreground_clearance_min_cam16_ucs"],
+    )
+    category_bytes = bytes_from_hex(values)
+    for (color_index, channel_index), ceiling in CATEGORY_CHANNEL_CEILINGS.get(
+        base.slug, {}
+    ).items():
+        if color_index < len(values):
+            _maximum_failure(
+                failures,
+                f"categorical maturity byte color {color_index} channel {channel_index}",
+                float(category_bytes[color_index, channel_index]),
+                float(ceiling),
+            )
+    binding_floor = min(
+        bank_floors["transformed_pair_cam16_ucs"],
+        bank_floors["sampled_gain_foreground_clearance_min_cam16_ucs"],
+    )
+    binding_value = min(
+        metrics["sampled_gain_pair_min_cam16_ucs"],
+        metrics["sampled_gain_foreground_clearance_min_cam16_ucs"],
+    )
+    if not failures and binding_value < binding_floor * (1.0 + SAMPLED_GAIN_MARGIN):
+        foregrounds = tuple(base.surfaces[f"fg_{index}"] for index in range(3))
+        dense = accent_metrics(base, values, foregrounds, terminal=False, sample_grid="dense")
+        _minimum_failure(
+            failures,
+            "categorical adaptive-grid pair CAM16-UCS",
+            dense["sampled_gain_pair_min_cam16_ucs"],
+            bank_floors["transformed_pair_cam16_ucs"],
+        )
+        _minimum_failure(
+            failures,
+            "categorical adaptive-grid foreground CAM16-UCS",
+            dense["sampled_gain_foreground_clearance_min_cam16_ucs"],
+            bank_floors["sampled_gain_foreground_clearance_min_cam16_ucs"],
+        )
+    return failures
+
+
+def terminal_failures(
+    base: FamilyDefinition,
+    values: tuple[str, ...],
+    metrics: dict[str, Any],
+    floors: dict[str, Any],
+) -> list[str]:
+    """Validate authored terminal roles and explicit ANSI aliases only."""
+
+    failures: list[str] = []
+    bank_floors = floors["terminal"]
+    _minimum_failure(
+        failures,
+        "terminal day pair",
+        metrics["normal_pair_delta_e_ok"],
+        base.terminal_daylight_minimum_delta_e_ok,
+    )
+    _minimum_failure(
+        failures,
+        "terminal sampled-grid pair CAM16-UCS",
+        metrics["sampled_gain_pair_min_cam16_ucs"],
+        bank_floors["transformed_pair_cam16_ucs"],
+    )
+    _minimum_failure(
+        failures,
+        "terminal transformed bg_0 contrast",
+        metrics["transformed_background_contrast_bg0_min"],
+        4.5,
+    )
+    _maximum_failure(
+        failures, "terminal semantic hue error", metrics["normal_semantic_hue_error_max"], 30.0
+    )
+    _maximum_failure(
+        failures,
+        "terminal commanded maximum chroma",
+        metrics["normal_max_chroma"],
+        TERMINAL_CHROMA_CEILINGS[base.slug],
+    )
+    terminal_bytes = bytes_from_hex(values)
+    for (color_index, channel_index), ceiling in TERMINAL_CHANNEL_CEILINGS.get(
+        base.slug, {}
+    ).items():
+        _maximum_failure(
+            failures,
+            f"terminal maturity byte color {color_index} channel {channel_index}",
+            float(terminal_bytes[color_index, channel_index]),
+            float(ceiling),
+        )
+    day_floors = (
+        base.terminal_daylight_minimum_fg_0_delta_e_ok,
+        base.terminal_daylight_minimum_fg_1_delta_e_ok,
+        base.terminal_daylight_minimum_fg_2_delta_e_ok,
+    )
+    for index, (value, floor) in enumerate(
+        zip(metrics["normal_foreground_clearance_by_role"], day_floors, strict=True)
+    ):
+        _minimum_failure(failures, f"terminal day fg_{index} clearance", value, floor)
+    for index, (value, floor) in enumerate(
+        zip(
+            metrics["transformed_foreground_clearance_by_role_cam16_ucs"],
+            bank_floors["transformed_foreground_by_role_cam16_ucs"],
+            strict=True,
+        )
+    ):
+        _minimum_failure(
+            failures, f"terminal transformed fg_{index} CAM16-UCS clearance", value, floor
+        )
+    if not failures and metrics["sampled_gain_pair_min_cam16_ucs"] < (
+        bank_floors["transformed_pair_cam16_ucs"] * (1.0 + SAMPLED_GAIN_MARGIN)
+    ):
+        foregrounds = tuple(base.surfaces[f"fg_{index}"] for index in range(3))
+        dense = accent_metrics(base, values, foregrounds, terminal=True, sample_grid="dense")
+        _minimum_failure(
+            failures,
+            "terminal adaptive-grid pair CAM16-UCS",
+            dense["sampled_gain_pair_min_cam16_ucs"],
+            bank_floors["transformed_pair_cam16_ucs"],
+        )
+    return failures
+
+
+def sequential_failures(metrics: dict[str, Any]) -> list[str]:
+    failures: list[str] = []
+    _minimum_failure(
+        failures, "sequential day lightness range", metrics["normal_lightness_range"], 0.5
+    )
+    _minimum_failure(
+        failures, "sequential transformed J range", metrics["transformed_j_range"], 10.0
+    )
+    _minimum_failure(
+        failures,
+        "sequential day monotonic step",
+        metrics["normal_minimum_signed_lightness_step"],
+        1e-9,
+    )
+    _minimum_failure(
+        failures,
+        "sequential transformed J monotonic step",
+        metrics["transformed_minimum_signed_j_step"],
+        1e-9,
+    )
+    _maximum_failure(
+        failures, "sequential day CV", metrics["normal_cv"], SEQUENTIAL_COMMANDED_CV_CEILING
+    )
+    _maximum_failure(
+        failures,
+        "sequential transformed CAM16-UCS CV",
+        metrics["transformed_cam16_cv"],
+        SEQUENTIAL_TRANSFORMED_CV_CEILING,
+    )
+    _minimum_failure(
+        failures,
+        "sequential light endpoint plot-canvas contrast",
+        metrics["light_endpoint_plot_canvas_contrast"],
+        4.5,
+    )
+    _minimum_failure(
+        failures,
+        "sequential dark endpoint plot-canvas contrast",
+        metrics["dark_endpoint_plot_canvas_contrast"],
+        1.02,
+    )
+    _minimum_failure(
+        failures,
+        "sequential sampled-grid transformed J step",
+        metrics["sampled_gain_minimum_signed_j_step"],
+        1e-9,
+    )
+    return failures
+
+
+def final_assembled_dependent_failures(
+    base: FamilyDefinition,
+    category_values: tuple[str, ...],
+    category: dict[str, Any],
+    terminal_values: tuple[str, ...],
+    terminal: dict[str, Any],
+    sequential: dict[str, Any],
+    floors: dict[str, Any],
+) -> list[str]:
+    return (
+        categorical_failures(base, category_values, category, floors)
+        + terminal_failures(base, terminal_values, terminal, floors)
+        + sequential_failures(sequential)
+    )
+
+
 def dependent_failures(
     base: FamilyDefinition,
     category_values: tuple[str, ...],
@@ -1250,147 +1664,20 @@ def dependent_failures(
     sequential: dict[str, Any],
     sequential_baseline: dict[str, Any],
 ) -> list[str]:
-    failures = []
+    """Compatibility wrapper for the old full-system experiment entry point."""
 
-    def minimum(label: str, actual: float, floor: float | None) -> None:
-        if floor is not None and actual + 1e-12 < floor:
-            failures.append(f"{label} {actual:.4f} < {floor:.4f}")
-
-    def maximum(label: str, actual: float, ceiling: float) -> None:
-        if actual > ceiling + 1e-12:
-            failures.append(f"{label} {actual:.6f} > {ceiling:.6f}")
-
-    minimum(
-        "categorical day pair", category["normal_pair_delta_e_ok"], base.daylight_minimum_delta_e_ok
+    del sequential_baseline
+    foregrounds = tuple(base.surfaces[f"fg_{index}"] for index in range(3))
+    floors = dependent_bank_floors(base, foregrounds)
+    return final_assembled_dependent_failures(
+        base,
+        category_values,
+        category,
+        terminal_values,
+        terminal,
+        sequential,
+        floors,
     )
-    minimum(
-        "categorical transformed pair",
-        category["shifted_pair_delta_e_ok"],
-        base.profile.categorical_threshold,
-    )
-    minimum(
-        "categorical day hue gap",
-        category["normal_hue_gap_degrees"],
-        base.daylight_minimum_hue_gap_degrees,
-    )
-    minimum("categorical day mean chroma", category["normal_mean_chroma"], 0.09)
-    maximum("categorical day mean chroma", category["normal_mean_chroma"], 0.105)
-    maximum("categorical day maximum chroma", category["normal_max_chroma"], 0.111)
-    minimum(
-        "categorical transformed bg contrast",
-        category["shifted_background_contrast_bg0_min"],
-        base.categorical_shifted_background_contrast_minimum,
-    )
-    for index, value in enumerate(category["normal_foreground_clearance_by_role"]):
-        minimum(
-            f"categorical day fg_{index} clearance",
-            value,
-            base.categorical_daylight_minimum_foreground_delta_e_ok,
-        )
-    for index, value in enumerate(category["shifted_foreground_clearance_by_role"]):
-        minimum(
-            f"categorical transformed fg_{index} clearance",
-            value,
-            base.categorical_night_minimum_foreground_delta_e_ok,
-        )
-    category_bytes = bytes_from_hex(category_values)
-    for (color_index, channel_index), ceiling in CATEGORY_CHANNEL_CEILINGS.get(
-        base.slug, {}
-    ).items():
-        maximum(
-            f"categorical maturity byte color {color_index} channel {channel_index}",
-            float(category_bytes[color_index, channel_index]),
-            float(ceiling),
-        )
-    if base.slug in DEEP_CATEGORY_CORNER_FOREGROUND_FLOORS:
-        minimum(
-            "categorical sampled-corner pair",
-            category["gain_corner_pair_min"],
-            base.profile.categorical_threshold,
-        )
-        minimum(
-            "categorical sampled-corner foreground clearance",
-            category["gain_corner_foreground_clearance_min"],
-            DEEP_CATEGORY_CORNER_FOREGROUND_FLOORS[base.slug],
-        )
-        minimum(
-            "categorical sampled-corner background contrast",
-            category["gain_corner_background_contrast_min"],
-            3.0,
-        )
-
-    minimum(
-        "terminal day pair",
-        terminal["normal_pair_delta_e_ok"],
-        base.terminal_daylight_minimum_delta_e_ok,
-    )
-    minimum(
-        "terminal transformed pair",
-        terminal["shifted_pair_delta_e_ok"],
-        base.terminal_night_minimum_delta_e_ok,
-    )
-    minimum(
-        "terminal transformed bg contrast", terminal["shifted_background_contrast_bg0_min"], 4.5
-    )
-    maximum("terminal semantic hue error", terminal["normal_semantic_hue_error_max"], 30.0)
-    shipped_terminal_chroma_max = float(
-        np.linalg.norm(srgb_to_oklab(hex_array(base.terminal_colors))[:, 1:], axis=1).max()
-    )
-    maximum(
-        "terminal commanded maximum chroma",
-        terminal["normal_max_chroma"],
-        shipped_terminal_chroma_max + 1e-12,
-    )
-    day_floors = (
-        base.terminal_daylight_minimum_fg_0_delta_e_ok,
-        base.terminal_daylight_minimum_fg_1_delta_e_ok,
-        base.terminal_daylight_minimum_fg_2_delta_e_ok,
-    )
-    night_floors = (
-        base.terminal_night_minimum_fg_0_delta_e_ok,
-        base.terminal_night_minimum_fg_1_delta_e_ok,
-        base.terminal_night_minimum_fg_2_delta_e_ok,
-    )
-    for index, (value, floor) in enumerate(
-        zip(terminal["normal_foreground_clearance_by_role"], day_floors, strict=True)
-    ):
-        minimum(f"terminal day fg_{index} clearance", value, floor)
-    for index, (value, floor) in enumerate(
-        zip(terminal["shifted_foreground_clearance_by_role"], night_floors, strict=True)
-    ):
-        minimum(f"terminal transformed fg_{index} clearance", value, floor)
-
-    minimum("sequential day lightness range", sequential["normal_lightness_range"], 0.5)
-    minimum("sequential transformed lightness range", sequential["shifted_lightness_range"], 0.5)
-    minimum(
-        "sequential day monotonic step", sequential["normal_minimum_signed_lightness_step"], 1e-9
-    )
-    minimum(
-        "sequential transformed monotonic step",
-        sequential["shifted_minimum_signed_lightness_step"],
-        1e-9,
-    )
-    maximum(
-        "sequential day CV",
-        sequential["normal_cv"],
-        max(0.18, sequential_baseline["normal_cv"] + 0.002),
-    )
-    maximum(
-        "sequential transformed CV",
-        sequential["shifted_cv"],
-        max(0.0001, sequential_baseline["shifted_cv"] + 0.00005),
-    )
-    maximum(
-        "sequential day max:min",
-        sequential["normal_max_to_min"],
-        max(1.6, sequential_baseline["normal_max_to_min"] + 0.02),
-    )
-    maximum(
-        "sequential transformed max:min",
-        sequential["shifted_max_to_min"],
-        max(1.001, sequential_baseline["shifted_max_to_min"] + 0.001),
-    )
-    return failures
 
 
 def run_experiment(iterations: dict[str, int] | None = None) -> dict[str, Any]:
