@@ -2488,9 +2488,9 @@
   "evidence": {
     "independent_replay": {
       "file": "raster-verification.json",
-      "sha256": "bd12996c0fb362c80cb11a21d03768f48312f8ce6f15a78bd4efb1c2c74be6bc",
+      "sha256": "00f71456614beab513771d9f11ec0855b153dfe10a4871cb6b854d55f9bd758e",
       "verifier_file": "g1_evidence_verify.py",
-      "verifier_sha256": "f2bbb8064b8f69408543badbe0794d5f7b257287a3ad2ace730d30c3eedf63cf"
+      "verifier_sha256": "271c574d0f39f43490467a5993fcb897fc946df45618b83b8a69b9f5732b0493"
     },
     "raster_ledger": {
       "file": "raster-baseline.json",
@@ -2530,7 +2530,8 @@
     "chromium_version_status": "unavailable-unclaimed",
     "gstack_browse_binary_sha256": "dc055b15f24c3d152032ff1c83fcf600b1b9619f47050998b258c9a4673061af",
     "probe_sha256": "59397374ba89a4e0095c250eabcff2e440abb6add048dc1aea374d12dd69a1a9",
-    "validator_sha256": "21fabcd341f24545a92593a4c86aa7c4ef99157ec82544f49c8a3ca1e62ca1a8"
+    "validator_sha256": "21fabcd341f24545a92593a4c86aa7c4ef99157ec82544f49c8a3ca1e62ca1a8",
+    "validator_source_commit": "98d7ff9183fa91112583fd6fe8a1ed16fa90e157"
   },
   "rgb8_residuals": {
     "mae": 0.02664851,

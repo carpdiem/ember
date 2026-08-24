@@ -37,6 +37,8 @@ TILE_WIDTH = 160
 TILE_HEIGHT = 128
 ATLAS_COLUMNS = 8
 CHUNK_TILES = 128
+DEFAULT_STANDALONE_SENTINELS = 48
+MAX_STANDALONE_SENTINELS = 21_600
 GAINS = np.array([1.0, 0.74, 0.53], dtype=float)
 PATHS = {
     "horizontal": "M16 64 L144 64",
@@ -607,10 +609,28 @@ def _write_error(output_dir: Path, status: str, reason: str) -> dict[str, Any]:
     return result
 
 
-def run_validation(output_dir: Path = HERE, *, standalone_sentinels: int = 8) -> dict[str, Any]:
+def _standalone_sentinel_error(value: object) -> str | None:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, int)
+        or not 1 <= value <= MAX_STANDALONE_SENTINELS
+    ):
+        return (
+            "standalone_sentinels must be an integer in range "
+            f"1..{MAX_STANDALONE_SENTINELS}; got {value!r}"
+        )
+    return None
+
+
+def run_validation(
+    output_dir: Path = HERE, *, standalone_sentinels: int = DEFAULT_STANDALONE_SENTINELS
+) -> dict[str, Any]:
     """Capture the complete approved ledger and write compact factored evidence."""
 
     output_dir = Path(output_dir)
+    sentinel_error = _standalone_sentinel_error(standalone_sentinels)
+    if sentinel_error is not None:
+        return _write_error(output_dir, "ERROR", sentinel_error)
     browse = _browse_binary()
     if browse is None:
         return _write_error(output_dir, "SKIP", "gstack browse binary unavailable")
@@ -1153,7 +1173,16 @@ def run_validation(output_dir: Path = HERE, *, standalone_sentinels: int = 8) ->
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", type=Path, default=HERE)
-    parser.add_argument("--standalone-sentinels", type=int, default=8)
+    parser.add_argument(
+        "--standalone-sentinels",
+        type=int,
+        default=DEFAULT_STANDALONE_SENTINELS,
+        help=(
+            "standalone-vs-batch observations to verify "
+            f"(integer 1..{MAX_STANDALONE_SENTINELS}; default: "
+            f"{DEFAULT_STANDALONE_SENTINELS})"
+        ),
+    )
     arguments = parser.parse_args()
     result = run_validation(
         output_dir=arguments.output_dir, standalone_sentinels=arguments.standalone_sentinels

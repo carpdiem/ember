@@ -7,7 +7,7 @@ The current 3400K Light categorical bank remains byte-frozen at `c4c25e480912f8f
 ## Capture and factoring
 
 - Real Chromium via GStack: 22,320 exact 160×128 tiles in 176 chunks, comprising 720 monochrome masks and 21,600 role/lane colour observations.
-- Each chunk used 128 eager same-origin `srcdoc` iframes and one chained `goto` + `screenshot`; each iframe rasterized at local `(0,0)`. DPR 1 and 2 were captured with screenshot scale equal to DPR.
+- Each chunk used up to 128 eager same-origin `srcdoc` iframes and one chained `goto` + `screenshot`; each iframe rasterized at local `(0,0)`. DPR 1 and 2 were captured with screenshot scale equal to DPR.
 - The 2,160 canonical bases and ten exact role/lane observations reconstruct all 32,400 `planned-N` pair rows. All IDs and dimension mappings independently replayed exactly.
 - Browser time was 75.846 s at 294.282 tiles/s. Total capture, analysis, evidence serialization, and sentinels took 100.476 s (322.466 effective pair rows/s).
 - Eight deterministic standalone-vs-batch observation tiles matched at every retained station.

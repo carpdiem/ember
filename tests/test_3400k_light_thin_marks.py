@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import ast
+import base64
 import hashlib
 import importlib.util
 import itertools
 import json
 import random
 import re
+import shutil
+import subprocess
+import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -43,6 +48,43 @@ def load_module(filename: str, name: str):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
+
+
+def copy_g1_replay_evidence(destination: Path) -> Path:
+    destination.mkdir()
+    for filename in (
+        "baseline.json",
+        "proxy-calibration.json",
+        "raster-baseline.json",
+        "raster-masks.json",
+        "raster-observations.json",
+        "raster-verification.json",
+    ):
+        shutil.copy2(EXPERIMENT / filename, destination / filename)
+    (destination / "review").mkdir()
+    shutil.copy2(
+        EXPERIMENT / "review/g1-browser-probe.html",
+        destination / "review/g1-browser-probe.html",
+    )
+    return destination
+
+
+def run_g1_replay(
+    evidence_dir: Path, *, optimized: bool = False
+) -> subprocess.CompletedProcess[str]:
+    command = [sys.executable]
+    if optimized:
+        command.append("-O")
+    command.extend(
+        [
+            str(EXPERIMENT / "g1_evidence_verify.py"),
+            "--evidence-dir",
+            str(evidence_dir),
+            "--output",
+            str(evidence_dir / "verification-output.json"),
+        ]
+    )
+    return subprocess.run(command, capture_output=True, text=True, timeout=180, check=False)
 
 
 def test_frozen_baseline_is_exact_schema_14_payload() -> None:
@@ -763,6 +805,119 @@ def test_g1_browser_evidence_hashes_and_independent_replay_are_fresh(tmp_path: P
     assert replayed["planned_id_mapping_rows_verified"] == 32_400
 
 
+def test_g1_report_capture_chunks_are_consistent() -> None:
+    calibration = json.loads((EXPERIMENT / "proxy-calibration.json").read_text())
+    capture = calibration["capture"]
+    dpr_count = len(capture["dpr"])
+    assert capture["mask_tiles"] % dpr_count == 0
+    assert capture["color_tiles"] % dpr_count == 0
+    chunk_sizes = [
+        min(capture["chunk_tiles"], tile_count - start)
+        for tile_count in (
+            *([capture["mask_tiles"] // dpr_count] * dpr_count),
+            *([capture["color_tiles"] // dpr_count] * dpr_count),
+        )
+        for start in range(0, tile_count, capture["chunk_tiles"])
+    ]
+    assert sum(chunk_sizes) == capture["total_tiles"] == 22_320
+    assert max(chunk_sizes) <= 128
+    assert len(chunk_sizes) == capture["chunks"] == 176
+    assert sorted(size for size in chunk_sizes if size < 128) == [48, 48, 104, 104]
+
+    report_line = next(
+        line
+        for line in (EXPERIMENT / "G1-REPORT.md").read_text().splitlines()
+        if line.startswith("- Each chunk used")
+    )
+    assert report_line == (
+        "- Each chunk used up to 128 eager same-origin `srcdoc` iframes and one chained "
+        "`goto` + `screenshot`; each iframe rasterized at local `(0,0)`. DPR 1 and 2 were "
+        "captured with screenshot scale equal to DPR."
+    )
+
+
+def test_g1_verifier_has_no_optimization_sensitive_asserts() -> None:
+    tree = ast.parse((EXPERIMENT / "g1_evidence_verify.py").read_text())
+    assert not [node for node in ast.walk(tree) if isinstance(node, ast.Assert)]
+
+
+def test_g1_verifier_rejects_corrupted_observation_with_and_without_optimization(
+    tmp_path: Path,
+) -> None:
+    evidence = copy_g1_replay_evidence(tmp_path / "corrupted-observation")
+    observations_path = evidence / "raster-observations.json"
+    observations = json.loads(observations_path.read_text())
+    record = observations["observations"][0]
+    observed = np.frombuffer(
+        base64.b64decode(record["observed_rgb8_base64"]), dtype=np.uint8
+    ).copy()
+    observed[::3] = np.where(observed[::3] == 255, 254, observed[::3] + 1)
+    record["observed_rgb8_base64"] = base64.b64encode(observed.tobytes()).decode("ascii")
+    record["observed_rgb8_median"] = np.median(observed.reshape(-1, 3), axis=0).tolist()
+    observations_path.write_text(json.dumps(observations, separators=(",", ":")) + "\n")
+
+    observation_hash = hashlib.sha256(observations_path.read_bytes()).hexdigest()
+    raster_path = evidence / "raster-baseline.json"
+    raster = json.loads(raster_path.read_text())
+    raster["evidence"]["raster_observations_sha256"] = observation_hash
+    raster_path.write_text(json.dumps(raster, separators=(",", ":")) + "\n")
+    raster_hash = hashlib.sha256(raster_path.read_bytes()).hexdigest()
+
+    receipt_path = evidence / "raster-verification.json"
+    receipt = json.loads(receipt_path.read_text())
+    receipt["provenance"]["raster_observations_sha256"] = observation_hash
+    receipt["provenance"]["raster_ledger_sha256"] = raster_hash
+    receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+
+    proxy_path = evidence / "proxy-calibration.json"
+    proxy = json.loads(proxy_path.read_text())
+    proxy["evidence"]["raster_observations"]["sha256"] = observation_hash
+    proxy["evidence"]["raster_ledger"]["sha256"] = raster_hash
+    proxy["evidence"]["independent_replay"]["sha256"] = hashlib.sha256(
+        receipt_path.read_bytes()
+    ).hexdigest()
+    proxy_path.write_text(json.dumps(proxy, indent=2, sort_keys=True) + "\n")
+
+    for optimized in (False, True):
+        completed = run_g1_replay(evidence, optimized=optimized)
+        assert completed.returncode != 0, completed.stdout + completed.stderr
+        assert "ERROR:" in completed.stderr
+
+
+def test_g1_verifier_rejects_corrupted_acceptance_and_replay_receipt(tmp_path: Path) -> None:
+    acceptance_evidence = copy_g1_replay_evidence(tmp_path / "corrupted-acceptance")
+    proxy_path = acceptance_evidence / "proxy-calibration.json"
+    proxy = json.loads(proxy_path.read_text())
+    proxy["acceptance"]["global_pooled_mae_delta_e_ok"] += 0.1
+    proxy_path.write_text(json.dumps(proxy, indent=2, sort_keys=True) + "\n")
+    completed = run_g1_replay(acceptance_evidence)
+    assert completed.returncode != 0
+    assert "acceptance aggregate" in completed.stderr
+
+    receipt_evidence = copy_g1_replay_evidence(tmp_path / "corrupted-receipt")
+    receipt_path = receipt_evidence / "raster-verification.json"
+    receipt = json.loads(receipt_path.read_text())
+    receipt["pair_rows_replayed"] -= 1
+    receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n")
+    proxy_path = receipt_evidence / "proxy-calibration.json"
+    proxy = json.loads(proxy_path.read_text())
+    proxy["evidence"]["independent_replay"]["sha256"] = hashlib.sha256(
+        receipt_path.read_bytes()
+    ).hexdigest()
+    proxy_path.write_text(json.dumps(proxy, indent=2, sort_keys=True) + "\n")
+    completed = run_g1_replay(receipt_evidence)
+    assert completed.returncode != 0
+    assert "independent replay receipt content" in completed.stderr
+
+
+def test_g1_verifier_valid_evidence_passes_with_and_without_optimization(tmp_path: Path) -> None:
+    evidence = copy_g1_replay_evidence(tmp_path / "valid")
+    for optimized in (False, True):
+        completed = run_g1_replay(evidence, optimized=optimized)
+        assert completed.returncode == 0, completed.stdout + completed.stderr
+        assert json.loads(completed.stdout)["status"] == "PASS"
+
+
 def test_g1_core_outputs_are_byte_deterministic(tmp_path: Path) -> None:
     g1 = load_module("g1_harness.py", "thin_marks_g1_determinism")
     g1.build_core_outputs(tmp_path)
@@ -789,6 +944,46 @@ def test_g1_browser_missing_is_skip_but_runtime_failure_is_error(
     failed_probe = browser.run_validation(output_dir=tmp_path)
     assert failed_probe["status"] == "ERROR"
     assert "runtime/probe failure" in failed_probe["reason"]
+
+
+def test_g1_standalone_sentinel_count_is_bounded_at_api_and_cli(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    browser = load_module("g1_browser_validate.py", "thin_marks_g1_sentinel_bounds")
+    assert browser.DEFAULT_STANDALONE_SENTINELS == 48
+    monkeypatch.setenv("GSTACK_BROWSE", str(tmp_path / "missing"))
+
+    for invalid in (0, -1, browser.MAX_STANDALONE_SENTINELS + 1, 1.5, True):
+        output = tmp_path / f"api-{invalid}"
+        result = browser.run_validation(output_dir=output, standalone_sentinels=invalid)
+        assert result["status"] == "ERROR"
+        assert "standalone_sentinels must be an integer in range" in result["reason"]
+
+    assert (
+        browser.run_validation(output_dir=tmp_path / "valid", standalone_sentinels=1)["status"]
+        == "SKIP"
+    )
+
+    for invalid in ("0", "-1", str(browser.MAX_STANDALONE_SENTINELS + 1)):
+        output = tmp_path / f"cli-{invalid}"
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(EXPERIMENT / "g1_browser_validate.py"),
+                "--output-dir",
+                str(output),
+                "--standalone-sentinels",
+                invalid,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+            env={"GSTACK_BROWSE": str(tmp_path / "missing")},
+        )
+        assert completed.returncode != 0
+        assert json.loads(completed.stdout)["status"] == "ERROR"
+        assert "standalone_sentinels must be an integer in range" in completed.stdout
 
 
 def test_g1_changed_role_observation_changes_reconstructed_pair() -> None:
