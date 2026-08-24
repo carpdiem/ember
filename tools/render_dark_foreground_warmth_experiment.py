@@ -325,6 +325,38 @@ def metrics_markdown(data: dict[str, Any], computed: dict[str, dict[str, dict[st
     return "\n".join(lines)
 
 
+def dependent_frontiers_html(data: dict[str, Any]) -> str:
+    rows = []
+    for profile in PROFILE_SLUGS:
+        for lane in LANES:
+            record = data["profiles"][profile]["lanes"][lane]
+            frontier = "; ".join(
+                f"N={entry['count']}: {entry['sampled_grid_pair_cam16_ucs']:.2f} "
+                f"({'pass' if entry['passes'] else 'blocked'})"
+                for entry in record["categorical_frontier"]
+            )
+            terminal = record["terminal_metrics"]
+            sequential = record["sequential_metrics"]
+            rows.append(
+                "<tr>"
+                f"<th>{escape(data['profiles'][profile]['name'])}</th>"
+                f"<td>{escape(LANE_LABELS[lane][0])}</td>"
+                f"<td>{escape(frontier)}</td>"
+                f"<td>{terminal['sampled_gain_pair_min_cam16_ucs']:.2f}</td>"
+                f"<td>{terminal['sampled_gain_foreground_clearance_min_cam16_ucs']:.2f}</td>"
+                f"<td>{sequential['transformed_cam16_cv']:.4f}</td>"
+                f"<td>{sequential['normal_cv']:.3f}</td>"
+                "</tr>"
+            )
+    return (
+        '<div class="table-scroll"><table class="metrics dependent-metrics"><thead><tr>'
+        "<th>Profile</th><th>Lane</th><th>Categorical capacity frontier</th>"
+        "<th>Terminal pair</th><th>Terminal↔fg</th>"
+        "<th>Sequential transformed CV</th><th>Commanded CV</th>"
+        f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>"
+    )
+
+
 def swatches(values: list[str], kind: str) -> str:
     return "".join(
         f'<span class="swatch {kind}-{index + 1}"><code>{value}</code></span>'
@@ -564,9 +596,10 @@ def render_html(data: dict[str, Any]) -> str:
 @media(max-width:680px){{.topbar{{position:static;display:flex;flex-direction:column;align-items:stretch}}.control{{display:grid;overflow:visible}}.control[aria-label="Profile"]{{grid-template-columns:repeat(3,1fr)}}.control[aria-label="Display state"]{{grid-template-columns:repeat(2,1fr)}}.control[aria-label="Candidate focus"]{{grid-template-columns:repeat(2,1fr)}}.control button{{min-width:0;white-space:normal}}.truth-grid,.candidate-grid{{grid-template-columns:1fr}}.intro h2{{font-size:2.4rem}}.proof{{padding:.9rem .55rem}}.metrics-section{{padding:1rem .55rem}}.card-head{{align-items:start;flex-direction:column}}.status{{justify-content:flex-start}}.surface{{height:56px}}.surface code{{font-size:.38rem}}.bank{{grid-template-columns:1fr}}.editorial,.terminal,.dashboard,.sequence-proof,figure{{margin:.45rem}}.dash-grid{{grid-template-columns:1fr}}.chart,.events,.controls{{grid-column:auto}}form{{grid-template-columns:1fr}}form button{{grid-column:auto}}.status-table{{width:100%;font-size:.58rem}}.status-table th,.status-table td{{padding:.3rem}}}}
 @media(prefers-reduced-motion:reduce){{*{{animation:none!important;scroll-behavior:auto!important}}}}
 </style></head><body data-profile="3400k-dark" data-state="commanded" data-focus="all">
-<header class="topbar"><div class="brand"><h1>EMBER · DARK FOREGROUND WARMTH</h1><p>Fourth pass · transformed-first · two-lane exact-Hex8 study</p></div><div class="control" role="group" aria-label="Profile">{profile_buttons}</div><div class="control" role="group" aria-label="Display state"><button type="button" data-state-button="commanded" aria-pressed="true">Commanded</button><button type="button" data-state-button="simulated" aria-pressed="false">Exact simulated</button></div><div class="control" role="group" aria-label="Candidate focus">{focus_buttons}</div></header>
-<main><section class="intro"><p class="eyebrow">BRANCH EXPERIMENT · NOT CANONICAL · NO SINGLE SCALAR WINNER</p><h2>Design the seen state first</h2><p>Design the seen state first: even transformed distinctness binds before commanded warmth; leftover exact-Hex8 freedom buys the halfway hue step for ink and surfaces. This fourth pass compares every shipped dark profile under two commanded philosophies: current keeps each shipped palette verbatim, and halfway moves ink <em>and</em> surfaces 50% of the way to the 3400K Light Mid-Depth warmth step. The optimizer scores candidates only after exact Hex8 quantization: transformed adjacent ΔE, uniformity, span, and text contrast are hard gates, while surface count (3–6), leftover byte freedom, warmth closeness, and chroma compete as soft objectives. Dependent categorical, terminal, and sequential banks are re-searched against each lane's exact selected system.</p><div class="truth-grid"><article class="truth-card"><h3>Transformed distinctness binds first</h3><p>Adjacent ΔE ≥ 2.5, a uniformity ratio ≤ 1.6, span ≥ 6.0, and text contrast floors gate every candidate before any warmth objective is scored.</p></article><article class="truth-card"><h3>Variable surface count</h3><p>The halfway lane may keep 4, 5, or 6 surfaces. Leftover exact-Hex8 freedom is spent on the hue step; the chosen count per profile is serialized with its search provenance.</p></article><article class="truth-card"><h3>Honest badges, recomputed here</h3><p>This page recomputes Distinctness and Universal text badges from the published Hex8 values — no release-status field is trusted from upstream.</p></article></div><table class="status-table"><thead><tr><th>Profile</th><th>Current</th><th>Halfway</th></tr></thead><tbody>{statuses}</tbody></table></section>
-<section class="metrics-section" id="metrics"><p class="eyebrow">COMBINED METRICS · BEST WITHIN EACH PROFILE ONLY</p><h2>Competing directions, no scalar winner</h2><p class="metrics-note">Rows are Pareto-ranked: transformed usability first, then commanded warmth. Every value is recomputed from the serialized Hex8 records. <u>Underline</u> marks the best-performing lane(s) per profile for that metric (bold in the README markdown); passing a floor alone is never underlined.</p>{metrics_html(data, computed)}</section>{"".join(sections)}</main><footer class="footer">Exact values: transformed-first-results.json · Reproducible search: search_transformed_first.py · Promotion requires a separate canonical pass.</footer>
+<header class="topbar"><div class="brand"><h1>EMBER · DARK FOREGROUND WARMTH</h1><p>Fifth pass · frozen system · dependent-bank CAM16-UCS redesign</p></div><div class="control" role="group" aria-label="Profile">{profile_buttons}</div><div class="control" role="group" aria-label="Display state"><button type="button" data-state-button="commanded" aria-pressed="true">Commanded</button><button type="button" data-state-button="simulated" aria-pressed="false">Exact simulated</button></div><div class="control" role="group" aria-label="Candidate focus">{focus_buttons}</div></header>
+<main><section class="intro"><p class="eyebrow">BRANCH EXPERIMENT · NOT CANONICAL · BG/FG BYTE-LOCKED</p><h2>Optimize around the approved system</h2><p>This fifth pass freezes every current and halfway background count, surface, and foreground at SHA <code>{escape(data["frozen_system"]["sha256"][:12])}</code>. Only categorical data colors, terminal semantic accents, and canonical float sequential ramps may move. Commanded maturity stays in Oklab; transformed pair and foreground clearance use the same flare-aware CAM16-UCS model as the approved surface system; WCAG remains an independent legibility gate.</p><div class="truth-grid"><article class="truth-card"><h3>Categorical capacity is a frontier</h3><p>Each profile tests its shipped count plus up to two larger banks with de novo transformed-maximin seeds. Extra capacity is adopted only with release margin; blocked counts remain visible evidence.</p></article><article class="truth-card"><h3>Terminal roles stay semantic</h3><p>Authored ANSI roles keep explicit hue and alias contracts. Every selected bank passes transformed WCAG, individual-role separation, maturity, and fixed-foreground clearance gates.</p></article><article class="truth-card"><h3>Sequential floats are canonical</h3><p>The approved commanded trajectory is resampled by transformed CAM16-UCS arc length. The 256 float samples carry the uniformity claim; six Hex8 anchors are preview exports.</p></article></div><table class="status-table"><thead><tr><th>Profile</th><th>Current</th><th>Halfway</th></tr></thead><tbody>{statuses}</tbody></table></section>
+<section class="metrics-section" id="dependent-frontiers"><p class="eyebrow">DEPENDENT-BANK OUTCOMES · SAMPLED-GRID CAM16-UCS</p><h2>Capacity, semantics, and scalar uniformity</h2><p class="metrics-note">Categorical counts report their sampled-gain minimum pair distance and pass/block state. Terminal columns show the selected bank's sampled-gain minimum pair and foreground clearance. Sequential CV is measured on canonical float samples, not the Hex8 preview anchors.</p>{dependent_frontiers_html(data)}</section>
+<section class="metrics-section" id="metrics"><p class="eyebrow">FROZEN SYSTEM METRICS · BEST WITHIN EACH PROFILE ONLY</p><h2>The backgrounds and foregrounds did not move</h2><p class="metrics-note">Every value below is recomputed from the frozen system bytes. <u>Underline</u> marks the best-performing lane(s) per profile for that metric (bold in the README markdown); passing a floor alone is never underlined.</p>{metrics_html(data, computed)}</section>{"".join(sections)}</main><footer class="footer">Exact values: transformed-first-results.json · Reproducible search: search_transformed_first.py · Promotion requires a separate canonical pass.</footer>
 <script>
 const body=document.body,params=new URLSearchParams(location.search);
 const canSync=location.protocol==='http:'||location.protocol==='https:';
