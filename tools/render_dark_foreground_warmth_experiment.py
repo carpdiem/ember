@@ -357,6 +357,8 @@ def dependent_frontiers_html(data: dict[str, Any]) -> str:
                 f"<td>{terminal['sampled_gain_foreground_clearance_min_cam16_ucs']:.2f}</td>"
                 f"<td>{sequential['transformed_cam16_cv']:.4f}</td>"
                 f"<td>{sequential['normal_cv']:.3f}</td>"
+                f"<td>{sequential['sampled_gain_cv_max']:.3f}</td>"
+                f"<td>{sequential['sampled_gain_max_to_min_max']:.2f}</td>"
                 "</tr>"
             )
     return (
@@ -364,6 +366,7 @@ def dependent_frontiers_html(data: dict[str, Any]) -> str:
         "<th>Profile</th><th>Lane</th><th>Categorical capacity frontier</th>"
         "<th>Terminal pair</th><th>Terminal↔fg</th>"
         "<th>Sequential transformed CV</th><th>Commanded CV</th>"
+        "<th>Sampled-gain CV max</th><th>Sampled-gain max:min</th>"
         f"</tr></thead><tbody>{''.join(rows)}</tbody></table></div>"
     )
 
@@ -435,7 +438,10 @@ def anatomy(slug: str, lane: str, record: dict[str, Any], metrics: dict[str, flo
     provenance.append(
         escape(
             f"sequential canonical float ramp: transformed CAM16-UCS CV "
-            f"{sequential_metrics['transformed_cam16_cv']:.4f}; {target_note}"
+            f"{sequential_metrics['transformed_cam16_cv']:.4f}; commanded CV "
+            f"{sequential_metrics['normal_cv']:.4f}; sampled-gain CV max "
+            f"{sequential_metrics['sampled_gain_cv_max']:.4f}; weight "
+            f"{sequential_metrics['transformed_arc_weight']:.2f}; {target_note}"
         )
     )
     details = "".join(f"<li>{item}</li>" for item in provenance)
@@ -621,7 +627,7 @@ def render_html(data: dict[str, Any]) -> str:
 @media(prefers-reduced-motion:reduce){{*{{animation:none!important;scroll-behavior:auto!important}}}}
 </style></head><body data-profile="3400k-dark" data-state="commanded" data-focus="all">
 <header class="topbar"><div class="brand"><h1>EMBER · DARK FOREGROUND WARMTH</h1><p>Fifth pass · frozen system · dependent-bank CAM16-UCS redesign</p></div><div class="control" role="group" aria-label="Profile">{profile_buttons}</div><div class="control" role="group" aria-label="Display state"><button type="button" data-state-button="commanded" aria-pressed="true">Commanded</button><button type="button" data-state-button="simulated" aria-pressed="false">Exact simulated</button></div><div class="control" role="group" aria-label="Candidate focus">{focus_buttons}</div></header>
-<main><section class="intro"><p class="eyebrow">BRANCH EXPERIMENT · NOT CANONICAL · BG/FG BYTE-LOCKED</p><h2>Optimize around the approved system</h2><p>This fifth pass freezes every current and halfway background count, surface, and foreground at SHA <code>{escape(data["frozen_system"]["sha256"][:12])}</code>. Only categorical data colors, terminal semantic accents, and canonical float sequential ramps may move. Commanded maturity stays in Oklab; transformed pair and foreground clearance use the same flare-aware CAM16-UCS model as the approved surface system; WCAG remains an independent legibility gate.</p><div class="truth-grid"><article class="truth-card"><h3>Categorical capacity and order are frontiers</h3><p>Each profile tests its shipped count plus up to two larger banks. The selected colors are then ordered as a paired current/halfway prefix-maximin sequence: strongest canvas contrast first, then farthest transformed identities.</p></article><article class="truth-card"><h3>Terminal roles stay semantic</h3><p>Authored ANSI roles keep explicit hue and alias contracts. Every selected bank passes transformed WCAG, individual-role separation, maturity, and fixed-foreground clearance gates.</p></article><article class="truth-card"><h3>Sequential floats are canonical</h3><p>The approved commanded trajectory is resampled by transformed CAM16-UCS arc length. The 256 float samples carry the uniformity claim; six Hex8 anchors are preview exports.</p></article></div><table class="status-table"><thead><tr><th>Profile</th><th>Current</th><th>Halfway</th></tr></thead><tbody>{statuses}</tbody></table></section>
+<main><section class="intro"><p class="eyebrow">BRANCH EXPERIMENT · NOT CANONICAL · BG/FG BYTE-LOCKED</p><h2>Optimize around the approved system</h2><p>This fifth pass freezes every current and halfway background count, surface, and foreground at SHA <code>{escape(data["frozen_system"]["sha256"][:12])}</code>. Only categorical data colors, terminal semantic accents, and canonical float sequential ramps may move. Commanded maturity stays in Oklab; transformed pair and foreground clearance use the same flare-aware CAM16-UCS model as the approved surface system; WCAG remains an independent legibility gate.</p><div class="truth-grid"><article class="truth-card"><h3>Categorical capacity and order are frontiers</h3><p>Each profile tests its shipped count plus up to two larger banks. The selected colors are then ordered as a paired current/halfway prefix-maximin sequence: strongest canvas contrast first, then farthest transformed identities.</p></article><article class="truth-card"><h3>Terminal roles stay semantic</h3><p>Authored ANSI roles keep explicit hue and alias contracts. Every selected bank passes transformed WCAG, individual-role separation, maturity, and fixed-foreground clearance gates.</p></article><article class="truth-card"><h3>Sequential optimization is profile-specific</h3><p>3400K and 2000K stop at perceptually sufficient transformed CV and spend the remaining freedom on commanded uniformity. 1200K minimizes worst sampled-gain CV. Every canonical float stays inside the approved chroma path; six Hex8 anchors are previews.</p></article></div><table class="status-table"><thead><tr><th>Profile</th><th>Current</th><th>Halfway</th></tr></thead><tbody>{statuses}</tbody></table></section>
 <section class="metrics-section" id="dependent-frontiers"><p class="eyebrow">DEPENDENT-BANK OUTCOMES · SAMPLED-GRID CAM16-UCS</p><h2>Capacity, semantics, and scalar uniformity</h2><p class="metrics-note">Categorical counts report their sampled-gain minimum pair distance and pass/block state. Terminal columns show the selected bank's sampled-gain minimum pair and foreground clearance. Sequential CV is measured on canonical float samples, not the Hex8 preview anchors.</p>{dependent_frontiers_html(data)}</section>
 <section class="metrics-section" id="metrics"><p class="eyebrow">FROZEN SYSTEM METRICS · BEST WITHIN EACH PROFILE ONLY</p><h2>The backgrounds and foregrounds did not move</h2><p class="metrics-note">Every value below is recomputed from the frozen system bytes. <u>Underline</u> marks the best-performing lane(s) per profile for that metric (bold in the README markdown); passing a floor alone is never underlined.</p>{metrics_html(data, computed)}</section>{"".join(sections)}</main><footer class="footer">Exact values: transformed-first-results.json · Reproducible search: search_transformed_first.py · Promotion requires a separate canonical pass.</footer>
 <script>
@@ -701,9 +707,10 @@ def dependent_frontiers_markdown(data: dict[str, Any]) -> str:
     lines = [
         (
             "| Profile | Lane | Categorical frontier (N: sampled-grid CAM16 pair / status) | "
-            "Terminal sampled-grid pair | Sequential CAM16 CV |"
+            "Terminal sampled-grid pair | Sequential transformed CV | Commanded CV | "
+            "Sampled-gain CV max | Sampled-gain max:min |"
         ),
-        "|---|---|---|---:|---:|",
+        "|---|---|---|---:|---:|---:|---:|---:|",
     ]
     for profile in PROFILE_SLUGS:
         for lane in LANES:
@@ -727,7 +734,10 @@ def dependent_frontiers_markdown(data: dict[str, Any]) -> str:
             lines.append(
                 f"| {profile} | {LANE_LABELS[lane][0]} | {frontier} | "
                 f"{record['terminal_metrics']['sampled_gain_pair_min_cam16_ucs']:.2f} | "
-                f"{record['sequential_metrics']['transformed_cam16_cv']:.4f} |"
+                f"{record['sequential_metrics']['transformed_cam16_cv']:.4f} | "
+                f"{record['sequential_metrics']['normal_cv']:.4f} | "
+                f"{record['sequential_metrics']['sampled_gain_cv_max']:.4f} | "
+                f"{record['sequential_metrics']['sampled_gain_max_to_min_max']:.2f} |"
             )
     return "\n".join(lines)
 

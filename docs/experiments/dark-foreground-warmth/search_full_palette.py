@@ -82,6 +82,8 @@ SEQUENTIAL_PLOT_CANVAS_ROLE = "bg_0"
 SEQUENTIAL_COMMANDED_CV_CEILING = 0.18
 SEQUENTIAL_TRANSFORMED_CV_TARGET = 0.05
 SEQUENTIAL_TRANSFORMED_CV_CEILING = 0.12
+SEQUENTIAL_SAMPLED_GAIN_CV_CEILING = 0.10
+SEQUENTIAL_1200_NOMINAL_CV_CEILING = 0.10
 TERMINAL_CHROMA_CEILINGS = {
     # Absolute maturity ceiling: permits modest redistribution above each
     # shipped bank's 0.115–0.118 maximum without admitting candy-like fronts.
@@ -739,16 +741,37 @@ def construct_sequential(
     monotone = np.concatenate(([True], np.diff(np.maximum.accumulate(dense_ucs[:, 0])) > 1e-12))
     monotone[-1] = True
     dense_lab = dense_lab[monotone]
+    dense_rgb = dense_rgb[monotone]
     dense_ucs = dense_ucs[monotone]
     day_steps = np.linalg.norm(np.diff(dense_lab, axis=0), axis=1)
     transformed_steps = np.linalg.norm(np.diff(dense_ucs, axis=0), axis=1)
+    transformed_norm = transformed_steps / max(float(transformed_steps.mean()), 1e-12)
+    day_norm = day_steps / max(float(day_steps.mean()), 1e-12)
+    sampled_step_norms = []
+    for sampled_gains in sampled_gain_grid(base.profile.gains):
+        sampled_ucs = cam16_ucs(dense_rgb, sampled_gains)
+        sampled_steps = np.linalg.norm(np.diff(sampled_ucs, axis=0), axis=1)
+        sampled_step_norms.append(sampled_steps / max(float(sampled_steps.mean()), 1e-12))
+    sampled_step_norms = np.asarray(sampled_step_norms)
+    if base.slug == "1200k-dark":
+        transformed_reference = (
+            sampled_step_norms.min(axis=0) + sampled_step_norms.max(axis=0)
+        ) / 2.0
+        selection_policy = (
+            "minimize worst sampled-gain transformed CV; transformed nominal CV <= 0.10; "
+            "commanded CV <= 0.18"
+        )
+    else:
+        transformed_reference = transformed_norm
+        selection_policy = (
+            "transformed perceptual sufficiency CV <= 0.05; then minimize commanded CV; "
+            "sampled-gain CV <= 0.10"
+        )
 
-    chosen_weight = None
-    chosen_sequence = None
-    for transformed_weight in np.linspace(1.0, 0.0, 21):
-        transformed_norm = transformed_steps / max(float(transformed_steps.mean()), 1e-12)
-        day_norm = day_steps / max(float(day_steps.mean()), 1e-12)
-        blended = transformed_weight * transformed_norm + (1.0 - transformed_weight) * day_norm
+    path_chroma = np.linalg.norm(dense_lab[:, 1:], axis=1)
+    candidates = []
+    for transformed_weight in np.linspace(0.0, 1.0, 101):
+        blended = transformed_weight * transformed_reference + (1.0 - transformed_weight) * day_norm
         distance = np.concatenate(([0.0], np.cumsum(blended)))
         targets = np.linspace(0.0, float(distance[-1]), count)
         upper = np.clip(np.searchsorted(distance, targets, side="left"), 1, len(dense_lab) - 1)
@@ -763,25 +786,76 @@ def construct_sequential(
         sampled_lab = dense_lab[lower] * (1.0 - fraction) + dense_lab[upper] * fraction
         sequence = np.clip(oklab_to_srgb(sampled_lab), 0.0, 1.0)
         metrics, sequence = sequential_metrics(base, sequence)
-        if (
-            metrics["normal_cv"] <= SEQUENTIAL_COMMANDED_CV_CEILING + 1e-12
-            and metrics["transformed_minimum_signed_j_step"] > 0.0
-        ):
-            chosen_weight = float(transformed_weight)
-            chosen_sequence = sequence
-            break
-    if chosen_sequence is None or chosen_weight is None:
+        sequence_chroma = np.linalg.norm(srgb_to_oklab(sequence)[:, 1:], axis=1)
+        if metrics["normal_cv"] > SEQUENTIAL_COMMANDED_CV_CEILING + 1e-12:
+            continue
+        if metrics["transformed_minimum_signed_j_step"] <= 0.0:
+            continue
+        if metrics["sampled_gain_minimum_signed_j_step"] <= 0.0:
+            continue
+        if float(sequence_chroma.max()) > float(path_chroma.max()) + 1e-6:
+            continue
+        if float(sequence_chroma.min()) < float(path_chroma.min()) - 1e-6:
+            continue
+        if base.slug == "1200k-dark":
+            if metrics["transformed_cam16_cv"] > SEQUENTIAL_1200_NOMINAL_CV_CEILING + 1e-12:
+                continue
+            key = (
+                metrics["sampled_gain_cv_max"],
+                metrics["sampled_gain_max_to_min_max"],
+                metrics["transformed_cam16_cv"],
+                metrics["normal_cv"],
+            )
+        else:
+            if metrics["transformed_cam16_cv"] > SEQUENTIAL_TRANSFORMED_CV_TARGET + 1e-12:
+                continue
+            if metrics["sampled_gain_cv_max"] > SEQUENTIAL_SAMPLED_GAIN_CV_CEILING + 1e-12:
+                continue
+            key = (
+                metrics["normal_cv"],
+                metrics["sampled_gain_cv_max"],
+                metrics["transformed_cam16_cv"],
+                -float(transformed_weight),
+            )
+        candidates.append(
+            (
+                key,
+                float(transformed_weight),
+                sequence,
+                metrics,
+                sequence_chroma,
+            )
+        )
+    if not candidates:
         raise RuntimeError(f"no monotone constructive sequential ramp for {base.slug}")
+    _, chosen_weight, chosen_sequence, metrics, sequence_chroma = min(
+        candidates, key=lambda row: row[0]
+    )
     anchors = tuple(
         srgb_to_hex(chosen_sequence[index])
         for index in np.rint(np.linspace(0, count - 1, 6)).astype(int)
     )
     metrics, chosen_sequence = sequential_metrics(base, chosen_sequence)
     provenance = {
-        "construction": "approved commanded OkLCh trajectory; equal blended arc-length resampling",
+        "construction": (
+            "approved commanded OkLCh trajectory; profile-specific nominal/robust "
+            "transformed arc-length resampling"
+        ),
         "transformed_arc_weight": chosen_weight,
+        "selection_policy": selection_policy,
+        "transformed_reference": (
+            "sampled-gain normalized-step midrange"
+            if base.slug == "1200k-dark"
+            else "nominal transformed CAM16-UCS arc length"
+        ),
         "canonical_samples": count,
         "anchors_are_hex8_preview_exports": True,
+        "approved_path_chroma_min": float(path_chroma.min()),
+        "approved_path_chroma_max": float(path_chroma.max()),
+        "canonical_chroma_min": float(sequence_chroma.min()),
+        "canonical_chroma_mean": float(sequence_chroma.mean()),
+        "canonical_chroma_max": float(sequence_chroma.max()),
+        "chroma_envelope_preserved": True,
         "transformed_cam16_cv_target": SEQUENTIAL_TRANSFORMED_CV_TARGET,
         "transformed_cam16_cv_target_met": (
             metrics["transformed_cam16_cv"] <= SEQUENTIAL_TRANSFORMED_CV_TARGET
@@ -789,7 +863,10 @@ def construct_sequential(
         "target_deviation_reason": (
             None
             if metrics["transformed_cam16_cv"] <= SEQUENTIAL_TRANSFORMED_CV_TARGET
-            else "blended away from pure transformed arc length to keep commanded CV <= 0.18"
+            else (
+                "1200K minimizes sampled-gain CV under transformed nominal CV <= 0.10 "
+                "and commanded CV <= 0.18"
+            )
         ),
     }
     return chosen_sequence, anchors, {**metrics, **provenance}

@@ -30,9 +30,7 @@ TRANSFORMED_ADJACENT_FLOOR = 2.5
 TRANSFORMED_UNIFORMITY_RATIO = 1.7
 FROZEN_SYSTEM_SHA256 = "1758d76fe90334201efed49fc3f9cb791aa95f5f358eac840facf78ef492ef13"
 FROZEN_CATEGORICAL_SET_SHA256 = "3cef5e1cbb615ba1e29060b3a63bf322736df03abb11d5bfc969d594d583a059"
-FROZEN_NONCATEGORICAL_DEPENDENT_SHA256 = (
-    "308962524a6aa54f84267617aa38776e7fc5e0615151d57f432a7684097e24cf"
-)
+FROZEN_TERMINAL_SHA256 = "1a005af88f35c4b810d4ebad0898a0a4353628e240f03d48d9204d2a8af91f8c"
 EXPECTED_CATEGORICAL_PERMUTATIONS = {
     "3400k-dark": [1, 2, 4, 0, 3, 5],
     "2000k-dark": [1, 0, 3, 2],
@@ -237,20 +235,13 @@ def test_categorical_ordering_changes_only_slot_order() -> None:
         slug: {lane: sorted(record["categorical"]) for lane, record in profile["lanes"].items()}
         for slug, profile in data["profiles"].items()
     }
-    noncategorical = {
-        slug: {
-            lane: {
-                "terminal": record["terminal"],
-                "sequential_anchors": record["sequential_anchors"],
-                "continuous_float_srgb": record["continuous_float_srgb"],
-            }
-            for lane, record in profile["lanes"].items()
-        }
+    terminal = {
+        slug: {lane: record["terminal"] for lane, record in profile["lanes"].items()}
         for slug, profile in data["profiles"].items()
     }
     for payload, expected in (
         (categorical_sets, FROZEN_CATEGORICAL_SET_SHA256),
-        (noncategorical, FROZEN_NONCATEGORICAL_DEPENDENT_SHA256),
+        (terminal, FROZEN_TERMINAL_SHA256),
     ):
         serialized = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
         assert hashlib.sha256(serialized).hexdigest() == expected
@@ -265,6 +256,34 @@ def test_categorical_ordering_changes_only_slot_order() -> None:
             record["categorical_ordering"]["stable_across_lanes"]
             for record in profile["lanes"].values()
         )
+
+
+def test_profile_specific_sequential_optimization_contracts() -> None:
+    data = load()
+    expected_weights = {
+        "3400k-dark": 0.53,
+        "2000k-dark": 0.72,
+        "1200k-dark": 0.62,
+    }
+    for slug, profile in data["profiles"].items():
+        current = profile["lanes"]["current"]
+        halfway = profile["lanes"]["halfway"]
+        assert current["continuous_float_srgb"] == halfway["continuous_float_srgb"]
+        assert current["sequential_anchors"] == halfway["sequential_anchors"]
+        metrics = halfway["sequential_metrics"]
+        assert metrics["transformed_arc_weight"] == expected_weights[slug]
+        assert metrics["normal_cv"] <= 0.18 + 1e-12
+        assert metrics["sampled_gain_minimum_signed_j_step"] > 0.0
+        assert metrics["chroma_envelope_preserved"]
+        assert metrics["canonical_chroma_min"] >= metrics["approved_path_chroma_min"] - 1e-6
+        assert metrics["canonical_chroma_max"] <= metrics["approved_path_chroma_max"] + 1e-6
+        if slug == "1200k-dark":
+            assert metrics["transformed_cam16_cv"] <= 0.10 + 1e-12
+            assert metrics["sampled_gain_cv_max"] < 0.1761023471493728
+            assert metrics["sampled_gain_max_to_min_max"] < 3.8183199761076376
+        else:
+            assert metrics["transformed_cam16_cv"] <= 0.05 + 1e-12
+            assert metrics["sampled_gain_cv_max"] <= 0.10 + 1e-12
 
 
 def test_sequential_maps_recompute_independently() -> None:

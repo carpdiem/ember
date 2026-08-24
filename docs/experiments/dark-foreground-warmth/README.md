@@ -38,14 +38,14 @@ This dependent-bank pass freeze-locks the already approved current and halfway b
 
 ## Dependent-bank frontiers
 
-| Profile | Lane | Categorical frontier (N: sampled-grid CAM16 pair / status) | Terminal sampled-grid pair | Sequential CAM16 CV |
-|---|---|---|---:|---:|
-| 3400k-dark | Current | 6: 15.78 / PASS / selected | 13.83 | 0.0001 |
-| 3400k-dark | Halfway | 6: 15.96 / PASS / selected | 14.45 | 0.0001 |
-| 2000k-dark | Current | 4: 16.42 / PASS / selected, 5: 14.83 / FAIL, 6: 14.14 / FAIL | 13.04 | 0.0000 |
-| 2000k-dark | Halfway | 4: 16.77 / PASS / selected, 5: 15.81 / FAIL, 6: 10.28 / FAIL | 12.86 | 0.0000 |
-| 1200k-dark | Current | 3: 12.51 / FAIL / trial rejected; shipped selected at 11.08 / PASS, 4: 7.91 / FAIL, 5: 5.32 / FAIL | 6.48 | 0.0911 |
-| 1200k-dark | Halfway | 3: 13.71 / PASS / selected, 4: 7.24 / FAIL, 5: 4.65 / FAIL | 6.46 | 0.0911 |
+| Profile | Lane | Categorical frontier (N: sampled-grid CAM16 pair / status) | Terminal sampled-grid pair | Sequential transformed CV | Commanded CV | Sampled-gain CV max | Sampled-gain max:min |
+|---|---|---|---:|---:|---:|---:|---:|
+| 3400k-dark | Current | 6: 15.78 / PASS / selected | 13.83 | 0.0494 | 0.0557 | 0.0846 | 1.31 |
+| 3400k-dark | Halfway | 6: 15.96 / PASS / selected | 14.45 | 0.0494 | 0.0557 | 0.0846 | 1.31 |
+| 2000k-dark | Current | 4: 16.42 / PASS / selected, 5: 14.83 / FAIL, 6: 14.14 / FAIL | 13.04 | 0.0493 | 0.1268 | 0.0798 | 1.27 |
+| 2000k-dark | Halfway | 4: 16.77 / PASS / selected, 5: 15.81 / FAIL, 6: 10.28 / FAIL | 12.86 | 0.0493 | 0.1268 | 0.0798 | 1.27 |
+| 1200k-dark | Current | 3: 12.51 / FAIL / trial rejected; shipped selected at 11.08 / PASS, 4: 7.91 / FAIL, 5: 5.32 / FAIL | 6.48 | 0.0923 | 0.1794 | 0.1613 | 3.21 |
+| 1200k-dark | Halfway | 3: 13.71 / PASS / selected, 4: 7.24 / FAIL, 5: 4.65 / FAIL | 6.46 | 0.0923 | 0.1794 | 0.1613 | 3.21 |
 
 ## Distinctness vs universal text badges
 
@@ -123,7 +123,7 @@ Surfaces:    090807 100E0C 181612 201D19 29251F 32241B
 Foregrounds: DDD0B2 BDAE93 908472
 Categorical: EFAF71 2D8B7E 935E47 6CA5E4 68C297 C67BAA
 Terminal:    F7A6AA 7EB798 C38236 B4C3FC C886CE 66E8DF
-Sequential:  282527 4C3D48 725662 99756C C09B73 E2CDA1
+Sequential:  282527 4D3D4A 765863 9D796C C39E75 E2CDA1
 ```
 
 #### Halfway (5 surfaces)
@@ -133,7 +133,7 @@ Surfaces:    050404 13100F 1E1918 29211F 322926
 Foregrounds: DCD9BF 9B9784 7D7564
 Categorical: DEA460 2B8B7F 915E42 6BA0DE 71CFA5 C7779E
 Terminal:    F7B7AA 7BB48F BE8236 A4C0FC D486C3 69EBD5
-Sequential:  282527 4C3D48 725662 99756C C09B73 E2CDA1
+Sequential:  282527 4D3D4A 765863 9D796C C39E75 E2CDA1
 ```
 
 ### 2000K Dark
@@ -145,7 +145,7 @@ Surfaces:    070504 0D0A09 15110E 1E1814 271F1B 30221B
 Foregrounds: EED5AE D3BB99 AA9D8B
 Categorical: E98FA0 5BAEDE 9FE5AF A36140
 Terminal:    F490AB 7BEEC0 C2A039 A3C2FC
-Sequential:  17110F 3C2A30 644354 936475 C3978C F2D9AE
+Sequential:  17110F 3D2B31 684657 986979 C79B8E F2D9AE
 ```
 
 #### Halfway (4 surfaces)
@@ -155,7 +155,7 @@ Surfaces:    050404 171312 251F1D 322926
 Foregrounds: ECDCBF B4AA8E 8D8570
 Categorical: E99894 54B7E2 A8EDB1 A36043
 Terminal:    F490AC 85EEB8 C29E39 A9C6FC
-Sequential:  17110F 3C2A30 644354 936475 C3978C F2D9AE
+Sequential:  17110F 3D2B31 684657 986979 C79B8E F2D9AE
 ```
 
 ### 1200K Dark
@@ -167,7 +167,7 @@ Surfaces:    060302 0C0806 130E0B 1C1511 251C17 2E1E17
 Foregrounds: FFE5BD CBAF89 A18C73
 Categorical: E9B76C 8FF0FF BB6572
 Terminal:    F68F96 C8FFBA DCD06A
-Sequential:  100C0B 37242F 633E58 96657F C9A19A FFE5B8
+Sequential:  100C0B 37242F 633E58 95657F C8A099 FFE5B8
 ```
 
 #### Halfway (4 surfaces)
@@ -177,7 +177,7 @@ Surfaces:    050404 171313 261F1D 322926
 Foregrounds: FFFBEE CDC4BA A1978F
 Categorical: F3AC74 8DEEFF B76270
 Terminal:    F68F96 C8FFC4 DED872
-Sequential:  100C0B 37242F 633E58 96657F C9A19A FFE5B8
+Sequential:  100C0B 37242F 633E58 95657F C8A099 FFE5B8
 ```
 
 ## Search provenance and reproducibility
