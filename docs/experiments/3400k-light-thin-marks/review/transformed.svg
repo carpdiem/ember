@@ -1,0 +1,222 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="1180" viewBox="0 0 1260 1180">
+<rect width="1260" height="1180" fill="#F9B883"/>
+<text x="28" y="38" fill="#342317" font-family="ui-monospace, monospace" font-size="22" font-weight="700">Ember 3400K Light · G0 thin marks · 3400K gain [1, .74, .53]</text>
+<text x="28" y="62" fill="#4D3322" font-family="ui-monospace, monospace" font-size="13">Frozen c4c25e4 · fake deterministic data · categorical contract; cross-bank rows are diagnostic only</text>
+<rect x="24" y="86" width="1212" height="496" rx="12" fill="#F9B883" stroke="#CA9367"/>
+<text x="44" y="114" fill="#342317" font-family="ui-monospace, monospace" font-size="16" font-weight="700">ACTUAL bg_0 · #F9F9F8</text>
+<text x="44" y="136" fill="#4D3322" font-family="ui-monospace, monospace" font-size="12">solid / dashed / dotted · horizontal / diagonal / curved · widths 1.5, 2, 3 CSS px</text>
+<line x1="48" y1="164" x2="82" y2="164" stroke="#357146" stroke-width="1.5"/>
+<text x="88" y="168" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.one</text>
+<line x1="180" y1="164" x2="214" y2="164" stroke="#280D24" stroke-width="1.5"/>
+<text x="220" y="168" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.two</text>
+<line x1="312" y1="164" x2="346" y2="164" stroke="#A74945" stroke-width="1.5"/>
+<text x="352" y="168" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.three</text>
+<line x1="444" y1="164" x2="478" y2="164" stroke="#6A1C00" stroke-width="1.5"/>
+<text x="484" y="168" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.four</text>
+<line x1="576" y1="164" x2="610" y2="164" stroke="#184113" stroke-width="1.5"/>
+<text x="616" y="168" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.five</text>
+<line x1="708" y1="164" x2="742" y2="164" stroke="#444552" stroke-width="1.5"/>
+<text x="748" y="168" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.six</text>
+<line x1="842" y1="164" x2="876" y2="164" stroke="#430000" stroke-width="1.5"/>
+<text x="882" y="168" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">terminal.red · diagnostic</text>
+<line x1="1060" y1="164" x2="1094" y2="164" stroke="#4D3322" stroke-width="1.5"/>
+<text x="1100" y="168" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">fg_1 · diagnostic</text>
+<text x="44" y="211" fill="#66442D" font-family="ui-monospace, monospace" font-size="11">1.5px</text>
+<line x1="100" y1="208" x2="192" y2="208" stroke="#357146" stroke-width="1.5"/>
+<line x1="212" y1="208" x2="304" y2="208" stroke="#280D24" stroke-width="1.5"/>
+<line x1="324" y1="208" x2="416" y2="208" stroke="#A74945" stroke-width="1.5" stroke-dasharray="8 5"/>
+<line x1="436" y1="208" x2="528" y2="208" stroke="#6A1C00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<line x1="548" y1="208" x2="640" y2="208" stroke="#184113" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<line x1="660" y1="208" x2="752" y2="208" stroke="#444552" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<path d="M800,228 L850,190 L900,228" fill="none" stroke="#184113" stroke-width="1.5"/>
+<path d="M800,190 L850,228 L900,190" fill="none" stroke="#444552" stroke-width="1.5" stroke-dasharray="6 4"/>
+<path d="M946,222 C980,183 1020,234 1072,196" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path d="M946,196 C980,234 1020,183 1072,222" fill="none" stroke="#430000" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="946" cy="222" r="3" fill="#280D24"/><circle cx="1072" cy="196" r="3" fill="#280D24"/>
+<path d="M1090,224 C1120,192 1168,226 1212,194" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path d="M1090,194 C1120,226 1168,192 1212,224" fill="none" stroke="#4D3322" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="44" y="265" fill="#66442D" font-family="ui-monospace, monospace" font-size="11">2px</text>
+<line x1="100" y1="262" x2="192" y2="262" stroke="#357146" stroke-width="2.0"/>
+<line x1="212" y1="262" x2="304" y2="262" stroke="#280D24" stroke-width="2.0"/>
+<line x1="324" y1="262" x2="416" y2="262" stroke="#A74945" stroke-width="2.0" stroke-dasharray="8 5"/>
+<line x1="436" y1="262" x2="528" y2="262" stroke="#6A1C00" stroke-width="2.0" stroke-dasharray="8 5"/>
+<line x1="548" y1="262" x2="640" y2="262" stroke="#184113" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<line x1="660" y1="262" x2="752" y2="262" stroke="#444552" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<path d="M800,282 L850,244 L900,282" fill="none" stroke="#184113" stroke-width="2.0"/>
+<path d="M800,244 L850,282 L900,244" fill="none" stroke="#444552" stroke-width="2.0" stroke-dasharray="6 4"/>
+<path d="M946,276 C980,237 1020,288 1072,250" fill="none" stroke="#280D24" stroke-width="2.0"/>
+<path d="M946,250 C980,288 1020,237 1072,276" fill="none" stroke="#430000" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="946" cy="276" r="3" fill="#280D24"/><circle cx="1072" cy="250" r="3" fill="#280D24"/>
+<path d="M1090,278 C1120,246 1168,280 1212,248" fill="none" stroke="#280D24" stroke-width="2.0"/>
+<path d="M1090,248 C1120,280 1168,246 1212,278" fill="none" stroke="#4D3322" stroke-width="2.0" stroke-dasharray="6 4"/>
+<text x="44" y="319" fill="#66442D" font-family="ui-monospace, monospace" font-size="11">3px</text>
+<line x1="100" y1="316" x2="192" y2="316" stroke="#357146" stroke-width="3.0"/>
+<line x1="212" y1="316" x2="304" y2="316" stroke="#280D24" stroke-width="3.0"/>
+<line x1="324" y1="316" x2="416" y2="316" stroke="#A74945" stroke-width="3.0" stroke-dasharray="8 5"/>
+<line x1="436" y1="316" x2="528" y2="316" stroke="#6A1C00" stroke-width="3.0" stroke-dasharray="8 5"/>
+<line x1="548" y1="316" x2="640" y2="316" stroke="#184113" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<line x1="660" y1="316" x2="752" y2="316" stroke="#444552" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<path d="M800,336 L850,298 L900,336" fill="none" stroke="#184113" stroke-width="3.0"/>
+<path d="M800,298 L850,336 L900,298" fill="none" stroke="#444552" stroke-width="3.0" stroke-dasharray="6 4"/>
+<path d="M946,330 C980,291 1020,342 1072,304" fill="none" stroke="#280D24" stroke-width="3.0"/>
+<path d="M946,304 C980,342 1020,291 1072,330" fill="none" stroke="#430000" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="946" cy="330" r="3" fill="#280D24"/><circle cx="1072" cy="304" r="3" fill="#280D24"/>
+<path d="M1090,332 C1120,300 1168,334 1212,302" fill="none" stroke="#280D24" stroke-width="3.0"/>
+<path d="M1090,302 C1120,334 1168,300 1212,332" fill="none" stroke="#4D3322" stroke-width="3.0" stroke-dasharray="6 4"/>
+<rect x="44" y="364" width="716" height="184" rx="8" fill="none" stroke="#CA9367"/>
+<text x="60" y="388" fill="#342317" font-family="ui-monospace, monospace" font-size="14" font-weight="700">Financial Cockpit · fake index paths</text>
+<path d="M62.00,520.00 L136.67,467.13 L211.33,426.97 L286.00,408.00 L360.67,411.73 L435.33,432.52 L510.00,458.65 L584.67,477.22 L659.33,477.42 L734.00,454.62" fill="none" stroke="#357146" stroke-width="1.5"/>
+<circle cx="734" cy="454.62" r="2.5" fill="#357146"/>
+<path d="M62.00,494.79 L136.67,435.35 L211.33,408.00 L286.00,415.03 L360.67,447.88 L435.33,488.83 L510.00,518.32 L584.67,520.00 L659.33,486.84 L734.00,422.97" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<circle cx="734" cy="422.97" r="2.5" fill="#280D24"/>
+<path d="M62.00,459.84 L136.67,443.02 L211.33,448.47 L286.00,470.63 L360.67,498.04 L435.33,518.02 L510.00,520.00 L584.67,499.42 L659.33,458.95 L734.00,408.00" fill="none" stroke="#A74945" stroke-width="1.5" stroke-dasharray="7 4"/>
+<circle cx="734" cy="408.00" r="2.5" fill="#A74945"/>
+<path d="M62.00,461.95 L136.67,466.47 L211.33,482.90 L286.00,503.07 L360.67,517.95 L435.33,520.00 L510.00,505.96 L584.67,477.75 L659.33,442.07 L734.00,408.00" fill="none" stroke="#6A1C00" stroke-width="1.5" stroke-dasharray="7 4"/>
+<circle cx="734" cy="408.00" r="2.5" fill="#6A1C00"/>
+<path d="M62.00,472.74 L136.67,487.13 L211.33,504.66 L286.00,517.74 L360.67,520.00 L435.33,508.70 L510.00,485.46 L584.67,455.92 L659.33,427.74 L734.00,408.00" fill="none" stroke="#184113" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="734" cy="408.00" r="2.5" fill="#184113"/>
+<path d="M62.00,486.57 L136.67,504.09 L211.33,517.29 L286.00,520.00 L360.67,509.57 L435.33,487.55 L510.00,459.42 L584.67,432.61 L659.33,413.99 L734.00,408.00" fill="none" stroke="#444552" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="734" cy="408.00" r="2.5" fill="#444552"/>
+<line x1="62" y1="520" x2="734" y2="520" stroke="#66442D" stroke-width="1"/>
+<rect x="780" y="364" width="432" height="184" rx="8" fill="none" stroke="#CA9367"/>
+<text x="796" y="388" fill="#342317" font-family="ui-monospace, monospace" font-size="14" font-weight="700">Thesis Baskets · fake weights + sparklines</text>
+<text x="796" y="416" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 1</text>
+<line x1="862" y1="412" x2="916" y2="412" stroke="#357146" stroke-width="3"/>
+<path d="M946.00,404.00 L965.20,409.06 L984.40,415.43 L1003.60,419.95 L1022.80,420.00 L1042.00,414.45" fill="none" stroke="#357146" stroke-width="1.5"/>
+<circle cx="1042" cy="414.45" r="2.2" fill="#357146"/>
+<text x="1060" y="416" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">18%</text>
+<text x="796" y="437" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 2</text>
+<line x1="862" y1="433" x2="910" y2="433" stroke="#280D24" stroke-width="3"/>
+<path d="M946.00,429.11 L965.20,435.86 L984.40,440.72 L1003.60,441.00 L1022.80,435.53 L1042.00,425.00" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<circle cx="1042" cy="425.00" r="2.2" fill="#280D24"/>
+<text x="1060" y="437" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">16%</text>
+<text x="796" y="458" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 3</text>
+<line x1="862" y1="454" x2="904" y2="454" stroke="#A74945" stroke-width="3"/>
+<path d="M946.00,458.86 L965.20,461.72 L984.40,462.00 L1003.60,459.06 L1022.80,453.28 L1042.00,446.00" fill="none" stroke="#A74945" stroke-width="1.5"/>
+<circle cx="1042" cy="446.00" r="2.2" fill="#A74945"/>
+<text x="1060" y="458" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">14%</text>
+<text x="796" y="479" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 4</text>
+<line x1="862" y1="475" x2="898" y2="475" stroke="#6A1C00" stroke-width="3"/>
+<path d="M946.00,482.71 L965.20,483.00 L984.40,480.99 L1003.60,476.96 L1022.80,471.87 L1042.00,467.00" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
+<circle cx="1042" cy="467.00" r="2.2" fill="#6A1C00"/>
+<text x="1060" y="479" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">12%</text>
+<text x="796" y="500" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 5</text>
+<line x1="862" y1="496" x2="892" y2="496" stroke="#184113" stroke-width="3"/>
+<path d="M946.00,504.00 L965.20,502.39 L984.40,499.07 L1003.60,494.85 L1022.80,490.82 L1042.00,488.00" fill="none" stroke="#184113" stroke-width="1.5"/>
+<circle cx="1042" cy="488.00" r="2.2" fill="#184113"/>
+<text x="1060" y="500" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">10%</text>
+<text x="796" y="521" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 6</text>
+<line x1="862" y1="517" x2="886" y2="517" stroke="#444552" stroke-width="3"/>
+<path d="M946.00,525.00 L965.20,521.53 L984.40,517.10 L1003.60,512.88 L1022.80,509.94 L1042.00,509.00" fill="none" stroke="#444552" stroke-width="1.5"/>
+<circle cx="1042" cy="509.00" r="2.2" fill="#444552"/>
+<text x="1060" y="521" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">8%</text>
+<rect x="24" y="606" width="1212" height="496" rx="12" fill="#ECAF7D" stroke="#CA9367"/>
+<text x="44" y="634" fill="#342317" font-family="ui-monospace, monospace" font-size="16" font-weight="700">ACTUAL bg_1 · #ECECEB</text>
+<text x="44" y="656" fill="#4D3322" font-family="ui-monospace, monospace" font-size="12">solid / dashed / dotted · horizontal / diagonal / curved · widths 1.5, 2, 3 CSS px</text>
+<line x1="48" y1="684" x2="82" y2="684" stroke="#357146" stroke-width="1.5"/>
+<text x="88" y="688" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.one</text>
+<line x1="180" y1="684" x2="214" y2="684" stroke="#280D24" stroke-width="1.5"/>
+<text x="220" y="688" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.two</text>
+<line x1="312" y1="684" x2="346" y2="684" stroke="#A74945" stroke-width="1.5"/>
+<text x="352" y="688" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.three</text>
+<line x1="444" y1="684" x2="478" y2="684" stroke="#6A1C00" stroke-width="1.5"/>
+<text x="484" y="688" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.four</text>
+<line x1="576" y1="684" x2="610" y2="684" stroke="#184113" stroke-width="1.5"/>
+<text x="616" y="688" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.five</text>
+<line x1="708" y1="684" x2="742" y2="684" stroke="#444552" stroke-width="1.5"/>
+<text x="748" y="688" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">cat.six</text>
+<line x1="842" y1="684" x2="876" y2="684" stroke="#430000" stroke-width="1.5"/>
+<text x="882" y="688" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">terminal.red · diagnostic</text>
+<line x1="1060" y1="684" x2="1094" y2="684" stroke="#4D3322" stroke-width="1.5"/>
+<text x="1100" y="688" fill="#4D3322" font-family="ui-monospace, monospace" font-size="11">fg_1 · diagnostic</text>
+<text x="44" y="731" fill="#66442D" font-family="ui-monospace, monospace" font-size="11">1.5px</text>
+<line x1="100" y1="728" x2="192" y2="728" stroke="#357146" stroke-width="1.5"/>
+<line x1="212" y1="728" x2="304" y2="728" stroke="#280D24" stroke-width="1.5"/>
+<line x1="324" y1="728" x2="416" y2="728" stroke="#A74945" stroke-width="1.5" stroke-dasharray="8 5"/>
+<line x1="436" y1="728" x2="528" y2="728" stroke="#6A1C00" stroke-width="1.5" stroke-dasharray="8 5"/>
+<line x1="548" y1="728" x2="640" y2="728" stroke="#184113" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<line x1="660" y1="728" x2="752" y2="728" stroke="#444552" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<path d="M800,748 L850,710 L900,748" fill="none" stroke="#184113" stroke-width="1.5"/>
+<path d="M800,710 L850,748 L900,710" fill="none" stroke="#444552" stroke-width="1.5" stroke-dasharray="6 4"/>
+<path d="M946,742 C980,703 1020,754 1072,716" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path d="M946,716 C980,754 1020,703 1072,742" fill="none" stroke="#430000" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="946" cy="742" r="3" fill="#280D24"/><circle cx="1072" cy="716" r="3" fill="#280D24"/>
+<path d="M1090,744 C1120,712 1168,746 1212,714" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path d="M1090,714 C1120,746 1168,712 1212,744" fill="none" stroke="#4D3322" stroke-width="1.5" stroke-dasharray="6 4"/>
+<text x="44" y="785" fill="#66442D" font-family="ui-monospace, monospace" font-size="11">2px</text>
+<line x1="100" y1="782" x2="192" y2="782" stroke="#357146" stroke-width="2.0"/>
+<line x1="212" y1="782" x2="304" y2="782" stroke="#280D24" stroke-width="2.0"/>
+<line x1="324" y1="782" x2="416" y2="782" stroke="#A74945" stroke-width="2.0" stroke-dasharray="8 5"/>
+<line x1="436" y1="782" x2="528" y2="782" stroke="#6A1C00" stroke-width="2.0" stroke-dasharray="8 5"/>
+<line x1="548" y1="782" x2="640" y2="782" stroke="#184113" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<line x1="660" y1="782" x2="752" y2="782" stroke="#444552" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<path d="M800,802 L850,764 L900,802" fill="none" stroke="#184113" stroke-width="2.0"/>
+<path d="M800,764 L850,802 L900,764" fill="none" stroke="#444552" stroke-width="2.0" stroke-dasharray="6 4"/>
+<path d="M946,796 C980,757 1020,808 1072,770" fill="none" stroke="#280D24" stroke-width="2.0"/>
+<path d="M946,770 C980,808 1020,757 1072,796" fill="none" stroke="#430000" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="946" cy="796" r="3" fill="#280D24"/><circle cx="1072" cy="770" r="3" fill="#280D24"/>
+<path d="M1090,798 C1120,766 1168,800 1212,768" fill="none" stroke="#280D24" stroke-width="2.0"/>
+<path d="M1090,768 C1120,800 1168,766 1212,798" fill="none" stroke="#4D3322" stroke-width="2.0" stroke-dasharray="6 4"/>
+<text x="44" y="839" fill="#66442D" font-family="ui-monospace, monospace" font-size="11">3px</text>
+<line x1="100" y1="836" x2="192" y2="836" stroke="#357146" stroke-width="3.0"/>
+<line x1="212" y1="836" x2="304" y2="836" stroke="#280D24" stroke-width="3.0"/>
+<line x1="324" y1="836" x2="416" y2="836" stroke="#A74945" stroke-width="3.0" stroke-dasharray="8 5"/>
+<line x1="436" y1="836" x2="528" y2="836" stroke="#6A1C00" stroke-width="3.0" stroke-dasharray="8 5"/>
+<line x1="548" y1="836" x2="640" y2="836" stroke="#184113" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<line x1="660" y1="836" x2="752" y2="836" stroke="#444552" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<path d="M800,856 L850,818 L900,856" fill="none" stroke="#184113" stroke-width="3.0"/>
+<path d="M800,818 L850,856 L900,818" fill="none" stroke="#444552" stroke-width="3.0" stroke-dasharray="6 4"/>
+<path d="M946,850 C980,811 1020,862 1072,824" fill="none" stroke="#280D24" stroke-width="3.0"/>
+<path d="M946,824 C980,862 1020,811 1072,850" fill="none" stroke="#430000" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="946" cy="850" r="3" fill="#280D24"/><circle cx="1072" cy="824" r="3" fill="#280D24"/>
+<path d="M1090,852 C1120,820 1168,854 1212,822" fill="none" stroke="#280D24" stroke-width="3.0"/>
+<path d="M1090,822 C1120,854 1168,820 1212,852" fill="none" stroke="#4D3322" stroke-width="3.0" stroke-dasharray="6 4"/>
+<rect x="44" y="884" width="716" height="184" rx="8" fill="none" stroke="#CA9367"/>
+<text x="60" y="908" fill="#342317" font-family="ui-monospace, monospace" font-size="14" font-weight="700">Financial Cockpit · fake index paths</text>
+<path d="M62.00,1040.00 L136.67,987.13 L211.33,946.97 L286.00,928.00 L360.67,931.73 L435.33,952.52 L510.00,978.65 L584.67,997.22 L659.33,997.42 L734.00,974.62" fill="none" stroke="#357146" stroke-width="1.5"/>
+<circle cx="734" cy="974.62" r="2.5" fill="#357146"/>
+<path d="M62.00,1014.79 L136.67,955.35 L211.33,928.00 L286.00,935.03 L360.67,967.88 L435.33,1008.83 L510.00,1038.32 L584.67,1040.00 L659.33,1006.84 L734.00,942.97" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<circle cx="734" cy="942.97" r="2.5" fill="#280D24"/>
+<path d="M62.00,979.84 L136.67,963.02 L211.33,968.47 L286.00,990.63 L360.67,1018.04 L435.33,1038.02 L510.00,1040.00 L584.67,1019.42 L659.33,978.95 L734.00,928.00" fill="none" stroke="#A74945" stroke-width="1.5" stroke-dasharray="7 4"/>
+<circle cx="734" cy="928.00" r="2.5" fill="#A74945"/>
+<path d="M62.00,981.95 L136.67,986.47 L211.33,1002.90 L286.00,1023.07 L360.67,1037.95 L435.33,1040.00 L510.00,1025.96 L584.67,997.75 L659.33,962.07 L734.00,928.00" fill="none" stroke="#6A1C00" stroke-width="1.5" stroke-dasharray="7 4"/>
+<circle cx="734" cy="928.00" r="2.5" fill="#6A1C00"/>
+<path d="M62.00,992.74 L136.67,1007.13 L211.33,1024.66 L286.00,1037.74 L360.67,1040.00 L435.33,1028.70 L510.00,1005.46 L584.67,975.92 L659.33,947.74 L734.00,928.00" fill="none" stroke="#184113" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="734" cy="928.00" r="2.5" fill="#184113"/>
+<path d="M62.00,1006.57 L136.67,1024.09 L211.33,1037.29 L286.00,1040.00 L360.67,1029.57 L435.33,1007.55 L510.00,979.42 L584.67,952.61 L659.33,933.99 L734.00,928.00" fill="none" stroke="#444552" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
+<circle cx="734" cy="928.00" r="2.5" fill="#444552"/>
+<line x1="62" y1="1040" x2="734" y2="1040" stroke="#66442D" stroke-width="1"/>
+<rect x="780" y="884" width="432" height="184" rx="8" fill="none" stroke="#CA9367"/>
+<text x="796" y="908" fill="#342317" font-family="ui-monospace, monospace" font-size="14" font-weight="700">Thesis Baskets · fake weights + sparklines</text>
+<text x="796" y="936" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 1</text>
+<line x1="862" y1="932" x2="916" y2="932" stroke="#357146" stroke-width="3"/>
+<path d="M946.00,924.00 L965.20,929.06 L984.40,935.43 L1003.60,939.95 L1022.80,940.00 L1042.00,934.45" fill="none" stroke="#357146" stroke-width="1.5"/>
+<circle cx="1042" cy="934.45" r="2.2" fill="#357146"/>
+<text x="1060" y="936" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">18%</text>
+<text x="796" y="957" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 2</text>
+<line x1="862" y1="953" x2="910" y2="953" stroke="#280D24" stroke-width="3"/>
+<path d="M946.00,949.11 L965.20,955.86 L984.40,960.72 L1003.60,961.00 L1022.80,955.53 L1042.00,945.00" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<circle cx="1042" cy="945.00" r="2.2" fill="#280D24"/>
+<text x="1060" y="957" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">16%</text>
+<text x="796" y="978" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 3</text>
+<line x1="862" y1="974" x2="904" y2="974" stroke="#A74945" stroke-width="3"/>
+<path d="M946.00,978.86 L965.20,981.72 L984.40,982.00 L1003.60,979.06 L1022.80,973.28 L1042.00,966.00" fill="none" stroke="#A74945" stroke-width="1.5"/>
+<circle cx="1042" cy="966.00" r="2.2" fill="#A74945"/>
+<text x="1060" y="978" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">14%</text>
+<text x="796" y="999" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 4</text>
+<line x1="862" y1="995" x2="898" y2="995" stroke="#6A1C00" stroke-width="3"/>
+<path d="M946.00,1002.71 L965.20,1003.00 L984.40,1000.99 L1003.60,996.96 L1022.80,991.87 L1042.00,987.00" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
+<circle cx="1042" cy="987.00" r="2.2" fill="#6A1C00"/>
+<text x="1060" y="999" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">12%</text>
+<text x="796" y="1020" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 5</text>
+<line x1="862" y1="1016" x2="892" y2="1016" stroke="#184113" stroke-width="3"/>
+<path d="M946.00,1024.00 L965.20,1022.39 L984.40,1019.07 L1003.60,1014.85 L1022.80,1010.82 L1042.00,1008.00" fill="none" stroke="#184113" stroke-width="1.5"/>
+<circle cx="1042" cy="1008.00" r="2.2" fill="#184113"/>
+<text x="1060" y="1020" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">10%</text>
+<text x="796" y="1041" fill="#4D3322" font-family="ui-monospace, monospace" font-size="10">Basket 6</text>
+<line x1="862" y1="1037" x2="886" y2="1037" stroke="#444552" stroke-width="3"/>
+<path d="M946.00,1045.00 L965.20,1041.53 L984.40,1037.10 L1003.60,1032.88 L1022.80,1029.94 L1042.00,1029.00" fill="none" stroke="#444552" stroke-width="1.5"/>
+<circle cx="1042" cy="1029.00" r="2.2" fill="#444552"/>
+<text x="1060" y="1041" fill="#66442D" font-family="ui-monospace, monospace" font-size="10">8%</text>
+<text x="28" y="1154" fill="#66442D" font-family="ui-monospace, monospace" font-size="12">bg_2 (#E0E0DD) is metrics/report only. Cross-bank comparisons are explicitly diagnostic/non-contract.</text>
+</svg>

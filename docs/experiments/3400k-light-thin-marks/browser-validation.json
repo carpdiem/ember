@@ -1,0 +1,158 @@
+{
+  "baseline_source_commit": "c4c25e480912f8f54cbd8c992c0b6eb520dc0b8f",
+  "browser": "GStack-managed Chromium",
+  "by_dpr": [
+    {
+      "dpr": 1,
+      "encoded_channel_mean_absolute_error_8bit": 5.08793794,
+      "oklab_distance_correlation": 0.98661331,
+      "oklab_distance_mean_absolute_error": 0.45306107,
+      "oklab_distance_p95_absolute_error": 0.65907405,
+      "pairs": [
+        {
+          "background": "bg_0",
+          "correlation": 0.98030391,
+          "mean_absolute_error": 0.4483479,
+          "roles": [
+            "cat.five",
+            "cat.six"
+          ],
+          "sample_count": 148
+        },
+        {
+          "background": "bg_0",
+          "correlation": 0.99325155,
+          "mean_absolute_error": 0.32948885,
+          "roles": [
+            "cat.two",
+            "terminal.red"
+          ],
+          "sample_count": 148
+        },
+        {
+          "background": "bg_0",
+          "correlation": 0.98696097,
+          "mean_absolute_error": 0.58107773,
+          "roles": [
+            "cat.two",
+            "fg_1"
+          ],
+          "sample_count": 148
+        },
+        {
+          "background": "bg_1",
+          "correlation": 0.97958601,
+          "mean_absolute_error": 0.44403169,
+          "roles": [
+            "cat.five",
+            "cat.six"
+          ],
+          "sample_count": 148
+        },
+        {
+          "background": "bg_1",
+          "correlation": 0.99297772,
+          "mean_absolute_error": 0.32900743,
+          "roles": [
+            "cat.two",
+            "terminal.red"
+          ],
+          "sample_count": 148
+        },
+        {
+          "background": "bg_1",
+          "correlation": 0.98664142,
+          "mean_absolute_error": 0.5864128,
+          "roles": [
+            "cat.two",
+            "fg_1"
+          ],
+          "sample_count": 148
+        }
+      ],
+      "sampled_pair_distance_count": 888
+    },
+    {
+      "dpr": 2,
+      "encoded_channel_mean_absolute_error_8bit": 4.85762572,
+      "oklab_distance_correlation": 0.96120086,
+      "oklab_distance_mean_absolute_error": 0.41305157,
+      "oklab_distance_p95_absolute_error": 0.73189194,
+      "pairs": [
+        {
+          "background": "bg_0",
+          "correlation": 0.94102463,
+          "mean_absolute_error": 0.45397471,
+          "roles": [
+            "cat.five",
+            "cat.six"
+          ],
+          "sample_count": 492
+        },
+        {
+          "background": "bg_0",
+          "correlation": 0.95802115,
+          "mean_absolute_error": 0.31005371,
+          "roles": [
+            "cat.two",
+            "terminal.red"
+          ],
+          "sample_count": 492
+        },
+        {
+          "background": "bg_0",
+          "correlation": 0.9461854,
+          "mean_absolute_error": 0.47366772,
+          "roles": [
+            "cat.two",
+            "fg_1"
+          ],
+          "sample_count": 492
+        },
+        {
+          "background": "bg_1",
+          "correlation": 0.94078556,
+          "mean_absolute_error": 0.45545787,
+          "roles": [
+            "cat.five",
+            "cat.six"
+          ],
+          "sample_count": 492
+        },
+        {
+          "background": "bg_1",
+          "correlation": 0.95763644,
+          "mean_absolute_error": 0.31286101,
+          "roles": [
+            "cat.two",
+            "terminal.red"
+          ],
+          "sample_count": 492
+        },
+        {
+          "background": "bg_1",
+          "correlation": 0.94605067,
+          "mean_absolute_error": 0.47229439,
+          "roles": [
+            "cat.two",
+            "fg_1"
+          ],
+          "sample_count": 492
+        }
+      ],
+      "sampled_pair_distance_count": 2952
+    }
+  ],
+  "comparison": {
+    "acceptance": {
+      "maximum_mean_absolute_error": 0.75,
+      "minimum_correlation": 0.95
+    },
+    "oklab_distance_correlation": 0.96120086,
+    "oklab_distance_mean_absolute_error": 0.42230377,
+    "oklab_distance_p95_absolute_error": 0.73189194
+  },
+  "full_image_hash_used": false,
+  "model": "encoded-sRGB 1.5 CSS px diagonal area-coverage proxy",
+  "status": "PASS"
+}
