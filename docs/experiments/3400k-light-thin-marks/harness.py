@@ -386,6 +386,7 @@ def _svg(state: str, baseline: dict[str, Any]) -> str:
     series = _fake_series()
     lines = [
         '<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="1180" viewBox="0 0 1260 1180">',
+        '<defs><path id="cat-five-six-crossing-geometry" d="M0,38 L50,0 L100,38"/></defs>',
         f'<rect width="1260" height="1180" fill="{surfaces["bg_0"]}"/>',
         f'<text x="28" y="38" fill="{surfaces["fg_0"]}" font-family="ui-monospace, monospace" font-size="22" font-weight="700">Ember 3400K Light · G0 thin marks · {html.escape(title)}</text>',
         f'<text x="28" y="62" fill="{surfaces["fg_1"]}" font-family="ui-monospace, monospace" font-size="13">Frozen c4c25e4 · fake deterministic data · categorical contract; cross-bank rows are diagnostic only</text>',
@@ -443,11 +444,13 @@ def _svg(state: str, baseline: dict[str, Any]) -> str:
                 lines.append(
                     f'<line x1="{x}" y1="{y + 20}" x2="{x + 92}" y2="{y + 20}" stroke="{color}" stroke-width="{width}"{dash}/>'
                 )
-            lines.append(
-                f'<path d="M800,{y + 40} L850,{y + 2} L900,{y + 40}" fill="none" stroke="{cats[4]}" stroke-width="{width}"/>'
-            )
-            lines.append(
-                f'<path d="M800,{y + 2} L850,{y + 40} L900,{y + 2}" fill="none" stroke="{cats[5]}" stroke-width="{width}" stroke-dasharray="6 4"/>'
+            lines.extend(
+                [
+                    f'<g data-evidence="color-only-cat-five-six-crossing" data-background="{background_name}" data-width="{width:g}" transform="translate(800 {y + 2})">',
+                    f'<use data-role="cat.five" href="#cat-five-six-crossing-geometry" fill="none" stroke="{cats[4]}" stroke-width="{width:g}"/>',
+                    f'<use data-role="cat.six" href="#cat-five-six-crossing-geometry" transform="translate(0 38) scale(1 -1)" fill="none" stroke="{cats[5]}" stroke-width="{width:g}"/>',
+                    "</g>",
+                ]
             )
             lines.append(
                 f'<path d="M946,{y + 34} C980,{y - 5} 1020,{y + 46} 1072,{y + 8}" fill="none" stroke="{cats[1]}" stroke-width="{width}"/>'
@@ -611,7 +614,7 @@ The transformed 1.5 CSS px diagonal at DPR 1 on actual `bg_0` is the named numer
 
 The categorical failure is the contract finding. Both cross-bank rows are deliberately labeled **diagnostic/non-contract** and cannot veto a categorical bank on their own. Human-visible evidence is in short legends, crossings, endpoints, and sparklines in `review/transformed.svg`; compare directly with `review/commanded.svg`.
 
-At native DPR 1, the same-style cat.five/cat.six traces lose reliable identity at the dedicated crossings and in the paired dotted Financial Cockpit paths. The cat.two/terminal.red diagnostic pair becomes the clearest dark-mark collision; cat.two/fg_1 also becomes harder to track in the compact curved and sparkline geometry. These are review observations, not substitutes for a calibrated threshold.
+At native DPR 1, cat.five/cat.six lose reliable identity in the dedicated solid crossings, where both traces reference one shared geometry at equal width and color is the only style identity channel. Separately, the paired fake Financial Cockpit paths use the same dotted stroke treatment and equal width. The cat.two/terminal.red diagnostic pair becomes the clearest dark-mark collision; cat.two/fg_1 also becomes harder to track in the compact curved and sparkline geometry. These are review observations, not substitutes for a calibrated threshold.
 
 ### Native commanded
 

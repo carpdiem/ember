@@ -16,7 +16,7 @@ The transformed 1.5 CSS px diagonal at DPR 1 on actual `bg_0` is the named numer
 
 The categorical failure is the contract finding. Both cross-bank rows are deliberately labeled **diagnostic/non-contract** and cannot veto a categorical bank on their own. Human-visible evidence is in short legends, crossings, endpoints, and sparklines in `review/transformed.svg`; compare directly with `review/commanded.svg`.
 
-At native DPR 1, the same-style cat.five/cat.six traces lose reliable identity at the dedicated crossings and in the paired dotted Financial Cockpit paths. The cat.two/terminal.red diagnostic pair becomes the clearest dark-mark collision; cat.two/fg_1 also becomes harder to track in the compact curved and sparkline geometry. These are review observations, not substitutes for a calibrated threshold.
+At native DPR 1, cat.five/cat.six lose reliable identity in the dedicated solid crossings, where both traces reference one shared geometry at equal width and color is the only style identity channel. Separately, the paired fake Financial Cockpit paths use the same dotted stroke treatment and equal width. The cat.two/terminal.red diagnostic pair becomes the clearest dark-mark collision; cat.two/fg_1 also becomes harder to track in the compact curved and sparkline geometry. These are review observations, not substitutes for a calibrated threshold.
 
 ### Native commanded
 

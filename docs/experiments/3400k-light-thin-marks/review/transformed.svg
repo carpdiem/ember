@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1260" height="1180" viewBox="0 0 1260 1180">
+<defs><path id="cat-five-six-crossing-geometry" d="M0,38 L50,0 L100,38"/></defs>
 <rect width="1260" height="1180" fill="#F9B883"/>
 <text x="28" y="38" fill="#342317" font-family="ui-monospace, monospace" font-size="22" font-weight="700">Ember 3400K Light · G0 thin marks · 3400K gain [1, .74, .53]</text>
 <text x="28" y="62" fill="#4D3322" font-family="ui-monospace, monospace" font-size="13">Frozen c4c25e4 · fake deterministic data · categorical contract; cross-bank rows are diagnostic only</text>
@@ -28,8 +29,10 @@
 <line x1="436" y1="208" x2="528" y2="208" stroke="#6A1C00" stroke-width="1.5" stroke-dasharray="8 5"/>
 <line x1="548" y1="208" x2="640" y2="208" stroke="#184113" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
 <line x1="660" y1="208" x2="752" y2="208" stroke="#444552" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
-<path d="M800,228 L850,190 L900,228" fill="none" stroke="#184113" stroke-width="1.5"/>
-<path d="M800,190 L850,228 L900,190" fill="none" stroke="#444552" stroke-width="1.5" stroke-dasharray="6 4"/>
+<g data-evidence="color-only-cat-five-six-crossing" data-background="bg_0" data-width="1.5" transform="translate(800 190)">
+<use data-role="cat.five" href="#cat-five-six-crossing-geometry" fill="none" stroke="#184113" stroke-width="1.5"/>
+<use data-role="cat.six" href="#cat-five-six-crossing-geometry" transform="translate(0 38) scale(1 -1)" fill="none" stroke="#444552" stroke-width="1.5"/>
+</g>
 <path d="M946,222 C980,183 1020,234 1072,196" fill="none" stroke="#280D24" stroke-width="1.5"/>
 <path d="M946,196 C980,234 1020,183 1072,222" fill="none" stroke="#430000" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
 <circle cx="946" cy="222" r="3" fill="#280D24"/><circle cx="1072" cy="196" r="3" fill="#280D24"/>
@@ -42,8 +45,10 @@
 <line x1="436" y1="262" x2="528" y2="262" stroke="#6A1C00" stroke-width="2.0" stroke-dasharray="8 5"/>
 <line x1="548" y1="262" x2="640" y2="262" stroke="#184113" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
 <line x1="660" y1="262" x2="752" y2="262" stroke="#444552" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
-<path d="M800,282 L850,244 L900,282" fill="none" stroke="#184113" stroke-width="2.0"/>
-<path d="M800,244 L850,282 L900,244" fill="none" stroke="#444552" stroke-width="2.0" stroke-dasharray="6 4"/>
+<g data-evidence="color-only-cat-five-six-crossing" data-background="bg_0" data-width="2" transform="translate(800 244)">
+<use data-role="cat.five" href="#cat-five-six-crossing-geometry" fill="none" stroke="#184113" stroke-width="2"/>
+<use data-role="cat.six" href="#cat-five-six-crossing-geometry" transform="translate(0 38) scale(1 -1)" fill="none" stroke="#444552" stroke-width="2"/>
+</g>
 <path d="M946,276 C980,237 1020,288 1072,250" fill="none" stroke="#280D24" stroke-width="2.0"/>
 <path d="M946,250 C980,288 1020,237 1072,276" fill="none" stroke="#430000" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
 <circle cx="946" cy="276" r="3" fill="#280D24"/><circle cx="1072" cy="250" r="3" fill="#280D24"/>
@@ -56,8 +61,10 @@
 <line x1="436" y1="316" x2="528" y2="316" stroke="#6A1C00" stroke-width="3.0" stroke-dasharray="8 5"/>
 <line x1="548" y1="316" x2="640" y2="316" stroke="#184113" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
 <line x1="660" y1="316" x2="752" y2="316" stroke="#444552" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
-<path d="M800,336 L850,298 L900,336" fill="none" stroke="#184113" stroke-width="3.0"/>
-<path d="M800,298 L850,336 L900,298" fill="none" stroke="#444552" stroke-width="3.0" stroke-dasharray="6 4"/>
+<g data-evidence="color-only-cat-five-six-crossing" data-background="bg_0" data-width="3" transform="translate(800 298)">
+<use data-role="cat.five" href="#cat-five-six-crossing-geometry" fill="none" stroke="#184113" stroke-width="3"/>
+<use data-role="cat.six" href="#cat-five-six-crossing-geometry" transform="translate(0 38) scale(1 -1)" fill="none" stroke="#444552" stroke-width="3"/>
+</g>
 <path d="M946,330 C980,291 1020,342 1072,304" fill="none" stroke="#280D24" stroke-width="3.0"/>
 <path d="M946,304 C980,342 1020,291 1072,330" fill="none" stroke="#430000" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
 <circle cx="946" cy="330" r="3" fill="#280D24"/><circle cx="1072" cy="304" r="3" fill="#280D24"/>
@@ -136,8 +143,10 @@
 <line x1="436" y1="728" x2="528" y2="728" stroke="#6A1C00" stroke-width="1.5" stroke-dasharray="8 5"/>
 <line x1="548" y1="728" x2="640" y2="728" stroke="#184113" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
 <line x1="660" y1="728" x2="752" y2="728" stroke="#444552" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
-<path d="M800,748 L850,710 L900,748" fill="none" stroke="#184113" stroke-width="1.5"/>
-<path d="M800,710 L850,748 L900,710" fill="none" stroke="#444552" stroke-width="1.5" stroke-dasharray="6 4"/>
+<g data-evidence="color-only-cat-five-six-crossing" data-background="bg_1" data-width="1.5" transform="translate(800 710)">
+<use data-role="cat.five" href="#cat-five-six-crossing-geometry" fill="none" stroke="#184113" stroke-width="1.5"/>
+<use data-role="cat.six" href="#cat-five-six-crossing-geometry" transform="translate(0 38) scale(1 -1)" fill="none" stroke="#444552" stroke-width="1.5"/>
+</g>
 <path d="M946,742 C980,703 1020,754 1072,716" fill="none" stroke="#280D24" stroke-width="1.5"/>
 <path d="M946,716 C980,754 1020,703 1072,742" fill="none" stroke="#430000" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
 <circle cx="946" cy="742" r="3" fill="#280D24"/><circle cx="1072" cy="716" r="3" fill="#280D24"/>
@@ -150,8 +159,10 @@
 <line x1="436" y1="782" x2="528" y2="782" stroke="#6A1C00" stroke-width="2.0" stroke-dasharray="8 5"/>
 <line x1="548" y1="782" x2="640" y2="782" stroke="#184113" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
 <line x1="660" y1="782" x2="752" y2="782" stroke="#444552" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
-<path d="M800,802 L850,764 L900,802" fill="none" stroke="#184113" stroke-width="2.0"/>
-<path d="M800,764 L850,802 L900,764" fill="none" stroke="#444552" stroke-width="2.0" stroke-dasharray="6 4"/>
+<g data-evidence="color-only-cat-five-six-crossing" data-background="bg_1" data-width="2" transform="translate(800 764)">
+<use data-role="cat.five" href="#cat-five-six-crossing-geometry" fill="none" stroke="#184113" stroke-width="2"/>
+<use data-role="cat.six" href="#cat-five-six-crossing-geometry" transform="translate(0 38) scale(1 -1)" fill="none" stroke="#444552" stroke-width="2"/>
+</g>
 <path d="M946,796 C980,757 1020,808 1072,770" fill="none" stroke="#280D24" stroke-width="2.0"/>
 <path d="M946,770 C980,808 1020,757 1072,796" fill="none" stroke="#430000" stroke-width="2.0" stroke-dasharray="1 5" stroke-linecap="round"/>
 <circle cx="946" cy="796" r="3" fill="#280D24"/><circle cx="1072" cy="770" r="3" fill="#280D24"/>
@@ -164,8 +175,10 @@
 <line x1="436" y1="836" x2="528" y2="836" stroke="#6A1C00" stroke-width="3.0" stroke-dasharray="8 5"/>
 <line x1="548" y1="836" x2="640" y2="836" stroke="#184113" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
 <line x1="660" y1="836" x2="752" y2="836" stroke="#444552" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
-<path d="M800,856 L850,818 L900,856" fill="none" stroke="#184113" stroke-width="3.0"/>
-<path d="M800,818 L850,856 L900,818" fill="none" stroke="#444552" stroke-width="3.0" stroke-dasharray="6 4"/>
+<g data-evidence="color-only-cat-five-six-crossing" data-background="bg_1" data-width="3" transform="translate(800 818)">
+<use data-role="cat.five" href="#cat-five-six-crossing-geometry" fill="none" stroke="#184113" stroke-width="3"/>
+<use data-role="cat.six" href="#cat-five-six-crossing-geometry" transform="translate(0 38) scale(1 -1)" fill="none" stroke="#444552" stroke-width="3"/>
+</g>
 <path d="M946,850 C980,811 1020,862 1072,824" fill="none" stroke="#280D24" stroke-width="3.0"/>
 <path d="M946,824 C980,862 1020,811 1072,850" fill="none" stroke="#430000" stroke-width="3.0" stroke-dasharray="1 5" stroke-linecap="round"/>
 <circle cx="946" cy="850" r="3" fill="#280D24"/><circle cx="1072" cy="824" r="3" fill="#280D24"/>

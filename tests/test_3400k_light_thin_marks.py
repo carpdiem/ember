@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import numpy as np
@@ -81,6 +82,61 @@ def test_harness_matrix_and_specimens_cover_the_g0_contract() -> None:
     assert (
         contract["data_policy"] == "deterministic fake data; no consumer imports; no private data"
     )
+
+
+def test_dedicated_cat_five_six_crossings_are_structurally_color_only() -> None:
+    harness = load_module("harness.py", "thin_marks_harness_color_only")
+    baseline = harness.load_baseline()
+    category = baseline["family"]["categorical"]
+    svg_namespace = {"svg": "http://www.w3.org/2000/svg"}
+    href_attribute = "{http://www.w3.org/1999/xlink}href"
+
+    for state in ("commanded", "transformed"):
+        root = ET.fromstring((EXPERIMENT / "review" / f"{state}.svg").read_text())
+        geometry = root.find("svg:defs/svg:path[@id='cat-five-six-crossing-geometry']", svg_namespace)
+        assert geometry is not None
+        assert geometry.attrib["d"]
+
+        groups = root.findall(
+            ".//svg:g[@data-evidence='color-only-cat-five-six-crossing']", svg_namespace
+        )
+        assert len(groups) == 6
+        assert {(group.attrib["data-background"], group.attrib["data-width"]) for group in groups} == {
+            (background, f"{width:g}")
+            for background in ("bg_0", "bg_1")
+            for width in (1.5, 2.0, 3.0)
+        }
+
+        expected_colors = {
+            f"cat.{name}": harness.rgb_to_hex(
+                harness.transform(harness.hex_to_rgb(value))
+                if state == "transformed"
+                else harness.hex_to_rgb(value)
+            )
+            for name, value in (("five", category["five"]), ("six", category["six"]))
+        }
+        for group in groups:
+            marks = group.findall("svg:use", svg_namespace)
+            assert len(marks) == 2
+            marks_by_role = {mark.attrib["data-role"]: mark for mark in marks}
+            assert set(marks_by_role) == set(expected_colors)
+            assert {
+                mark.attrib.get("href", mark.attrib.get(href_attribute)) for mark in marks
+            } == {"#cat-five-six-crossing-geometry"}
+            assert marks_by_role["cat.five"].attrib.get("transform") is None
+            assert marks_by_role["cat.six"].attrib["transform"] == (
+                "translate(0 38) scale(1 -1)"
+            )
+            assert {mark.attrib["stroke-width"] for mark in marks} == {
+                group.attrib["data-width"]
+            }
+            assert {mark.attrib["fill"] for mark in marks} == {"none"}
+            assert {mark.attrib["stroke"] for mark in marks} == set(expected_colors.values())
+            for mark in marks:
+                assert mark.attrib["stroke"] == expected_colors[mark.attrib["data-role"]]
+                assert "stroke-dasharray" not in mark.attrib
+                assert "stroke-linecap" not in mark.attrib
+                assert not any(attribute.startswith("marker-") for attribute in mark.attrib)
 
 
 def test_transform_and_encoded_blend_commute_for_diagonal_model() -> None:
