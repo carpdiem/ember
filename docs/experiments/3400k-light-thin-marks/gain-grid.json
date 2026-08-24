@@ -1,0 +1,457 @@
+{
+  "brightness_uncertainty": {
+    "Y_w_cd_m2_samples": [
+      80.0,
+      100.0,
+      120.0
+    ],
+    "separate_from_channel_gain_grid": true,
+    "status": "planned sensitivity; never pooled with channel-gain samples"
+  },
+  "claim": "sampled grid and local refinement; not a continuous worst case",
+  "grid": {
+    "blue_axis": {
+      "center": 0.53,
+      "relative_offsets": [
+        -0.05,
+        -0.0375,
+        -0.025,
+        -0.0125,
+        0.0,
+        0.0125,
+        0.025,
+        0.0375,
+        0.05
+      ]
+    },
+    "green_axis": {
+      "center": 0.74,
+      "relative_offsets": [
+        -0.05,
+        -0.025,
+        0.0,
+        0.025,
+        0.05
+      ]
+    },
+    "red_axis": {
+      "fixed": 1.0
+    },
+    "sample_count": 45,
+    "samples": [
+      {
+        "blue_gain": 0.5035,
+        "blue_relative_offset": -0.05,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b-0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.510125,
+        "blue_relative_offset": -0.0375,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b-0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.51675,
+        "blue_relative_offset": -0.025,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b-0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.523375,
+        "blue_relative_offset": -0.0125,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b-0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.53,
+        "blue_relative_offset": 0.0,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b+0.0000",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.536625,
+        "blue_relative_offset": 0.0125,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b+0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.54325,
+        "blue_relative_offset": 0.025,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b+0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.549875,
+        "blue_relative_offset": 0.0375,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b+0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5565,
+        "blue_relative_offset": 0.05,
+        "green_gain": 0.703,
+        "green_relative_offset": -0.05,
+        "name": "g-0.0500_b+0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5035,
+        "blue_relative_offset": -0.05,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b-0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.510125,
+        "blue_relative_offset": -0.0375,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b-0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.51675,
+        "blue_relative_offset": -0.025,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b-0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.523375,
+        "blue_relative_offset": -0.0125,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b-0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.53,
+        "blue_relative_offset": 0.0,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b+0.0000",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.536625,
+        "blue_relative_offset": 0.0125,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b+0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.54325,
+        "blue_relative_offset": 0.025,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b+0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.549875,
+        "blue_relative_offset": 0.0375,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b+0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5565,
+        "blue_relative_offset": 0.05,
+        "green_gain": 0.7215,
+        "green_relative_offset": -0.025,
+        "name": "g-0.0250_b+0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5035,
+        "blue_relative_offset": -0.05,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b-0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.510125,
+        "blue_relative_offset": -0.0375,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b-0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.51675,
+        "blue_relative_offset": -0.025,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b-0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.523375,
+        "blue_relative_offset": -0.0125,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b-0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.53,
+        "blue_relative_offset": 0.0,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b+0.0000",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.536625,
+        "blue_relative_offset": 0.0125,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b+0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.54325,
+        "blue_relative_offset": 0.025,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b+0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.549875,
+        "blue_relative_offset": 0.0375,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b+0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5565,
+        "blue_relative_offset": 0.05,
+        "green_gain": 0.74,
+        "green_relative_offset": 0.0,
+        "name": "g+0.0000_b+0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5035,
+        "blue_relative_offset": -0.05,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b-0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.510125,
+        "blue_relative_offset": -0.0375,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b-0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.51675,
+        "blue_relative_offset": -0.025,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b-0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.523375,
+        "blue_relative_offset": -0.0125,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b-0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.53,
+        "blue_relative_offset": 0.0,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b+0.0000",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.536625,
+        "blue_relative_offset": 0.0125,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b+0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.54325,
+        "blue_relative_offset": 0.025,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b+0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.549875,
+        "blue_relative_offset": 0.0375,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b+0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5565,
+        "blue_relative_offset": 0.05,
+        "green_gain": 0.7585,
+        "green_relative_offset": 0.025,
+        "name": "g+0.0250_b+0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5035,
+        "blue_relative_offset": -0.05,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b-0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.510125,
+        "blue_relative_offset": -0.0375,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b-0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.51675,
+        "blue_relative_offset": -0.025,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b-0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.523375,
+        "blue_relative_offset": -0.0125,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b-0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.53,
+        "blue_relative_offset": 0.0,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b+0.0000",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.536625,
+        "blue_relative_offset": 0.0125,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b+0.0125",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.54325,
+        "blue_relative_offset": 0.025,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b+0.0250",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.549875,
+        "blue_relative_offset": 0.0375,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b+0.0375",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      },
+      {
+        "blue_gain": 0.5565,
+        "blue_relative_offset": 0.05,
+        "green_gain": 0.777,
+        "green_relative_offset": 0.05,
+        "name": "g+0.0500_b+0.0500",
+        "red_gain": 1.0,
+        "status": "PLANNED_ANALYTICAL_SAMPLE"
+      }
+    ]
+  },
+  "local_refinement_protocol": {
+    "bounds": "stay inside the adjacent green/blue grid cell",
+    "continuous_worst_case_claim": false,
+    "design": "deterministic 5 x 5 subgrid including cell boundaries",
+    "ownership": "same transformed CAM16-UCS engineering metric and named scenario",
+    "status": "specified-not-run",
+    "trigger": "after the sampled-grid minimum is identified for a named pair/scenario"
+  }
+}

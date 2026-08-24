@@ -1,0 +1,23 @@
+{
+  "acceptance": {
+    "maximum_pair_background_mae": 0.75,
+    "minimum_global_pooled_correlation": 0.95,
+    "observed_global_pooled_correlation": null,
+    "observed_pair_background_mae_max": null,
+    "status": "NOT_EVALUATED"
+  },
+  "baseline_source_commit": "c4c25e480912f8f54cbd8c992c0b6eb520dc0b8f",
+  "coordinates": null,
+  "evidence_kind": "schema and acceptance API only; no browser observations",
+  "full_image_hash_used": false,
+  "provenance": {
+    "browser": null,
+    "chromium_version": null,
+    "chromium_version_status": "pending-browser-calibration",
+    "probe_sha256": null,
+    "validator_sha256": null
+  },
+  "reason": "Phase 2B must collect real line-core pixels from the deterministic probe.",
+  "samples": [],
+  "status": "PENDING_BROWSER_CALIBRATION"
+}

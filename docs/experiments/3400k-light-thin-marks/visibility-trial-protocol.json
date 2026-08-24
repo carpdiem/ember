@@ -1,0 +1,129 @@
+{
+  "adaptation": {
+    "neutral_reset_minutes": 2,
+    "order": "counterbalanced across observers",
+    "warm_state_minutes": 5
+  },
+  "backgrounds": [
+    "bg_0",
+    "bg_1"
+  ],
+  "balanced_factors": {
+    "left_right_answer_position": "counterbalanced",
+    "orientations": [
+      "horizontal",
+      "vertical",
+      "diagonal_45",
+      "shallow_1_2",
+      "curved"
+    ],
+    "styles": [
+      "solid",
+      "dashed",
+      "dotted"
+    ],
+    "widths_css_px": [
+      1.5,
+      2.0,
+      3.0
+    ]
+  },
+  "capacity_rule": "No width receives PASS/FAIL or a capacity until observer-level uncertainty, catch criteria, and held-out floor calibration are complete.",
+  "catch_trials": {
+    "design": "large commanded solid separations at 3 CSS px",
+    "exclusion_rule": "preregister before data collection",
+    "fraction": 0.1
+  },
+  "final_visibility_threshold": null,
+  "final_width_capacity": null,
+  "floor_calibration": {
+    "held_out": true,
+    "method": "fit threshold only on held-out trial responses after protocol lock",
+    "no_proxy_tuning_on_held_out": true
+  },
+  "human_status": "not run",
+  "observers": {
+    "analyze_individual_and_group": true,
+    "minimum": 12,
+    "multiple_observers_required": true
+  },
+  "pair_count": 15,
+  "pairs": [
+    [
+      "cat.one",
+      "cat.two"
+    ],
+    [
+      "cat.one",
+      "cat.three"
+    ],
+    [
+      "cat.one",
+      "cat.four"
+    ],
+    [
+      "cat.one",
+      "cat.five"
+    ],
+    [
+      "cat.one",
+      "cat.six"
+    ],
+    [
+      "cat.two",
+      "cat.three"
+    ],
+    [
+      "cat.two",
+      "cat.four"
+    ],
+    [
+      "cat.two",
+      "cat.five"
+    ],
+    [
+      "cat.two",
+      "cat.six"
+    ],
+    [
+      "cat.three",
+      "cat.four"
+    ],
+    [
+      "cat.three",
+      "cat.five"
+    ],
+    [
+      "cat.three",
+      "cat.six"
+    ],
+    [
+      "cat.four",
+      "cat.five"
+    ],
+    [
+      "cat.four",
+      "cat.six"
+    ],
+    [
+      "cat.five",
+      "cat.six"
+    ]
+  ],
+  "repeats": {
+    "minimum_per_cell_per_observer": 4,
+    "randomized": true
+  },
+  "results": null,
+  "screening": [
+    "normal or corrected-to-normal acuity self-report",
+    "Ishihara-style colour-vision screen",
+    "viewing-distance and ambient-light compliance"
+  ],
+  "states": [
+    "commanded",
+    "transformed"
+  ],
+  "study": "preregistered line-to-legend 2AFC",
+  "task": "A target line segment is shown in a chart and two labeled legend samples are offered; choose which legend identity matches the target."
+}

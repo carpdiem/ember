@@ -1,0 +1,21 @@
+<!doctype html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G1 deterministic browser probe</title>
+<style>*{box-sizing:border-box}html,body{margin:0;background:#fff}#status{font:12px monospace;padding:8px}svg{display:block}</style>
+<div id="status">PENDING_BROWSER_CALIBRATION · case selected by ?case=0..32399</div><div id="probe"></div>
+<script id="g1-contract" type="application/json">{"categorical":{"five":"#185823","four":"#6A2600","one":"#359984","six":"#445D9B","three":"#A76282","two":"#281144"},"contract":{"backgrounds":{"gate":["bg_0","bg_1"],"report_only":["bg_2"]},"data_policy":"deterministic fake data; no consumer imports; no private data","device_pixel_ratios":[1,2],"features":["isolated_lines","same_style_crossings","short_legends","endpoint_markers","sparklines","financial_cockpit","thesis_baskets"],"line_core":{"aggregation":"per-channel median","definition":"For each uninterrupted stroke segment, exclude endpoints, joins, markers, crossings, and dash transitions; at each normal slice choose the max-coverage pixel nearest the mathematical centerline, retain coverage >= 0.5, then take the per-channel median across retained pixels.","minimum_coverage":0.5},"orientations":["horizontal","vertical","diagonal_45","shallow_1_2","curved"],"phases_css_px":[[0.0,0.0],[0.0,0.5],[0.5,0.0],[0.5,0.5]],"styles":{"dashed":{"dasharray":[8.0,5.0],"dashoffset":0.0,"linecap":"butt"},"dotted":{"dasharray":[1.0,5.0],"dashoffset":0.0,"linecap":"round"},"solid":{"dasharray":null,"dashoffset":0.0,"linecap":"butt"}},"viewports_css_px":{"desktop":[1280,900],"phone":[390,844]},"widths_css_px":[1.5,2.0,3.0]},"gains":[1.0,0.74,0.53],"status":"PENDING_BROWSER_CALIBRATION","surfaces":{"bg_0":"#F9F9F8","bg_1":"#ECECEB","bg_2":"#E0E0DD"}}</script>
+<script>
+const spec=JSON.parse(document.getElementById('g1-contract').textContent);
+const pairs=[]; const names=Object.keys(spec.categorical);
+for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++)pairs.push([names[i],names[j]]);
+const product=[];
+for(const state of ['commanded','transformed'])for(const background of ['bg_0','bg_1','bg_2'])for(const width of spec.contract.widths_css_px)for(const style of Object.keys(spec.contract.styles))for(const orientation of spec.contract.orientations)for(const dpr of spec.contract.device_pixel_ratios)for(const phase of spec.contract.phases_css_px)for(const pair of pairs)product.push({state,background,width,style,orientation,dpr,phase,pair});
+const index=Math.max(0,Math.min(product.length-1,Number(new URLSearchParams(location.search).get('case')||0)));
+const row=product[index]; const style=spec.contract.styles[row.style];
+const paths={horizontal:'M16 64 L144 64',vertical:'M80 16 L80 112',diagonal_45:'M24 104 L120 8',shallow_1_2:'M16 88 L144 40',curved:'M16 96 C48 18 108 116 144 28'};
+const dash=style.dasharray?`stroke-dasharray="${style.dasharray.join(' ')}"`:'';
+const warm='<defs><filter id="g1-warm" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0 0 .74 0 0 0 0 0 .53 0 0 0 0 0 1 0"/></filter></defs>';
+const filter=row.state==='transformed'?' filter="url(#g1-warm)"':'';
+document.getElementById('probe').innerHTML=`<svg data-case="${index}" data-status="PENDING_BROWSER_CALIBRATION" width="160" height="128" viewBox="0 0 160 128">${warm}<g${filter}><rect width="160" height="128" fill="${spec.surfaces[row.background]}"/><g transform="translate(${row.phase[0]} ${row.phase[1]})"><path d="${paths[row.orientation]}" fill="none" stroke="${spec.categorical[row.pair[0]]}" stroke-width="${row.width}" stroke-linecap="${style.linecap}" stroke-dashoffset="${style.dashoffset}" ${dash}/><path d="${paths[row.orientation]}" transform="translate(0 8)" fill="none" stroke="${spec.categorical[row.pair[1]]}" stroke-width="${row.width}" stroke-linecap="${style.linecap}" stroke-dashoffset="${style.dashoffset}" ${dash}/></g></g></svg>`;
+document.getElementById('status').textContent+=` · planned-${String(index+1).padStart(5,'0')} · ${JSON.stringify(row)}`;
+</script>

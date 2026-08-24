@@ -1,0 +1,52 @@
+{
+  "browser_pixels": "release oracle; no G1 browser observations committed in Phase 2A",
+  "claim_scope": "engineering appearance-model assumptions; not device calibration",
+  "display_white": {
+    "Y_w_cd_m2": 100.0,
+    "chromaticity": "D65"
+  },
+  "flare_implementation": {
+    "formula": "XYZ_stimulus_for_CAM16 = sRGB_to_XYZ(transformed_rgb) + flare_fraction_of_Yw * XYZ_D65_white",
+    "scope": "additive neutral engineering sensitivity term; not measured veiling glare",
+    "white_point": "XYZ_D65_white remains normalized to Y=1.0"
+  },
+  "primary": {
+    "L_A_cd_m2": 14.2,
+    "Y_b": {
+      "bg_0": 56.18,
+      "bg_1": 49.82,
+      "bg_2": 44.32
+    },
+    "flare_fraction_of_Yw": 0.0,
+    "surround": "Dim"
+  },
+  "scenario_policy": "report separately; never average",
+  "sensitivity": {
+    "L_A_cd_m2": [
+      9.5,
+      19.0
+    ],
+    "flare_fraction_of_Yw": 0.0075,
+    "surround": "Average",
+    "transformed_white_adapted_Y_b": {
+      "bg_0": 94.77,
+      "bg_1": 84.05,
+      "bg_2": 74.76
+    }
+  },
+  "signal_domain": {
+    "CAM16_UCS_units": "colour-science CAM16-UCS Euclidean distance",
+    "colour_science_XYZ_domain": "0 to 1 (reference scale)",
+    "compositing": "coverage-weighted encoded sRGB",
+    "input": "encoded sRGB in [0, 1]",
+    "transform": "diagonal gain multiplication in encoded sRGB, clipped to [0, 1]"
+  },
+  "transform": {
+    "gains": [
+      1.0,
+      0.74,
+      0.53
+    ],
+    "operation_order": "transform after rasterization/compositing"
+  }
+}
