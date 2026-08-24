@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
+<defs><path id="g1-crossing-geometry" d="M0,30 L44,0 L88,30"/></defs>
+<rect width="390" height="844" fill="#F9B883"/>
+<text x="16" y="25" fill="#342317" font-family="ui-monospace,monospace" font-size="16" font-weight="700">G1 phone · transformed</text>
+<text x="16" y="43" fill="#4D3322" font-family="ui-monospace,monospace" font-size="9">390×844 · compact real evidence · fake compositions</text>
+<rect x="10" y="54" width="370" height="372" rx="8" fill="#F9B883" stroke="#CA9367"/>
+<text x="20" y="74" fill="#342317" font-family="ui-monospace,monospace" font-size="11" font-weight="700">bg_0 · gate surface</text>
+<g data-background="bg_0" data-layout="phone">
+<g data-feature="short-category-legends"><text x="20" y="84" fill="#342317" font-family="ui-monospace,monospace" font-size="10">short category legend</text>
+<line data-feature="short-category-legend" data-role="cat.one" x1="20" y1="93" x2="46" y2="93" stroke="#357146" stroke-width="2"/>
+<text x="52" y="97" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">one</text>
+<line data-feature="short-category-legend" data-role="cat.two" x1="132" y1="93" x2="158" y2="93" stroke="#280D24" stroke-width="2"/>
+<text x="164" y="97" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">two</text>
+<line data-feature="short-category-legend" data-role="cat.three" x1="244" y1="93" x2="270" y2="93" stroke="#A74945" stroke-width="2"/>
+<text x="276" y="97" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">three</text>
+<line data-feature="short-category-legend" data-role="cat.four" x1="20" y1="115" x2="46" y2="115" stroke="#6A1C00" stroke-width="2"/>
+<text x="52" y="119" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">four</text>
+<line data-feature="short-category-legend" data-role="cat.five" x1="132" y1="115" x2="158" y2="115" stroke="#184113" stroke-width="2"/>
+<text x="164" y="119" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">five</text>
+<line data-feature="short-category-legend" data-role="cat.six" x1="244" y1="115" x2="270" y2="115" stroke="#444552" stroke-width="2"/>
+<text x="276" y="119" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">six</text>
+</g>
+<g data-feature="same-style-color-only-crossing" data-style="solid" data-geometry="g1-crossing-geometry" transform="translate(20 161)">
+<use href="#g1-crossing-geometry" data-role="cat.five" fill="none" stroke="#184113" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0"/>
+<use href="#g1-crossing-geometry" data-role="cat.six" fill="none" stroke="#444552" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0" transform="translate(0 30) scale(1 -1)"/>
+</g>
+<text x="20" y="206" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">equal geometry + solid style; colour only</text>
+<g data-feature="endpoint-markers" data-style="solid">
+<line x1="204" y1="175" x2="280" y2="175" stroke="#357146" stroke-width="2"/>
+<circle data-feature="endpoint-marker" data-role="cat.one" cx="204" cy="175" r="4" fill="#F9B883" stroke="#357146" stroke-width="2"/>
+<circle data-feature="endpoint-marker" data-role="cat.one" cx="280" cy="175" r="4" fill="#F9B883" stroke="#357146" stroke-width="2"/>
+</g>
+<g data-feature="sparklines"><text x="20" y="218" fill="#342317" font-family="ui-monospace,monospace" font-size="10">sparklines · fake deterministic data</text>
+<path data-feature="sparkline" data-role="cat.one" d="M20.00,239.00 L38.75,231.95 L57.50,227.20 L76.25,226.00 L95.00,227.89 L113.75,230.99 L132.50,232.83 L151.25,231.54 L170.00,226.72" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-feature="sparkline" data-role="cat.three" d="M20.00,254.38 L38.75,253.61 L57.50,254.83 L76.25,256.82 L95.00,258.00 L113.75,257.17 L132.50,254.07 L151.25,249.52 L170.00,245.00" fill="none" stroke="#A74945" stroke-width="1.5"/>
+<path data-feature="sparkline" data-role="cat.six" d="M20.00,274.53 L38.75,276.08 L57.50,277.00 L76.25,276.35 L95.00,273.95 L113.75,270.40 L132.50,266.89 L151.25,264.56 L170.00,264.00" fill="none" stroke="#444552" stroke-width="1.5"/>
+</g>
+<g data-feature="financial-cockpit" data-data-policy="fake-deterministic"><rect x="20" y="289" width="164" height="106" rx="5" fill="none" stroke="#CA9367"/><text x="29" y="306" fill="#342317" font-family="ui-monospace,monospace" font-size="10">fake Financial Cockpit</text>
+<path data-role="cat.one" d="M29.00,329.00 L47.25,321.95 L65.50,317.20 L83.75,316.00 L102.00,317.89 L120.25,320.99 L138.50,322.83 L156.75,321.54 L175.00,316.72" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-role="cat.two" d="M29.00,348.13 L47.25,343.46 L65.50,342.27 L83.75,344.14 L102.00,347.19 L120.25,349.00 L138.50,347.73 L156.75,342.98 L175.00,336.00" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path data-role="cat.four" d="M29.00,365.38 L47.25,364.61 L65.50,365.83 L83.75,367.82 L102.00,369.00 L120.25,368.17 L138.50,365.07 L156.75,360.52 L175.00,356.00" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
+</g>
+<g data-feature="thesis-baskets" data-data-policy="fake-deterministic"><rect x="194" y="289" width="166" height="106" rx="5" fill="none" stroke="#CA9367"/><text x="203" y="306" fill="#342317" font-family="ui-monospace,monospace" font-size="10">fake Thesis Baskets</text>
+<line data-role="cat.three" x1="204" y1="322" x2="232" y2="322" stroke="#A74945" stroke-width="2"/>
+<rect x="242" y="318" width="24" height="8" fill="#A74945" opacity="0.82"/>
+<line data-role="cat.five" x1="204" y1="344" x2="232" y2="344" stroke="#184113" stroke-width="2"/>
+<rect x="242" y="340" width="48" height="8" fill="#184113" opacity="0.82"/>
+<line data-role="cat.six" x1="204" y1="366" x2="232" y2="366" stroke="#444552" stroke-width="2"/>
+<rect x="242" y="362" width="72" height="8" fill="#444552" opacity="0.82"/>
+</g>
+</g>
+<rect x="10" y="436" width="370" height="372" rx="8" fill="#ECAF7D" stroke="#CA9367"/>
+<text x="20" y="456" fill="#342317" font-family="ui-monospace,monospace" font-size="11" font-weight="700">bg_1 · gate surface</text>
+<g data-background="bg_1" data-layout="phone">
+<g data-feature="short-category-legends"><text x="20" y="466" fill="#342317" font-family="ui-monospace,monospace" font-size="10">short category legend</text>
+<line data-feature="short-category-legend" data-role="cat.one" x1="20" y1="475" x2="46" y2="475" stroke="#357146" stroke-width="2"/>
+<text x="52" y="479" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">one</text>
+<line data-feature="short-category-legend" data-role="cat.two" x1="132" y1="475" x2="158" y2="475" stroke="#280D24" stroke-width="2"/>
+<text x="164" y="479" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">two</text>
+<line data-feature="short-category-legend" data-role="cat.three" x1="244" y1="475" x2="270" y2="475" stroke="#A74945" stroke-width="2"/>
+<text x="276" y="479" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">three</text>
+<line data-feature="short-category-legend" data-role="cat.four" x1="20" y1="497" x2="46" y2="497" stroke="#6A1C00" stroke-width="2"/>
+<text x="52" y="501" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">four</text>
+<line data-feature="short-category-legend" data-role="cat.five" x1="132" y1="497" x2="158" y2="497" stroke="#184113" stroke-width="2"/>
+<text x="164" y="501" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">five</text>
+<line data-feature="short-category-legend" data-role="cat.six" x1="244" y1="497" x2="270" y2="497" stroke="#444552" stroke-width="2"/>
+<text x="276" y="501" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">six</text>
+</g>
+<g data-feature="same-style-color-only-crossing" data-style="solid" data-geometry="g1-crossing-geometry" transform="translate(20 543)">
+<use href="#g1-crossing-geometry" data-role="cat.five" fill="none" stroke="#184113" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0"/>
+<use href="#g1-crossing-geometry" data-role="cat.six" fill="none" stroke="#444552" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0" transform="translate(0 30) scale(1 -1)"/>
+</g>
+<text x="20" y="588" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">equal geometry + solid style; colour only</text>
+<g data-feature="endpoint-markers" data-style="solid">
+<line x1="204" y1="557" x2="280" y2="557" stroke="#357146" stroke-width="2"/>
+<circle data-feature="endpoint-marker" data-role="cat.one" cx="204" cy="557" r="4" fill="#ECAF7D" stroke="#357146" stroke-width="2"/>
+<circle data-feature="endpoint-marker" data-role="cat.one" cx="280" cy="557" r="4" fill="#ECAF7D" stroke="#357146" stroke-width="2"/>
+</g>
+<g data-feature="sparklines"><text x="20" y="600" fill="#342317" font-family="ui-monospace,monospace" font-size="10">sparklines · fake deterministic data</text>
+<path data-feature="sparkline" data-role="cat.one" d="M20.00,621.00 L38.75,613.95 L57.50,609.20 L76.25,608.00 L95.00,609.89 L113.75,612.99 L132.50,614.83 L151.25,613.54 L170.00,608.72" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-feature="sparkline" data-role="cat.three" d="M20.00,636.38 L38.75,635.61 L57.50,636.83 L76.25,638.82 L95.00,640.00 L113.75,639.17 L132.50,636.07 L151.25,631.52 L170.00,627.00" fill="none" stroke="#A74945" stroke-width="1.5"/>
+<path data-feature="sparkline" data-role="cat.six" d="M20.00,656.53 L38.75,658.08 L57.50,659.00 L76.25,658.35 L95.00,655.95 L113.75,652.40 L132.50,648.89 L151.25,646.56 L170.00,646.00" fill="none" stroke="#444552" stroke-width="1.5"/>
+</g>
+<g data-feature="financial-cockpit" data-data-policy="fake-deterministic"><rect x="20" y="671" width="164" height="106" rx="5" fill="none" stroke="#CA9367"/><text x="29" y="688" fill="#342317" font-family="ui-monospace,monospace" font-size="10">fake Financial Cockpit</text>
+<path data-role="cat.one" d="M29.00,711.00 L47.25,703.95 L65.50,699.20 L83.75,698.00 L102.00,699.89 L120.25,702.99 L138.50,704.83 L156.75,703.54 L175.00,698.72" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-role="cat.two" d="M29.00,730.13 L47.25,725.46 L65.50,724.27 L83.75,726.14 L102.00,729.19 L120.25,731.00 L138.50,729.73 L156.75,724.98 L175.00,718.00" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path data-role="cat.four" d="M29.00,747.38 L47.25,746.61 L65.50,747.83 L83.75,749.82 L102.00,751.00 L120.25,750.17 L138.50,747.07 L156.75,742.52 L175.00,738.00" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
+</g>
+<g data-feature="thesis-baskets" data-data-policy="fake-deterministic"><rect x="194" y="671" width="166" height="106" rx="5" fill="none" stroke="#CA9367"/><text x="203" y="688" fill="#342317" font-family="ui-monospace,monospace" font-size="10">fake Thesis Baskets</text>
+<line data-role="cat.three" x1="204" y1="704" x2="232" y2="704" stroke="#A74945" stroke-width="2"/>
+<rect x="242" y="700" width="24" height="8" fill="#A74945" opacity="0.82"/>
+<line data-role="cat.five" x1="204" y1="726" x2="232" y2="726" stroke="#184113" stroke-width="2"/>
+<rect x="242" y="722" width="48" height="8" fill="#184113" opacity="0.82"/>
+<line data-role="cat.six" x1="204" y1="748" x2="232" y2="748" stroke="#444552" stroke-width="2"/>
+<rect x="242" y="744" width="72" height="8" fill="#444552" opacity="0.82"/>
+</g>
+</g>
+<text x="16" y="829" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">structural aid only · browser/human evidence pending</text>
+</svg>

@@ -1,102 +1,125 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">
+<defs><path id="g1-crossing-geometry" d="M0,30 L44,0 L88,30"/></defs>
 <rect width="1280" height="900" fill="#F9B883"/>
-<text x="32" y="38" fill="#342317" font-family="ui-monospace,monospace" font-size="22" font-weight="700">G1 current-bank core · transformed gain [1, .74, .53]</text>
-<text x="32" y="62" fill="#4D3322" font-family="ui-monospace,monospace" font-size="13">planned geometry · analytical model · browser calibration and human capacity pending</text>
-<rect x="24" y="86" width="1232" height="366" rx="10" fill="#F9B883" stroke="#CA9367"/>
-<text x="44" y="114" fill="#342317" font-family="ui-monospace,monospace" font-size="15" font-weight="700">bg_0 · gate surface · frozen current categorical bank</text>
-<path d="M46,164 L162,164" fill="none" stroke="#357146" stroke-width="1.5"/>
-<text x="46" y="208" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">horizontal</text>
-<path d="M254,140 L254,188" fill="none" stroke="#280D24" stroke-width="1.5"/>
-<text x="196" y="208" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">vertical</text>
-<path d="M346,188 L394,140" fill="none" stroke="#A74945" stroke-width="1.5"/>
-<text x="346" y="208" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">diagonal_45</text>
-<path d="M496,180 L612,148" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
-<text x="496" y="208" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">shallow_1_2</text>
-<path d="M646,178 C676,140 724,192 762,150" fill="none" stroke="#184113" stroke-width="1.5"/>
-<text x="646" y="208" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">curved</text>
-<line x1="820" y1="148" x2="936" y2="148" stroke="#6A1C00" stroke-width="2" stroke-linecap="butt"/>
-<text x="948" y="152" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">solid</text>
-<line x1="820" y1="178" x2="936" y2="178" stroke="#184113" stroke-width="2" stroke-dasharray="8.0 5.0" stroke-linecap="butt"/>
-<text x="948" y="182" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">dashed</text>
-<line x1="820" y1="208" x2="936" y2="208" stroke="#444552" stroke-width="2" stroke-dasharray="1.0 5.0" stroke-linecap="round"/>
-<text x="948" y="212" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">dotted</text>
-<text x="46" y="254" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">1.5px</text>
-<line x1="100" y1="250" x2="188" y2="250" stroke="#357146" stroke-width="1.5"/>
-<line x1="212" y1="250" x2="300" y2="250" stroke="#280D24" stroke-width="1.5"/>
-<line x1="324" y1="250" x2="412" y2="250" stroke="#A74945" stroke-width="1.5"/>
-<line x1="436" y1="250" x2="524" y2="250" stroke="#6A1C00" stroke-width="1.5"/>
-<line x1="548" y1="250" x2="636" y2="250" stroke="#184113" stroke-width="1.5"/>
-<line x1="660" y1="250" x2="748" y2="250" stroke="#444552" stroke-width="1.5"/>
-<text x="46" y="288" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">2px</text>
-<line x1="100" y1="284" x2="188" y2="284" stroke="#357146" stroke-width="2.0"/>
-<line x1="212" y1="284" x2="300" y2="284" stroke="#280D24" stroke-width="2.0"/>
-<line x1="324" y1="284" x2="412" y2="284" stroke="#A74945" stroke-width="2.0"/>
-<line x1="436" y1="284" x2="524" y2="284" stroke="#6A1C00" stroke-width="2.0"/>
-<line x1="548" y1="284" x2="636" y2="284" stroke="#184113" stroke-width="2.0"/>
-<line x1="660" y1="284" x2="748" y2="284" stroke="#444552" stroke-width="2.0"/>
-<text x="46" y="322" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">3px</text>
-<line x1="100" y1="318" x2="188" y2="318" stroke="#357146" stroke-width="3.0"/>
-<line x1="212" y1="318" x2="300" y2="318" stroke="#280D24" stroke-width="3.0"/>
-<line x1="324" y1="318" x2="412" y2="318" stroke="#A74945" stroke-width="3.0"/>
-<line x1="436" y1="318" x2="524" y2="318" stroke="#6A1C00" stroke-width="3.0"/>
-<line x1="548" y1="318" x2="636" y2="318" stroke="#184113" stroke-width="3.0"/>
-<line x1="660" y1="318" x2="748" y2="318" stroke="#444552" stroke-width="3.0"/>
-<rect x="806" y="244" width="422" height="152" rx="7" fill="none" stroke="#CA9367"/>
-<text x="824" y="268" fill="#342317" font-family="ui-monospace,monospace" font-size="13">fake Financial Cockpit / Thesis Baskets</text>
-<path d="M826.00,388.00 L872.75,331.57 L919.50,293.63 L966.25,284.00 L1013.00,299.16 L1059.75,323.93 L1106.50,338.64 L1153.25,328.31 L1200.00,289.77" fill="none" stroke="#357146" stroke-width="1.5"/>
-<path d="M826.00,381.03 L872.75,343.65 L919.50,334.16 L966.25,349.10 L1013.00,373.51 L1059.75,388.00 L1106.50,377.82 L1153.25,339.84 L1200.00,284.00" fill="none" stroke="#280D24" stroke-width="1.5"/>
-<path d="M826.00,359.06 L872.75,352.86 L919.50,362.61 L966.25,378.54 L1013.00,388.00 L1059.75,381.36 L1106.50,356.57 L1153.25,320.13 L1200.00,284.00" fill="none" stroke="#A74945" stroke-width="1.5" stroke-dasharray="8 5"/>
-<path d="M826.00,359.45 L872.75,367.37 L919.50,380.32 L966.25,388.00 L1013.00,382.60 L1059.75,362.47 L1106.50,332.86 L1153.25,303.50 L1200.00,284.00" fill="none" stroke="#6A1C00" stroke-width="1.5" stroke-dasharray="8 5"/>
-<path d="M826.00,368.26 L872.75,380.65 L919.50,388.00 L966.25,382.84 L1013.00,363.56 L1059.75,335.23 L1106.50,307.13 L1153.25,288.47 L1200.00,284.00" fill="none" stroke="#184113" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
-<path d="M826.00,380.65 L872.75,388.00 L919.50,382.84 L966.25,363.56 L1013.00,335.23 L1059.75,307.13 L1106.50,288.47 L1153.25,284.00 L1200.00,291.80" fill="none" stroke="#444552" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
-<text x="46" y="428" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">Phases: (0,0), (0,.5), (.5,0), (.5,.5) · DPR 1/2 · endpoints/joins/markers/crossings/dash transitions excluded from line core.</text>
-<rect x="24" y="476" width="1232" height="366" rx="10" fill="#ECAF7D" stroke="#CA9367"/>
-<text x="44" y="504" fill="#342317" font-family="ui-monospace,monospace" font-size="15" font-weight="700">bg_1 · gate surface · frozen current categorical bank</text>
-<path d="M46,554 L162,554" fill="none" stroke="#357146" stroke-width="1.5"/>
-<text x="46" y="598" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">horizontal</text>
-<path d="M254,530 L254,578" fill="none" stroke="#280D24" stroke-width="1.5"/>
-<text x="196" y="598" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">vertical</text>
-<path d="M346,578 L394,530" fill="none" stroke="#A74945" stroke-width="1.5"/>
-<text x="346" y="598" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">diagonal_45</text>
-<path d="M496,570 L612,538" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
-<text x="496" y="598" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">shallow_1_2</text>
-<path d="M646,568 C676,530 724,582 762,540" fill="none" stroke="#184113" stroke-width="1.5"/>
-<text x="646" y="598" fill="#66442D" font-family="ui-monospace,monospace" font-size="10">curved</text>
-<line x1="820" y1="538" x2="936" y2="538" stroke="#6A1C00" stroke-width="2" stroke-linecap="butt"/>
-<text x="948" y="542" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">solid</text>
-<line x1="820" y1="568" x2="936" y2="568" stroke="#184113" stroke-width="2" stroke-dasharray="8.0 5.0" stroke-linecap="butt"/>
-<text x="948" y="572" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">dashed</text>
-<line x1="820" y1="598" x2="936" y2="598" stroke="#444552" stroke-width="2" stroke-dasharray="1.0 5.0" stroke-linecap="round"/>
-<text x="948" y="602" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">dotted</text>
-<text x="46" y="644" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">1.5px</text>
-<line x1="100" y1="640" x2="188" y2="640" stroke="#357146" stroke-width="1.5"/>
-<line x1="212" y1="640" x2="300" y2="640" stroke="#280D24" stroke-width="1.5"/>
-<line x1="324" y1="640" x2="412" y2="640" stroke="#A74945" stroke-width="1.5"/>
-<line x1="436" y1="640" x2="524" y2="640" stroke="#6A1C00" stroke-width="1.5"/>
-<line x1="548" y1="640" x2="636" y2="640" stroke="#184113" stroke-width="1.5"/>
-<line x1="660" y1="640" x2="748" y2="640" stroke="#444552" stroke-width="1.5"/>
-<text x="46" y="678" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">2px</text>
-<line x1="100" y1="674" x2="188" y2="674" stroke="#357146" stroke-width="2.0"/>
-<line x1="212" y1="674" x2="300" y2="674" stroke="#280D24" stroke-width="2.0"/>
-<line x1="324" y1="674" x2="412" y2="674" stroke="#A74945" stroke-width="2.0"/>
-<line x1="436" y1="674" x2="524" y2="674" stroke="#6A1C00" stroke-width="2.0"/>
-<line x1="548" y1="674" x2="636" y2="674" stroke="#184113" stroke-width="2.0"/>
-<line x1="660" y1="674" x2="748" y2="674" stroke="#444552" stroke-width="2.0"/>
-<text x="46" y="712" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">3px</text>
-<line x1="100" y1="708" x2="188" y2="708" stroke="#357146" stroke-width="3.0"/>
-<line x1="212" y1="708" x2="300" y2="708" stroke="#280D24" stroke-width="3.0"/>
-<line x1="324" y1="708" x2="412" y2="708" stroke="#A74945" stroke-width="3.0"/>
-<line x1="436" y1="708" x2="524" y2="708" stroke="#6A1C00" stroke-width="3.0"/>
-<line x1="548" y1="708" x2="636" y2="708" stroke="#184113" stroke-width="3.0"/>
-<line x1="660" y1="708" x2="748" y2="708" stroke="#444552" stroke-width="3.0"/>
-<rect x="806" y="634" width="422" height="152" rx="7" fill="none" stroke="#CA9367"/>
-<text x="824" y="658" fill="#342317" font-family="ui-monospace,monospace" font-size="13">fake Financial Cockpit / Thesis Baskets</text>
-<path d="M826.00,778.00 L872.75,721.57 L919.50,683.63 L966.25,674.00 L1013.00,689.16 L1059.75,713.93 L1106.50,728.64 L1153.25,718.31 L1200.00,679.77" fill="none" stroke="#357146" stroke-width="1.5"/>
-<path d="M826.00,771.03 L872.75,733.65 L919.50,724.16 L966.25,739.10 L1013.00,763.51 L1059.75,778.00 L1106.50,767.82 L1153.25,729.84 L1200.00,674.00" fill="none" stroke="#280D24" stroke-width="1.5"/>
-<path d="M826.00,749.06 L872.75,742.86 L919.50,752.61 L966.25,768.54 L1013.00,778.00 L1059.75,771.36 L1106.50,746.57 L1153.25,710.13 L1200.00,674.00" fill="none" stroke="#A74945" stroke-width="1.5" stroke-dasharray="8 5"/>
-<path d="M826.00,749.45 L872.75,757.37 L919.50,770.32 L966.25,778.00 L1013.00,772.60 L1059.75,752.47 L1106.50,722.86 L1153.25,693.50 L1200.00,674.00" fill="none" stroke="#6A1C00" stroke-width="1.5" stroke-dasharray="8 5"/>
-<path d="M826.00,758.26 L872.75,770.65 L919.50,778.00 L966.25,772.84 L1013.00,753.56 L1059.75,725.23 L1106.50,697.13 L1153.25,678.47 L1200.00,674.00" fill="none" stroke="#184113" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
-<path d="M826.00,770.65 L872.75,778.00 L919.50,772.84 L966.25,753.56 L1013.00,725.23 L1059.75,697.13 L1106.50,678.47 L1153.25,674.00 L1200.00,681.80" fill="none" stroke="#444552" stroke-width="1.5" stroke-dasharray="1 5" stroke-linecap="round"/>
-<text x="46" y="818" fill="#66442D" font-family="ui-monospace,monospace" font-size="11">Phases: (0,0), (0,.5), (.5,0), (.5,.5) · DPR 1/2 · endpoints/joins/markers/crossings/dash transitions excluded from line core.</text>
-<text x="32" y="874" fill="#66442D" font-family="ui-monospace,monospace" font-size="12">bg_2 is report-only. No candidate colors. No browser samples. No human width PASS/FAIL.</text>
+<text x="32" y="38" fill="#342317" font-family="ui-monospace,monospace" font-size="22" font-weight="700">G1 current-bank evidence · transformed gain [1, .74, .53]</text>
+<text x="32" y="62" fill="#4D3322" font-family="ui-monospace,monospace" font-size="13">real tagged specimens · fake deterministic compositions · browser and human calibration pending</text>
+<rect x="24" y="82" width="1232" height="370" rx="10" fill="#F9B883" stroke="#CA9367"/>
+<text x="42" y="107" fill="#342317" font-family="ui-monospace,monospace" font-size="14" font-weight="700">bg_0 · gate surface</text>
+<g data-background="bg_0" data-layout="desktop">
+<g data-feature="short-category-legends"><text x="42" y="128" fill="#342317" font-family="ui-monospace,monospace" font-size="10">short category legend</text>
+<line data-feature="short-category-legend" data-role="cat.one" x1="42" y1="137" x2="68" y2="137" stroke="#357146" stroke-width="2"/>
+<text x="74" y="141" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">one</text>
+<line data-feature="short-category-legend" data-role="cat.two" x1="128" y1="137" x2="154" y2="137" stroke="#280D24" stroke-width="2"/>
+<text x="160" y="141" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">two</text>
+<line data-feature="short-category-legend" data-role="cat.three" x1="214" y1="137" x2="240" y2="137" stroke="#A74945" stroke-width="2"/>
+<text x="246" y="141" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">three</text>
+<line data-feature="short-category-legend" data-role="cat.four" x1="300" y1="137" x2="326" y2="137" stroke="#6A1C00" stroke-width="2"/>
+<text x="332" y="141" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">four</text>
+<line data-feature="short-category-legend" data-role="cat.five" x1="386" y1="137" x2="412" y2="137" stroke="#184113" stroke-width="2"/>
+<text x="418" y="141" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">five</text>
+<line data-feature="short-category-legend" data-role="cat.six" x1="472" y1="137" x2="498" y2="137" stroke="#444552" stroke-width="2"/>
+<text x="504" y="141" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">six</text>
+</g>
+<g data-feature="same-style-color-only-crossing" data-style="solid" data-geometry="g1-crossing-geometry" transform="translate(42 192)">
+<use href="#g1-crossing-geometry" data-role="cat.five" fill="none" stroke="#184113" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0"/>
+<use href="#g1-crossing-geometry" data-role="cat.six" fill="none" stroke="#444552" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0" transform="translate(0 30) scale(1 -1)"/>
+</g>
+<text x="42" y="237" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">equal geometry + solid style; colour only</text>
+<g data-feature="endpoint-markers" data-style="solid">
+<line x1="274" y1="206" x2="350" y2="206" stroke="#357146" stroke-width="2"/>
+<circle data-feature="endpoint-marker" data-role="cat.one" cx="274" cy="206" r="4" fill="#F9B883" stroke="#357146" stroke-width="2"/>
+<circle data-feature="endpoint-marker" data-role="cat.one" cx="350" cy="206" r="4" fill="#F9B883" stroke="#357146" stroke-width="2"/>
+</g>
+<g data-feature="sparklines"><text x="42" y="259" fill="#342317" font-family="ui-monospace,monospace" font-size="10">sparklines · fake deterministic data</text>
+<path data-feature="sparkline" data-role="cat.one" d="M42.00,280.00 L73.25,272.95 L104.50,268.20 L135.75,267.00 L167.00,268.89 L198.25,271.99 L229.50,273.83 L260.75,272.54 L292.00,267.72" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-feature="sparkline" data-role="cat.three" d="M42.00,295.38 L73.25,294.61 L104.50,295.83 L135.75,297.82 L167.00,299.00 L198.25,298.17 L229.50,295.07 L260.75,290.52 L292.00,286.00" fill="none" stroke="#A74945" stroke-width="1.5"/>
+<path data-feature="sparkline" data-role="cat.six" d="M42.00,315.53 L73.25,317.08 L104.50,318.00 L135.75,317.35 L167.00,314.95 L198.25,311.40 L229.50,307.89 L260.75,305.56 L292.00,305.00" fill="none" stroke="#444552" stroke-width="1.5"/>
+</g>
+<g data-feature="financial-cockpit" data-data-policy="fake-deterministic"><rect x="42" y="332" width="270" height="92" rx="5" fill="none" stroke="#CA9367"/><text x="51" y="349" fill="#342317" font-family="ui-monospace,monospace" font-size="10">fake Financial Cockpit</text>
+<path data-role="cat.one" d="M51.00,372.00 L82.50,364.95 L114.00,360.20 L145.50,359.00 L177.00,360.89 L208.50,363.99 L240.00,365.83 L271.50,364.54 L303.00,359.72" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-role="cat.two" d="M51.00,391.13 L82.50,386.46 L114.00,385.27 L145.50,387.14 L177.00,390.19 L208.50,392.00 L240.00,390.73 L271.50,385.98 L303.00,379.00" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path data-role="cat.four" d="M51.00,408.38 L82.50,407.61 L114.00,408.83 L145.50,410.82 L177.00,412.00 L208.50,411.17 L240.00,408.07 L271.50,403.52 L303.00,399.00" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
+</g>
+<g data-feature="thesis-baskets" data-data-policy="fake-deterministic"><rect x="328" y="332" width="276" height="92" rx="5" fill="none" stroke="#CA9367"/><text x="337" y="349" fill="#342317" font-family="ui-monospace,monospace" font-size="10">fake Thesis Baskets</text>
+<line data-role="cat.three" x1="338" y1="365" x2="366" y2="365" stroke="#A74945" stroke-width="2"/>
+<rect x="376" y="361" width="42" height="8" fill="#A74945" opacity="0.82"/>
+<line data-role="cat.five" x1="338" y1="387" x2="366" y2="387" stroke="#184113" stroke-width="2"/>
+<rect x="376" y="383" width="84" height="8" fill="#184113" opacity="0.82"/>
+<line data-role="cat.six" x1="338" y1="409" x2="366" y2="409" stroke="#444552" stroke-width="2"/>
+<rect x="376" y="405" width="126" height="8" fill="#444552" opacity="0.82"/>
+</g>
+</g>
+<g data-feature="isolated-lines" data-background="bg_0"><text x="650" y="131" fill="#342317" font-family="ui-monospace,monospace" font-size="10">isolated geometry + style/width samples</text>
+<path data-orientation="horizontal" d="M650,164 L766,164" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-orientation="vertical" d="M820,140 L820,188" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path data-orientation="diagonal_45" d="M874,188 L922,140" fill="none" stroke="#A74945" stroke-width="1.5"/>
+<path data-orientation="shallow_1_2" d="M986,180 L1102,148" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
+<path data-orientation="curved" d="M1098,178 C1128,140 1176,192 1214,150" fill="none" stroke="#184113" stroke-width="1.5"/>
+<line data-style="solid" x1="650" y1="232" x2="770" y2="232" stroke="#357146" stroke-width="2" stroke-linecap="butt"/>
+<line data-style="dashed" x1="650" y1="259" x2="770" y2="259" stroke="#280D24" stroke-width="2" stroke-linecap="butt" stroke-dasharray="8.0 5.0"/>
+<line data-style="dotted" x1="650" y1="286" x2="770" y2="286" stroke="#A74945" stroke-width="2" stroke-linecap="round" stroke-dasharray="1.0 5.0"/>
+<line data-width="1.5" x1="800" y1="232" x2="920" y2="232" stroke="#6A1C00" stroke-width="1.5"/>
+<line data-width="2" x1="800" y1="259" x2="920" y2="259" stroke="#184113" stroke-width="2"/>
+<line data-width="3" x1="800" y1="286" x2="920" y2="286" stroke="#444552" stroke-width="3"/>
+</g>
+<rect x="24" y="472" width="1232" height="370" rx="10" fill="#ECAF7D" stroke="#CA9367"/>
+<text x="42" y="497" fill="#342317" font-family="ui-monospace,monospace" font-size="14" font-weight="700">bg_1 · gate surface</text>
+<g data-background="bg_1" data-layout="desktop">
+<g data-feature="short-category-legends"><text x="42" y="518" fill="#342317" font-family="ui-monospace,monospace" font-size="10">short category legend</text>
+<line data-feature="short-category-legend" data-role="cat.one" x1="42" y1="527" x2="68" y2="527" stroke="#357146" stroke-width="2"/>
+<text x="74" y="531" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">one</text>
+<line data-feature="short-category-legend" data-role="cat.two" x1="128" y1="527" x2="154" y2="527" stroke="#280D24" stroke-width="2"/>
+<text x="160" y="531" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">two</text>
+<line data-feature="short-category-legend" data-role="cat.three" x1="214" y1="527" x2="240" y2="527" stroke="#A74945" stroke-width="2"/>
+<text x="246" y="531" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">three</text>
+<line data-feature="short-category-legend" data-role="cat.four" x1="300" y1="527" x2="326" y2="527" stroke="#6A1C00" stroke-width="2"/>
+<text x="332" y="531" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">four</text>
+<line data-feature="short-category-legend" data-role="cat.five" x1="386" y1="527" x2="412" y2="527" stroke="#184113" stroke-width="2"/>
+<text x="418" y="531" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">five</text>
+<line data-feature="short-category-legend" data-role="cat.six" x1="472" y1="527" x2="498" y2="527" stroke="#444552" stroke-width="2"/>
+<text x="504" y="531" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">six</text>
+</g>
+<g data-feature="same-style-color-only-crossing" data-style="solid" data-geometry="g1-crossing-geometry" transform="translate(42 582)">
+<use href="#g1-crossing-geometry" data-role="cat.five" fill="none" stroke="#184113" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0"/>
+<use href="#g1-crossing-geometry" data-role="cat.six" fill="none" stroke="#444552" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0" transform="translate(0 30) scale(1 -1)"/>
+</g>
+<text x="42" y="627" fill="#66442D" font-family="ui-monospace,monospace" font-size="9">equal geometry + solid style; colour only</text>
+<g data-feature="endpoint-markers" data-style="solid">
+<line x1="274" y1="596" x2="350" y2="596" stroke="#357146" stroke-width="2"/>
+<circle data-feature="endpoint-marker" data-role="cat.one" cx="274" cy="596" r="4" fill="#ECAF7D" stroke="#357146" stroke-width="2"/>
+<circle data-feature="endpoint-marker" data-role="cat.one" cx="350" cy="596" r="4" fill="#ECAF7D" stroke="#357146" stroke-width="2"/>
+</g>
+<g data-feature="sparklines"><text x="42" y="649" fill="#342317" font-family="ui-monospace,monospace" font-size="10">sparklines · fake deterministic data</text>
+<path data-feature="sparkline" data-role="cat.one" d="M42.00,670.00 L73.25,662.95 L104.50,658.20 L135.75,657.00 L167.00,658.89 L198.25,661.99 L229.50,663.83 L260.75,662.54 L292.00,657.72" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-feature="sparkline" data-role="cat.three" d="M42.00,685.38 L73.25,684.61 L104.50,685.83 L135.75,687.82 L167.00,689.00 L198.25,688.17 L229.50,685.07 L260.75,680.52 L292.00,676.00" fill="none" stroke="#A74945" stroke-width="1.5"/>
+<path data-feature="sparkline" data-role="cat.six" d="M42.00,705.53 L73.25,707.08 L104.50,708.00 L135.75,707.35 L167.00,704.95 L198.25,701.40 L229.50,697.89 L260.75,695.56 L292.00,695.00" fill="none" stroke="#444552" stroke-width="1.5"/>
+</g>
+<g data-feature="financial-cockpit" data-data-policy="fake-deterministic"><rect x="42" y="722" width="270" height="92" rx="5" fill="none" stroke="#CA9367"/><text x="51" y="739" fill="#342317" font-family="ui-monospace,monospace" font-size="10">fake Financial Cockpit</text>
+<path data-role="cat.one" d="M51.00,762.00 L82.50,754.95 L114.00,750.20 L145.50,749.00 L177.00,750.89 L208.50,753.99 L240.00,755.83 L271.50,754.54 L303.00,749.72" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-role="cat.two" d="M51.00,781.13 L82.50,776.46 L114.00,775.27 L145.50,777.14 L177.00,780.19 L208.50,782.00 L240.00,780.73 L271.50,775.98 L303.00,769.00" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path data-role="cat.four" d="M51.00,798.38 L82.50,797.61 L114.00,798.83 L145.50,800.82 L177.00,802.00 L208.50,801.17 L240.00,798.07 L271.50,793.52 L303.00,789.00" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
+</g>
+<g data-feature="thesis-baskets" data-data-policy="fake-deterministic"><rect x="328" y="722" width="276" height="92" rx="5" fill="none" stroke="#CA9367"/><text x="337" y="739" fill="#342317" font-family="ui-monospace,monospace" font-size="10">fake Thesis Baskets</text>
+<line data-role="cat.three" x1="338" y1="755" x2="366" y2="755" stroke="#A74945" stroke-width="2"/>
+<rect x="376" y="751" width="42" height="8" fill="#A74945" opacity="0.82"/>
+<line data-role="cat.five" x1="338" y1="777" x2="366" y2="777" stroke="#184113" stroke-width="2"/>
+<rect x="376" y="773" width="84" height="8" fill="#184113" opacity="0.82"/>
+<line data-role="cat.six" x1="338" y1="799" x2="366" y2="799" stroke="#444552" stroke-width="2"/>
+<rect x="376" y="795" width="126" height="8" fill="#444552" opacity="0.82"/>
+</g>
+</g>
+<g data-feature="isolated-lines" data-background="bg_1"><text x="650" y="521" fill="#342317" font-family="ui-monospace,monospace" font-size="10">isolated geometry + style/width samples</text>
+<path data-orientation="horizontal" d="M650,554 L766,554" fill="none" stroke="#357146" stroke-width="1.5"/>
+<path data-orientation="vertical" d="M820,530 L820,578" fill="none" stroke="#280D24" stroke-width="1.5"/>
+<path data-orientation="diagonal_45" d="M874,578 L922,530" fill="none" stroke="#A74945" stroke-width="1.5"/>
+<path data-orientation="shallow_1_2" d="M986,570 L1102,538" fill="none" stroke="#6A1C00" stroke-width="1.5"/>
+<path data-orientation="curved" d="M1098,568 C1128,530 1176,582 1214,540" fill="none" stroke="#184113" stroke-width="1.5"/>
+<line data-style="solid" x1="650" y1="622" x2="770" y2="622" stroke="#357146" stroke-width="2" stroke-linecap="butt"/>
+<line data-style="dashed" x1="650" y1="649" x2="770" y2="649" stroke="#280D24" stroke-width="2" stroke-linecap="butt" stroke-dasharray="8.0 5.0"/>
+<line data-style="dotted" x1="650" y1="676" x2="770" y2="676" stroke="#A74945" stroke-width="2" stroke-linecap="round" stroke-dasharray="1.0 5.0"/>
+<line data-width="1.5" x1="800" y1="622" x2="920" y2="622" stroke="#6A1C00" stroke-width="1.5"/>
+<line data-width="2" x1="800" y1="649" x2="920" y2="649" stroke="#184113" stroke-width="2"/>
+<line data-width="3" x1="800" y1="676" x2="920" y2="676" stroke="#444552" stroke-width="3"/>
+</g>
+<text x="32" y="874" fill="#66442D" font-family="ui-monospace,monospace" font-size="12">bg_2 report-only · no candidate colors · no browser samples · no human width PASS/FAIL</text>
 </svg>

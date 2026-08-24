@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import importlib.util
+import itertools
 import json
+import random
+import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -31,6 +34,8 @@ G1_CORE_OUTPUTS = (
     "review/g1-index.html",
     "review/g1-commanded.svg",
     "review/g1-transformed.svg",
+    "review/g1-phone-commanded.svg",
+    "review/g1-phone-transformed.svg",
     "review/g1-browser-probe.html",
 )
 
@@ -412,6 +417,10 @@ def test_g1_contract_has_real_geometry_styles_phases_and_compositions() -> None:
     g1 = load_module("g1_harness.py", "thin_marks_g1_contract")
     contract = g1.specimen_contract()
     assert contract["backgrounds"] == {"gate": ["bg_0", "bg_1"], "report_only": ["bg_2"]}
+    assert contract["state_order"] == ["commanded", "transformed"]
+    assert contract["background_order"] == ["bg_0", "bg_1", "bg_2"]
+    assert contract["category_order"] == ["one", "two", "three", "four", "five", "six"]
+    assert contract["style_order"] == ["solid", "dashed", "dotted"]
     assert contract["widths_css_px"] == [1.5, 2.0, 3.0]
     assert contract["device_pixel_ratios"] == [1, 2]
     assert contract["orientations"] == [
@@ -442,6 +451,136 @@ def test_g1_contract_has_real_geometry_styles_phases_and_compositions() -> None:
     assert core["aggregation"] == "per-channel median"
     assert "exclude endpoints" in core["definition"]
     assert "max-coverage pixel" in core["definition"]
+
+
+def test_g1_browser_payload_case_mapping_matches_planned_ledger() -> None:
+    probe = (EXPERIMENT / "review/g1-browser-probe.html").read_text()
+    match = re.search(
+        r'<script id="g1-contract" type="application/json">(.*?)</script>', probe, re.DOTALL
+    )
+    assert match is not None
+    payload = json.loads(match.group(1))
+    contract = payload["contract"]
+    ledger = json.loads((EXPERIMENT / "raster-baseline.json").read_text())["matrix"]
+    pairs = list(itertools.combinations(contract["category_order"], 2))
+    browser_dimensions = list(
+        itertools.product(
+            contract["state_order"],
+            contract["background_order"],
+            contract["widths_css_px"],
+            contract["style_order"],
+            contract["orientations"],
+            contract["device_pixel_ratios"],
+            contract["phases_css_px"],
+            pairs,
+        )
+    )
+    assert len(browser_dimensions) == len(ledger) == 32_400
+    strides = (1, 15, 60, 120, 600, 1_800, 5_400, 16_200)
+    indices = {0, len(ledger) - 1}
+    for stride in strides:
+        indices.update({stride - 1, stride})
+    indices.update(random.Random(3400).sample(range(len(ledger)), 48))
+
+    for index in sorted(indices):
+        state, background, width, style, orientation, dpr, phase, pair = browser_dimensions[index]
+        reconstructed = {
+            "id": f"planned-{index + 1:05d}",
+            "state": state,
+            "background": background,
+            "background_policy": "gate" if background in ("bg_0", "bg_1") else "report-only",
+            "width_css_px": width,
+            "style": style,
+            "orientation": orientation,
+            "dpr": dpr,
+            "phase_css_px": list(phase),
+            "roles": [f"cat.{name}" for name in pair],
+            "status": "PENDING_BROWSER_CALIBRATION",
+            "observed_line_core_rgb8": None,
+            "observed_distance": None,
+        }
+        assert reconstructed == ledger[index]
+
+    assert "Object.keys(spec.categorical)" not in probe
+    assert "Object.keys(spec.contract.styles)" not in probe
+    assert "data-planned-id" in probe
+
+
+def test_g1_review_sheets_contain_real_structurally_tagged_features() -> None:
+    namespace = {"svg": "http://www.w3.org/2000/svg"}
+    href = "{http://www.w3.org/1999/xlink}href"
+    sheets = (
+        ("g1-commanded.svg", "desktop"),
+        ("g1-transformed.svg", "desktop"),
+        ("g1-phone-commanded.svg", "phone"),
+        ("g1-phone-transformed.svg", "phone"),
+    )
+    for filename, layout in sheets:
+        root = ET.fromstring((EXPERIMENT / "review" / filename).read_text())
+        geometry = root.find("svg:defs/svg:path[@id='g1-crossing-geometry']", namespace)
+        assert geometry is not None and geometry.attrib["d"]
+        evidence_groups = [
+            group
+            for group in root.findall(".//svg:g", namespace)
+            if group.attrib.get("data-layout") == layout
+        ]
+        assert {group.attrib["data-background"] for group in evidence_groups} == {
+            "bg_0",
+            "bg_1",
+        }
+        for group in evidence_groups:
+            legends = group.findall(".//svg:line[@data-feature='short-category-legend']", namespace)
+            assert [legend.attrib["data-role"] for legend in legends] == [
+                "cat.one",
+                "cat.two",
+                "cat.three",
+                "cat.four",
+                "cat.five",
+                "cat.six",
+            ]
+            assert all(
+                float(mark.attrib["x2"]) - float(mark.attrib["x1"]) == 26 for mark in legends
+            )
+            assert (
+                len(group.findall(".//svg:circle[@data-feature='endpoint-marker']", namespace)) == 2
+            )
+            assert len(group.findall(".//svg:path[@data-feature='sparkline']", namespace)) == 3
+            assert len(group.findall(".//svg:g[@data-feature='financial-cockpit']", namespace)) == 1
+            assert len(group.findall(".//svg:g[@data-feature='thesis-baskets']", namespace)) == 1
+
+            crossings = group.findall(
+                ".//svg:g[@data-feature='same-style-color-only-crossing']", namespace
+            )
+            assert len(crossings) == 1
+            crossing_marks = crossings[0].findall("svg:use", namespace)
+            assert len(crossing_marks) == 2
+            assert {mark.attrib.get("href", mark.attrib.get(href)) for mark in crossing_marks} == {
+                "#g1-crossing-geometry"
+            }
+            assert {mark.attrib["data-role"] for mark in crossing_marks} == {
+                "cat.five",
+                "cat.six",
+            }
+            for attribute in ("fill", "stroke-width", "stroke-linecap", "stroke-dashoffset"):
+                assert len({mark.attrib[attribute] for mark in crossing_marks}) == 1
+            assert len({mark.attrib["stroke"] for mark in crossing_marks}) == 2
+
+
+def test_g1_phone_sheets_and_review_index_obey_390px_contract() -> None:
+    for filename in ("g1-phone-commanded.svg", "g1-phone-transformed.svg"):
+        root = ET.fromstring((EXPERIMENT / "review" / filename).read_text())
+        assert root.attrib["width"] == "390"
+        assert root.attrib["height"] == "844"
+        assert root.attrib["viewBox"] == "0 0 390 844"
+
+    index = (EXPERIMENT / "review/g1-index.html").read_text()
+    assert 'src="g1-phone-commanded.svg"' in index
+    assert 'src="g1-phone-transformed.svg"' in index
+    assert ".desktop-frame{overflow-x:auto;overflow-y:hidden}" in index
+    assert ".phone-frame{overflow:hidden}" in index
+    assert "section{min-width:0}" in index
+    assert ".desktop-sheet{display:block;width:1280px;max-width:none}" in index
+    assert "html,body{margin:0;max-width:100%;overflow-x:hidden" in index
 
 
 def test_g1_metric_owns_proxy_and_bad_gate_polarity() -> None:
@@ -475,7 +614,11 @@ def test_g1_artifact_contract_is_complete_and_honest() -> None:
 
     assert raster["source_bank"] == "CURRENT frozen 3400K Light categorical"
     assert raster["browser_release_oracle"] is True
+    assert raster["planned_case_count"] == 32_400
     assert len(raster["matrix"]) == 2 * 3 * 3 * 3 * 5 * 2 * 4 * 15
+    assert {row["status"] for row in raster["matrix"]} == {"PENDING_BROWSER_CALIBRATION"}
+    assert all(row["observed_line_core_rgb8"] is None for row in raster["matrix"])
+    assert all(row["observed_distance"] is None for row in raster["matrix"])
     assert set(raster["width_capacity"]) == {"1.5", "2.0", "3.0"}
     assert all(
         row["human_capacity_status"] == "UNKNOWN/UNPROVEN"
@@ -507,7 +650,61 @@ def test_g1_artifact_contract_is_complete_and_honest() -> None:
     assert protocol["human_status"] == "not run"
     assert set(protocol["states"]) == {"commanded", "transformed"}
     assert set(protocol["backgrounds"]) == {"bg_0", "bg_1"}
+    assert protocol["design"] == "balanced incomplete fractional-block design"
+    base_cells = protocol["base_cells"]
+    assert base_cells["count_per_observer"] == 15 * 2 * 2 * 3 == 180
+    assert base_cells["repeats_per_observer"] == 2
+    assert base_cells["noncatch_trials_per_observer"] == 360
+    assert base_cells["noncatch_trials_per_observer"] <= 400
+    assert protocol["fractional_factors"]["not_full_factorial_per_observer"] is True
+    assert protocol["observers"]["minimum"] == 15
+    assert protocol["aggregate_coverage_at_minimum"] == {
+        "observers": 15,
+        "noncatch_trials": 5_400,
+        "observations_per_base_cell": 30,
+        "observations_per_style_orientation_per_base_cell": 2,
+    }
+    assert protocol["catch_trials"]["count_per_observer"] == 40
+    assert protocol["catch_trials"]["fraction_of_total"] == pytest.approx(0.1)
+    assert protocol["session_plan"]["blocks_per_observer"] == 4
+    assert protocol["session_plan"]["trials_per_block_including_catches"] == 100
+    assert protocol["session_plan"]["target_total_duration_minutes_max"] <= 60
+    assert protocol["power_analysis_before_run"]["required"] is True
+    assert protocol["power_analysis_before_run"]["observed_results_used"] is False
     assert protocol["floor_calibration"]["held_out"] is True
+    assert protocol["floor_calibration"]["no_proxy_tuning_on_held_out"] is True
+
+    styles = protocol["fractional_factors"]["styles"]
+    orientations = protocol["fractional_factors"]["orientations"]
+    for base_cell_index in range(base_cells["count_per_observer"]):
+        assignments = [
+            (
+                styles[(observer + repeat + base_cell_index) % 3],
+                orientations[(observer + 2 * repeat + base_cell_index) % 5],
+            )
+            for observer in range(protocol["observers"]["minimum"])
+            for repeat in range(base_cells["repeats_per_observer"])
+        ]
+        assert set(assignments) == set(itertools.product(styles, orientations))
+        assert all(assignments.count(combination) == 2 for combination in set(assignments))
+        sides = [
+            (observer + repeat + base_cell_index) % 2
+            for observer in range(protocol["observers"]["minimum"])
+            for repeat in range(base_cells["repeats_per_observer"])
+        ]
+        assert sides.count(0) == sides.count(1) == 15
+
+    for observer in range(protocol["observers"]["minimum"]):
+        assignments = [
+            (
+                styles[(observer + repeat + base_cell_index) % 3],
+                orientations[(observer + 2 * repeat + base_cell_index) % 5],
+            )
+            for repeat in range(base_cells["repeats_per_observer"])
+            for base_cell_index in range(base_cells["count_per_observer"])
+        ]
+        assert len(assignments) == 360
+        assert all(assignments.count(combination) == 24 for combination in set(assignments))
 
     assert calibration["status"] == "PENDING_BROWSER_CALIBRATION"
     assert calibration["full_image_hash_used"] is False
@@ -522,6 +719,11 @@ def test_g1_artifact_contract_is_complete_and_honest() -> None:
     assert calibration["provenance"]["chromium_version_status"] == ("pending-browser-calibration")
     assert calibration["samples"] == []
     assert calibration["coordinates"] is None
+
+    report = (EXPERIMENT / "G1-REPORT.md").read_text()
+    assert "may begin Phase 3 candidate search without inventing human results" in report
+    assert "not a prerequisite for starting that search" in report
+    assert "before declaring a final visibility floor" in report
 
 
 def test_g1_core_outputs_are_byte_deterministic(tmp_path: Path) -> None:

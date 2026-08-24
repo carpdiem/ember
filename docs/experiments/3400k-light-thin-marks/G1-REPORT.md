@@ -1,6 +1,6 @@
 # G1 Phase 2A: deterministic core checkpoint
 
-**Verdict: `CORE_READY_BROWSER_PENDING`. This checkpoint is not Phase-3-ready.**
+**Verdict: `CORE_READY_BROWSER_PENDING`. Phase 3 candidate search remains blocked only until the Phase 2B browser machinery gates pass.**
 
 The current 3400K Light categorical bank remains byte-frozen at `c4c25e480912f8f54cbd8c992c0b6eb520dc0b8f`. No candidate search, candidate colours, `categorical_line` bank, production palette edit, or export edit is present.
 
@@ -40,14 +40,17 @@ Every width capacity is `UNKNOWN/UNPROVEN`. The 2AFC study has not run, so there
 - [Commanded/transformed index](review/g1-index.html)
 - [Commanded structural specimen](review/g1-commanded.svg)
 - [Transformed engineering specimen](review/g1-transformed.svg)
+- [Commanded 390×844 phone specimen](review/g1-phone-commanded.svg)
+- [Transformed 390×844 phone specimen](review/g1-phone-transformed.svg)
 - [Deterministic browser probe](review/g1-browser-probe.html)
 
 The SVGs are structural review aids, not browser pixels. `bg_0` and `bg_1` are gate surfaces; `bg_2` remains report-only.
 
-## Required Phase 2B work
+## Phase 2B sequencing
 
 1. Run the deterministic probe in real Chromium at the pinned DPRs/viewports and record renderer provenance.
 2. Derive coverage and line-core coordinates from actual raster pixels; do not invent them.
 3. Store predicted/observed RGB8 samples and evaluate pooled correlation plus every pair/background MAE gate.
 4. Treat a missing browser binary as SKIP and every launch/probe/runtime failure as ERROR.
-5. Run the preregistered multi-observer 2AFC study and held-out floor calibration before assigning any width capacity.
+5. When the browser machinery gates pass, the autonomous process may begin Phase 3 candidate search without inventing human results.
+6. Run the preregistered multi-observer 2AFC study and held-out floor calibration before declaring a final visibility floor, assigning width capacity, or promoting any palette to production. The human study may follow or overlap candidate search; it is not a prerequisite for starting that search.

@@ -4,12 +4,62 @@
     "order": "counterbalanced across observers",
     "warm_state_minutes": 5
   },
+  "aggregate_coverage_at_minimum": {
+    "noncatch_trials": 5400,
+    "observations_per_base_cell": 30,
+    "observations_per_style_orientation_per_base_cell": 2,
+    "observers": 15
+  },
   "backgrounds": [
     "bg_0",
     "bg_1"
   ],
-  "balanced_factors": {
-    "left_right_answer_position": "counterbalanced",
+  "base_cells": {
+    "count_per_observer": 180,
+    "coverage": "every observer completes every base cell",
+    "dimensions": [
+      "pair",
+      "state",
+      "background",
+      "width_css_px"
+    ],
+    "noncatch_trials_per_observer": 360,
+    "repeats_per_observer": 2,
+    "widths_css_px": [
+      1.5,
+      2.0,
+      3.0
+    ]
+  },
+  "capacity_rule": "No width receives PASS/FAIL or a capacity until observer-level uncertainty, catch criteria, and held-out floor calibration are complete.",
+  "catch_trials": {
+    "count_per_observer": 40,
+    "design": "large commanded solid separations at 3 CSS px",
+    "exclusion_rule": "preregister before data collection",
+    "fraction_of_total": 0.1,
+    "placement": "10 deterministic catches in each 100-trial block"
+  },
+  "design": "balanced incomplete fractional-block design",
+  "final_visibility_threshold": null,
+  "final_width_capacity": null,
+  "floor_calibration": {
+    "allocation": "sealed before the run and excluded from proxy/model tuning",
+    "held_out": true,
+    "method": "fit threshold only on held-out trial responses after protocol lock",
+    "no_proxy_tuning_on_held_out": true
+  },
+  "fractional_factors": {
+    "assignment_formula": {
+      "base_cell_index": "zero-based canonical base-cell ordinal",
+      "correct_answer_side": "left when (observer_index + repeat_index + base_cell_index) mod 2 = 0; right otherwise",
+      "observer_index": "zero-based integer",
+      "orientation_index": "(observer_index + 2 * repeat_index + base_cell_index) mod 5",
+      "repeat_index": "zero or one",
+      "style_index": "(observer_index + repeat_index + base_cell_index) mod 3"
+    },
+    "balance_at_15_observers": "for each base cell and repeat, the 15 observers cover every one of the 3 style x 5 orientation combinations exactly once; repeat two covers each combination once again, and answer side swaps across repeats",
+    "base_cell_order": "canonical Cartesian order: pair, then state, background, and width_css_px",
+    "not_full_factorial_per_observer": true,
     "orientations": [
       "horizontal",
       "vertical",
@@ -21,30 +71,13 @@
       "solid",
       "dashed",
       "dotted"
-    ],
-    "widths_css_px": [
-      1.5,
-      2.0,
-      3.0
     ]
-  },
-  "capacity_rule": "No width receives PASS/FAIL or a capacity until observer-level uncertainty, catch criteria, and held-out floor calibration are complete.",
-  "catch_trials": {
-    "design": "large commanded solid separations at 3 CSS px",
-    "exclusion_rule": "preregister before data collection",
-    "fraction": 0.1
-  },
-  "final_visibility_threshold": null,
-  "final_width_capacity": null,
-  "floor_calibration": {
-    "held_out": true,
-    "method": "fit threshold only on held-out trial responses after protocol lock",
-    "no_proxy_tuning_on_held_out": true
   },
   "human_status": "not run",
   "observers": {
     "analyze_individual_and_group": true,
-    "minimum": 12,
+    "balance_basis": "least common multiple of 3 styles and 5 orientations",
+    "minimum": 15,
     "multiple_observers_required": true
   },
   "pair_count": 15,
@@ -110,9 +143,12 @@
       "cat.six"
     ]
   ],
-  "repeats": {
-    "minimum_per_cell_per_observer": 4,
-    "randomized": true
+  "power_analysis_before_run": {
+    "decision_rule": "increase observer count in multiples of 15 if the target power or precision is not met; never reduce below 15",
+    "method": "simulation-based power and interval-width analysis for the preregistered hierarchical 2AFC model using design-only effect-size scenarios",
+    "observed_results_used": false,
+    "required": true,
+    "timing": "after protocol lock and before recruitment or response collection"
   },
   "results": null,
   "screening": [
@@ -120,6 +156,13 @@
     "Ishihara-style colour-vision screen",
     "viewing-distance and ambient-light compliance"
   ],
+  "session_plan": {
+    "blocks_per_observer": 4,
+    "rest_between_blocks_minutes": 3,
+    "target_total_duration_minutes_max": 55,
+    "timing_basis": "400 total trials budgeted at no more than 5 seconds average each, plus adaptation and three required rests",
+    "trials_per_block_including_catches": 100
+  },
   "states": [
     "commanded",
     "transformed"

@@ -23,6 +23,8 @@ GAINS = np.array([1.0, 0.74, 0.53], dtype=float)
 CATEGORY_NAMES = ("one", "two", "three", "four", "five", "six")
 BACKGROUND_NAMES = ("bg_0", "bg_1", "bg_2")
 FOREGROUND_NAMES = ("fg_0", "fg_1", "fg_2")
+STATE_ORDER = ("commanded", "transformed")
+STYLE_ORDER = ("solid", "dashed", "dotted")
 PRIMARY_Y_B = {"bg_0": 56.18, "bg_1": 49.82, "bg_2": 44.32}
 SENSITIVITY_Y_B = {"bg_0": 94.77, "bg_1": 84.05, "bg_2": 74.76}
 
@@ -35,6 +37,10 @@ def load_baseline() -> dict[str, Any]:
 
 def specimen_contract() -> dict[str, Any]:
     return {
+        "state_order": list(STATE_ORDER),
+        "background_order": list(BACKGROUND_NAMES),
+        "category_order": list(CATEGORY_NAMES),
+        "style_order": list(STYLE_ORDER),
         "backgrounds": {"gate": ["bg_0", "bg_1"], "report_only": ["bg_2"]},
         "widths_css_px": [1.5, 2.0, 3.0],
         "device_pixel_ratios": [1, 2],
@@ -374,14 +380,14 @@ def _raster_baseline(baseline: dict[str, Any]) -> dict[str, Any]:
     rows = []
     for case_number, (state, background, width, style, orientation, dpr, phase, pair) in enumerate(
         itertools.product(
-            ("commanded", "transformed"),
-            BACKGROUND_NAMES,
+            contract["state_order"],
+            contract["background_order"],
             contract["widths_css_px"],
-            tuple(contract["styles"]),
+            contract["style_order"],
             contract["orientations"],
             contract["device_pixel_ratios"],
             contract["phases_css_px"],
-            _pairs(),
+            _pairs(tuple(contract["category_order"])),
         ),
         start=1,
     ):
@@ -552,8 +558,13 @@ def _gain_grid() -> dict[str, Any]:
 
 def _visibility_protocol() -> dict[str, Any]:
     pairs = [[f"cat.{left}", f"cat.{right}"] for left, right in _pairs()]
+    base_cell_count = len(pairs) * 2 * 2 * 3
+    repeats_per_base_cell = 2
+    noncatch_trials = base_cell_count * repeats_per_base_cell
+    catch_trials = 40
     return {
         "study": "preregistered line-to-legend 2AFC",
+        "design": "balanced incomplete fractional-block design",
         "pair_count": len(pairs),
         "pairs": pairs,
         "results": None,
@@ -562,8 +573,15 @@ def _visibility_protocol() -> dict[str, Any]:
         "human_status": "not run",
         "states": ["commanded", "transformed"],
         "backgrounds": ["bg_0", "bg_1"],
-        "balanced_factors": {
+        "base_cells": {
+            "dimensions": ["pair", "state", "background", "width_css_px"],
+            "count_per_observer": base_cell_count,
+            "coverage": "every observer completes every base cell",
             "widths_css_px": [1.5, 2.0, 3.0],
+            "repeats_per_observer": repeats_per_base_cell,
+            "noncatch_trials_per_observer": noncatch_trials,
+        },
+        "fractional_factors": {
             "styles": ["solid", "dashed", "dotted"],
             "orientations": [
                 "horizontal",
@@ -572,17 +590,49 @@ def _visibility_protocol() -> dict[str, Any]:
                 "shallow_1_2",
                 "curved",
             ],
-            "left_right_answer_position": "counterbalanced",
+            "not_full_factorial_per_observer": True,
+            "base_cell_order": (
+                "canonical Cartesian order: pair, then state, background, and width_css_px"
+            ),
+            "assignment_formula": {
+                "observer_index": "zero-based integer",
+                "repeat_index": "zero or one",
+                "base_cell_index": "zero-based canonical base-cell ordinal",
+                "style_index": "(observer_index + repeat_index + base_cell_index) mod 3",
+                "orientation_index": (
+                    "(observer_index + 2 * repeat_index + base_cell_index) mod 5"
+                ),
+                "correct_answer_side": (
+                    "left when (observer_index + repeat_index + base_cell_index) mod 2 = 0; "
+                    "right otherwise"
+                ),
+            },
+            "balance_at_15_observers": (
+                "for each base cell and repeat, the 15 observers cover every one of the "
+                "3 style x 5 orientation combinations exactly once; repeat two covers each "
+                "combination once again, and answer side swaps across repeats"
+            ),
         },
         "task": (
             "A target line segment is shown in a chart and two labeled legend samples are "
             "offered; choose which legend identity matches the target."
         ),
-        "repeats": {"minimum_per_cell_per_observer": 4, "randomized": True},
         "catch_trials": {
-            "fraction": 0.1,
+            "count_per_observer": catch_trials,
+            "fraction_of_total": catch_trials / (noncatch_trials + catch_trials),
             "design": "large commanded solid separations at 3 CSS px",
+            "placement": "10 deterministic catches in each 100-trial block",
             "exclusion_rule": "preregister before data collection",
+        },
+        "session_plan": {
+            "blocks_per_observer": 4,
+            "trials_per_block_including_catches": 100,
+            "rest_between_blocks_minutes": 3,
+            "target_total_duration_minutes_max": 55,
+            "timing_basis": (
+                "400 total trials budgeted at no more than 5 seconds average each, plus "
+                "adaptation and three required rests"
+            ),
         },
         "adaptation": {
             "warm_state_minutes": 5,
@@ -595,12 +645,33 @@ def _visibility_protocol() -> dict[str, Any]:
             "viewing-distance and ambient-light compliance",
         ],
         "observers": {
-            "minimum": 12,
+            "minimum": 15,
             "multiple_observers_required": True,
+            "balance_basis": "least common multiple of 3 styles and 5 orientations",
             "analyze_individual_and_group": True,
+        },
+        "aggregate_coverage_at_minimum": {
+            "observers": 15,
+            "noncatch_trials": noncatch_trials * 15,
+            "observations_per_base_cell": repeats_per_base_cell * 15,
+            "observations_per_style_orientation_per_base_cell": repeats_per_base_cell,
+        },
+        "power_analysis_before_run": {
+            "required": True,
+            "timing": "after protocol lock and before recruitment or response collection",
+            "method": (
+                "simulation-based power and interval-width analysis for the preregistered "
+                "hierarchical 2AFC model using design-only effect-size scenarios"
+            ),
+            "decision_rule": (
+                "increase observer count in multiples of 15 if the target power or precision "
+                "is not met; never reduce below 15"
+            ),
+            "observed_results_used": False,
         },
         "floor_calibration": {
             "held_out": True,
+            "allocation": "sealed before the run and excluded from proxy/model tuning",
             "method": "fit threshold only on held-out trial responses after protocol lock",
             "no_proxy_tuning_on_held_out": True,
         },
@@ -672,7 +743,7 @@ def _polyline(values: list[float], x: float, y: float, width: float, height: flo
     return "M" + " L".join(f"{px:.2f},{py:.2f}" for px, py in points)
 
 
-def _svg(state: str, baseline: dict[str, Any]) -> str:
+def _shown_palettes(state: str, baseline: dict[str, Any]) -> tuple[dict[str, str], dict[str, str]]:
     family = baseline["family"]
 
     def shown(value: str) -> str:
@@ -680,77 +751,203 @@ def _svg(state: str, baseline: dict[str, Any]) -> str:
         return _rgb_to_hex(_transform(rgb) if state == "transformed" else rgb)
 
     surfaces = {name: shown(value) for name, value in family["surfaces"].items()}
-    categories = [shown(value) for value in family["categorical"].values()]
+    categories = {
+        name: shown(family["categorical"][name]) for name in specimen_contract()["category_order"]
+    }
+    return surfaces, categories
+
+
+def _feature_evidence(
+    *,
+    background_name: str,
+    x: float,
+    y: float,
+    surfaces: dict[str, str],
+    categories: dict[str, str],
+    compact: bool,
+) -> list[str]:
+    fg_0, fg_2, rule = surfaces["fg_0"], surfaces["fg_2"], surfaces["bg_4"]
+    names = specimen_contract()["category_order"]
+    lines = [
+        f'<g data-background="{background_name}" data-layout="{"phone" if compact else "desktop"}">'
+    ]
+
+    legend_y = y + (36 if compact else 50)
+    lines.append(
+        f'<g data-feature="short-category-legends"><text x="{x}" y="{legend_y - 9}" fill="{fg_0}" font-family="ui-monospace,monospace" font-size="10">short category legend</text>'
+    )
+    columns = 3 if compact else 6
+    column_width = 112 if compact else 86
+    for index, name in enumerate(names):
+        column, row = index % columns, index // columns
+        sample_x = x + column * column_width
+        sample_y = legend_y + row * 22
+        lines.append(
+            f'<line data-feature="short-category-legend" data-role="cat.{name}" x1="{sample_x}" y1="{sample_y}" x2="{sample_x + 26}" y2="{sample_y}" stroke="{categories[name]}" stroke-width="2"/>'
+        )
+        lines.append(
+            f'<text x="{sample_x + 32}" y="{sample_y + 4}" fill="{fg_2}" font-family="ui-monospace,monospace" font-size="9">{name}</text>'
+        )
+    lines.append("</g>")
+
+    crossing_x = x
+    crossing_y = y + (104 if compact else 105)
+    lines.append(
+        f'<g data-feature="same-style-color-only-crossing" data-style="solid" data-geometry="g1-crossing-geometry" transform="translate({crossing_x} {crossing_y})">'
+    )
+    for name, transform in (("five", ""), ("six", ' transform="translate(0 30) scale(1 -1)"')):
+        lines.append(
+            f'<use href="#g1-crossing-geometry" data-role="cat.{name}" fill="none" stroke="{categories[name]}" stroke-width="2" stroke-linecap="butt" stroke-dashoffset="0"{transform}/>'
+        )
+    lines.append("</g>")
+    lines.append(
+        f'<text x="{crossing_x}" y="{crossing_y + 45}" fill="{fg_2}" font-family="ui-monospace,monospace" font-size="9">equal geometry + solid style; colour only</text>'
+    )
+
+    marker_x = x + (184 if compact else 232)
+    marker_y = crossing_y + 14
+    lines.append('<g data-feature="endpoint-markers" data-style="solid">')
+    lines.append(
+        f'<line x1="{marker_x}" y1="{marker_y}" x2="{marker_x + 76}" y2="{marker_y}" stroke="{categories["one"]}" stroke-width="2"/>'
+    )
+    for endpoint_x in (marker_x, marker_x + 76):
+        lines.append(
+            f'<circle data-feature="endpoint-marker" data-role="cat.one" cx="{endpoint_x}" cy="{marker_y}" r="4" fill="{surfaces[background_name]}" stroke="{categories["one"]}" stroke-width="2"/>'
+        )
+    lines.append("</g>")
+
+    spark_y = y + (169 if compact else 180)
+    spark_width = 150 if compact else 250
+    lines.append(
+        f'<g data-feature="sparklines"><text x="{x}" y="{spark_y - 8}" fill="{fg_0}" font-family="ui-monospace,monospace" font-size="10">sparklines · fake deterministic data</text>'
+    )
+    for index, name in enumerate(("one", "three", "six")):
+        lines.append(
+            f'<path data-feature="sparkline" data-role="cat.{name}" d="{_polyline(_fake_series()[index * 2], x, spark_y + index * 19, spark_width, 13)}" fill="none" stroke="{categories[name]}" stroke-width="1.5"/>'
+        )
+    lines.append("</g>")
+
+    composition_y = y + (232 if compact else 245)
+    cockpit_x = x
+    cockpit_width = 164 if compact else 270
+    cockpit_height = 106 if compact else 92
+    lines.append(
+        f'<g data-feature="financial-cockpit" data-data-policy="fake-deterministic"><rect x="{cockpit_x}" y="{composition_y}" width="{cockpit_width}" height="{cockpit_height}" rx="5" fill="none" stroke="{rule}"/><text x="{cockpit_x + 9}" y="{composition_y + 17}" fill="{fg_0}" font-family="ui-monospace,monospace" font-size="10">fake Financial Cockpit</text>'
+    )
+    for index, name in enumerate(("one", "two", "four")):
+        lines.append(
+            f'<path data-role="cat.{name}" d="{_polyline(_fake_series()[index], cockpit_x + 9, composition_y + 27 + index * 20, cockpit_width - 18, 13)}" fill="none" stroke="{categories[name]}" stroke-width="1.5"/>'
+        )
+    lines.append("</g>")
+
+    baskets_x = x + (174 if compact else 286)
+    baskets_width = 166 if compact else 276
+    lines.append(
+        f'<g data-feature="thesis-baskets" data-data-policy="fake-deterministic"><rect x="{baskets_x}" y="{composition_y}" width="{baskets_width}" height="{cockpit_height}" rx="5" fill="none" stroke="{rule}"/><text x="{baskets_x + 9}" y="{composition_y + 17}" fill="{fg_0}" font-family="ui-monospace,monospace" font-size="10">fake Thesis Baskets</text>'
+    )
+    for index, name in enumerate(("three", "five", "six")):
+        row_y = composition_y + 33 + index * 22
+        lines.append(
+            f'<line data-role="cat.{name}" x1="{baskets_x + 10}" y1="{row_y}" x2="{baskets_x + 38}" y2="{row_y}" stroke="{categories[name]}" stroke-width="2"/>'
+        )
+        lines.append(
+            f'<rect x="{baskets_x + 48}" y="{row_y - 4}" width="{(index + 1) * (24 if compact else 42)}" height="8" fill="{categories[name]}" opacity="0.82"/>'
+        )
+    lines.extend(["</g>", "</g>"])
+    return lines
+
+
+def _svg(state: str, baseline: dict[str, Any]) -> str:
+    surfaces, categories = _shown_palettes(state, baseline)
     title = "transformed gain [1, .74, .53]" if state == "transformed" else "commanded sRGB"
     lines = [
         '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="900" viewBox="0 0 1280 900">',
+        '<defs><path id="g1-crossing-geometry" d="M0,30 L44,0 L88,30"/></defs>',
         f'<rect width="1280" height="900" fill="{surfaces["bg_0"]}"/>',
-        f'<text x="32" y="38" fill="{surfaces["fg_0"]}" font-family="ui-monospace,monospace" font-size="22" font-weight="700">G1 current-bank core · {html.escape(title)}</text>',
-        f'<text x="32" y="62" fill="{surfaces["fg_1"]}" font-family="ui-monospace,monospace" font-size="13">planned geometry · analytical model · browser calibration and human capacity pending</text>',
+        f'<text x="32" y="38" fill="{surfaces["fg_0"]}" font-family="ui-monospace,monospace" font-size="22" font-weight="700">G1 current-bank evidence · {html.escape(title)}</text>',
+        f'<text x="32" y="62" fill="{surfaces["fg_1"]}" font-family="ui-monospace,monospace" font-size="13">real tagged specimens · fake deterministic compositions · browser and human calibration pending</text>',
     ]
     for background_index, background_name in enumerate(("bg_0", "bg_1")):
-        y0 = 86 + background_index * 390
+        y0 = 82 + background_index * 390
         lines.extend(
             [
-                f'<rect x="24" y="{y0}" width="1232" height="366" rx="10" fill="{surfaces[background_name]}" stroke="{surfaces["bg_4"]}"/>',
-                f'<text x="44" y="{y0 + 28}" fill="{surfaces["fg_0"]}" font-family="ui-monospace,monospace" font-size="15" font-weight="700">{background_name} · gate surface · frozen current categorical bank</text>',
+                f'<rect x="24" y="{y0}" width="1232" height="370" rx="10" fill="{surfaces[background_name]}" stroke="{surfaces["bg_4"]}"/>',
+                f'<text x="42" y="{y0 + 25}" fill="{surfaces["fg_0"]}" font-family="ui-monospace,monospace" font-size="14" font-weight="700">{background_name} · gate surface</text>',
             ]
         )
+        lines.extend(
+            _feature_evidence(
+                background_name=background_name,
+                x=42,
+                y=y0 + 5,
+                surfaces=surfaces,
+                categories=categories,
+                compact=False,
+            )
+        )
+        lines.append(
+            f'<g data-feature="isolated-lines" data-background="{background_name}"><text x="650" y="{y0 + 49}" fill="{surfaces["fg_0"]}" font-family="ui-monospace,monospace" font-size="10">isolated geometry + style/width samples</text>'
+        )
         for index, orientation in enumerate(specimen_contract()["orientations"]):
-            x = 46 + index * 150
+            x = 650 + index * 112
+            path = _path_for_orientation(orientation, x, y0 + 58)
             lines.append(
-                f'<path d="{_path_for_orientation(orientation, x, y0 + 54)}" fill="none" stroke="{categories[index]}" stroke-width="1.5"/>'
+                f'<path data-orientation="{orientation}" d="{path}" fill="none" stroke="{categories[CATEGORY_NAMES[index]]}" stroke-width="1.5"/>'
             )
-            lines.append(
-                f'<text x="{x}" y="{y0 + 122}" fill="{surfaces["fg_2"]}" font-family="ui-monospace,monospace" font-size="10">{orientation}</text>'
-            )
-        style_x = 820
-        for row, (style, spec) in enumerate(specimen_contract()["styles"].items()):
-            y = y0 + 62 + row * 30
+        for row, style_name in enumerate(STYLE_ORDER):
+            spec = specimen_contract()["styles"][style_name]
             dash = (
                 ""
                 if spec["dasharray"] is None
                 else f' stroke-dasharray="{" ".join(str(value) for value in spec["dasharray"])}"'
             )
-            cap = f' stroke-linecap="{spec["linecap"]}"'
+            sample_y = y0 + 150 + row * 27
             lines.append(
-                f'<line x1="{style_x}" y1="{y}" x2="{style_x + 116}" y2="{y}" stroke="{categories[row + 3]}" stroke-width="2"{dash}{cap}/>'
+                f'<line data-style="{style_name}" x1="650" y1="{sample_y}" x2="770" y2="{sample_y}" stroke="{categories[CATEGORY_NAMES[row]]}" stroke-width="2" stroke-linecap="{spec["linecap"]}"{dash}/>'
             )
+        for row, width in enumerate(specimen_contract()["widths_css_px"]):
+            sample_y = y0 + 150 + row * 27
             lines.append(
-                f'<text x="{style_x + 128}" y="{y + 4}" fill="{surfaces["fg_2"]}" font-family="ui-monospace,monospace" font-size="11">{style}</text>'
+                f'<line data-width="{width:g}" x1="800" y1="{sample_y}" x2="920" y2="{sample_y}" stroke="{categories[CATEGORY_NAMES[row + 3]]}" stroke-width="{width:g}"/>'
             )
-        for row, width in enumerate((1.5, 2.0, 3.0)):
-            y = y0 + 164 + row * 34
-            lines.append(
-                f'<text x="46" y="{y + 4}" fill="{surfaces["fg_2"]}" font-family="ui-monospace,monospace" font-size="11">{width:g}px</text>'
-            )
-            for index, color in enumerate(categories):
-                x = 100 + index * 112
-                lines.append(
-                    f'<line x1="{x}" y1="{y}" x2="{x + 88}" y2="{y}" stroke="{color}" stroke-width="{width}"/>'
-                )
-        lines.append(
-            f'<rect x="806" y="{y0 + 158}" width="422" height="152" rx="7" fill="none" stroke="{surfaces["bg_4"]}"/>'
+        lines.append("</g>")
+    lines.append(
+        f'<text x="32" y="874" fill="{surfaces["fg_2"]}" font-family="ui-monospace,monospace" font-size="12">bg_2 report-only · no candidate colors · no browser samples · no human width PASS/FAIL</text>'
+    )
+    lines.append("</svg>\n")
+    return "\n".join(lines)
+
+
+def _phone_svg(state: str, baseline: dict[str, Any]) -> str:
+    surfaces, categories = _shown_palettes(state, baseline)
+    title = "transformed" if state == "transformed" else "commanded"
+    lines = [
+        '<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">',
+        '<defs><path id="g1-crossing-geometry" d="M0,30 L44,0 L88,30"/></defs>',
+        f'<rect width="390" height="844" fill="{surfaces["bg_0"]}"/>',
+        f'<text x="16" y="25" fill="{surfaces["fg_0"]}" font-family="ui-monospace,monospace" font-size="16" font-weight="700">G1 phone · {title}</text>',
+        f'<text x="16" y="43" fill="{surfaces["fg_1"]}" font-family="ui-monospace,monospace" font-size="9">390×844 · compact real evidence · fake compositions</text>',
+    ]
+    for background_index, background_name in enumerate(("bg_0", "bg_1")):
+        y0 = 54 + background_index * 382
+        lines.extend(
+            [
+                f'<rect x="10" y="{y0}" width="370" height="372" rx="8" fill="{surfaces[background_name]}" stroke="{surfaces["bg_4"]}"/>',
+                f'<text x="20" y="{y0 + 20}" fill="{surfaces["fg_0"]}" font-family="ui-monospace,monospace" font-size="11" font-weight="700">{background_name} · gate surface</text>',
+            ]
         )
-        lines.append(
-            f'<text x="824" y="{y0 + 182}" fill="{surfaces["fg_0"]}" font-family="ui-monospace,monospace" font-size="13">fake Financial Cockpit / Thesis Baskets</text>'
-        )
-        for index, values in enumerate(_fake_series()):
-            dash = (
-                ""
-                if index < 2
-                else ' stroke-dasharray="8 5"'
-                if index < 4
-                else ' stroke-dasharray="1 5" stroke-linecap="round"'
+        lines.extend(
+            _feature_evidence(
+                background_name=background_name,
+                x=20,
+                y=y0 + 3,
+                surfaces=surfaces,
+                categories=categories,
+                compact=True,
             )
-            lines.append(
-                f'<path d="{_polyline(values, 826, y0 + 198, 374, 104)}" fill="none" stroke="{categories[index]}" stroke-width="1.5"{dash}/>'
-            )
-        lines.append(
-            f'<text x="46" y="{y0 + 342}" fill="{surfaces["fg_2"]}" font-family="ui-monospace,monospace" font-size="11">Phases: (0,0), (0,.5), (.5,0), (.5,.5) · DPR 1/2 · endpoints/joins/markers/crossings/dash transitions excluded from line core.</text>'
         )
     lines.append(
-        f'<text x="32" y="874" fill="{surfaces["fg_2"]}" font-family="ui-monospace,monospace" font-size="12">bg_2 is report-only. No candidate colors. No browser samples. No human width PASS/FAIL.</text>'
+        f'<text x="16" y="829" fill="{surfaces["fg_2"]}" font-family="ui-monospace,monospace" font-size="9">structural aid only · browser/human evidence pending</text>'
     )
     lines.append("</svg>\n")
     return "\n".join(lines)
@@ -760,11 +957,13 @@ def _review_index() -> str:
     return """<!doctype html>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>3400K Light G1 Phase 2A review</title>
-<style>body{margin:0;background:#171312;color:#ecdcbf;font:14px ui-monospace,monospace}header{position:sticky;top:0;padding:15px 20px;background:#171312;border-bottom:1px solid #4d4540}main{display:grid;gap:18px;padding:18px}.frame{overflow:auto;padding:8px;background:#050404;border:1px solid #4d4540}img{display:block;width:1280px;max-width:none}.truth{max-width:1000px;color:#b4aa8e;line-height:1.5}b{color:#f490ac}</style>
+<style>*{box-sizing:border-box}html,body{margin:0;max-width:100%;overflow-x:hidden;background:#171312;color:#ecdcbf;font:14px ui-monospace,monospace}header{position:sticky;top:0;max-width:100%;padding:12px 16px;background:#171312;border-bottom:1px solid #4d4540;overflow-wrap:anywhere}main{display:grid;gap:18px;width:100%;min-width:0;padding:12px}section{min-width:0}.frame{max-width:100%;padding:8px;background:#050404;border:1px solid #4d4540}.desktop-frame{overflow-x:auto;overflow-y:hidden}.phone-frame{overflow:hidden}.desktop-sheet{display:block;width:1280px;max-width:none}.phone-sheet{display:block;width:390px;max-width:100%;height:auto;margin:0 auto}.truth{max-width:1000px;color:#b4aa8e;line-height:1.5}b{color:#f490ac}a{color:#ecdcbf}@media(min-width:820px){main{padding:18px}.phone-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}</style>
 <header><b>G1 CORE_READY_BROWSER_PENDING</b> · frozen current bank · <a href="../G1-REPORT.md">report</a> · <a href="../raster-baseline.json">planned raster matrix</a></header>
 <main><p class="truth">Phase 2A fixes geometry and appearance-model assumptions. These SVGs are deterministic structural review aids, not browser-raster evidence. There are no candidate colours and no claimed human width capacity.</p>
-<section><h2>Commanded</h2><div class="frame"><img src="g1-commanded.svg" alt="G1 commanded planned thin-mark geometry"></div></section>
-<section><h2>Transformed engineering view</h2><div class="frame"><img src="g1-transformed.svg" alt="G1 transformed planned thin-mark geometry"></div></section></main>
+<section><h2>Desktop commanded</h2><div class="frame desktop-frame"><img class="desktop-sheet" src="g1-commanded.svg" alt="G1 commanded desktop thin-mark evidence"></div></section>
+<section><h2>Desktop transformed engineering view</h2><div class="frame desktop-frame"><img class="desktop-sheet" src="g1-transformed.svg" alt="G1 transformed desktop thin-mark evidence"></div></section>
+<div class="phone-grid"><section><h2>Phone commanded · 390×844</h2><div class="frame phone-frame"><img class="phone-sheet" src="g1-phone-commanded.svg" alt="G1 commanded 390 by 844 phone evidence"></div></section>
+<section><h2>Phone transformed · 390×844</h2><div class="frame phone-frame"><img class="phone-sheet" src="g1-phone-transformed.svg" alt="G1 transformed 390 by 844 phone evidence"></div></section></div></main>
 """
 
 
@@ -786,18 +985,19 @@ def _browser_probe_html(baseline: dict[str, Any]) -> str:
 <script id="g1-contract" type="application/json">{data}</script>
 <script>
 const spec=JSON.parse(document.getElementById('g1-contract').textContent);
-const pairs=[]; const names=Object.keys(spec.categorical);
+const pairs=[]; const names=spec.contract.category_order;
 for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++)pairs.push([names[i],names[j]]);
 const product=[];
-for(const state of ['commanded','transformed'])for(const background of ['bg_0','bg_1','bg_2'])for(const width of spec.contract.widths_css_px)for(const style of Object.keys(spec.contract.styles))for(const orientation of spec.contract.orientations)for(const dpr of spec.contract.device_pixel_ratios)for(const phase of spec.contract.phases_css_px)for(const pair of pairs)product.push({{state,background,width,style,orientation,dpr,phase,pair}});
+for(const state of spec.contract.state_order)for(const background of spec.contract.background_order)for(const width_css_px of spec.contract.widths_css_px)for(const style of spec.contract.style_order)for(const orientation of spec.contract.orientations)for(const dpr of spec.contract.device_pixel_ratios)for(const phase_css_px of spec.contract.phases_css_px)for(const pair of pairs)product.push({{id:`planned-${{String(product.length+1).padStart(5,'0')}}`,state,background,background_policy:['bg_0','bg_1'].includes(background)?'gate':'report-only',width_css_px,style,orientation,dpr,phase_css_px,roles:pair.map(name=>`cat.${{name}}`),status:'PENDING_BROWSER_CALIBRATION',observed_line_core_rgb8:null,observed_distance:null}});
 const index=Math.max(0,Math.min(product.length-1,Number(new URLSearchParams(location.search).get('case')||0)));
 const row=product[index]; const style=spec.contract.styles[row.style];
 const paths={{horizontal:'M16 64 L144 64',vertical:'M80 16 L80 112',diagonal_45:'M24 104 L120 8',shallow_1_2:'M16 88 L144 40',curved:'M16 96 C48 18 108 116 144 28'}};
 const dash=style.dasharray?`stroke-dasharray="${{style.dasharray.join(' ')}}"`:'';
 const warm='<defs><filter id="g1-warm" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0 0 .74 0 0 0 0 0 .53 0 0 0 0 0 1 0"/></filter></defs>';
 const filter=row.state==='transformed'?' filter="url(#g1-warm)"':'';
-document.getElementById('probe').innerHTML=`<svg data-case="${{index}}" data-status="PENDING_BROWSER_CALIBRATION" width="160" height="128" viewBox="0 0 160 128">${{warm}}<g${{filter}}><rect width="160" height="128" fill="${{spec.surfaces[row.background]}}"/><g transform="translate(${{row.phase[0]}} ${{row.phase[1]}})"><path d="${{paths[row.orientation]}}" fill="none" stroke="${{spec.categorical[row.pair[0]]}}" stroke-width="${{row.width}}" stroke-linecap="${{style.linecap}}" stroke-dashoffset="${{style.dashoffset}}" ${{dash}}/><path d="${{paths[row.orientation]}}" transform="translate(0 8)" fill="none" stroke="${{spec.categorical[row.pair[1]]}}" stroke-width="${{row.width}}" stroke-linecap="${{style.linecap}}" stroke-dashoffset="${{style.dashoffset}}" ${{dash}}/></g></g></svg>`;
-document.getElementById('status').textContent+=` · planned-${{String(index+1).padStart(5,'0')}} · ${{JSON.stringify(row)}}`;
+const roleNames=row.roles.map(role=>role.slice(4));
+document.getElementById('probe').innerHTML=`<svg data-case="${{index}}" data-planned-id="${{row.id}}" data-status="PENDING_BROWSER_CALIBRATION" width="160" height="128" viewBox="0 0 160 128">${{warm}}<g${{filter}}><rect width="160" height="128" fill="${{spec.surfaces[row.background]}}"/><g transform="translate(${{row.phase_css_px[0]}} ${{row.phase_css_px[1]}})"><path d="${{paths[row.orientation]}}" fill="none" stroke="${{spec.categorical[roleNames[0]]}}" stroke-width="${{row.width_css_px}}" stroke-linecap="${{style.linecap}}" stroke-dashoffset="${{style.dashoffset}}" ${{dash}}/><path d="${{paths[row.orientation]}}" transform="translate(0 8)" fill="none" stroke="${{spec.categorical[roleNames[1]]}}" stroke-width="${{row.width_css_px}}" stroke-linecap="${{style.linecap}}" stroke-dashoffset="${{style.dashoffset}}" ${{dash}}/></g></g></svg>`;
+document.getElementById('status').textContent+=` · ${{row.id}} · ${{JSON.stringify(row)}}`;
 </script>
 """
 
@@ -816,7 +1016,7 @@ def _report(baseline: dict[str, Any], raster: dict[str, Any], neutral: dict[str,
     )
     return f"""# G1 Phase 2A: deterministic core checkpoint
 
-**Verdict: `CORE_READY_BROWSER_PENDING`. This checkpoint is not Phase-3-ready.**
+**Verdict: `CORE_READY_BROWSER_PENDING`. Phase 3 candidate search remains blocked only until the Phase 2B browser machinery gates pass.**
 
 The current 3400K Light categorical bank remains byte-frozen at `{baseline["baseline_source_commit"]}`. No candidate search, candidate colours, `categorical_line` bank, production palette edit, or export edit is present.
 
@@ -854,17 +1054,20 @@ Every width capacity is `UNKNOWN/UNPROVEN`. The 2AFC study has not run, so there
 - [Commanded/transformed index](review/g1-index.html)
 - [Commanded structural specimen](review/g1-commanded.svg)
 - [Transformed engineering specimen](review/g1-transformed.svg)
+- [Commanded 390×844 phone specimen](review/g1-phone-commanded.svg)
+- [Transformed 390×844 phone specimen](review/g1-phone-transformed.svg)
 - [Deterministic browser probe](review/g1-browser-probe.html)
 
 The SVGs are structural review aids, not browser pixels. `bg_0` and `bg_1` are gate surfaces; `bg_2` remains report-only.
 
-## Required Phase 2B work
+## Phase 2B sequencing
 
 1. Run the deterministic probe in real Chromium at the pinned DPRs/viewports and record renderer provenance.
 2. Derive coverage and line-core coordinates from actual raster pixels; do not invent them.
 3. Store predicted/observed RGB8 samples and evaluate pooled correlation plus every pair/background MAE gate.
 4. Treat a missing browser binary as SKIP and every launch/probe/runtime failure as ERROR.
-5. Run the preregistered multi-observer 2AFC study and held-out floor calibration before assigning any width capacity.
+5. When the browser machinery gates pass, the autonomous process may begin Phase 3 candidate search without inventing human results.
+6. Run the preregistered multi-observer 2AFC study and held-out floor calibration before declaring a final visibility floor, assigning width capacity, or promoting any palette to production. The human study may follow or overlap candidate search; it is not a prerequisite for starting that search.
 """
 
 
@@ -913,6 +1116,12 @@ def build_core_outputs(output_dir: Path = HERE) -> None:
     (review / "g1-index.html").write_text(_review_index(), encoding="utf-8")
     (review / "g1-commanded.svg").write_text(_svg("commanded", baseline), encoding="utf-8")
     (review / "g1-transformed.svg").write_text(_svg("transformed", baseline), encoding="utf-8")
+    (review / "g1-phone-commanded.svg").write_text(
+        _phone_svg("commanded", baseline), encoding="utf-8"
+    )
+    (review / "g1-phone-transformed.svg").write_text(
+        _phone_svg("transformed", baseline), encoding="utf-8"
+    )
     (review / "g1-browser-probe.html").write_text(_browser_probe_html(baseline), encoding="utf-8")
 
 

@@ -3,7 +3,7 @@
 > **Scope:** Phase 0/1 G0 evidence plus deterministic Phase 2A G1 core<br>
 > **Frozen source:** `c4c25e480912f8f54cbd8c992c0b6eb520dc0b8f`<br>
 > **Production palette changes:** none<br>
-> **Status:** `CORE_READY_BROWSER_PENDING`; not Phase-3-ready<br>
+> **Status:** `CORE_READY_BROWSER_PENDING`; Phase 3 candidate search awaits the Phase 2B browser machinery gates<br>
 > **Review:** [G1 commanded/transformed index](review/g1-index.html) · [G1 report](G1-REPORT.md) · [planned raster matrix](raster-baseline.json) · [G0 archive](review/index.html)
 
 ## What this proves
@@ -16,7 +16,7 @@ The frozen current schema-14 `3400k-light` payload reproduces a thin-mark identi
 
 The review specimens cover actual `bg_0` and `bg_1`; `bg_2` is metrics/report-only. They include 1.5, 2, and 3 CSS px marks; DPR 1 and 2 validation; horizontal, diagonal, and curved geometry; solid, dashed, and dotted strokes; crossings; short legends; endpoint markers; sparklines; and deterministic fake Financial Cockpit and Thesis Baskets-style panels. No consumer repository or private data is imported.
 
-This checkpoint does **not** optimize colors, alter a canonical source, claim device calibration, or reuse the dark CAM16-UCS `L_A=8, Y_b=3` conditions. G1 instead pins explicit light-surface CAM16-UCS engineering assumptions, a complete 32,400-case planned browser matrix, and a preregistered visibility protocol. Browser observations, proxy acceptance, human floors, and width capacity all remain pending.
+This checkpoint does **not** optimize colors, alter a canonical source, claim device calibration, or reuse the dark CAM16-UCS `L_A=8, Y_b=3` conditions. G1 instead pins explicit light-surface CAM16-UCS engineering assumptions, a complete 32,400-case planned browser matrix, and a preregistered visibility protocol. Browser observations, proxy acceptance, human floors, and width capacity all remain pending. Passing Phase 2B browser machinery gates may authorize Phase 3 candidate search; the human study remains mandatory before a final visibility floor, width capacity, or production promotion, but is not required merely to begin candidate search.
 
 ## Reproduce
 
@@ -55,4 +55,4 @@ The archived G0 browser result compares sampled raster pixels and per-pixel Okla
 - `visibility-trial-protocol.json` — preregistered 2AFC design with no results or capacity claims.
 - `g1_browser_validate.py` / `proxy-calibration.json` — Phase 2B API/schema with explicit pending semantics and no fabricated browser evidence.
 - `G1-REPORT.md` — `CORE_READY_BROWSER_PENDING` checkpoint and exact remaining work.
-- `review/` — G0 archive plus sparse G1 commanded/transformed SVGs, index, and deterministic browser probe.
+- `review/` — G0 archive plus tagged G1 desktop and 390×844 phone commanded/transformed SVGs, responsive index, and deterministic browser probe.
