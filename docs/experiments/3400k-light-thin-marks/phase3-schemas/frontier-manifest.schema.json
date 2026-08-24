@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase3-frontier-manifest.schema.json",
+  "title": "Phase 3 bounded-search frontier manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "input_chain_sha256", "search_contract_sha256", "baseline_candidate_id", "candidate_ids", "pareto_dimensions", "rank_policy", "strict_pareto_requires_no_protected_regression", "sampled_not_continuous", "seed_runs", "browser_oracle_status", "human_width_capacity"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "input_chain_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "search_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "baseline_candidate_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "candidate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
+    "pareto_dimensions": {"type": "array", "minItems": 9, "maxItems": 9, "items": {"type": "string"}},
+    "rank_policy": {"const": "worst-state/pair/geometry, then aggregate, then commanded deviation"},
+    "strict_pareto_requires_no_protected_regression": {"const": true},
+    "sampled_not_continuous": {"const": true},
+    "seed_runs": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["seed", "records_sha256"],
+        "properties": {
+          "seed": {"type": "integer", "minimum": 0},
+          "records_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "browser_oracle_status": {"enum": ["NOT_RUN", "PASS", "FAIL", "ERROR"]},
+    "human_width_capacity": {"type": "null"}
+  }
+}

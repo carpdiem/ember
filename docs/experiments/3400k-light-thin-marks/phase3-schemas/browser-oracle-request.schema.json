@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase3-browser-oracle-request.schema.json",
+  "title": "Exact-bank Phase 3B browser oracle request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate_id", "bank_kind", "serialized_bank", "serialized_bank_sha256", "input_chain_sha256", "search_contract_sha256", "finalist_rank", "mask_set", "requested_roles", "requested_role_observations", "full_image_hash_used", "cvd_policy", "human_width_capacity"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "candidate_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "bank_kind": {"const": "categorical"},
+    "serialized_bank": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string", "pattern": "^#[0-9A-F]{6}$"}},
+    "serialized_bank_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "input_chain_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "search_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "finalist_rank": {"type": "integer", "minimum": 1},
+    "mask_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "sha256", "count", "rerasterize"],
+      "properties": {
+        "file": {"const": "raster-masks.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "count": {"const": 720},
+        "rerasterize": {"const": false}
+      }
+    },
+    "requested_roles": {"const": ["cat.one", "cat.two", "cat.three", "cat.four", "cat.five", "cat.six"]},
+    "requested_role_observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "mask_id", "state", "background", "role"],
+        "properties": {
+          "id": {"type": "string"},
+          "mask_id": {"type": "string"},
+          "state": {"enum": ["commanded", "transformed"]},
+          "background": {"enum": ["bg_0", "bg_1", "bg_2"]},
+          "role": {"enum": ["cat.one", "cat.two", "cat.three", "cat.four", "cat.five", "cat.six"]}
+        }
+      }
+    },
+    "full_image_hash_used": {"const": false},
+    "cvd_policy": {"const": "report-only"},
+    "human_width_capacity": {"type": "null"}
+  }
+}

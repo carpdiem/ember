@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase3-candidate-row.schema.json",
+  "title": "Exact-Hex8 Phase 3 categorical candidate row",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "row_kind", "candidate_id", "bank_kind", "role_order", "serialized_bank", "serialized_bank_sha256", "input_chain_sha256", "search_contract_sha256", "evaluation_stage", "cheap", "primary", "full", "raster_proxy", "pareto", "failures", "strict_pareto_improvement", "cvd", "browser_oracle_status"],
+  "properties": {
+    "schema_version": {"const": 1}, "row_kind": {"enum": ["baseline", "candidate"]}, "candidate_id": {"$ref": "#/$defs/hash"}, "bank_kind": {"const": "categorical"},
+    "role_order": {"const": ["cat.one", "cat.two", "cat.three", "cat.four", "cat.five", "cat.six"]},
+    "serialized_bank": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string", "pattern": "^#[0-9A-F]{6}$"}},
+    "serialized_bank_sha256": {"$ref": "#/$defs/hash"}, "input_chain_sha256": {"$ref": "#/$defs/hash"}, "search_contract_sha256": {"$ref": "#/$defs/hash"},
+    "evaluation_stage": {"enum": ["cheap", "primary", "full"]}, "cheap": {"type": "object"}, "primary": {"type": ["object", "null"]}, "full": {"type": ["object", "null"]}, "raster_proxy": {"type": ["object", "null"]},
+    "pareto": {"type": "object", "additionalProperties": false, "required": ["transformed_pair_min", "commanded_pair_min", "neutral_min", "graphics_contrast_min", "raster_1_5_min", "raster_2_min", "raster_3_min", "max_commanded_deviation", "mean_commanded_deviation"], "properties": {"transformed_pair_min": {"type": "number"}, "commanded_pair_min": {"type": "number"}, "neutral_min": {"type": "number"}, "graphics_contrast_min": {"type": "number"}, "raster_1_5_min": {"type": ["number", "null"]}, "raster_2_min": {"type": ["number", "null"]}, "raster_3_min": {"type": ["number", "null"]}, "max_commanded_deviation": {"type": "number"}, "mean_commanded_deviation": {"type": "number"}}},
+    "failures": {"type": "array", "items": {"type": "object"}}, "strict_pareto_improvement": {"type": "boolean"},
+    "cvd": {"type": "object", "additionalProperties": false, "required": ["report_only", "used_as_gate", "metrics"], "properties": {"report_only": {"const": true}, "used_as_gate": {"const": false}, "metrics": {"type": "object"}}},
+    "browser_oracle_status": {"enum": ["NOT_RUN", "PASS", "FAIL", "ERROR"]}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

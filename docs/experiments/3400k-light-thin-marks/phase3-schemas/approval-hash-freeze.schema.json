@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase3-approval-hash-freeze.schema.json",
+  "title": "G2 approval and selected-bank replay freeze receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "candidate_id", "serialized_bank_sha256", "candidate_artifact_sha256", "frontier_manifest_sha256", "browser_result_sha256", "input_chain_sha256", "search_contract_sha256", "schema_bundle_sha256", "replay_sha256", "approver", "production_promotion_authorized"],
+  "properties": {
+    "schema_version": {"const": 1}, "status": {"enum": ["APPROVED", "REJECTED"]}, "candidate_id": {"$ref": "#/$defs/hash"}, "serialized_bank_sha256": {"$ref": "#/$defs/hash"}, "candidate_artifact_sha256": {"$ref": "#/$defs/hash"}, "frontier_manifest_sha256": {"$ref": "#/$defs/hash"}, "browser_result_sha256": {"$ref": "#/$defs/hash"}, "input_chain_sha256": {"$ref": "#/$defs/hash"}, "search_contract_sha256": {"$ref": "#/$defs/hash"}, "schema_bundle_sha256": {"$ref": "#/$defs/hash"}, "replay_sha256": {"$ref": "#/$defs/hash"}, "approver": {"type": "string", "minLength": 1}, "production_promotion_authorized": {"const": false}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

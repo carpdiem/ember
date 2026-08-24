@@ -1,0 +1,100 @@
+{
+  "authorization": {
+    "approved_g1_head": "922ba7faa45ccdb56e95356750d353c7602da78a",
+    "evidence_status": "PASS",
+    "phase3_search_authorized": true,
+    "require_independent_replay": true
+  },
+  "bank": {
+    "count": 6,
+    "kind": "categorical",
+    "role_order": [
+      "cat.one",
+      "cat.two",
+      "cat.three",
+      "cat.four",
+      "cat.five",
+      "cat.six"
+    ]
+  },
+  "cvd": {
+    "report_only": true,
+    "used_as_gate": false
+  },
+  "evaluation_ladder": [
+    "exact-Hex8-commanded-Oklab-WCAG-role-neutral-hard-gates",
+    "transformed-primary-CAM16-UCS-pair-neutral-gates",
+    "all-45-gains-times-declared-viewing-sensitivities-separately-never-averaged-plus-local-refinement",
+    "calibrated-raster-proxy-over-reused-full-G1-masks-and-geometries",
+    "exact-browser-oracle-for-Phase3B-finalists-only"
+  ],
+  "hard_gates": {
+    "commanded_pair_delta_e_ok": 16.0,
+    "graphics_contrast_ratio": 3.0,
+    "neutral_delta_e_ok": 8.0,
+    "transformed_neutral_baseline_ratio": 0.9,
+    "transformed_pair_baseline_ratio": 0.9
+  },
+  "input_sha256": {
+    "baseline": "d51298b4b711ff925fa300b782cdad3fa94cd63f95813dc2b4494c376419190d",
+    "browser_probe": "59397374ba89a4e0095c250eabcff2e440abb6add048dc1aea374d12dd69a1a9",
+    "gain_grid": "bec79c3aa21cac16bb59adf1017d8104054db6bff1cb4486ee95b11d943499f5",
+    "neutral": "eaecc5a48f27f18503212e19ba9b6cb1a5e92e150dfe06d543a35e684f05d5e1",
+    "proxy": "df82de83f839e9a7f501461f92b4a4eb333172f11c7de57b193cba512e58c5dc",
+    "raster_ledger": "052b49ae052322f2a3a7bf1830bb670dfe1ef7983c51edb42049d1eeedae09f2",
+    "raster_masks": "58304e5c7207517390e2d0b268fb0f502e1d4e7031ad22280e68dbc0f677754b",
+    "raster_observations": "b38087d6054db305088b21d4830af224654b80a0175b2f79a8a3dc2e662b467f",
+    "replay_receipt": "00f71456614beab513771d9f11ec0855b153dfe10a4871cb6b854d55f9bd758e",
+    "replay_verifier": "271c574d0f39f43490467a5993fcb897fc946df45618b83b8a69b9f5732b0493",
+    "viewing": "92dd1bdfcc3c8320922e82329e21c40ee06d9a9b56de8ee81368706c37f6bd92"
+  },
+  "local_gain_refinement": {
+    "continuous_worst_case_claim": false,
+    "subgrid": [5, 5],
+    "trigger_fraction_above_floor": 0.05
+  },
+  "pareto_dimensions": [
+    "transformed_pair_min",
+    "commanded_pair_min",
+    "neutral_min",
+    "graphics_contrast_min",
+    "raster_1_5_min",
+    "raster_2_min",
+    "raster_3_min",
+    "max_commanded_deviation",
+    "mean_commanded_deviation"
+  ],
+  "proposal_bounds": {
+    "global_oklab": {
+      "bank_mean_chroma_max": 0.105,
+      "bank_mean_chroma_min": 0.09,
+      "chroma_max": 0.111,
+      "l_max": 0.6593999278,
+      "l_min": 0.2438077701,
+      "per_role_chroma_min": null
+    },
+    "roles": [
+      {"hue_center_degrees": 176.2766872, "hue_half_width_degrees": 22.0, "l_max": 0.6593999278, "l_min": 0.5393999278, "role": "cat.one"},
+      {"hue_center_degrees": 300.3842621, "hue_half_width_degrees": 22.0, "l_max": 0.3238077701, "l_min": 0.2438077701, "role": "cat.two"},
+      {"hue_center_degrees": 351.2904568, "hue_half_width_degrees": 22.0, "l_max": 0.6593999278, "l_min": 0.503131201, "role": "cat.three"},
+      {"hue_center_degrees": 43.6731621, "hue_half_width_degrees": 22.0, "l_max": 0.44519495, "l_min": 0.28519495, "role": "cat.four"},
+      {"hue_center_degrees": 146.207267, "hue_half_width_degrees": 22.0, "l_max": 0.4869335575, "l_min": 0.3269335575, "role": "cat.five"},
+      {"hue_center_degrees": 266.0687792, "hue_half_width_degrees": 22.0, "l_max": 0.5685170588, "l_min": 0.4085170588, "role": "cat.six"}
+    ]
+  },
+  "raster_proxy": {
+    "calibrated_error_margin_delta_e_ok": 0.75,
+    "mask_count": 720,
+    "mask_file": "raster-masks.json",
+    "rerasterize": false,
+    "widths_css_px": [1.5, 2.0, 3.0]
+  },
+  "schema_version": 1,
+  "seed": {
+    "algorithm": "numpy-PCG64",
+    "chunk_order_independent": true,
+    "experiment_seed": 3400,
+    "minimum_independent_runs": 4
+  },
+  "threshold_policy": "All numerical thresholds are bounded-search numerical optimizer priors inherited from the frozen palette contract or conservative G1 calibration limits; none is a human visibility floor or a universal perceptual constant. G2 selection and held-out human evidence remain separate."
+}

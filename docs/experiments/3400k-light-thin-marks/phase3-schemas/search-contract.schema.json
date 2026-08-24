@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase3-search-contract.schema.json",
+  "title": "Phase 3 categorical search contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authorization",
+    "bank",
+    "input_sha256",
+    "seed",
+    "proposal_bounds",
+    "hard_gates",
+    "evaluation_ladder",
+    "pareto_dimensions",
+    "raster_proxy",
+    "local_gain_refinement",
+    "cvd",
+    "threshold_policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approved_g1_head", "evidence_status", "phase3_search_authorized", "require_independent_replay"],
+      "properties": {
+        "approved_g1_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "evidence_status": {"const": "PASS"},
+        "phase3_search_authorized": {"const": true},
+        "require_independent_replay": {"const": true}
+      }
+    },
+    "bank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "count", "role_order"],
+      "properties": {
+        "kind": {"const": "categorical"},
+        "count": {"const": 6},
+        "role_order": {"const": ["cat.one", "cat.two", "cat.three", "cat.four", "cat.five", "cat.six"]}
+      }
+    },
+    "input_sha256": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+      "minProperties": 11
+    },
+    "seed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "chunk_order_independent", "experiment_seed", "minimum_independent_runs"],
+      "properties": {
+        "algorithm": {"const": "numpy-PCG64"},
+        "chunk_order_independent": {"const": true},
+        "experiment_seed": {"type": "integer", "minimum": 0},
+        "minimum_independent_runs": {"const": 4}
+      }
+    },
+    "proposal_bounds": {"type": "object"},
+    "hard_gates": {"type": "object"},
+    "evaluation_ladder": {"type": "array", "minItems": 5, "items": {"type": "string"}},
+    "pareto_dimensions": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"type": "string"}},
+    "raster_proxy": {"type": "object"},
+    "local_gain_refinement": {"type": "object"},
+    "cvd": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["report_only", "used_as_gate"],
+      "properties": {"report_only": {"const": true}, "used_as_gate": {"const": false}}
+    },
+    "threshold_policy": {"type": "string"}
+  }
+}

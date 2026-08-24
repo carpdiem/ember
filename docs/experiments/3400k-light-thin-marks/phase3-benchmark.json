@@ -1,0 +1,49 @@
+{
+  "artifact_policy": {
+    "environment_bound": true,
+    "gating": false,
+    "timings_deterministic": false,
+    "wall_clock_timestamp_included": false
+  },
+  "bank_payload_included": false,
+  "full_45_gain_all_viewing_plus_720_mask_proxy": {
+    "banks_per_second": 2.591352461993759,
+    "cam16_rows_per_bank": 405,
+    "g1_masks_reused_per_bank": 720,
+    "maximum_seconds": 0.38819329207763076,
+    "median_seconds": 0.38589887507259846,
+    "minimum_seconds": 0.38360445806756616,
+    "repeats": 2
+  },
+  "host": {
+    "numpy": "2.5.1",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python": "3.13.13"
+  },
+  "phase3b_estimate": {
+    "browser_and_replay_budget_minutes": [
+      10,
+      30
+    ],
+    "browser_finalists": 12,
+    "claim": "engineering estimate from baseline throughput; not a search result",
+    "coarse_banks": 100000,
+    "full_survivors": 500,
+    "numerical_wall_minutes": 0.8706300607688414,
+    "total_wall_minutes_range": [
+      15,
+      30.870630060768843
+    ],
+    "workers": 4
+  },
+  "schema_version": 1,
+  "scope": "frozen baseline repeated for throughput only; no candidate search or replacement colors",
+  "vectorized_exact_hex8_coarse": {
+    "banks_per_batch": 2000,
+    "banks_per_second": 6249.305917626615,
+    "maximum_seconds": 0.3392297080717981,
+    "median_seconds": 0.3200355409644544,
+    "minimum_seconds": 0.3160588340833783,
+    "repeats": 5
+  }
+}
