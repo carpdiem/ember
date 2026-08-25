@@ -13,10 +13,13 @@ import importlib.util
 import itertools
 import json
 import math
+import multiprocessing
 import os
 import subprocess
 import time
+from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
+from concurrent.futures import ProcessPoolExecutor
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,7 +28,14 @@ from typing import Any, Literal
 import colour
 import numpy as np
 
-from ember.color import contrast_ratio, hex_to_srgb, oklab_to_srgb, srgb_to_hex, srgb_to_oklab
+from ember.color import (
+    contrast_ratio,
+    hex_to_srgb,
+    oklab_to_srgb,
+    srgb_to_hex,
+    srgb_to_oklab,
+    wcag_luminance,
+)
 
 ROLES = ("cat.one", "cat.two", "cat.three", "cat.four", "cat.five", "cat.six")
 ROLE_NAMES = ("one", "two", "three", "four", "five", "six")
@@ -62,7 +72,42 @@ PARETO_DIMENSIONS = (
 _MAXIMIZE = PARETO_DIMENSIONS[:7]
 _MINIMIZE = PARETO_DIMENSIONS[7:]
 _CANONICAL_HEX = __import__("re").compile(r"^#[0-9A-F]{6}$")
+_CANONICAL_HASH = __import__("re").compile(r"^[0-9a-f]{64}$")
 _REPLAY_CACHE: set[str] = set()
+SEARCH_ALGORITHM_VERSION = "phase3-survivor-driven-v2"
+SEARCH_MANIFEST_SCHEMA_VERSION = 2
+MAX_COARSE_SURVIVORS = 5_000
+MIN_REFINE_CANDIDATES = 500
+
+_BROWSER_REQUEST_KEYS = {
+    "schema_version",
+    "request_kind",
+    "candidate_id",
+    "bank_kind",
+    "serialized_bank",
+    "serialized_bank_sha256",
+    "input_chain_sha256",
+    "search_contract_sha256",
+    "frontier_manifest_sha256",
+    "frontier_rank",
+    "mask_set",
+    "requested_roles",
+    "requested_role_observations",
+    "full_image_hash_used",
+    "cvd_policy",
+    "human_width_capacity",
+}
+_BROWSER_RESULT_KEYS = {
+    "schema_version",
+    "request_sha256",
+    "candidate_id",
+    "serialized_bank_sha256",
+    "input_chain_sha256",
+    "status",
+    "observations",
+    "full_image_hash_used",
+    "human_width_capacity",
+}
 
 
 class AuthorizationError(RuntimeError):
@@ -615,13 +660,11 @@ def evaluate_commanded_batch(
         np.linalg.norm(lab[:, :, None] - neutral[None, None], axis=3) * 100.0, axis=(1, 2)
     )
     backgrounds = [parse_exact_hex8(surfaces[name]) for name in GATE_BACKGROUNDS]
-    contrast_min = np.asarray(
-        [
-            min(contrast_ratio(color, background) for color in bank for background in backgrounds)
-            for bank in rgb
-        ],
-        dtype=float,
-    )
+    bank_luminance = wcag_luminance(rgb)
+    background_luminance = wcag_luminance(np.asarray(backgrounds))
+    lighter = np.maximum(bank_luminance[:, :, None], background_luminance[None, None, :])
+    darker = np.minimum(bank_luminance[:, :, None], background_luminance[None, None, :])
+    contrast_min = np.min((lighter + 0.05) / (darker + 0.05), axis=(1, 2))
     return {
         "pair_min_delta_e_ok": pair_min,
         "neutral_min_delta_e_ok": neutral_min,
@@ -1207,6 +1250,8 @@ def validate_browser_oracle_request(
     request: Mapping[str, Any], inputs: Phase3Inputs, contract: Mapping[str, Any]
 ) -> None:
     authorize_search(inputs, replay=True)
+    if set(request) != _BROWSER_REQUEST_KEYS or request.get("schema_version") != 2:
+        raise StaleArtifactError("browser request schema version/keys are invalid")
     if request.get("bank_kind") != "categorical" or request.get("requested_roles") != list(ROLES):
         raise StaleArtifactError("browser request bank/role contract is tampered")
     try:
@@ -1219,6 +1264,20 @@ def validate_browser_oracle_request(
         raise StaleArtifactError("browser request input chain is stale")
     if request.get("search_contract_sha256") != sha256_json(contract):
         raise StaleArtifactError("browser request search contract is stale")
+    for key in ("frontier_manifest_sha256",):
+        value = request.get(key)
+        if not isinstance(value, str) or _CANONICAL_HASH.fullmatch(value) is None:
+            raise StaleArtifactError(f"browser request {key} is invalid")
+    request_kind = request.get("request_kind")
+    rank = request.get("frontier_rank")
+    if request_kind == "frontier-candidate":
+        if isinstance(rank, bool) or not isinstance(rank, int) or rank < 1:
+            raise StaleArtifactError("browser request frontier rank is invalid")
+    elif request_kind == "baseline-reference":
+        if rank != 0:
+            raise StaleArtifactError("baseline reference must use frontier rank zero")
+    else:
+        raise StaleArtifactError("browser request kind is invalid")
     mask_set = request.get("mask_set", {})
     if mask_set != {
         "file": INPUT_FILENAMES["raster_masks"],
@@ -1242,23 +1301,53 @@ def build_browser_oracle_request(
     contract: Mapping[str, Any],
     *,
     finalist_rank: int,
+    frontier: Mapping[str, Any],
+    reference: bool = False,
 ) -> dict[str, Any]:
     authorize_search(inputs, replay=True)
-    if finalist_rank < 1:
-        raise ValueError("finalist_rank must be positive")
+    validate_frontier_manifest(frontier, inputs, contract)
     if candidate["input_chain_sha256"] != input_chain_sha256(inputs):
         raise StaleArtifactError("candidate input chain is stale")
+    if candidate.get("search_contract_sha256") != sha256_json(contract):
+        raise StaleArtifactError("candidate search contract is stale")
     if candidate["serialized_bank_sha256"] != bank_hash(candidate["serialized_bank"]):
         raise StaleArtifactError("candidate bank hash is tampered")
+    if candidate.get("candidate_id") != _candidate_id(
+        canonical_bank(candidate["serialized_bank"]), inputs, contract
+    ):
+        raise StaleArtifactError("candidate ID is stale or tampered")
+    baseline_id = frontier["baseline_candidate_id"]
+    if reference:
+        if candidate.get("row_kind") != "baseline" or candidate["candidate_id"] != baseline_id:
+            raise StaleArtifactError("only the exact frontier baseline may be a reference request")
+        if finalist_rank != 0:
+            raise ValueError("baseline reference rank must be zero")
+        request_kind = "baseline-reference"
+    else:
+        ranked = frontier["ranked_candidate_ids"]
+        if (
+            candidate.get("row_kind") != "candidate"
+            or candidate.get("evaluation_stage") != "full"
+            or candidate.get("failures")
+            or canonical_bank(candidate["serialized_bank"]) == _baseline_bank(inputs)
+        ):
+            raise StaleArtifactError("browser candidates must be failure-free full evaluations")
+        if finalist_rank < 1 or finalist_rank > len(ranked):
+            raise ValueError("finalist_rank is outside the exact frontier")
+        if ranked[finalist_rank - 1] != candidate["candidate_id"]:
+            raise StaleArtifactError("candidate/rank is not bound to the exact frontier")
+        request_kind = "frontier-candidate"
     request = {
-        "schema_version": 1,
+        "schema_version": 2,
+        "request_kind": request_kind,
         "candidate_id": candidate["candidate_id"],
         "bank_kind": "categorical",
         "serialized_bank": candidate["serialized_bank"],
         "serialized_bank_sha256": candidate["serialized_bank_sha256"],
         "input_chain_sha256": input_chain_sha256(inputs),
         "search_contract_sha256": sha256_json(contract),
-        "finalist_rank": finalist_rank,
+        "frontier_manifest_sha256": sha256_json(frontier),
+        "frontier_rank": finalist_rank,
         "mask_set": {
             "file": INPUT_FILENAMES["raster_masks"],
             "sha256": inputs.source_sha256["raster_masks"],
@@ -1276,6 +1365,8 @@ def build_browser_oracle_request(
 
 
 def validate_browser_oracle_result(result: Mapping[str, Any], request: Mapping[str, Any]) -> None:
+    if set(result) != _BROWSER_RESULT_KEYS or result.get("schema_version") != 2:
+        raise StaleArtifactError("browser result schema version/keys are invalid")
     if result.get("request_sha256") != sha256_json(request):
         raise StaleArtifactError("browser result request hash is stale or tampered")
     for key in ("candidate_id", "serialized_bank_sha256", "input_chain_sha256"):
@@ -1372,41 +1463,558 @@ def make_search_jobs(*, seed: int, count: int, chunk_size: int) -> list[SearchJo
 
 
 def merge_chunk_records(records: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    """Merge deterministic shards without colliding equal job indices from different runs."""
     rows = [dict(row) for row in records]
-    by_index: dict[int, dict[str, Any]] = {}
+    by_index: dict[tuple[int, int], dict[str, Any]] = {}
     for row in rows:
-        index = int(row["job_index"])
-        current = by_index.get(index)
+        key = (int(row.get("run_seed", 0)), int(row["job_index"]))
+        current = by_index.get(key)
         if current is None or str(row["candidate_id"]) < str(current["candidate_id"]):
-            by_index[index] = row
-    return [by_index[index] for index in sorted(by_index)]
+            by_index[key] = row
+    return [by_index[key] for key in sorted(by_index)]
 
 
-def _propose_job(
-    job: SearchJob, inputs: Phase3Inputs, contract: Mapping[str, Any]
-) -> tuple[str, ...]:
-    rng = np.random.Generator(np.random.PCG64(job.seed))
-    rows = []
-    global_bounds = contract["proposal_bounds"]["global_oklab"]
-    for role_bound in contract["proposal_bounds"]["roles"]:
-        lightness = rng.uniform(role_bound["l_min"], role_bound["l_max"])
-        chroma = rng.uniform(0.0, global_bounds["chroma_max"])
-        hue = math.radians(
-            role_bound["hue_center_degrees"]
-            + rng.uniform(
-                -role_bound["hue_half_width_degrees"], role_bound["hue_half_width_degrees"]
+def _git_root(experiment_dir: Path) -> Path:
+    try:
+        value = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            cwd=experiment_dir,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError) as error:
+        raise AuthorizationError("Git root cannot be resolved for the output guard") from error
+    return Path(value).resolve()
+
+
+def validate_external_output_path(output_dir: Path, inputs: Phase3Inputs) -> Path:
+    """Reject lexical or symlink-resolved output anywhere inside the repository."""
+    root = _git_root(inputs.experiment_dir)
+    raw = Path(output_dir).expanduser()
+    lexical = Path(os.path.abspath(raw))
+    resolved = raw.resolve(strict=False)
+    if root == lexical or root in lexical.parents or root == resolved or root in resolved.parents:
+        raise ValueError("search output must be external to the entire Git repository")
+    return resolved
+
+
+def _proposal_context(inputs: Phase3Inputs, contract: Mapping[str, Any]) -> dict[str, Any]:
+    baseline = _baseline_bank(inputs)
+    cheap = evaluate_cheap(baseline, inputs, contract)
+    role_index = {role: index for index, role in enumerate(ROLES)}
+    pair = tuple(role_index[role] for role in cheap["pair_roles"])
+    neutral = role_index[cheap["neutral_roles"][0]]
+    rgb = bank_rgb(baseline)
+    surfaces = inputs.baseline["family"]["surfaces"]
+    backgrounds = [parse_exact_hex8(surfaces[name]) for name in GATE_BACKGROUNDS]
+    contrast_by_role = np.asarray(
+        [min(contrast_ratio(color, background) for background in backgrounds) for color in rgb]
+    )
+    return {
+        "baseline_bank": baseline,
+        "baseline_lab": bank_oklab(baseline),
+        "binding_pair": pair,
+        "binding_neutral": neutral,
+        "binding_contrast": int(np.argmin(contrast_by_role)),
+    }
+
+
+def _repair_proposal(lab: np.ndarray, contract: Mapping[str, Any]) -> np.ndarray:
+    """Project a proposal into declared L/hue/chroma bounds and exact sRGB gamut."""
+    repaired = np.asarray(lab, dtype=float).copy()
+    bounds = contract["proposal_bounds"]
+    global_bounds = bounds["global_oklab"]
+    margin = 0.0025
+    for index, role in enumerate(bounds["roles"]):
+        repaired[index, 0] = np.clip(
+            repaired[index, 0], role["l_min"] + margin, role["l_max"] - margin
+        )
+        chroma = float(np.linalg.norm(repaired[index, 1:]))
+        hue = math.degrees(math.atan2(repaired[index, 2], repaired[index, 1])) % 360.0
+        delta = (hue - role["hue_center_degrees"] + 180.0) % 360.0 - 180.0
+        delta = float(
+            np.clip(
+                delta,
+                -role["hue_half_width_degrees"] + 0.25,
+                role["hue_half_width_degrees"] - 0.25,
             )
         )
-        rows.append([lightness, chroma * math.cos(hue), chroma * math.sin(hue)])
-    bank, _ = quantize_proposal(rows)
-    return bank
+        hue = math.radians(role["hue_center_degrees"] + delta)
+        chroma = min(chroma, global_bounds["chroma_max"] - margin)
+        repaired[index, 1:] = [chroma * math.cos(hue), chroma * math.sin(hue)]
+    chroma = np.linalg.norm(repaired[:, 1:], axis=1)
+    mean = float(np.mean(chroma))
+    target = float(
+        np.clip(
+            mean,
+            global_bounds["bank_mean_chroma_min"] + margin,
+            global_bounds["bank_mean_chroma_max"] - margin,
+        )
+    )
+    if mean > 0:
+        repaired[:, 1:] *= target / mean
+    # Preserve L and hue while shrinking chroma only as much as exact sRGB gamut requires.
+    for _ in range(16):
+        rgb = oklab_to_srgb(repaired)
+        invalid = np.any((rgb < -1e-7) | (rgb > 1.0 + 1e-7), axis=1)
+        if not np.any(invalid):
+            break
+        repaired[invalid, 1:] *= 0.96
+    return repaired
 
 
-def _atomic_json(path: Path, payload: Any) -> None:
+def _propose_batch(
+    jobs: Sequence[SearchJob], inputs: Phase3Inputs, contract: Mapping[str, Any]
+) -> tuple[list[tuple[str, ...] | None], list[str]]:
+    """Generate a deterministic baseline-anchored constrained NumPy proposal batch."""
+    context = _proposal_context(inputs, contract)
+    baseline = context["baseline_lab"]
+    proposals = np.repeat(baseline[None, :, :], len(jobs), axis=0)
+    modes: list[str] = []
+    pair_left, pair_right = context["binding_pair"]
+    priority = [pair_left, pair_right, context["binding_neutral"], context["binding_contrast"]]
+    for offset, job in enumerate(jobs):
+        if job.index == 0:
+            modes.append("baseline-reference")
+            continue
+        rng = np.random.Generator(np.random.PCG64(job.seed))
+        selector = job.index % 10
+        if selector in {0, 8}:
+            sigma = 0.0025 if selector == 0 else 0.006
+            proposals[offset] += rng.normal(0.0, sigma, size=(6, 3))
+            modes.append("local-all-role-small" if selector == 0 else "local-all-role-medium")
+        elif selector in {1, 2, 3, 4, 5, 6}:
+            count = 1 if selector in {1, 2, 3} else 2
+            weights = np.ones(6)
+            weights[priority] += 4.0
+            chosen = rng.choice(6, size=count, replace=False, p=weights / np.sum(weights))
+            proposals[offset, chosen] += rng.normal(0.0, 0.007, size=(count, 3))
+            modes.append(f"targeted-{count}-role")
+        elif selector == 7:
+            direction = baseline[pair_left] - baseline[pair_right]
+            direction /= max(float(np.linalg.norm(direction)), 1e-12)
+            step = rng.uniform(0.0015, 0.006)
+            proposals[offset, pair_left] += step * direction
+            proposals[offset, pair_right] -= step * direction
+            modes.append("baseline-binding-pair-emphasis")
+        else:
+            broader = baseline.copy()
+            for index, role in enumerate(contract["proposal_bounds"]["roles"]):
+                lightness = rng.uniform(role["l_min"], role["l_max"])
+                chroma = rng.uniform(
+                    0.075, contract["proposal_bounds"]["global_oklab"]["chroma_max"]
+                )
+                hue = math.radians(
+                    role["hue_center_degrees"]
+                    + rng.uniform(-role["hue_half_width_degrees"], role["hue_half_width_degrees"])
+                )
+                broader[index] = [lightness, chroma * math.cos(hue), chroma * math.sin(hue)]
+            blend = rng.uniform(0.15, 0.40)
+            proposals[offset] = (1.0 - blend) * baseline + blend * broader
+            modes.append("bounded-broader-oklab")
+
+        # The worst commanded contrast role is derived from the baseline and nudged inward;
+        # this is a proposal prior, not a changed gate.
+        proposals[offset, context["binding_contrast"], 0] -= rng.uniform(0.004, 0.010)
+        # Likewise, separate the measured binding pair rather than hard-coding role identities.
+        direction = baseline[pair_left] - baseline[pair_right]
+        direction /= max(float(np.linalg.norm(direction)), 1e-12)
+        pair_step = rng.uniform(0.0005, 0.0025)
+        proposals[offset, pair_left] += pair_step * direction
+        proposals[offset, pair_right] -= pair_step * direction
+        proposals[offset] = _repair_proposal(proposals[offset], contract)
+
+    banks: list[tuple[str, ...] | None] = []
+    for proposal in proposals:
+        try:
+            bank, _ = quantize_proposal(proposal)
+        except ValueError:
+            banks.append(None)
+        else:
+            banks.append(bank)
+    return banks, modes
+
+
+def _batch_gate_results(
+    banks: Sequence[tuple[str, ...]], inputs: Phase3Inputs, contract: Mapping[str, Any]
+) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
+    metrics = evaluate_commanded_batch(banks, inputs)
+    rgb = np.asarray([bank_rgb(bank) for bank in banks])
+    lab = srgb_to_oklab(rgb)
+    chroma = np.linalg.norm(lab[:, :, 1:], axis=2)
+    hues = np.degrees(np.arctan2(lab[:, :, 2], lab[:, :, 1])) % 360.0
+    bounds = contract["proposal_bounds"]
+    failures: dict[str, np.ndarray] = {}
+    role_l_floor = np.zeros(len(banks), dtype=bool)
+    role_l_ceiling = np.zeros(len(banks), dtype=bool)
+    role_hue = np.zeros(len(banks), dtype=bool)
+    for index, role in enumerate(bounds["roles"]):
+        role_l_floor |= lab[:, index, 0] < role["l_min"] - 1e-12
+        role_l_ceiling |= lab[:, index, 0] > role["l_max"] + 1e-12
+        delta = np.abs((hues[:, index] - role["hue_center_degrees"] + 180.0) % 360.0 - 180.0)
+        role_hue |= delta > role["hue_half_width_degrees"] + 1e-12
+    global_bounds = bounds["global_oklab"]
+    failures["oklab-lightness-floor"] = role_l_floor
+    failures["oklab-lightness-ceiling"] = role_l_ceiling
+    failures["oklab-chroma-ceiling"] = np.any(chroma > global_bounds["chroma_max"] + 1e-12, axis=1)
+    failures["role-hue-neighborhood"] = role_hue
+    mean_chroma = np.mean(chroma, axis=1)
+    failures["bank-mean-chroma-floor"] = mean_chroma < global_bounds["bank_mean_chroma_min"] - 1e-12
+    failures["bank-mean-chroma-ceiling"] = (
+        mean_chroma > global_bounds["bank_mean_chroma_max"] + 1e-12
+    )
+    failures["commanded-pair-distance"] = (
+        metrics["pair_min_delta_e_ok"] < contract["hard_gates"]["commanded_pair_delta_e_ok"] - 1e-12
+    )
+    failures["commanded-neutral-separation"] = (
+        metrics["neutral_min_delta_e_ok"] < contract["hard_gates"]["neutral_delta_e_ok"] - 1e-12
+    )
+    failures["commanded-graphics-contrast"] = (
+        metrics["graphics_contrast_min"] < contract["hard_gates"]["graphics_contrast_ratio"] - 1e-12
+    )
+    return metrics, failures
+
+
+def _coarse_chunk(
+    jobs: Sequence[SearchJob], inputs: Phase3Inputs, contract: Mapping[str, Any], run_seed: int
+) -> tuple[list[dict[str, Any]], Counter[str], int]:
+    banks, modes = _propose_batch(jobs, inputs, contract)
+    rejected = Counter()
+    valid_positions = [index for index, bank in enumerate(banks) if bank is not None]
+    valid_banks = [banks[index] for index in valid_positions]
+    if not valid_banks:
+        rejected["proposal-quantization"] = len(jobs)
+        return [], rejected, len(jobs)
+    metrics, failure_masks = _batch_gate_results(valid_banks, inputs, contract)
+    for gate, mask in failure_masks.items():
+        rejected[gate] += int(np.count_nonzero(mask))
+    failed_any = np.logical_or.reduce(list(failure_masks.values()))
+    records = []
+    for local_index, original_position in enumerate(valid_positions):
+        job = jobs[original_position]
+        bank = valid_banks[local_index]
+        is_baseline = job.index == 0
+        if failed_any[local_index] and not is_baseline:
+            continue
+        records.append(
+            {
+                "run_seed": run_seed,
+                "job_index": job.index,
+                "job_seed": job.seed,
+                "proposal_mode": modes[original_position],
+                "candidate_id": _candidate_id(bank, inputs, contract),
+                "serialized_bank_sha256": bank_hash(bank),
+                "serialized_bank": list(bank),
+                "cheap_pass": bool(not failed_any[local_index]),
+                "baseline_reference": is_baseline,
+                "cheap_metrics": {
+                    "pair_min_delta_e_ok": float(metrics["pair_min_delta_e_ok"][local_index]),
+                    "neutral_min_delta_e_ok": float(metrics["neutral_min_delta_e_ok"][local_index]),
+                    "graphics_contrast_min": float(metrics["graphics_contrast_min"][local_index]),
+                },
+            }
+        )
+    rejected["proposal-quantization"] += len(jobs) - len(valid_positions)
+    return records, rejected, len(jobs)
+
+
+def _survivor_sort_key(row: Mapping[str, Any]) -> tuple[Any, ...]:
+    metrics = row["cheap_metrics"]
+    margins = (
+        metrics["pair_min_delta_e_ok"] / 16.0,
+        metrics["neutral_min_delta_e_ok"] / 8.0,
+        metrics["graphics_contrast_min"] / 3.0,
+    )
+    return (-min(margins), -sum(margins), str(row["candidate_id"]))
+
+
+def select_diverse_survivors(
+    rows: Iterable[Mapping[str, Any]], *, limit: int = MAX_COARSE_SURVIVORS
+) -> list[dict[str, Any]]:
+    """Dedupe exact banks, then deterministically interleave proposal modes by quality."""
+    exact: dict[str, dict[str, Any]] = {}
+    for raw in rows:
+        row = dict(raw)
+        if not row.get("cheap_pass") or row.get("baseline_reference"):
+            continue
+        key = str(row["serialized_bank_sha256"])
+        current = exact.get(key)
+        identity = (int(row["run_seed"]), int(row["job_index"]), str(row["candidate_id"]))
+        if current is None or identity < (
+            int(current["run_seed"]),
+            int(current["job_index"]),
+            str(current["candidate_id"]),
+        ):
+            exact[key] = row
+    buckets: dict[str, list[dict[str, Any]]] = {}
+    for row in exact.values():
+        buckets.setdefault(str(row["proposal_mode"]), []).append(row)
+    for values in buckets.values():
+        values.sort(key=_survivor_sort_key)
+    selected = []
+    names = sorted(buckets)
+    position = 0
+    while len(selected) < limit:
+        added = False
+        for name in names:
+            if position < len(buckets[name]):
+                selected.append(buckets[name][position])
+                added = True
+                if len(selected) == limit:
+                    break
+        if not added:
+            break
+        position += 1
+    return selected
+
+
+def _atomic_json(path: Path, payload: Any, *, immutable: bool = False) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
+    encoded = canonical_json(payload) + b"\n"
+    if path.exists():
+        if immutable and path.read_bytes() == encoded:
+            return 0
+        if immutable:
+            raise StaleArtifactError(
+                f"immutable shard already exists with different bytes: {path.name}"
+            )
     temporary = path.with_suffix(path.suffix + ".tmp")
-    temporary.write_bytes(canonical_json(payload) + b"\n")
+    temporary.write_bytes(encoded)
     os.replace(temporary, path)
+    return len(encoded)
+
+
+def _shard_layout(budget: int, chunk_size: int) -> list[dict[str, int]]:
+    return [
+        {"index": index, "start": start, "stop": min(start + chunk_size, budget)}
+        for index, start in enumerate(range(0, budget, chunk_size))
+    ]
+
+
+def _load_and_validate_survivor_artifact(
+    artifact: Path | Mapping[str, Any], inputs: Phase3Inputs, contract: Mapping[str, Any]
+) -> tuple[dict[str, Any], str]:
+    payload = (
+        _load_json(Path(artifact))
+        if isinstance(artifact, (str, os.PathLike, Path))
+        else dict(artifact)
+    )
+    required = {
+        "schema_version",
+        "artifact_kind",
+        "algorithm_version",
+        "input_chain_sha256",
+        "search_contract_sha256",
+        "seed_runs",
+        "proposal_count",
+        "cheap_survivor_count",
+        "deduped_survivor_count",
+        "failure_histogram",
+        "survivor_rows",
+        "source_manifest_hashes",
+    }
+    if set(payload) != required or payload.get("schema_version") != 2:
+        raise StaleArtifactError("coarse survivor artifact schema/keys are invalid")
+    if payload.get("artifact_kind") != "coarse-survivors":
+        raise StaleArtifactError("refine parent is not a coarse survivor artifact")
+    if payload.get("algorithm_version") != SEARCH_ALGORITHM_VERSION:
+        raise StaleArtifactError("coarse survivor artifact algorithm is stale")
+    if payload.get("input_chain_sha256") != input_chain_sha256(inputs):
+        raise StaleArtifactError("coarse survivor artifact input chain is stale")
+    if payload.get("search_contract_sha256") != sha256_json(contract):
+        raise StaleArtifactError("coarse survivor artifact search contract is stale")
+    seed_runs = payload.get("seed_runs")
+    if (
+        not isinstance(seed_runs, list)
+        or len(seed_runs) < contract["seed"]["minimum_independent_runs"]
+        or len(set(seed_runs)) != len(seed_runs)
+    ):
+        raise StaleArtifactError("refine requires at least four unique coarse seed runs")
+    rows = payload.get("survivor_rows")
+    if not isinstance(rows, list) or any(not row.get("cheap_pass") for row in rows):
+        raise StaleArtifactError("coarse survivor rows are invalid")
+    if len({row["serialized_bank_sha256"] for row in rows}) != len(rows):
+        raise StaleArtifactError("coarse survivor artifact contains duplicate exact banks")
+    for row in rows:
+        if row["serialized_bank_sha256"] != bank_hash(row["serialized_bank"]):
+            raise StaleArtifactError("coarse survivor bank/hash is tampered")
+    return payload, sha256_json(payload)
+
+
+def combine_coarse_artifacts(
+    artifacts: Sequence[Path | Mapping[str, Any]],
+    *,
+    output_path: Path,
+    inputs: Phase3Inputs,
+    contract: Mapping[str, Any],
+    limit: int = MAX_COARSE_SURVIVORS,
+) -> dict[str, Any]:
+    if len(artifacts) < contract["seed"]["minimum_independent_runs"]:
+        raise ValueError("at least four coarse run artifacts are required")
+    output_path = validate_external_output_path(output_path, inputs)
+    all_rows: list[dict[str, Any]] = []
+    runs: list[int] = []
+    source_hashes: list[str] = []
+    histogram: Counter[str] = Counter()
+    proposal_count = 0
+    cheap_count = 0
+    for artifact in artifacts:
+        payload = (
+            _load_json(Path(artifact))
+            if isinstance(artifact, (str, os.PathLike, Path))
+            else dict(artifact)
+        )
+        if payload.get("artifact_kind") != "coarse-run-survivors":
+            raise StaleArtifactError("combine input is not a single-run coarse artifact")
+        if payload.get("algorithm_version") != SEARCH_ALGORITHM_VERSION:
+            raise StaleArtifactError("combine input algorithm is stale")
+        if payload.get("input_chain_sha256") != input_chain_sha256(inputs):
+            raise StaleArtifactError("combine input chain is stale")
+        if payload.get("search_contract_sha256") != sha256_json(contract):
+            raise StaleArtifactError("combine search contract is stale")
+        run_seed = int(payload["run_seed"])
+        if run_seed in runs:
+            raise StaleArtifactError("coarse seed run is duplicated")
+        runs.append(run_seed)
+        source_hashes.append(sha256_json(payload))
+        proposal_count += int(payload["proposal_count"])
+        cheap_count += int(payload["cheap_survivor_count"])
+        histogram.update(payload["failure_histogram"])
+        all_rows.extend(dict(row) for row in payload["survivor_rows"])
+    merged = merge_chunk_records(all_rows)
+    selected = select_diverse_survivors(merged, limit=limit)
+    result = {
+        "schema_version": 2,
+        "artifact_kind": "coarse-survivors",
+        "algorithm_version": SEARCH_ALGORITHM_VERSION,
+        "input_chain_sha256": input_chain_sha256(inputs),
+        "search_contract_sha256": sha256_json(contract),
+        "seed_runs": sorted(runs),
+        "proposal_count": proposal_count,
+        "cheap_survivor_count": cheap_count,
+        "deduped_survivor_count": len(selected),
+        "failure_histogram": dict(sorted(histogram.items())),
+        "survivor_rows": selected,
+        "source_manifest_hashes": sorted(source_hashes),
+    }
+    _atomic_json(output_path, result)
+    return result
+
+
+_FULL_WORKER_INPUTS: Phase3Inputs | None = None
+_FULL_WORKER_CONTRACT: Mapping[str, Any] | None = None
+
+
+def _initialize_full_worker(inputs: Phase3Inputs, contract: Mapping[str, Any]) -> None:
+    global _FULL_WORKER_INPUTS, _FULL_WORKER_CONTRACT
+    _FULL_WORKER_INPUTS = inputs
+    _FULL_WORKER_CONTRACT = contract
+
+
+def _evaluate_full_worker(task: Mapping[str, Any]) -> dict[str, Any]:
+    if _FULL_WORKER_INPUTS is None or _FULL_WORKER_CONTRACT is None:
+        raise RuntimeError("full-evaluation worker is not initialized")
+    row = evaluate_candidate(
+        task["serialized_bank"], _FULL_WORKER_INPUTS, _FULL_WORKER_CONTRACT, stage="full"
+    )
+    row.update(
+        {
+            "run_seed": task["run_seed"],
+            "job_index": task["job_index"],
+            "job_seed": task["job_seed"],
+            "proposal_mode": task["proposal_mode"],
+            "parent_artifact_sha256": task["parent_artifact_sha256"],
+            "parent_candidate_ids": task["parent_candidate_ids"],
+        }
+    )
+    return row
+
+
+def validate_frontier_manifest(
+    frontier: Mapping[str, Any], inputs: Phase3Inputs, contract: Mapping[str, Any]
+) -> None:
+    required = {
+        "schema_version",
+        "artifact_kind",
+        "algorithm_version",
+        "input_chain_sha256",
+        "search_contract_sha256",
+        "parent_artifact_sha256",
+        "baseline_candidate_id",
+        "candidate_ids",
+        "ranked_candidate_ids",
+        "frontier_rows_sha256",
+        "pareto_dimensions",
+        "rank_policy",
+        "strict_pareto_requires_no_protected_regression",
+        "sampled_not_continuous",
+        "seed_runs",
+        "browser_oracle_status",
+        "human_width_capacity",
+    }
+    if set(frontier) != required or frontier.get("schema_version") != 2:
+        raise StaleArtifactError("frontier manifest schema version/keys are invalid")
+    if frontier.get("artifact_kind") != "full-evaluated-frontier":
+        raise StaleArtifactError("frontier artifact kind is invalid")
+    if frontier.get("algorithm_version") != SEARCH_ALGORITHM_VERSION:
+        raise StaleArtifactError("frontier algorithm is stale")
+    if frontier.get("input_chain_sha256") != input_chain_sha256(inputs):
+        raise StaleArtifactError("frontier input chain is stale")
+    if frontier.get("search_contract_sha256") != sha256_json(contract):
+        raise StaleArtifactError("frontier search contract is stale")
+    if frontier.get("pareto_dimensions") != list(PARETO_DIMENSIONS):
+        raise StaleArtifactError("frontier Pareto contract is invalid")
+    ranked = frontier.get("ranked_candidate_ids")
+    candidate_ids = frontier.get("candidate_ids")
+    if not isinstance(ranked, list) or not isinstance(candidate_ids, list):
+        raise StaleArtifactError("frontier candidate enumeration is invalid")
+    if candidate_ids != [frontier.get("baseline_candidate_id"), *ranked]:
+        raise StaleArtifactError("frontier must be ordered and anchored by the baseline")
+    if len(candidate_ids) != len(set(candidate_ids)):
+        raise StaleArtifactError("frontier candidate IDs are duplicated")
+
+
+def _run_binding(
+    inputs: Phase3Inputs,
+    contract: Mapping[str, Any],
+    *,
+    stage: str,
+    seed: int,
+    budget: int,
+    chunk_size: int,
+    proposal_mode: str,
+    workers: int,
+    parent_artifact_sha256: str | None,
+) -> dict[str, Any]:
+    return {
+        "algorithm_version": SEARCH_ALGORITHM_VERSION,
+        "input_chain_sha256": input_chain_sha256(inputs),
+        "search_contract_sha256": sha256_json(contract),
+        "root_run_seed": seed,
+        "stage": stage,
+        "budget": budget,
+        "chunk_size": chunk_size,
+        "proposal_mode": proposal_mode,
+        "worker_count": workers,
+        "shard_layout": _shard_layout(budget, chunk_size),
+        "parent_artifact_sha256": parent_artifact_sha256,
+    }
+
+
+def _validate_saved_shards(output_dir: Path, manifest: Mapping[str, Any]) -> list[dict[str, Any]]:
+    records = []
+    for expected_index, descriptor in enumerate(manifest.get("shards", [])):
+        if descriptor.get("index") != expected_index:
+            raise StaleArtifactError("checkpoint shard order is invalid")
+        path = output_dir / descriptor["file"]
+        if not path.is_file() or _sha256(path) != descriptor["sha256"]:
+            raise StaleArtifactError(f"checkpoint shard {expected_index} is missing or corrupt")
+        shard = _load_json(path)
+        if shard.get("run_binding_sha256") != manifest["run_binding_sha256"]:
+            raise StaleArtifactError("checkpoint shard run binding is stale")
+        records.extend(dict(row) for row in shard["records"])
+    return records
 
 
 def run_search(
@@ -1422,100 +2030,238 @@ def run_search(
     workers: int,
     final_selection: bool,
     resume: bool = False,
+    proposal_mode: str | None = None,
+    survivor_artifact: Path | Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Run bounded deterministic search with stable shards/checkpointing.
-
-    ``workers`` is recorded for multiprocessing-safe external sharding. Job seeds are
-    index-derived, so worker/chunk completion order cannot alter bytes. This Phase 3A
-    API refuses final selection; Phase 3B must perform finalist/browser/G2 selection.
-    """
+    """Run immutable deterministic shards and materialize bounded survivor/frontier artifacts."""
     authorize_search(inputs, replay=True)
     validate_search_contract(contract, inputs)
     if final_selection:
-        raise ValueError("final selection is forbidden in Phase 3A; use the G2 Phase 3B flow")
+        raise ValueError("final selection is forbidden; browser/G2 selection remains separate")
     if stage not in {"coarse", "refine"} or budget < 0 or chunk_size < 1 or workers < 1:
         raise ValueError("invalid bounded search settings")
     if max_seconds <= 0:
         raise ValueError("max_seconds must be positive")
-    output_dir = Path(output_dir).resolve()
-    if output_dir == inputs.experiment_dir or inputs.experiment_dir in output_dir.parents:
-        raise ValueError("search output must be temporary/external, never the tracked experiment")
+    output_dir = validate_external_output_path(output_dir, inputs)
     output_dir.mkdir(parents=True, exist_ok=True)
-    checkpoint = output_dir / "checkpoint.json"
-    records: list[dict[str, Any]] = []
-    if resume and checkpoint.exists():
-        saved = _load_json(checkpoint)
-        if (
-            saved.get("seed") != seed
-            or saved.get("stage") != stage
-            or saved.get("budget") != budget
-        ):
-            raise StaleArtifactError("checkpoint search settings are stale")
-        records = [dict(row) for row in saved["records"]]
-    completed = {int(row["job_index"]) for row in records}
-    started = time.monotonic()
-    for job in make_search_jobs(seed=seed, count=budget, chunk_size=chunk_size):
-        if job.index in completed:
-            continue
-        if time.monotonic() - started > max_seconds:
-            break
-        try:
-            bank = _propose_job(job, inputs, contract)
-            row = evaluate_candidate(
-                bank,
-                inputs,
-                contract,
-                stage="cheap" if stage == "coarse" else "primary",
-            )
-            record = {
-                "job_index": job.index,
-                "job_seed": job.seed,
-                "candidate_id": row["candidate_id"],
-                "serialized_bank_sha256": row["serialized_bank_sha256"],
-                "serialized_bank": row["serialized_bank"],
-                "failures": row["failures"],
-                "pareto": row["pareto"],
-            }
-        except ValueError as error:
-            record = {
-                "job_index": job.index,
-                "job_seed": job.seed,
-                "candidate_id": hashlib.sha256(f"rejected:{job.seed}".encode()).hexdigest(),
-                "serialized_bank_sha256": hashlib.sha256(f"none:{job.seed}".encode()).hexdigest(),
-                "serialized_bank": None,
-                "failures": [{"gate": "proposal-quantization", "reason": str(error)}],
-                "pareto": None,
-            }
-        records.append(record)
-        records = merge_chunk_records(records)
-        _atomic_json(
-            checkpoint,
-            {
-                "schema_version": 1,
-                "seed": seed,
-                "stage": stage,
-                "budget": budget,
-                "chunk_size": chunk_size,
-                "workers": workers,
-                "records": records,
-            },
+
+    parent_payload: dict[str, Any] | None = None
+    parent_hash: str | None = None
+    if stage == "refine":
+        if survivor_artifact is None:
+            raise ValueError("refine requires the exact combined coarse survivor artifact")
+        parent_payload, parent_hash = _load_and_validate_survivor_artifact(
+            survivor_artifact, inputs, contract
         )
+        if not parent_payload["survivor_rows"]:
+            raise ValueError("refine parent contains no cheap survivors")
+    elif survivor_artifact is not None:
+        raise ValueError("coarse search cannot consume a survivor artifact")
+    proposal_mode = proposal_mode or (
+        "baseline-anchored-mixture" if stage == "coarse" else "coarse-survivor-local"
+    )
+    binding = _run_binding(
+        inputs,
+        contract,
+        stage=stage,
+        seed=seed,
+        budget=budget,
+        chunk_size=chunk_size,
+        proposal_mode=proposal_mode,
+        workers=workers,
+        parent_artifact_sha256=parent_hash,
+    )
+    binding_hash = sha256_json(binding)
+    manifest_path = output_dir / "search-manifest.json"
+    if resume:
+        if not manifest_path.is_file():
+            raise StaleArtifactError("resume requested but search manifest is missing")
+        manifest = _load_json(manifest_path)
+        if (
+            manifest.get("run_binding") != binding
+            or manifest.get("run_binding_sha256") != binding_hash
+        ):
+            raise StaleArtifactError("checkpoint run binding is stale")
+        records = _validate_saved_shards(output_dir, manifest)
+    else:
+        if manifest_path.exists() or any(output_dir.glob("shard-*.json")):
+            raise StaleArtifactError("output directory already contains search state; use resume")
+        records = []
+        manifest = {
+            "schema_version": SEARCH_MANIFEST_SCHEMA_VERSION,
+            "artifact_kind": "phase3-search-shard-manifest",
+            "run_binding": binding,
+            "run_binding_sha256": binding_hash,
+            "shards": [],
+            "completed_jobs": 0,
+            "shard_bytes_written": 0,
+            "selected_candidate_id": None,
+            "final_selection_performed": False,
+            "browser_oracle_run": False,
+        }
+        _atomic_json(manifest_path, manifest)
+
+    completed_shards = len(manifest["shards"])
+    started = time.monotonic()
+    executor: ProcessPoolExecutor | None = None
+    if stage == "refine" and workers > 1:
+        executor = ProcessPoolExecutor(
+            max_workers=workers,
+            mp_context=multiprocessing.get_context("spawn"),
+            initializer=_initialize_full_worker,
+            initargs=(inputs, contract),
+        )
+    try:
+        for layout in binding["shard_layout"][completed_shards:]:
+            if time.monotonic() - started > max_seconds:
+                break
+            jobs = make_search_jobs(seed=seed, count=budget, chunk_size=chunk_size)[
+                layout["start"] : layout["stop"]
+            ]
+            if stage == "coarse":
+                chunk_records, histogram, proposal_count = _coarse_chunk(
+                    jobs, inputs, contract, seed
+                )
+            else:
+                assert parent_payload is not None and parent_hash is not None
+                parents = parent_payload["survivor_rows"]
+                tasks = []
+                for job in jobs:
+                    parent = parents[job.index % len(parents)]
+                    if job.index < len(parents):
+                        bank = parent["serialized_bank"]
+                        mode = "exact-coarse-survivor"
+                    else:
+                        local_inputs = deepcopy(inputs)
+                        categorical = local_inputs.baseline["family"]["categorical"]
+                        for name, value in zip(ROLE_NAMES, parent["serialized_bank"], strict=True):
+                            categorical[name] = value
+                        bank = next(
+                            candidate
+                            for candidate in _propose_batch([job], local_inputs, contract)[0]
+                            if candidate is not None
+                        )
+                        mode = "local-mutation-around-coarse-survivor"
+                    tasks.append(
+                        {
+                            "run_seed": seed,
+                            "job_index": job.index,
+                            "job_seed": job.seed,
+                            "proposal_mode": mode,
+                            "serialized_bank": list(bank),
+                            "parent_artifact_sha256": parent_hash,
+                            "parent_candidate_ids": [parent["candidate_id"]],
+                        }
+                    )
+                if executor is None:
+                    _initialize_full_worker(inputs, contract)
+                    chunk_records = [_evaluate_full_worker(task) for task in tasks]
+                else:
+                    chunk_records = list(executor.map(_evaluate_full_worker, tasks))
+                histogram = Counter(
+                    failure["gate"] for row in chunk_records for failure in row["failures"]
+                )
+                proposal_count = len(tasks)
+            chunk_records = merge_chunk_records(chunk_records)
+            shard_payload = {
+                "schema_version": SEARCH_MANIFEST_SCHEMA_VERSION,
+                "artifact_kind": f"phase3-{stage}-shard",
+                "algorithm_version": SEARCH_ALGORITHM_VERSION,
+                "run_binding_sha256": binding_hash,
+                "chunk": layout,
+                "proposal_count": proposal_count,
+                "failure_histogram": dict(sorted(histogram.items())),
+                "records": chunk_records,
+            }
+            shard_path = output_dir / f"shard-{layout['index']:06d}.json"
+            written = _atomic_json(shard_path, shard_payload, immutable=True)
+            descriptor = {
+                **layout,
+                "file": shard_path.name,
+                "sha256": _sha256(shard_path),
+                "record_count": len(chunk_records),
+            }
+            manifest["shards"].append(descriptor)
+            manifest["completed_jobs"] += proposal_count
+            manifest["shard_bytes_written"] += written
+            _atomic_json(manifest_path, manifest)
+            records.extend(chunk_records)
+    finally:
+        if executor is not None:
+            executor.shutdown(wait=True, cancel_futures=True)
+
     records = merge_chunk_records(records)
-    canonical_records = canonical_json(records)
-    manifest = {
-        "schema_version": 1,
-        "stage": stage,
-        "seed": seed,
-        "budget": budget,
-        "completed": len(records),
-        "bounded_runtime_seconds": max_seconds,
-        "workers": workers,
-        "chunk_size": chunk_size,
-        "records_sha256": hashlib.sha256(canonical_records).hexdigest(),
-        "selected_candidate_id": None,
-        "final_selection_performed": False,
-        "browser_oracle_run": False,
-    }
+    histogram: Counter[str] = Counter()
+    proposal_count = 0
+    for descriptor in manifest["shards"]:
+        shard = _load_json(output_dir / descriptor["file"])
+        histogram.update(shard["failure_histogram"])
+        proposal_count += int(shard["proposal_count"])
+    manifest["completed_jobs"] = proposal_count
+    manifest["records_sha256"] = sha256_json(records)
+
+    if stage == "coarse":
+        survivors = select_diverse_survivors(records)
+        artifact = {
+            "schema_version": 2,
+            "artifact_kind": "coarse-run-survivors",
+            "algorithm_version": SEARCH_ALGORITHM_VERSION,
+            "input_chain_sha256": input_chain_sha256(inputs),
+            "search_contract_sha256": sha256_json(contract),
+            "run_seed": seed,
+            "proposal_count": proposal_count,
+            "cheap_survivor_count": sum(
+                1 for row in records if row.get("cheap_pass") and not row.get("baseline_reference")
+            ),
+            "failure_histogram": dict(sorted(histogram.items())),
+            "survivor_rows": survivors,
+            "source_search_manifest_sha256": sha256_json(
+                {"run_binding": binding, "shards": manifest["shards"]}
+            ),
+        }
+        artifact_path = output_dir / "coarse-survivors.json"
+        _atomic_json(artifact_path, artifact)
+        manifest["result_artifact"] = {
+            "file": artifact_path.name,
+            "sha256": _sha256(artifact_path),
+            "survivor_count": len(survivors),
+        }
+    else:
+        baseline = evaluate_candidate(_baseline_bank(inputs), inputs, contract, stage="full")
+        frontier_rows = pareto_front(records, baseline)
+        rows_path = output_dir / "frontier-rows.json"
+        _atomic_json(rows_path, frontier_rows)
+        ranked_ids = [row["candidate_id"] for row in frontier_rows[1:]]
+        assert parent_payload is not None and parent_hash is not None
+        frontier = {
+            "schema_version": 2,
+            "artifact_kind": "full-evaluated-frontier",
+            "algorithm_version": SEARCH_ALGORITHM_VERSION,
+            "input_chain_sha256": input_chain_sha256(inputs),
+            "search_contract_sha256": sha256_json(contract),
+            "parent_artifact_sha256": parent_hash,
+            "baseline_candidate_id": baseline["candidate_id"],
+            "candidate_ids": [baseline["candidate_id"], *ranked_ids],
+            "ranked_candidate_ids": ranked_ids,
+            "frontier_rows_sha256": _sha256(rows_path),
+            "pareto_dimensions": list(PARETO_DIMENSIONS),
+            "rank_policy": "worst-state/pair/geometry, then aggregate, then commanded deviation",
+            "strict_pareto_requires_no_protected_regression": True,
+            "sampled_not_continuous": True,
+            "seed_runs": parent_payload["seed_runs"],
+            "browser_oracle_status": "NOT_RUN",
+            "human_width_capacity": None,
+        }
+        validate_frontier_manifest(frontier, inputs, contract)
+        frontier_path = output_dir / "frontier-manifest.json"
+        _atomic_json(frontier_path, frontier)
+        manifest["result_artifact"] = {
+            "file": frontier_path.name,
+            "sha256": _sha256(frontier_path),
+            "frontier_count": len(frontier_rows),
+        }
+    _atomic_json(manifest_path, manifest)
+    # Compatibility name for existing Phase 3A smoke consumers; bytes remain small.
     _atomic_json(output_dir / "smoke-manifest.json", manifest)
     return manifest
 
@@ -1553,3 +2299,52 @@ def generate_report_specimen(
     }
     _atomic_json(output_dir / "phase3-report.json", report)
     return report
+
+
+def _cli() -> None:
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Phase 3 survivor-driven categorical search")
+    parser.add_argument("--experiment", type=Path, default=Path(__file__).resolve().parent)
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    for name in ("coarse", "refine"):
+        command = subparsers.add_parser(name)
+        command.add_argument("--output", type=Path, required=True)
+        command.add_argument("--seed", type=int, required=True)
+        command.add_argument("--budget", type=int, required=True)
+        command.add_argument("--chunk-size", type=int, required=True)
+        command.add_argument("--workers", type=int, default=1 if name == "coarse" else 4)
+        command.add_argument("--max-seconds", type=float, default=86_400.0)
+        command.add_argument("--resume", action="store_true")
+        if name == "refine":
+            command.add_argument("--survivor-artifact", type=Path, required=True)
+    combine = subparsers.add_parser("combine")
+    combine.add_argument("--output", type=Path, required=True)
+    combine.add_argument("artifacts", nargs="+", type=Path)
+    args = parser.parse_args()
+    inputs = load_inputs(args.experiment)
+    contract = load_contract(args.experiment / "phase3-search-contract.json")
+    if args.command == "combine":
+        result = combine_coarse_artifacts(
+            args.artifacts, output_path=args.output, inputs=inputs, contract=contract
+        )
+    else:
+        result = run_search(
+            inputs,
+            contract,
+            output_dir=args.output,
+            stage=args.command,
+            seed=args.seed,
+            budget=args.budget,
+            chunk_size=args.chunk_size,
+            max_seconds=args.max_seconds,
+            workers=args.workers,
+            final_selection=False,
+            resume=args.resume,
+            survivor_artifact=getattr(args, "survivor_artifact", None),
+        )
+    print(json.dumps(result, indent=2, sort_keys=True))
+
+
+if __name__ == "__main__":
+    _cli()

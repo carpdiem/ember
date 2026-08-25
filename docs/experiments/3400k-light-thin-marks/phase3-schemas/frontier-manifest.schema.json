@@ -1,34 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "phase3-frontier-manifest.schema.json",
-  "title": "Phase 3 bounded-search frontier manifest",
+  "title": "Phase 3 full-evaluated frontier manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "input_chain_sha256", "search_contract_sha256", "baseline_candidate_id", "candidate_ids", "pareto_dimensions", "rank_policy", "strict_pareto_requires_no_protected_regression", "sampled_not_continuous", "seed_runs", "browser_oracle_status", "human_width_capacity"],
+  "required": ["schema_version", "artifact_kind", "algorithm_version", "input_chain_sha256", "search_contract_sha256", "parent_artifact_sha256", "baseline_candidate_id", "candidate_ids", "ranked_candidate_ids", "frontier_rows_sha256", "pareto_dimensions", "rank_policy", "strict_pareto_requires_no_protected_regression", "sampled_not_continuous", "seed_runs", "browser_oracle_status", "human_width_capacity"],
   "properties": {
-    "schema_version": {"const": 1},
-    "input_chain_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "search_contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "baseline_candidate_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "candidate_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}},
-    "pareto_dimensions": {"type": "array", "minItems": 9, "maxItems": 9, "items": {"type": "string"}},
+    "schema_version": {"const": 2},
+    "artifact_kind": {"const": "full-evaluated-frontier"},
+    "algorithm_version": {"const": "phase3-survivor-driven-v2"},
+    "input_chain_sha256": {"$ref": "#/$defs/hash"},
+    "search_contract_sha256": {"$ref": "#/$defs/hash"},
+    "parent_artifact_sha256": {"$ref": "#/$defs/hash"},
+    "baseline_candidate_id": {"$ref": "#/$defs/hash"},
+    "candidate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/hash"}},
+    "ranked_candidate_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/hash"}},
+    "frontier_rows_sha256": {"$ref": "#/$defs/hash"},
+    "pareto_dimensions": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"type": "string"}},
     "rank_policy": {"const": "worst-state/pair/geometry, then aggregate, then commanded deviation"},
     "strict_pareto_requires_no_protected_regression": {"const": true},
     "sampled_not_continuous": {"const": true},
-    "seed_runs": {
-      "type": "array",
-      "minItems": 4,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["seed", "records_sha256"],
-        "properties": {
-          "seed": {"type": "integer", "minimum": 0},
-          "records_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-        }
-      }
-    },
+    "seed_runs": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}},
     "browser_oracle_status": {"enum": ["NOT_RUN", "PASS", "FAIL", "ERROR"]},
     "human_width_capacity": {"type": "null"}
-  }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
 }

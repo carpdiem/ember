@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import random
 import shutil
 import sys
@@ -84,6 +85,26 @@ def test_exact_hex8_pipeline_reparses_and_float_good_hex_bad_fails(inputs, contr
     cheap = p3.evaluate_cheap(bank, inputs, contract)
     assert cheap["serialized_bank_sha256"] == p3.bank_hash(bank)
     assert "proposal_floats" not in cheap
+
+
+def test_vectorized_contrast_preserves_exact_wcag_ratio_semantics(inputs) -> None:
+    banks = [baseline_bank(inputs), tuple(reversed(baseline_bank(inputs)))]
+    actual = p3.evaluate_commanded_batch(banks, inputs)["graphics_contrast_min"]
+    backgrounds = [
+        p3.parse_exact_hex8(inputs.baseline["family"]["surfaces"][name])
+        for name in p3.GATE_BACKGROUNDS
+    ]
+    expected = np.asarray(
+        [
+            min(
+                p3.contrast_ratio(color, background)
+                for color in p3.bank_rgb(bank)
+                for background in backgrounds
+            )
+            for bank in banks
+        ]
+    )
+    np.testing.assert_array_equal(actual, expected)
 
 
 def test_role_hue_neighborhood_and_no_universal_chroma_floor(contract) -> None:
@@ -198,9 +219,40 @@ def test_no_regression_required_for_pareto_claim() -> None:
 
 
 def test_browser_request_and_result_reject_stale_or_tampered(inputs, contract) -> None:
-    bank = baseline_bank(inputs)
-    candidate = p3.evaluate_candidate(bank, inputs, contract, stage="cheap")
-    request = p3.build_browser_oracle_request(candidate, inputs, contract, finalist_rank=1)
+    coarse, _, _ = p3._coarse_chunk(
+        p3.make_search_jobs(seed=3400, count=200, chunk_size=200), inputs, contract, 3400
+    )
+    candidate = next(
+        row
+        for compact in coarse
+        if compact["cheap_pass"] and not compact["baseline_reference"]
+        if not (
+            row := p3.evaluate_candidate(compact["serialized_bank"], inputs, contract, stage="full")
+        )["failures"]
+    )
+    baseline = p3.evaluate_candidate(baseline_bank(inputs), inputs, contract, stage="full")
+    frontier = {
+        "schema_version": 2,
+        "artifact_kind": "full-evaluated-frontier",
+        "algorithm_version": p3.SEARCH_ALGORITHM_VERSION,
+        "input_chain_sha256": p3.input_chain_sha256(inputs),
+        "search_contract_sha256": p3.sha256_json(contract),
+        "parent_artifact_sha256": "1" * 64,
+        "baseline_candidate_id": baseline["candidate_id"],
+        "candidate_ids": [baseline["candidate_id"], candidate["candidate_id"]],
+        "ranked_candidate_ids": [candidate["candidate_id"]],
+        "frontier_rows_sha256": "2" * 64,
+        "pareto_dimensions": list(p3.PARETO_DIMENSIONS),
+        "rank_policy": "worst-state/pair/geometry, then aggregate, then commanded deviation",
+        "strict_pareto_requires_no_protected_regression": True,
+        "sampled_not_continuous": True,
+        "seed_runs": [3400, 3401, 3402, 3403],
+        "browser_oracle_status": "NOT_RUN",
+        "human_width_capacity": None,
+    }
+    request = p3.build_browser_oracle_request(
+        candidate, inputs, contract, finalist_rank=1, frontier=frontier
+    )
     assert request["bank_kind"] == "categorical"
     assert request["mask_set"]["count"] == 720
     assert request["mask_set"]["rerasterize"] is False
@@ -211,7 +263,7 @@ def test_browser_request_and_result_reject_stale_or_tampered(inputs, contract) -
     with pytest.raises(p3.StaleArtifactError):
         p3.validate_browser_oracle_request(tampered_request, inputs, contract)
     result = {
-        "schema_version": 1,
+        "schema_version": 2,
         "request_sha256": request_sha,
         "candidate_id": candidate["candidate_id"],
         "serialized_bank_sha256": candidate["serialized_bank_sha256"],
@@ -231,6 +283,15 @@ def test_browser_request_and_result_reject_stale_or_tampered(inputs, contract) -
     }
     p3.validate_browser_oracle_result(result, request)
 
+    extra = deepcopy(result)
+    extra["unexpected"] = True
+    with pytest.raises(p3.StaleArtifactError, match="schema"):
+        p3.validate_browser_oracle_result(extra, request)
+    wrong_version = deepcopy(result)
+    wrong_version["schema_version"] = 1
+    with pytest.raises(p3.StaleArtifactError, match="schema"):
+        p3.validate_browser_oracle_result(wrong_version, request)
+
     tampered = deepcopy(result)
     tampered["serialized_bank_sha256"] = "0" * 64
     with pytest.raises(p3.StaleArtifactError):
@@ -242,9 +303,22 @@ def test_browser_request_and_result_reject_stale_or_tampered(inputs, contract) -
         p3.validate_browser_oracle_result(incomplete, request)
 
     stale_request = deepcopy(request)
-    stale_request["finalist_rank"] = 2
+    stale_request["frontier_rank"] = 2
     with pytest.raises(p3.StaleArtifactError):
         p3.validate_browser_oracle_result(result, stale_request)
+
+    with pytest.raises(p3.StaleArtifactError, match="failure-free full"):
+        p3.build_browser_oracle_request(
+            p3.evaluate_candidate(candidate["serialized_bank"], inputs, contract, stage="cheap"),
+            inputs,
+            contract,
+            finalist_rank=1,
+            frontier=frontier,
+        )
+    with pytest.raises(p3.StaleArtifactError, match="failure-free full"):
+        p3.build_browser_oracle_request(
+            baseline, inputs, contract, finalist_rank=1, frontier=frontier
+        )
 
 
 def test_deterministic_seed_chunk_order_and_resume_are_identical(
@@ -299,6 +373,167 @@ def test_deterministic_seed_chunk_order_and_resume_are_identical(
     assert first["records_sha256"] == resumed["records_sha256"] == second["records_sha256"]
     assert first["selected_candidate_id"] is None
     assert all(str(path).startswith(str(tmp_path)) for path in (tmp_path / "first").iterdir())
+
+
+def test_four_seed_merge_keeps_equal_job_indices_and_exact_bank_dedupes() -> None:
+    rows = [
+        {
+            "run_seed": seed,
+            "job_index": index,
+            "candidate_id": f"{seed * 10 + index:064x}",
+        }
+        for seed in (3400, 3401, 3402, 3403)
+        for index in range(3)
+    ]
+    assert len(p3.merge_chunk_records(rows)) == 12
+
+
+def test_baseline_anchored_batch_has_plentiful_deduped_cheap_survivors(inputs, contract) -> None:
+    jobs = p3.make_search_jobs(seed=3400, count=4_000, chunk_size=4_000)
+    rows, _, count = p3._coarse_chunk(jobs, inputs, contract, 3400)
+    survivors = p3.select_diverse_survivors(rows)
+    assert count == 4_000
+    assert rows[0]["baseline_reference"] is True
+    assert rows[0]["serialized_bank"] == list(baseline_bank(inputs))
+    assert len(survivors) >= 500
+    assert len({row["serialized_bank_sha256"] for row in survivors}) == len(survivors)
+    assert {row["proposal_mode"] for row in survivors} >= {
+        "targeted-1-role",
+        "targeted-2-role",
+        "baseline-binding-pair-emphasis",
+    }
+
+
+def test_shard_corruption_and_run_binding_changes_block_resume(
+    tmp_path: Path, inputs, contract
+) -> None:
+    output = tmp_path / "resume"
+    p3.run_search(
+        inputs,
+        contract,
+        output_dir=output,
+        stage="coarse",
+        seed=3400,
+        budget=12,
+        chunk_size=4,
+        max_seconds=30,
+        workers=1,
+        final_selection=False,
+    )
+    with pytest.raises(p3.StaleArtifactError, match="binding"):
+        p3.run_search(
+            inputs,
+            contract,
+            output_dir=output,
+            stage="coarse",
+            seed=3400,
+            budget=12,
+            chunk_size=3,
+            max_seconds=30,
+            workers=1,
+            final_selection=False,
+            resume=True,
+        )
+    changed = deepcopy(contract)
+    changed["hard_gates"]["commanded_pair_delta_e_ok"] += 0.01
+    with pytest.raises(p3.StaleArtifactError, match="binding"):
+        p3.run_search(
+            inputs,
+            changed,
+            output_dir=output,
+            stage="coarse",
+            seed=3400,
+            budget=12,
+            chunk_size=4,
+            max_seconds=30,
+            workers=1,
+            final_selection=False,
+            resume=True,
+        )
+    shard = output / "shard-000000.json"
+    shard.write_bytes(shard.read_bytes() + b" ")
+    with pytest.raises(p3.StaleArtifactError, match="corrupt"):
+        p3.run_search(
+            inputs,
+            contract,
+            output_dir=output,
+            stage="coarse",
+            seed=3400,
+            budget=12,
+            chunk_size=4,
+            max_seconds=30,
+            workers=1,
+            final_selection=False,
+            resume=True,
+        )
+
+
+def test_refine_consumes_combined_survivors_and_emits_full_parent_provenance(
+    tmp_path: Path, inputs, contract
+) -> None:
+    artifacts = []
+    for seed in (3400, 3401, 3402, 3403):
+        output = tmp_path / f"coarse-{seed}"
+        p3.run_search(
+            inputs,
+            contract,
+            output_dir=output,
+            stage="coarse",
+            seed=seed,
+            budget=80,
+            chunk_size=40,
+            max_seconds=30,
+            workers=1,
+            final_selection=False,
+        )
+        artifacts.append(output / "coarse-survivors.json")
+    combined_path = tmp_path / "combined.json"
+    combined = p3.combine_coarse_artifacts(
+        artifacts, output_path=combined_path, inputs=inputs, contract=contract
+    )
+    assert combined["seed_runs"] == [3400, 3401, 3402, 3403]
+    assert combined["deduped_survivor_count"] > 0
+    output = tmp_path / "refine"
+    p3.run_search(
+        inputs,
+        contract,
+        output_dir=output,
+        stage="refine",
+        seed=4400,
+        budget=1,
+        chunk_size=1,
+        max_seconds=60,
+        workers=1,
+        final_selection=False,
+        survivor_artifact=combined_path,
+    )
+    shard = json.loads((output / "shard-000000.json").read_text())
+    row = shard["records"][0]
+    parent = combined["survivor_rows"][0]
+    assert row["evaluation_stage"] == "full"
+    assert row["full"]["grid_kind"] == "full-45-gain-all-viewing-sensitivities"
+    assert row["raster_proxy"]["mask_count"] == 720
+    assert row["serialized_bank"] == parent["serialized_bank"]
+    assert row["parent_candidate_ids"] == [parent["candidate_id"]]
+    assert row["parent_artifact_sha256"] == p3.sha256_json(combined)
+    frontier = json.loads((output / "frontier-manifest.json").read_text())
+    assert frontier["candidate_ids"][0] == frontier["baseline_candidate_id"]
+
+
+def test_output_guard_rejects_every_repo_path_and_symlink_direction(tmp_path: Path, inputs) -> None:
+    with pytest.raises(ValueError, match="entire Git repository"):
+        p3.validate_external_output_path(ROOT / "palettes", inputs)
+    external_link = tmp_path / "into-repo"
+    external_link.symlink_to(ROOT / "palettes", target_is_directory=True)
+    with pytest.raises(ValueError, match="entire Git repository"):
+        p3.validate_external_output_path(external_link / "search", inputs)
+    repo_link = ROOT / ".phase3-output-link-test"
+    try:
+        os.symlink(tmp_path, repo_link, target_is_directory=True)
+        with pytest.raises(ValueError, match="entire Git repository"):
+            p3.validate_external_output_path(repo_link / "search", inputs)
+    finally:
+        repo_link.unlink(missing_ok=True)
 
 
 def test_baseline_conservation_and_all_pareto_dimensions(inputs, contract) -> None:

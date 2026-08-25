@@ -6,29 +6,22 @@
   "additionalProperties": false,
   "required": ["schema_version", "request_sha256", "candidate_id", "serialized_bank_sha256", "input_chain_sha256", "status", "observations", "full_image_hash_used", "human_width_capacity"],
   "properties": {
-    "schema_version": {"const": 1},
-    "request_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "candidate_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "serialized_bank_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "input_chain_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "schema_version": {"const": 2},
+    "request_sha256": {"$ref": "#/$defs/hash"},
+    "candidate_id": {"$ref": "#/$defs/hash"},
+    "serialized_bank_sha256": {"$ref": "#/$defs/hash"},
+    "input_chain_sha256": {"$ref": "#/$defs/hash"},
     "status": {"enum": ["PASS", "FAIL", "ERROR"]},
     "observations": {
-      "type": "array",
-      "minItems": 25920,
-      "maxItems": 25920,
+      "type": "array", "minItems": 25920, "maxItems": 25920,
       "items": {
-        "type": "object",
-        "additionalProperties": false,
+        "type": "object", "additionalProperties": false,
         "required": ["request_observation_id", "status", "sample_count", "observed_rgb8_median"],
-        "properties": {
-          "request_observation_id": {"type": "string"},
-          "status": {"enum": ["PASS", "FAIL", "ERROR"]},
-          "sample_count": {"type": "integer", "minimum": 0},
-          "observed_rgb8_median": {"type": ["array", "null"], "items": {"type": "number", "minimum": 0, "maximum": 255}, "minItems": 3, "maxItems": 3}
-        }
+        "properties": {"request_observation_id": {"type": "string"}, "status": {"enum": ["PASS", "FAIL", "ERROR"]}, "sample_count": {"type": "integer", "minimum": 0}, "observed_rgb8_median": {"type": ["array", "null"], "items": {"type": "number", "minimum": 0, "maximum": 255}, "minItems": 3, "maxItems": 3}}
       }
     },
     "full_image_hash_used": {"const": false},
     "human_width_capacity": {"type": "null"}
-  }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
 }
