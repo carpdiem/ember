@@ -9,16 +9,16 @@
   },
   "candidates": [
     {
-      "candidate_id": "4b045fae5d1999879447674f308b6e782fcfd92a4aa9af7c8236b410f5023f4b",
+      "candidate_id": "112973505132c0022657620e5f20eb34b808c7004e8924b49de96bd50351768b",
       "categories": [
         "#7C140A",
         "#857D0B",
-        "#055F04",
+        "#0A6109",
         "#2B8CAD",
         "#5D53AE",
         "#B34B71"
       ],
-      "category_set_sha256": "1ceacaa95b51368502e436dbbb8a7c05d5846f8d876669f5cdba41129f01e5bb",
+      "category_set_sha256": "b68cf983fc8d618aec0b0ed6520df7cb03fdec29c2e097893fbf4f5e63520c88",
       "changed_from_seed": true,
       "hard_gate_failures": [],
       "lane": "A",
@@ -119,14 +119,14 @@
         12.47123628934246
       ],
       "polish": {
-        "exact_evaluation_count": 13,
+        "exact_evaluation_count": 23,
         "lane_runtime_cap_seconds": 90.0,
         "ledger": [
           {
-            "added_hex8": "#055F04",
+            "added_hex8": "#0A6109",
             "after_primary": 8.679595273141931,
             "before_primary": 8.458135103726663,
-            "category_set_sha256": "1ceacaa95b51368502e436dbbb8a7c05d5846f8d876669f5cdba41129f01e5bb",
+            "category_set_sha256": "b68cf983fc8d618aec0b0ed6520df7cb03fdec29c2e097893fbf4f5e63520c88",
             "pass": 1,
             "proxy_primary": 8.679595273141931,
             "removed_hex8": "#03642B",
@@ -152,16 +152,16 @@
       "seed_primary_raw_symmetric_scalar": 8.458135103726663
     },
     {
-      "candidate_id": "41c65d7ea5d1bc75150bd7928ec2a7ac7cef7852f5c9482d3ce7d20620ed20cb",
+      "candidate_id": "dab61ac75d5cdc6515205446d6d81524da131b5b3b32991ec425b733a3f5116a",
       "categories": [
         "#7E5403",
-        "#359A54",
+        "#489543",
         "#0C6A76",
         "#5783DA",
         "#6C3183",
         "#B34F7F"
       ],
-      "category_set_sha256": "d1aab9f566b6d411b1cbb7b661951701dde43fbd90684bec3e1bb16a1db95715",
+      "category_set_sha256": "6a4e237fe2535a8de4299bc10e4b8e028dfd8170fd3449d55883140787302563",
       "changed_from_seed": true,
       "hard_gate_failures": [],
       "lane": "B",
@@ -262,7 +262,7 @@
         11.562055815115645
       ],
       "polish": {
-        "exact_evaluation_count": 31,
+        "exact_evaluation_count": 33,
         "lane_runtime_cap_seconds": 90.0,
         "ledger": [
           {
@@ -296,10 +296,10 @@
             "slot": 4
           },
           {
-            "added_hex8": "#359A54",
+            "added_hex8": "#489543",
             "after_primary": 8.172912758351735,
             "before_primary": 8.11306811470274,
-            "category_set_sha256": "d1aab9f566b6d411b1cbb7b661951701dde43fbd90684bec3e1bb16a1db95715",
+            "category_set_sha256": "6a4e237fe2535a8de4299bc10e4b8e028dfd8170fd3449d55883140787302563",
             "pass": 4,
             "proxy_primary": 8.172912758351735,
             "removed_hex8": "#599234",
@@ -435,7 +435,7 @@
         11.329527849735923
       ],
       "polish": {
-        "exact_evaluation_count": 13,
+        "exact_evaluation_count": 2,
         "lane_runtime_cap_seconds": 90.0,
         "ledger": [
           {
@@ -452,7 +452,7 @@
         "pass_cap": 6,
         "passes_accepted": 1,
         "proxy_evaluation_count": 86208,
-        "stop_reason": "coordinate_local_optimum"
+        "stop_reason": "exact_evaluation_cap"
       },
       "polish_method": "bounded-full-catalog-coordinate-polish",
       "primary_improvement_over_seed": 0.001347952153421872,
@@ -474,6 +474,7 @@
   "objective_policy": {
     "churn": false,
     "class_normalization": false,
+    "exact_tie_break": "maximum canonical category tuple after six-component objective",
     "kind": "single-raw-symmetric-minimum",
     "lane_directions": 2,
     "pair_count": 21,
@@ -485,9 +486,9 @@
     "sha256": "39ca1302fc35efbad04b7da5e69ce677d52752b0435211166fb6a5e6318738e7"
   },
   "polish_source": {
-    "commit": "b94c0fda9ef3db53b55214055e4a3563830bb609",
+    "commit": "9cae6f430ad7279583981024d2187acf5120dcb2",
     "file": "polish.py",
-    "sha256": "014701bac25e4cf9f6f1152ee63a5626469c800ce3444b6b11ea0b86658ea044"
+    "sha256": "40a460b24435513e2368bec96612f6cd80f4b2b02053b45c84de64c90ba681f5"
   },
   "production": false,
   "schema_version": 1,
