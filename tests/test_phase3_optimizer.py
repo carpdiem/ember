@@ -44,6 +44,103 @@ def baseline_bank(inputs: p3.Phase3Inputs) -> tuple[str, ...]:
     return tuple(inputs.baseline["family"]["categorical"][role] for role in p3.ROLE_NAMES)
 
 
+@pytest.fixture(scope="module")
+def authentic_pipeline(tmp_path_factory, inputs, contract) -> dict:
+    root = tmp_path_factory.mktemp("phase3-authentic")
+    coarse_paths = []
+    for seed in (3400, 3401, 3402, 3403):
+        output = root / f"coarse-{seed}"
+        p3.run_search(
+            inputs,
+            contract,
+            output_dir=output,
+            stage="coarse",
+            seed=seed,
+            budget=8,
+            chunk_size=3,
+            max_seconds=60,
+            workers=1,
+            final_selection=False,
+        )
+        coarse_paths.append(output / "coarse-survivors.json")
+    combined_path = root / "combined.json"
+    p3.combine_coarse_artifacts(
+        coarse_paths, output_path=combined_path, inputs=inputs, contract=contract
+    )
+    refine = root / "refine"
+    p3.run_search(
+        inputs,
+        contract,
+        output_dir=refine,
+        stage="refine",
+        seed=4400,
+        budget=1,
+        chunk_size=1,
+        max_seconds=120,
+        workers=1,
+        final_selection=False,
+        survivor_artifact=combined_path,
+    )
+    return {
+        "root": root,
+        "coarse_paths": coarse_paths,
+        "combined_path": combined_path,
+        "combined": json.loads(combined_path.read_text()),
+        "refine": refine,
+        "frontier_path": refine / "frontier-manifest.json",
+        "frontier": json.loads((refine / "frontier-manifest.json").read_text()),
+        "rows_path": refine / "frontier-rows.json",
+        "rows": json.loads((refine / "frontier-rows.json").read_text()),
+        "search_manifest_path": refine / "search-manifest.json",
+    }
+
+
+def authentic_browser_result(request: dict, inputs: p3.Phase3Inputs) -> dict:
+    masks = {row["id"]: row for row in inputs.raster_masks["records"]}
+    observations = [
+        {
+            "request_observation_id": row["id"],
+            "status": "PASS",
+            "sample_count": 1,
+            "observed_rgb8_median": p3._expected_browser_rgb8(
+                row, request, inputs, mask_lookup=masks
+            ),
+            "delta_e_ok": 0.0,
+        }
+        for row in request["requested_role_observations"]
+    ]
+    replay = {
+        "schema_version": 1,
+        "status": "PASS",
+        "request_sha256": p3.sha256_json(request),
+        "candidate_id": request["candidate_id"],
+        "input_chain_sha256": request["input_chain_sha256"],
+        "observation_count": len(observations),
+        "pass_count": len(observations),
+        "fail_count": 0,
+        "error_count": 0,
+        "maximum_delta_e_ok": 0.0,
+    }
+    return {
+        "schema_version": p3.BROWSER_SCHEMA_VERSION,
+        "request_sha256": p3.sha256_json(request),
+        "candidate_id": request["candidate_id"],
+        "serialized_bank_sha256": request["serialized_bank_sha256"],
+        "input_chain_sha256": request["input_chain_sha256"],
+        "status": "PASS",
+        "observations": observations,
+        "source_provenance": {
+            "browser": "test-browser",
+            "browser_version": "1.0",
+            "probe_sha256": inputs.source_sha256["browser_probe"],
+        },
+        "replay_receipt": replay,
+        "replay_sha256": p3.sha256_json(replay),
+        "full_image_hash_used": False,
+        "human_width_capacity": None,
+    }
+
+
 def test_committed_g1_chain_authorizes_search_and_freezes_exact_inputs(inputs) -> None:
     receipt = p3.authorize_search(inputs, replay=True)
     assert receipt["status"] == "PASS"
@@ -218,107 +315,102 @@ def test_no_regression_required_for_pareto_claim() -> None:
     assert p3.is_strict_pareto_improvement(candidate, baseline) is True
 
 
-def test_browser_request_and_result_reject_stale_or_tampered(inputs, contract) -> None:
-    coarse, _, _ = p3._coarse_chunk(
-        p3.make_search_jobs(seed=3400, count=200, chunk_size=200), inputs, contract, 3400
-    )
-    candidate = next(
-        row
-        for compact in coarse
-        if compact["cheap_pass"] and not compact["baseline_reference"]
-        if not (
-            row := p3.evaluate_candidate(compact["serialized_bank"], inputs, contract, stage="full")
-        )["failures"]
-    )
-    baseline = p3.evaluate_candidate(baseline_bank(inputs), inputs, contract, stage="full")
-    frontier = {
-        "schema_version": 2,
-        "artifact_kind": "full-evaluated-frontier",
-        "algorithm_version": p3.SEARCH_ALGORITHM_VERSION,
-        "input_chain_sha256": p3.input_chain_sha256(inputs),
-        "search_contract_sha256": p3.sha256_json(contract),
-        "parent_artifact_sha256": "1" * 64,
-        "baseline_candidate_id": baseline["candidate_id"],
-        "candidate_ids": [baseline["candidate_id"], candidate["candidate_id"]],
-        "ranked_candidate_ids": [candidate["candidate_id"]],
-        "frontier_rows_sha256": "2" * 64,
-        "pareto_dimensions": list(p3.PARETO_DIMENSIONS),
-        "rank_policy": "worst-state/pair/geometry, then aggregate, then commanded deviation",
-        "strict_pareto_requires_no_protected_regression": True,
-        "sampled_not_continuous": True,
-        "seed_runs": [3400, 3401, 3402, 3403],
-        "browser_oracle_status": "NOT_RUN",
-        "human_width_capacity": None,
-    }
+def test_authentic_frontier_builds_reference_request_and_replays_browser_rows(
+    inputs, contract, authentic_pipeline
+) -> None:
+    baseline = authentic_pipeline["rows"]["rows"][0]
     request = p3.build_browser_oracle_request(
-        candidate, inputs, contract, finalist_rank=1, frontier=frontier
+        baseline,
+        inputs,
+        contract,
+        finalist_rank=0,
+        frontier=authentic_pipeline["frontier_path"],
+        frontier_rows=authentic_pipeline["rows_path"],
+        parent_artifact=authentic_pipeline["combined_path"],
+        source_search_manifest=authentic_pipeline["search_manifest_path"],
+        reference=True,
     )
-    assert request["bank_kind"] == "categorical"
-    assert request["mask_set"]["count"] == 720
-    assert request["mask_set"]["rerasterize"] is False
-    assert request["requested_roles"] == list(p3.ROLES)
-    request_sha = p3.sha256_json(request)
-    tampered_request = deepcopy(request)
-    tampered_request["mask_set"]["rerasterize"] = True
-    with pytest.raises(p3.StaleArtifactError):
-        p3.validate_browser_oracle_request(tampered_request, inputs, contract)
-    result = {
-        "schema_version": 2,
-        "request_sha256": request_sha,
-        "candidate_id": candidate["candidate_id"],
-        "serialized_bank_sha256": candidate["serialized_bank_sha256"],
-        "input_chain_sha256": request["input_chain_sha256"],
-        "status": "PASS",
-        "observations": [
-            {
-                "request_observation_id": row["id"],
-                "status": "PASS",
-                "sample_count": 1,
-                "observed_rgb8_median": [0.0, 0.0, 0.0],
-            }
-            for row in request["requested_role_observations"]
-        ],
-        "full_image_hash_used": False,
-        "human_width_capacity": None,
-    }
-    p3.validate_browser_oracle_result(result, request)
+    assert request["schema_version"] == p3.BROWSER_SCHEMA_VERSION
+    assert request["request_kind"] == "baseline-reference"
+    assert len(request["requested_role_observations"]) == 25_920
+    result = authentic_browser_result(request, inputs)
+    p3.validate_browser_oracle_result(result, request, inputs, contract)
 
-    extra = deepcopy(result)
-    extra["unexpected"] = True
-    with pytest.raises(p3.StaleArtifactError, match="schema"):
-        p3.validate_browser_oracle_result(extra, request)
-    wrong_version = deepcopy(result)
-    wrong_version["schema_version"] = 1
-    with pytest.raises(p3.StaleArtifactError, match="schema"):
-        p3.validate_browser_oracle_result(wrong_version, request)
 
-    tampered = deepcopy(result)
-    tampered["serialized_bank_sha256"] = "0" * 64
-    with pytest.raises(p3.StaleArtifactError):
-        p3.validate_browser_oracle_result(tampered, request)
+def test_browser_rejects_all_black_and_every_status_metric_row_contract_tamper(
+    inputs, contract, authentic_pipeline
+) -> None:
+    baseline = authentic_pipeline["rows"]["rows"][0]
+    request = p3.build_browser_oracle_request(
+        baseline,
+        inputs,
+        contract,
+        finalist_rank=0,
+        frontier=authentic_pipeline["frontier_path"],
+        frontier_rows=authentic_pipeline["rows_path"],
+        parent_artifact=authentic_pipeline["combined_path"],
+        source_search_manifest=authentic_pipeline["search_manifest_path"],
+        reference=True,
+    )
+    result = authentic_browser_result(request, inputs)
 
-    incomplete = deepcopy(result)
-    incomplete["observations"].pop()
-    with pytest.raises(p3.StaleArtifactError):
-        p3.validate_browser_oracle_result(incomplete, request)
+    all_black = deepcopy(result)
+    for row in all_black["observations"]:
+        row["observed_rgb8_median"] = [0.0, 0.0, 0.0]
+    with pytest.raises(p3.StaleArtifactError, match="metric"):
+        p3.validate_browser_oracle_result(all_black, request, inputs, contract)
 
-    stale_request = deepcopy(request)
-    stale_request["frontier_rank"] = 2
-    with pytest.raises(p3.StaleArtifactError):
-        p3.validate_browser_oracle_result(result, stale_request)
+    variants = []
+    wrong_status = deepcopy(result)
+    wrong_status["status"] = "FAIL"
+    variants.append(wrong_status)
+    wrong_metric = deepcopy(result)
+    wrong_metric["observations"][0]["delta_e_ok"] = 0.01
+    variants.append(wrong_metric)
+    missing_row = deepcopy(result)
+    missing_row["observations"].pop()
+    variants.append(missing_row)
+    wrong_order = deepcopy(result)
+    wrong_order["observations"][0], wrong_order["observations"][1] = (
+        wrong_order["observations"][1],
+        wrong_order["observations"][0],
+    )
+    variants.append(wrong_order)
+    for tampered in variants:
+        with pytest.raises(p3.StaleArtifactError):
+            p3.validate_browser_oracle_result(tampered, request, inputs, contract)
 
-    with pytest.raises(p3.StaleArtifactError, match="failure-free full"):
-        p3.build_browser_oracle_request(
-            p3.evaluate_candidate(candidate["serialized_bank"], inputs, contract, stage="cheap"),
-            inputs,
-            contract,
-            finalist_rank=1,
-            frontier=frontier,
-        )
-    with pytest.raises(p3.StaleArtifactError, match="failure-free full"):
-        p3.build_browser_oracle_request(
-            baseline, inputs, contract, finalist_rank=1, frontier=frontier
-        )
+
+def test_browser_request_result_versions_extras_and_nested_replay_are_closed(
+    inputs, contract, authentic_pipeline
+) -> None:
+    baseline = authentic_pipeline["rows"]["rows"][0]
+    request = p3.build_browser_oracle_request(
+        baseline,
+        inputs,
+        contract,
+        finalist_rank=0,
+        frontier=authentic_pipeline["frontier_path"],
+        frontier_rows=authentic_pipeline["rows_path"],
+        parent_artifact=authentic_pipeline["combined_path"],
+        source_search_manifest=authentic_pipeline["search_manifest_path"],
+        reference=True,
+    )
+    result = authentic_browser_result(request, inputs)
+    for key, value in (("unexpected", True), ("schema_version", 999)):
+        tampered = deepcopy(request)
+        tampered[key] = value
+        with pytest.raises(p3.StaleArtifactError, match="schema"):
+            p3.validate_browser_oracle_request(tampered, inputs, contract)
+        tampered_result = deepcopy(result)
+        tampered_result[key] = value
+        with pytest.raises(p3.StaleArtifactError):
+            p3.validate_browser_oracle_result(tampered_result, request, inputs, contract)
+    nested_extra = deepcopy(result)
+    nested_extra["replay_receipt"]["forged"] = True
+    nested_extra["replay_sha256"] = p3.sha256_json(nested_extra["replay_receipt"])
+    with pytest.raises(p3.StaleArtifactError, match="replay"):
+        p3.validate_browser_oracle_result(nested_extra, request, inputs, contract)
 
 
 def test_deterministic_seed_chunk_order_and_resume_are_identical(

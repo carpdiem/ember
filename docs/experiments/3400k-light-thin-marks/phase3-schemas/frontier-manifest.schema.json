@@ -4,25 +4,31 @@
   "title": "Phase 3 full-evaluated frontier manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_kind", "algorithm_version", "input_chain_sha256", "search_contract_sha256", "parent_artifact_sha256", "baseline_candidate_id", "candidate_ids", "ranked_candidate_ids", "frontier_rows_sha256", "pareto_dimensions", "rank_policy", "strict_pareto_requires_no_protected_regression", "sampled_not_continuous", "seed_runs", "browser_oracle_status", "human_width_capacity"],
+  "required": ["schema_version", "artifact_kind", "algorithm_version", "input_chain_sha256", "search_contract_sha256", "parent_artifact_sha256", "parent_source_manifest_hashes", "source_search_manifest", "frontier_rows_file", "baseline_candidate_id", "candidate_ids", "ranked_candidate_ids", "frontier_rows_sha256", "pareto_dimensions", "rank_policy", "strict_pareto_requires_no_protected_regression", "sampled_not_continuous", "seed_runs", "browser_oracle_status", "human_width_capacity"],
   "properties": {
-    "schema_version": {"const": 2},
+    "schema_version": {"const": 3},
     "artifact_kind": {"const": "full-evaluated-frontier"},
-    "algorithm_version": {"const": "phase3-survivor-driven-v2"},
+    "algorithm_version": {"const": "phase3-survivor-driven-v3"},
     "input_chain_sha256": {"$ref": "#/$defs/hash"},
     "search_contract_sha256": {"$ref": "#/$defs/hash"},
     "parent_artifact_sha256": {"$ref": "#/$defs/hash"},
+    "parent_source_manifest_hashes": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/hash"}},
+    "source_search_manifest": {"$ref": "#/$defs/fileHash"},
+    "frontier_rows_file": {"const": "frontier-rows.json"},
     "baseline_candidate_id": {"$ref": "#/$defs/hash"},
     "candidate_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/hash"}},
     "ranked_candidate_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/hash"}},
     "frontier_rows_sha256": {"$ref": "#/$defs/hash"},
-    "pareto_dimensions": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"type": "string"}},
+    "pareto_dimensions": {"const": ["transformed_pair_min", "commanded_pair_min", "neutral_min", "graphics_contrast_min", "raster_1_5_min", "raster_2_min", "raster_3_min", "max_commanded_deviation", "mean_commanded_deviation"]},
     "rank_policy": {"const": "worst-state/pair/geometry, then aggregate, then commanded deviation"},
     "strict_pareto_requires_no_protected_regression": {"const": true},
     "sampled_not_continuous": {"const": true},
     "seed_runs": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}},
-    "browser_oracle_status": {"enum": ["NOT_RUN", "PASS", "FAIL", "ERROR"]},
+    "browser_oracle_status": {"const": "NOT_RUN"},
     "human_width_capacity": {"type": "null"}
   },
-  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "fileHash": {"type": "object", "additionalProperties": false, "required": ["file", "sha256"], "properties": {"file": {"type": "string", "pattern": "^[^/]+$"}, "sha256": {"$ref": "#/$defs/hash"}}}
+  }
 }

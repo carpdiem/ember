@@ -4,72 +4,24 @@
   "title": "Phase 3 categorical search contract",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "schema_version",
-    "authorization",
-    "bank",
-    "input_sha256",
-    "seed",
-    "proposal_bounds",
-    "hard_gates",
-    "evaluation_ladder",
-    "pareto_dimensions",
-    "raster_proxy",
-    "local_gain_refinement",
-    "cvd",
-    "threshold_policy"
-  ],
+  "required": ["schema_version", "authorization", "bank", "input_sha256", "seed", "proposal_bounds", "hard_gates", "evaluation_ladder", "pareto_dimensions", "raster_proxy", "local_gain_refinement", "cvd", "threshold_policy"],
   "properties": {
     "schema_version": {"const": 1},
-    "authorization": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["approved_g1_head", "evidence_status", "phase3_search_authorized", "require_independent_replay"],
-      "properties": {
-        "approved_g1_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
-        "evidence_status": {"const": "PASS"},
-        "phase3_search_authorized": {"const": true},
-        "require_independent_replay": {"const": true}
-      }
-    },
-    "bank": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["kind", "count", "role_order"],
-      "properties": {
-        "kind": {"const": "categorical"},
-        "count": {"const": 6},
-        "role_order": {"const": ["cat.one", "cat.two", "cat.three", "cat.four", "cat.five", "cat.six"]}
-      }
-    },
-    "input_sha256": {
-      "type": "object",
-      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-      "minProperties": 11
-    },
-    "seed": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["algorithm", "chunk_order_independent", "experiment_seed", "minimum_independent_runs"],
-      "properties": {
-        "algorithm": {"const": "numpy-PCG64"},
-        "chunk_order_independent": {"const": true},
-        "experiment_seed": {"type": "integer", "minimum": 0},
-        "minimum_independent_runs": {"const": 4}
-      }
-    },
-    "proposal_bounds": {"type": "object"},
-    "hard_gates": {"type": "object"},
-    "evaluation_ladder": {"type": "array", "minItems": 5, "items": {"type": "string"}},
-    "pareto_dimensions": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"type": "string"}},
-    "raster_proxy": {"type": "object"},
-    "local_gain_refinement": {"type": "object"},
-    "cvd": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["report_only", "used_as_gate"],
-      "properties": {"report_only": {"const": true}, "used_as_gate": {"const": false}}
-    },
-    "threshold_policy": {"type": "string"}
+    "authorization": {"type": "object", "additionalProperties": false, "required": ["approved_g1_head", "evidence_status", "phase3_search_authorized", "require_independent_replay"], "properties": {"approved_g1_head": {"const": "922ba7faa45ccdb56e95356750d353c7602da78a"}, "evidence_status": {"const": "PASS"}, "phase3_search_authorized": {"const": true}, "require_independent_replay": {"const": true}}},
+    "bank": {"type": "object", "additionalProperties": false, "required": ["kind", "count", "role_order"], "properties": {"kind": {"const": "categorical"}, "count": {"const": 6}, "role_order": {"const": ["cat.one", "cat.two", "cat.three", "cat.four", "cat.five", "cat.six"]}}},
+    "input_sha256": {"type": "object", "additionalProperties": false, "required": ["baseline", "viewing", "gain_grid", "neutral", "proxy", "raster_ledger", "raster_masks", "raster_observations", "replay_receipt", "replay_verifier", "browser_probe"], "properties": {"baseline": {"$ref": "#/$defs/hash"}, "viewing": {"$ref": "#/$defs/hash"}, "gain_grid": {"$ref": "#/$defs/hash"}, "neutral": {"$ref": "#/$defs/hash"}, "proxy": {"$ref": "#/$defs/hash"}, "raster_ledger": {"$ref": "#/$defs/hash"}, "raster_masks": {"$ref": "#/$defs/hash"}, "raster_observations": {"$ref": "#/$defs/hash"}, "replay_receipt": {"$ref": "#/$defs/hash"}, "replay_verifier": {"$ref": "#/$defs/hash"}, "browser_probe": {"$ref": "#/$defs/hash"}}},
+    "seed": {"type": "object", "additionalProperties": false, "required": ["algorithm", "chunk_order_independent", "experiment_seed", "minimum_independent_runs"], "properties": {"algorithm": {"const": "numpy-PCG64"}, "chunk_order_independent": {"const": true}, "experiment_seed": {"const": 3400}, "minimum_independent_runs": {"const": 4}}},
+    "proposal_bounds": {"type": "object", "additionalProperties": false, "required": ["global_oklab", "roles"], "properties": {"global_oklab": {"type": "object", "additionalProperties": false, "required": ["bank_mean_chroma_max", "bank_mean_chroma_min", "chroma_max", "l_max", "l_min", "per_role_chroma_min"], "properties": {"bank_mean_chroma_max": {"type": "number"}, "bank_mean_chroma_min": {"type": "number"}, "chroma_max": {"type": "number"}, "l_max": {"type": "number"}, "l_min": {"type": "number"}, "per_role_chroma_min": {"type": "null"}}}, "roles": {"type": "array", "minItems": 6, "maxItems": 6, "items": {"$ref": "#/$defs/roleBound"}}}},
+    "hard_gates": {"type": "object", "additionalProperties": false, "required": ["commanded_pair_delta_e_ok", "graphics_contrast_ratio", "neutral_delta_e_ok", "transformed_neutral_baseline_ratio", "transformed_pair_baseline_ratio"], "properties": {"commanded_pair_delta_e_ok": {"type": "number"}, "graphics_contrast_ratio": {"type": "number"}, "neutral_delta_e_ok": {"type": "number"}, "transformed_neutral_baseline_ratio": {"type": "number"}, "transformed_pair_baseline_ratio": {"type": "number"}}},
+    "evaluation_ladder": {"const": ["exact-Hex8-commanded-Oklab-WCAG-role-neutral-hard-gates", "transformed-primary-CAM16-UCS-pair-neutral-gates", "all-45-gains-times-declared-viewing-sensitivities-separately-never-averaged-plus-local-refinement", "calibrated-raster-proxy-over-reused-full-G1-masks-and-geometries", "exact-browser-oracle-for-Phase3B-finalists-only"]},
+    "pareto_dimensions": {"const": ["transformed_pair_min", "commanded_pair_min", "neutral_min", "graphics_contrast_min", "raster_1_5_min", "raster_2_min", "raster_3_min", "max_commanded_deviation", "mean_commanded_deviation"]},
+    "raster_proxy": {"type": "object", "additionalProperties": false, "required": ["calibrated_error_margin_delta_e_ok", "mask_count", "mask_file", "rerasterize", "widths_css_px"], "properties": {"calibrated_error_margin_delta_e_ok": {"type": "number"}, "mask_count": {"const": 720}, "mask_file": {"const": "raster-masks.json"}, "rerasterize": {"const": false}, "widths_css_px": {"const": [1.5, 2.0, 3.0]}}},
+    "local_gain_refinement": {"type": "object", "additionalProperties": false, "required": ["continuous_worst_case_claim", "subgrid", "trigger_fraction_above_floor"], "properties": {"continuous_worst_case_claim": {"const": false}, "subgrid": {"const": [5, 5]}, "trigger_fraction_above_floor": {"type": "number"}}},
+    "cvd": {"type": "object", "additionalProperties": false, "required": ["report_only", "used_as_gate"], "properties": {"report_only": {"const": true}, "used_as_gate": {"const": false}}},
+    "threshold_policy": {"type": "string", "minLength": 1}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "roleBound": {"type": "object", "additionalProperties": false, "required": ["role", "hue_center_degrees", "hue_half_width_degrees", "l_min", "l_max"], "properties": {"role": {"enum": ["cat.one", "cat.two", "cat.three", "cat.four", "cat.five", "cat.six"]}, "hue_center_degrees": {"type": "number"}, "hue_half_width_degrees": {"type": "number"}, "l_min": {"type": "number"}, "l_max": {"type": "number"}}}
   }
 }

@@ -1,27 +1,28 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "phase3-browser-oracle-result.schema.json",
-  "title": "Hash-bound Phase 3B browser oracle result",
+  "title": "Hash-bound replayed Phase 3B browser oracle result",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "request_sha256", "candidate_id", "serialized_bank_sha256", "input_chain_sha256", "status", "observations", "full_image_hash_used", "human_width_capacity"],
+  "required": ["schema_version", "request_sha256", "candidate_id", "serialized_bank_sha256", "input_chain_sha256", "status", "observations", "source_provenance", "replay_receipt", "replay_sha256", "full_image_hash_used", "human_width_capacity"],
   "properties": {
-    "schema_version": {"const": 2},
+    "schema_version": {"const": 3},
     "request_sha256": {"$ref": "#/$defs/hash"},
     "candidate_id": {"$ref": "#/$defs/hash"},
     "serialized_bank_sha256": {"$ref": "#/$defs/hash"},
     "input_chain_sha256": {"$ref": "#/$defs/hash"},
-    "status": {"enum": ["PASS", "FAIL", "ERROR"]},
-    "observations": {
-      "type": "array", "minItems": 25920, "maxItems": 25920,
-      "items": {
-        "type": "object", "additionalProperties": false,
-        "required": ["request_observation_id", "status", "sample_count", "observed_rgb8_median"],
-        "properties": {"request_observation_id": {"type": "string"}, "status": {"enum": ["PASS", "FAIL", "ERROR"]}, "sample_count": {"type": "integer", "minimum": 0}, "observed_rgb8_median": {"type": ["array", "null"], "items": {"type": "number", "minimum": 0, "maximum": 255}, "minItems": 3, "maxItems": 3}}
-      }
-    },
+    "status": {"enum": ["PASS", "FAIL"]},
+    "observations": {"type": "array", "minItems": 25920, "maxItems": 25920, "items": {"$ref": "#/$defs/resultObservation"}},
+    "source_provenance": {"type": "object", "additionalProperties": false, "required": ["browser", "browser_version", "probe_sha256"], "properties": {"browser": {"type": "string", "minLength": 1}, "browser_version": {"type": "string", "minLength": 1}, "probe_sha256": {"$ref": "#/$defs/hash"}}},
+    "replay_receipt": {"$ref": "#/$defs/replay"},
+    "replay_sha256": {"$ref": "#/$defs/hash"},
     "full_image_hash_used": {"const": false},
     "human_width_capacity": {"type": "null"}
   },
-  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "rgb8": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "number", "minimum": 0, "maximum": 255}},
+    "resultObservation": {"type": "object", "additionalProperties": false, "required": ["request_observation_id", "status", "sample_count", "observed_rgb8_median", "delta_e_ok"], "properties": {"request_observation_id": {"type": "string", "minLength": 1}, "status": {"enum": ["PASS", "FAIL"]}, "sample_count": {"type": "integer", "minimum": 0}, "observed_rgb8_median": {"$ref": "#/$defs/rgb8"}, "delta_e_ok": {"type": "number", "minimum": 0}}},
+    "replay": {"type": "object", "additionalProperties": false, "required": ["schema_version", "status", "request_sha256", "candidate_id", "input_chain_sha256", "observation_count", "pass_count", "fail_count", "error_count", "maximum_delta_e_ok"], "properties": {"schema_version": {"const": 1}, "status": {"enum": ["PASS", "FAIL"]}, "request_sha256": {"$ref": "#/$defs/hash"}, "candidate_id": {"$ref": "#/$defs/hash"}, "input_chain_sha256": {"$ref": "#/$defs/hash"}, "observation_count": {"const": 25920}, "pass_count": {"type": "integer", "minimum": 0, "maximum": 25920}, "fail_count": {"type": "integer", "minimum": 0, "maximum": 25920}, "error_count": {"const": 0}, "maximum_delta_e_ok": {"type": "number", "minimum": 0}}}
+  }
 }
