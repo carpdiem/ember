@@ -48,6 +48,7 @@ import phase3_optimizer as p3
 
 seven = _load_local("seven_point_optimizer_for_browser", "optimizer.py")
 polish_search = _load_local("seven_point_polish_for_browser", "polish.py")
+warm_search = _load_local("seven_point_warm_pair_for_browser", "warm_pair.py")
 
 SCHEMA_VERSION = 1
 BASE_COUNT = 2_160
@@ -88,6 +89,7 @@ _BINDING_KEYS = {
     "search_artifacts",
     "optimizer_source",
     "polish_source",
+    "warm_pair_source",
 }
 _SOURCE_KEYS = {"file", "sha256", "commit"}
 _ARTIFACT_KEYS = {"file", "sha256", "canonical_sha256"}
@@ -259,6 +261,7 @@ def _artifact_binding(
         "search_artifacts": artifacts,
         "optimizer_source": _source_binding("optimizer.py"),
         "polish_source": _source_binding("polish.py"),
+        "warm_pair_source": _source_binding("warm_pair.py"),
     }
 
 
@@ -271,6 +274,7 @@ def _validate_binding(
     row = exact_keys(binding, _BINDING_KEYS, "evidence binding")
     exact_keys(row["optimizer_source"], _SOURCE_KEYS, "optimizer source")
     exact_keys(row["polish_source"], _SOURCE_KEYS, "polish source")
+    exact_keys(row["warm_pair_source"], _SOURCE_KEYS, "warm-pair source")
     artifacts = row["search_artifacts"]
     require(
         isinstance(artifacts, list) and len(artifacts) == len(SEARCH_FILES),
@@ -387,10 +391,25 @@ def _counts() -> dict[str, int]:
 def _search_results(search_artifacts: Path) -> dict[str, Any]:
     result = _load_object(Path(search_artifacts) / "results.json", "seven-point results artifact")
     require(
-        result.get("artifact_kind") == "seven-point-bounded-full-catalog-polish",
-        "seven-point results are not bounded full-catalog polish",
+        result.get("artifact_kind")
+        in {
+            "seven-point-bounded-full-catalog-polish",
+            "seven-point-warm-pair-refinement",
+        },
+        "seven-point results kind is unsupported",
     )
     return result
+
+
+def _validate_search_artifacts(search_artifacts: Path) -> None:
+    kind = _search_results(search_artifacts)["artifact_kind"]
+    if kind == "seven-point-bounded-full-catalog-polish":
+        polish_search.validate(search_artifacts, progress=True)
+        return
+    if kind == "seven-point-warm-pair-refinement":
+        warm_search.validate(search_artifacts)
+        return
+    raise SevenPointEvidenceError("seven-point results kind is unsupported")
 
 
 def _special_candidate(
@@ -426,7 +445,13 @@ def _request_for(
         "artifact_kind": "seven-point-symmetric-chromium-request",
         "request_role": role,
         "candidate_id": candidate["candidate_id"],
-        "lane": candidate["lane"],
+        "lane": {
+            "reference": "REFERENCE",
+            "benchmark-c": "BENCHMARK-C",
+            "a": "A",
+            "b": "B",
+            "c": "C",
+        }[role],
         "serialized_bank": list(bank),
         "serialized_bank_sha256": p3.bank_hash(bank),
         "category_set_sha256": candidate["category_set_sha256"],
@@ -452,6 +477,13 @@ def _expected_candidates(
     search_artifacts: Path, inputs: p3.Phase3Inputs, contract: Mapping[str, Any]
 ) -> dict[str, dict[str, Any]]:
     results = _search_results(search_artifacts)
+    if results["artifact_kind"] == "seven-point-warm-pair-refinement":
+        rows = results["browser_roles"]
+        require(
+            list(rows) == ["reference", "benchmark-c", "a", "b", "c"],
+            "warm role order differs",
+        )
+        return {role: dict(rows[role]) for role in rows}
     candidates = results["candidates"]
     require([row["lane"] for row in candidates] == ["A", "B", "C"], "candidate lanes differ")
     rows = {row["lane"].lower(): row for row in candidates}
@@ -470,7 +502,7 @@ def build_requests(
 ) -> dict[str, dict[str, Any]]:
     """Fully replay search once, then write reference, benchmark-C, and A/B/C requests."""
 
-    polish_search.validate(search_artifacts, progress=True)
+    _validate_search_artifacts(search_artifacts)
     candidates = _expected_candidates(search_artifacts, inputs, contract)
     binding = _artifact_binding(search_artifacts, inputs, contract)
     observations = build_observation_plan(inputs)
@@ -533,7 +565,7 @@ def validate_request(
         "request fixed fg0 differs",
     )
     if validate_search:
-        polish_search.validate(search_artifacts, progress=True)
+        _validate_search_artifacts(search_artifacts)
     _validate_binding(row["binding"], search_artifacts, inputs, contract)
     expected = _expected_candidates(search_artifacts, inputs, contract)[role]
     bank = seven.canonical_categories(row["serialized_bank"])

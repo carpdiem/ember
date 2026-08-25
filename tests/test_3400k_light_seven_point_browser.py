@@ -307,6 +307,7 @@ def test_request_is_external_compact_and_contains_no_environment_metadata(
         ],
         "optimizer_source": browser._source_binding("optimizer.py"),
         "polish_source": browser._source_binding("polish.py"),
+        "warm_pair_source": browser._source_binding("warm_pair.py"),
     }
     request = browser._request_for(
         "reference",
