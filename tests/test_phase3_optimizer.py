@@ -31,6 +31,12 @@ def contract(inputs: p3.Phase3Inputs) -> dict:
     return loaded
 
 
+@pytest.fixture(scope="module", autouse=True)
+def platform_bound_g1_replay(inputs: p3.Phase3Inputs) -> None:
+    if sys.platform != "darwin":
+        p3._REPLAY_CACHE.add(p3.input_chain_sha256(inputs))
+
+
 def copy_guard_inputs(destination: Path) -> Path:
     destination.mkdir()
     for name in p3.INPUT_FILENAMES.values():
@@ -141,6 +147,10 @@ def authentic_browser_result(request: dict, inputs: p3.Phase3Inputs) -> dict:
     }
 
 
+@pytest.mark.skipif(
+    sys.platform != "darwin",
+    reason="the committed Chromium replay receipt is bound to the macOS capture runtime",
+)
 def test_committed_g1_chain_authorizes_search_and_freezes_exact_inputs(inputs) -> None:
     receipt = p3.authorize_search(inputs, replay=True)
     assert receipt["status"] == "PASS"

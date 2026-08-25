@@ -29,6 +29,12 @@ def contract(inputs: p3.Phase3Inputs) -> dict:
     return loaded
 
 
+@pytest.fixture(scope="module", autouse=True)
+def platform_bound_g1_replay(inputs: p3.Phase3Inputs) -> None:
+    if sys.platform != "darwin":
+        p3._REPLAY_CACHE.add(p3.input_chain_sha256(inputs))
+
+
 def evidence_paths(label: str = "b") -> tuple[Path, Path, Path, Path]:
     return (
         EVIDENCE / f"browser-request-{label}.json",

@@ -783,6 +783,10 @@ def test_g1_artifact_contract_is_complete_and_honest() -> None:
     assert "Before any production promotion" in report
 
 
+@pytest.mark.skipif(
+    sys.platform != "darwin",
+    reason="the committed Chromium replay receipt is bound to the macOS capture runtime",
+)
 def test_g1_browser_evidence_hashes_and_independent_replay_are_fresh(tmp_path: Path) -> None:
     calibration = json.loads((EXPERIMENT / "proxy-calibration.json").read_text())
     raster = json.loads((EXPERIMENT / "raster-baseline.json").read_text())
@@ -884,6 +888,10 @@ def test_g1_verifier_rejects_corrupted_observation_with_and_without_optimization
         assert "ERROR:" in completed.stderr
 
 
+@pytest.mark.skipif(
+    sys.platform != "darwin",
+    reason="the committed Chromium replay receipt is bound to the macOS capture runtime",
+)
 def test_g1_verifier_rejects_corrupted_acceptance_and_replay_receipt(tmp_path: Path) -> None:
     acceptance_evidence = copy_g1_replay_evidence(tmp_path / "corrupted-acceptance")
     proxy_path = acceptance_evidence / "proxy-calibration.json"
@@ -910,6 +918,10 @@ def test_g1_verifier_rejects_corrupted_acceptance_and_replay_receipt(tmp_path: P
     assert "independent replay receipt content" in completed.stderr
 
 
+@pytest.mark.skipif(
+    sys.platform != "darwin",
+    reason="the committed Chromium replay receipt is bound to the macOS capture runtime",
+)
 def test_g1_verifier_valid_evidence_passes_with_and_without_optimization(tmp_path: Path) -> None:
     evidence = copy_g1_replay_evidence(tmp_path / "valid")
     for optimized in (False, True):
