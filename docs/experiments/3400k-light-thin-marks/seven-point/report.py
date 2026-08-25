@@ -120,6 +120,7 @@ def collect(
     gains = list(inputs.viewing["transform"]["gains"])
     rows = {}
     for role in ROLE_ORDER:
+        print(f"[seven-report] verify-start role={role}", file=sys.stderr, flush=True)
         request_path = Path(request_dir) / f"browser-request-{role}.json"
         result_path = Path(browser_dir) / f"browser-result-{role}.json"
         observations_path = Path(browser_dir) / f"browser-observations-{role}.json"
@@ -168,6 +169,7 @@ def collect(
             "observations_sha256": browser.sha256_file(observations_path),
             "pairs_sha256": browser.sha256_file(pairs_path),
         }
+        print(f"[seven-report] verify-complete role={role}", file=sys.stderr, flush=True)
     recommendation = max(
         FINALIST_ROLES,
         key=lambda role: (
