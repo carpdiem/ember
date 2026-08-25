@@ -352,8 +352,8 @@ def best_swap_per_slot(
             candidate[slot] = tables.catalog[int(catalog_index)].hex8
             canonical = seven.canonical_categories(candidate)
             candidate_rows.append((canonical, int(catalog_index)))
-        canonical, catalog_index = min(candidate_rows)
-        proposals.append((best_score, slot, catalog_index, canonical))
+        for canonical, catalog_index in sorted(candidate_rows, reverse=True):
+            proposals.append((best_score, slot, catalog_index, canonical))
         evaluations += len(tables.catalog)
     return proposals, evaluations
 
@@ -398,11 +398,19 @@ def polish_lane(
         pair_proxy = catalog_to_bank_proxy(tables, bank_indices)
         proposals, scanned = best_swap_per_slot(tables, contract, lane, bank, pair_proxy)
         proxy_evaluations += scanned
+        if proposals:
+            best_proxy_primary = max(row[0] for row in proposals)
+            unique = {}
+            for proposal in proposals:
+                if abs(proposal[0] - best_proxy_primary) <= 1e-12:
+                    unique[proposal[3]] = proposal
+            proposals = [unique[key] for key in sorted(unique, reverse=True)]
+        remaining_exact = MAX_EXACT_EVALUATIONS_PER_LANE - exact_evaluations
+        if len(proposals) > remaining_exact:
+            stop_reason = "exact_evaluation_cap"
+            break
         exact_rows = []
         for proxy_primary, slot, catalog_index, candidate_bank in proposals:
-            if exact_evaluations >= MAX_EXACT_EVALUATIONS_PER_LANE:
-                stop_reason = "exact_evaluation_cap"
-                break
             evaluation = seven.evaluate(candidate_bank, inputs, contract)
             exact_evaluations += 1
             if evaluation["hard_gate_failures"]:
