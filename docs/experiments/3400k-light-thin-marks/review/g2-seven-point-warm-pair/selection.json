@@ -1,0 +1,29 @@
+{
+  "allowed_selections": [
+    "KEEP-A",
+    "LIFT-ONLY",
+    "CLEAN-GOLD",
+    "BRIGHT-WARM",
+    "PHOTOPIC-2.7"
+  ],
+  "artifact_kind": "seven-point-warm-pair-human-selection",
+  "automatic_recommendation": null,
+  "candidate_ids": {
+    "Bright warm": "d169e4784323664871eb160946ef0b96481b44b9d5f8daf67e87993ce712244c",
+    "Candidate A baseline": "cdfdcbb18180c3f2f0b9ae47070d81f720043dedcf8a5240248d393ef3d9bf28",
+    "Clean gold": "daac36677f030cbc6b52ee548a7853e0f9377b78d4971702f89ff5a2d09dc28b",
+    "Lift only": "123d54fa7c81f465135694c91ed20ba80c236a56031fd5af5eb9181fd322fe55",
+    "Photopic 2.7 challenge": "98798af6cdeac6b4c39abd1095f79eecbb95aa1f6adc2364c4501a761a18ae50"
+  },
+  "fixed_fg0": "#342F2C",
+  "photopic_lane_status": "HUMAN_CHALLENGE_NOT_PASS",
+  "production_promotion": false,
+  "report_source": {
+    "commit": "5bc11f5c74cec119291c9eb8a7d0f369db928526",
+    "file": "warm_pair_report.py",
+    "sha256": "8c7d471d99e8285b13c39966ae8bf92647f96b075af0c091679b36ef7668be2c"
+  },
+  "schema_version": 1,
+  "selection": null,
+  "status": "AWAITING_MICHAEL_WARM_PAIR_SELECTION"
+}

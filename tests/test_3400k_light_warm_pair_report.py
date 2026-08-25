@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SEVEN = ROOT / "docs/experiments/3400k-light-thin-marks/seven-point"
+REVIEW = ROOT / "docs/experiments/3400k-light-thin-marks/review/g2-seven-point-warm-pair"
 SPEC = importlib.util.spec_from_file_location(
     "warm_pair_report_test", SEVEN / "warm_pair_report.py"
 )
@@ -119,3 +121,28 @@ def test_source_is_narrow_and_environment_free() -> None:
     assert "timestamp" not in source.lower()
     assert "2.5 lane" in source
     assert report.EXPECTED_EVIDENCE_COUNT == 22
+
+
+def test_committed_warm_review_is_closed_and_awaiting_human_selection() -> None:
+    evidence = REVIEW / "evidence"
+    assert len(list(evidence.iterdir())) == 22
+    assert all(path.stat().st_size < 50_000_000 for path in evidence.iterdir())
+    selection = json.loads((REVIEW / "selection.json").read_text())
+    assert selection["status"] == "AWAITING_MICHAEL_WARM_PAIR_SELECTION"
+    assert selection["selection"] is None
+    assert selection["automatic_recommendation"] is None
+    assert selection["photopic_lane_status"] == "HUMAN_CHALLENGE_NOT_PASS"
+    assert selection["production_promotion"] is False
+
+
+def test_committed_warm_page_reports_actual_metrics_and_exception() -> None:
+    page = (REVIEW / "index.html").read_text()
+    assert "Candidate A, without the ugly olive" in page
+    assert "1.5px 9.484" in page
+    assert "1.5px 8.369" in page
+    assert "1.5px 7.608" in page
+    assert "1.5px 7.880" in page
+    assert "1.5px 7.596" in page
+    assert "2.7 challenge · not PASS" in page
+    assert "2.732:1 versus the 3.0 target" in page
+    assert "/Users/" not in page
