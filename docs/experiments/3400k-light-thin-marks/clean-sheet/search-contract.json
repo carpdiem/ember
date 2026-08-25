@@ -1,0 +1,84 @@
+{
+  "authorization": {
+    "approved_g1_head": "922ba7faa45ccdb56e95356750d353c7602da78a",
+    "input_chain_sha256": "55763c938efd8f91dae75d2b20a4c2187ed3e91934180cf8cf4fc2500649feea",
+    "require_independent_replay": true
+  },
+  "bank": {
+    "count": 6,
+    "discovery_then_role_permutation": true,
+    "role_order": [
+      "cat.one",
+      "cat.two",
+      "cat.three",
+      "cat.four",
+      "cat.five",
+      "cat.six"
+    ]
+  },
+  "exploration": {
+    "chroma": [0.04, 0.14],
+    "exact_catalog": "quantize to canonical Hex8, reparse, then admit by exact gamut and hard single-color gates",
+    "hue_degrees": [0.0, 360.0],
+    "lightness": [0.3, 0.64]
+  },
+  "hard_gates": {
+    "commanded_category_foreground_delta_e_ok": 8.0,
+    "commanded_category_pair_delta_e_ok": 16.0,
+    "graphics_contrast_ratio": 3.0,
+    "minimum_commanded_oklab_lightness": 0.3,
+    "minimum_nominal_transformed_luminance": 0.003,
+    "nominal_transformed_category_foreground_delta_e_ok": 5.0,
+    "nominal_transformed_category_pair_delta_e_ok": 8.0
+  },
+  "lanes": [
+    {
+      "broad_anchor_count": 0,
+      "id": "A",
+      "method": "constructive-cool-lighter-warm-darker"
+    },
+    {
+      "broad_anchor_count": 0,
+      "id": "B",
+      "method": "transformed-native-targets-inverted-through-gains"
+    },
+    {
+      "broad_anchor_count": 2,
+      "broad_anchor_half_width_degrees": 30.0,
+      "broad_anchor_hues_degrees": [176.2766872, 266.0687792],
+      "id": "C",
+      "method": "continuity-compromise-zero-to-two-broad-anchors"
+    }
+  ],
+  "materiality": {
+    "category_fg_0_distinctiveness_delta_e_ok": 0.25,
+    "comparison_reference": "current approved categorical bank",
+    "full_bank_1_5px_thin_proxy_delta_e_ok": 0.5,
+    "policy": "deterministic search targets; NOT human floors",
+    "selected_weakest_three_dark_cluster_analog_delta_e_ok": 0.5
+  },
+  "objective": {
+    "lexicographic_worst_case": [
+      "nominal_transformed_1_5px_raster_category_pair",
+      "nominal_transformed_1_5px_raster_category_fg_0",
+      "nominal_transformed_j_prime_luminance_pair",
+      "nominal_transformed_solid_category_pair",
+      "commanded_solid_category_pair",
+      "raster_2px_then_3px",
+      "hue_breadth_topology_sensitivity"
+    ],
+    "selection": null
+  },
+  "raster": {
+    "calibrated_error_margin_delta_e_ok": 0.75,
+    "mask_count": 720,
+    "mask_file": "raster-masks.json",
+    "states": ["commanded", "nominal-transformed"],
+    "widths_css_px": [1.5, 2.0, 3.0]
+  },
+  "report_only": {
+    "baseline_churn": true,
+    "gain_and_viewing_sensitivity": true
+  },
+  "schema_version": 1
+}
