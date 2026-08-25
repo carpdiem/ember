@@ -267,9 +267,9 @@ def _base_rows(inputs: p3.Phase3Inputs) -> list[dict[str, Any]]:
         key = g1._base_key(item)
         if key not in seen:
             seen.add(key)
-            rows.append(
-                {"id": f"base-{len(rows) + 1:04d}", **dict(zip(g1.BASE_FIELDS, key, strict=True))}
-            )
+            values = dict(zip(g1.BASE_FIELDS, key, strict=True))
+            values["phase_css_px"] = list(values["phase_css_px"])
+            rows.append({"id": f"base-{len(rows) + 1:04d}", **values})
     require(len(rows) == BASE_COUNT, "base factorization is not exactly 2,160")
     return rows
 
