@@ -1,7 +1,8 @@
 {
   "artifact_kind": "seven-point-bounded-full-catalog-polish",
   "bounds": {
-    "exact_evaluation_cap_per_lane": 37,
+    "exact_evaluation_cap_per_lane": 145,
+    "exact_finalist_cap_per_sweep": 24,
     "lane_runtime_cap_seconds": 90.0,
     "minimum_primary_improvement": 1e-09,
     "pass_cap": 6,
@@ -262,7 +263,7 @@
         11.562055815115645
       ],
       "polish": {
-        "exact_evaluation_count": 33,
+        "exact_evaluation_count": 31,
         "lane_runtime_cap_seconds": 90.0,
         "ledger": [
           {
@@ -435,7 +436,7 @@
         11.329527849735923
       ],
       "polish": {
-        "exact_evaluation_count": 2,
+        "exact_evaluation_count": 26,
         "lane_runtime_cap_seconds": 90.0,
         "ledger": [
           {
@@ -452,7 +453,7 @@
         "pass_cap": 6,
         "passes_accepted": 1,
         "proxy_evaluation_count": 86208,
-        "stop_reason": "exact_evaluation_cap"
+        "stop_reason": "coordinate_local_optimum"
       },
       "polish_method": "bounded-full-catalog-coordinate-polish",
       "primary_improvement_over_seed": 0.001347952153421872,
@@ -486,9 +487,9 @@
     "sha256": "39ca1302fc35efbad04b7da5e69ce677d52752b0435211166fb6a5e6318738e7"
   },
   "polish_source": {
-    "commit": "9cae6f430ad7279583981024d2187acf5120dcb2",
+    "commit": "7ca9ce8cc52e204b6052ab578b4e4cd14c98fe17",
     "file": "polish.py",
-    "sha256": "40a460b24435513e2368bec96612f6cd80f4b2b02053b45c84de64c90ba681f5"
+    "sha256": "0b1c7f7c3b50b77eed8fb41ba1baa74d53702da1ff2b497ecd05ce94e8b03b62"
   },
   "production": false,
   "schema_version": 1,
