@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SEVEN = ROOT / "docs/experiments/3400k-light-thin-marks/seven-point"
+REVIEW = ROOT / "docs/experiments/3400k-light-thin-marks/review/g2-seven-point"
 SPEC = importlib.util.spec_from_file_location("seven_point_report_test", SEVEN / "report.py")
 assert SPEC is not None and SPEC.loader is not None
 report = importlib.util.module_from_spec(SPEC)
@@ -84,6 +86,7 @@ def test_page_shows_all_banks_and_three_simultaneous_finalists() -> None:
     assert "overflow-y" not in page.lower()
     assert "@media(max-width:1180px)" in page
     assert "@media(max-width:680px)" in page
+    assert ".summary-wrap th:nth-child(5),.summary-wrap td:nth-child(5){display:none}" in page
 
 
 def test_report_table_is_actual_chromium_first() -> None:
@@ -168,3 +171,49 @@ def test_source_has_no_environment_paths_or_timestamp_fields() -> None:
     assert '"timestamp"' not in source
     assert "datetime" not in source
     assert report.EXPECTED_EVIDENCE_COUNT == 22
+
+
+def test_committed_review_package_is_closed_and_selection_matches_finalists() -> None:
+    evidence = REVIEW / "evidence"
+    files = sorted(path.name for path in evidence.iterdir() if path.is_file())
+    expected = ["catalog-summary.json", "results.json"]
+    expected += [f"browser-request-{role}.json" for role in report.ROLE_ORDER]
+    expected += [
+        f"browser-{kind}-{role}.json"
+        for role in report.ROLE_ORDER
+        for kind in ("result", "observations", "pairs")
+    ]
+    assert files == sorted(expected)
+    assert len(files) == 22
+    assert all((evidence / name).stat().st_size < 50_000_000 for name in files)
+    selection = json.loads((REVIEW / "selection.json").read_text())
+    results = json.loads((evidence / "results.json").read_text())
+    assert selection["candidate_ids"] == {
+        row["lane"]: row["candidate_id"] for row in results["candidates"]
+    }
+    assert selection["status"] == "AWAITING_MICHAEL_SELECTION"
+    assert selection["selection"] is None
+    assert selection["allowed_selections"] == ["A", "B", "C"]
+    assert selection["human_1_5px_capacity"] == "UNKNOWN"
+    assert selection["production_promotion"] is False
+
+
+def test_committed_page_and_report_match_actual_browser_minima() -> None:
+    page = (REVIEW / "index.html").read_text()
+    markdown = (REVIEW / "report.md").read_text()
+    assert page.count('class="candidate"') == 3
+    assert page.count('class="benchmark"') == 2
+    for role in report.ROLE_ORDER:
+        result = json.loads((REVIEW / "evidence" / f"browser-result-{role}.json").read_text())
+        value = report.gated_metric(result, "1.5", "transformed")
+        assert f"{value:.8f}" in markdown
+    assert "Recommendation: A" in page
+    assert "Production promotion: FALSE" in page
+
+
+def test_committed_review_chrome_has_no_private_paths_or_runtime_metadata() -> None:
+    for name in ("index.html", "report.md", "selection.json"):
+        payload = (REVIEW / name).read_text()
+        assert "/Users/" not in payload
+        assert "timestamp" not in payload.lower()
+        assert "screenshot" not in payload.lower()
