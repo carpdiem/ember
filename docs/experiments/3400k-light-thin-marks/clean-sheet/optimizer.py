@@ -165,6 +165,7 @@ def validate_contract(contract: Mapping[str, Any], inputs: p3.Phase3Inputs) -> N
     expected_gates = {
         "commanded_category_foreground_delta_e_ok": 8.0,
         "commanded_category_pair_delta_e_ok": 16.0,
+        "commanded_minimum_hue_gap_degrees": 30.0,
         "graphics_contrast_ratio": 3.0,
         "minimum_commanded_oklab_lightness": 0.3,
         "minimum_nominal_transformed_luminance": 0.003,
@@ -438,26 +439,48 @@ def _lane_targets(lane: str, inputs: p3.Phase3Inputs) -> tuple[list[float], list
     if lane != "B":
         raise ValueError(f"unknown search lane: {lane}")
 
-    transformed_native_oklch = (
-        (0.42, 0.10, 10.0),
-        (0.28, 0.10, 35.0),
-        (0.53, 0.11, 135.0),
-        (0.36, 0.09, 155.0),
-        (0.48, 0.10, 255.0),
-        (0.27, 0.10, 285.0),
+    transformed_native_targets = (
+        (0.34, 0.08, 10.0),
+        (0.48, 0.08, 70.0),
+        (0.40, 0.09, 130.0),
+        (0.50, 0.07, 190.0),
+        (0.42, 0.08, 250.0),
+        (0.48, 0.08, 310.0),
     )
     gains = np.asarray(inputs.viewing["transform"]["gains"], dtype=float)
     hues: list[float] = []
     lightnesses: list[float] = []
-    for lightness, chroma, hue in transformed_native_oklch:
-        radians = np.radians(hue)
-        transformed_lab = np.asarray(
-            [lightness, chroma * np.cos(radians), chroma * np.sin(radians)], dtype=float
-        )
-        transformed_rgb = oklab_to_srgb(transformed_lab)
-        commanded_lab = srgb_to_oklab(np.clip(transformed_rgb / gains, 0.0, 1.0))
-        hues.append(float(_hue_degrees(commanded_lab)))
-        lightnesses.append(float(commanded_lab[0]))
+    for lightness, chroma, desired_commanded_hue in transformed_native_targets:
+        candidates = []
+        for transformed_hue in np.arange(0.0, 360.0, 1.0):
+            radians = np.radians(transformed_hue)
+            transformed_lab = np.asarray(
+                [lightness, chroma * np.cos(radians), chroma * np.sin(radians)], dtype=float
+            )
+            transformed_rgb = oklab_to_srgb(transformed_lab)
+            commanded_rgb = transformed_rgb / gains
+            if (
+                np.any(transformed_rgb < 0.0)
+                or np.any(transformed_rgb > 1.0)
+                or np.any(commanded_rgb < 0.0)
+                or np.any(commanded_rgb > 1.0)
+            ):
+                continue
+            commanded_lab = srgb_to_oklab(commanded_rgb)
+            commanded_hue = float(_hue_degrees(commanded_lab))
+            candidates.append(
+                (
+                    _hue_delta(commanded_hue, desired_commanded_hue),
+                    transformed_hue,
+                    commanded_hue,
+                    float(commanded_lab[0]),
+                )
+            )
+        if not candidates:
+            raise RuntimeError("transformed-native target has no exact invertible hue")
+        _, _, commanded_hue, commanded_lightness = min(candidates)
+        hues.append(commanded_hue)
+        lightnesses.append(commanded_lightness)
     return hues, lightnesses
 
 
@@ -466,10 +489,13 @@ def _discover_bank(
     lane: str,
     inputs: p3.Phase3Inputs,
     contract: Mapping[str, Any],
+    *,
+    hue_rotation_degrees: float = 0.0,
 ) -> tuple[str, ...]:
     """Discover an unordered bank; no role or baseline values enter this search."""
 
     target_hues, target_lightnesses = _lane_targets(lane, inputs)
+    target_hues = [(hue + hue_rotation_degrees) % 360.0 for hue in target_hues]
     hexes = [row.hex8 for row in catalog]
     commanded = np.asarray([row.commanded_oklab for row in catalog]) * 100.0
     transformed = np.asarray([row.transformed_oklab for row in catalog]) * 100.0
@@ -539,6 +565,17 @@ def _discover_bank(
                     < contract["hard_gates"]["nominal_transformed_category_pair_delta_e_ok"]
                 ):
                     continue
+                if len(new_selected) == 6:
+                    selected_hues = sorted(float(hues[color_index]) for color_index in new_selected)
+                    hue_gaps = [
+                        (selected_hues[(position + 1) % 6] - hue) % 360.0
+                        for position, hue in enumerate(selected_hues)
+                    ]
+                    if (
+                        min(hue_gaps) + 1e-12
+                        < contract["hard_gates"]["commanded_minimum_hue_gap_degrees"]
+                    ):
+                        continue
                 topology_error = sum(
                     _hue_delta(float(hues[color_index]), slot_hue)
                     for color_index, slot_hue in zip(new_selected, target_hues, strict=False)
@@ -561,6 +598,212 @@ def _discover_bank(
             raise RuntimeError(f"lane {lane} search beam was exhausted")
 
     return tuple(sorted(hexes[index] for index in beam[0][0]))
+
+
+def _quick_refinement_metrics(
+    bank_values: Sequence[str], inputs: p3.Phase3Inputs
+) -> dict[str, float]:
+    bank = p3.canonical_bank(bank_values)
+    rgb = p3.bank_rgb(bank)
+    commanded = p3.bank_oklab(bank)
+    gains = np.asarray(inputs.viewing["transform"]["gains"], dtype=float)
+    transformed = srgb_to_oklab(rgb * gains)
+    surfaces = inputs.baseline["family"]["surfaces"]
+    foreground = np.asarray([p3.parse_exact_hex8(surfaces[name]) for name in FOREGROUNDS])
+    commanded_foreground = srgb_to_oklab(foreground)
+    transformed_foreground = srgb_to_oklab(foreground * gains)
+
+    def pair_values(points: np.ndarray) -> np.ndarray:
+        distances = np.linalg.norm(points[:, None] - points[None, :], axis=2) * 100.0
+        return distances[np.triu_indices(6, 1)]
+
+    commanded_pairs = pair_values(commanded)
+    transformed_pairs = pair_values(transformed)
+    pair_proxy = math.inf
+    fg0_proxy = math.inf
+    fg0 = foreground[0]
+    for coverage in (0.30, 0.45, 0.60):
+        for background_name in GATE_BACKGROUNDS:
+            background = p3.parse_exact_hex8(surfaces[background_name])
+            category_points = srgb_to_oklab(
+                (coverage * rgb + (1.0 - coverage) * background) * gains
+            )
+            foreground_point = srgb_to_oklab(
+                (coverage * fg0 + (1.0 - coverage) * background) * gains
+            )
+            pair_proxy = min(pair_proxy, float(np.min(pair_values(category_points))))
+            fg0_proxy = min(
+                fg0_proxy,
+                float(np.min(np.linalg.norm(category_points - foreground_point, axis=1)) * 100.0),
+            )
+    hue = _hue_topology(commanded)
+    return {
+        "commanded_pair": float(np.min(commanded_pairs)),
+        "transformed_pair": float(np.min(transformed_pairs)),
+        "weakest_three_mean": float(np.mean(np.sort(transformed_pairs)[:3])),
+        "commanded_foreground": float(
+            np.min(np.linalg.norm(commanded[:, None] - commanded_foreground[None, :], axis=2))
+            * 100.0
+        ),
+        "transformed_foreground": float(
+            np.min(np.linalg.norm(transformed[:, None] - transformed_foreground[None, :], axis=2))
+            * 100.0
+        ),
+        "pair_proxy": pair_proxy,
+        "fg0_proxy": fg0_proxy,
+        "hue_gap": float(hue["minimum_circular_gap_degrees"]),
+    }
+
+
+def _local_refine_bank(
+    discovered: Sequence[str],
+    catalog: Sequence[CatalogColor],
+    lane: str,
+    inputs: p3.Phase3Inputs,
+    contract: Mapping[str, Any],
+    *,
+    hue_rotation_degrees: float,
+    maximum_swaps: int = 6,
+) -> tuple[tuple[str, ...], int]:
+    """Polish one discovered exact bank by deterministic catalog swaps."""
+
+    hexes = [row.hex8 for row in catalog]
+    by_hex = {hex8: index for index, hex8 in enumerate(hexes)}
+    current = tuple(by_hex[hex8] for hex8 in p3.canonical_bank(discovered))
+    baseline = _quick_refinement_metrics(_baseline_bank(inputs), inputs)
+    lane_contract = next(row for row in contract["lanes"] if row["id"] == lane)
+    target_hues, _ = _lane_targets(lane, inputs)
+    target_hues = [(hue + hue_rotation_degrees) % 360.0 for hue in target_hues]
+    catalog_rgb = np.asarray([p3.parse_exact_hex8(row.hex8) for row in catalog])
+    catalog_commanded = np.asarray([row.commanded_oklab for row in catalog])
+    catalog_transformed = np.asarray([row.transformed_oklab for row in catalog])
+    catalog_hues = np.asarray(
+        [float(_hue_degrees(np.asarray(row.commanded_oklab))) for row in catalog]
+    )
+    gains = np.asarray(inputs.viewing["transform"]["gains"], dtype=float)
+    surfaces = inputs.baseline["family"]["surfaces"]
+    backgrounds = np.asarray([p3.parse_exact_hex8(surfaces[name]) for name in GATE_BACKGROUNDS])
+    foreground = np.asarray([p3.parse_exact_hex8(surfaces[name]) for name in FOREGROUNDS])
+    commanded_foreground = srgb_to_oklab(foreground)
+    transformed_foreground = srgb_to_oklab(foreground * gains)
+
+    def pair_values(points: np.ndarray) -> np.ndarray:
+        distances = np.linalg.norm(points[:, None] - points[None, :], axis=2) * 100.0
+        return distances[np.triu_indices(6, 1)]
+
+    def score(indices: tuple[int, ...]) -> tuple[float, ...] | None:
+        selected = np.asarray(indices, dtype=int)
+        rgb = catalog_rgb[selected]
+        commanded = catalog_commanded[selected]
+        transformed = catalog_transformed[selected]
+        commanded_pairs = pair_values(commanded)
+        transformed_pairs = pair_values(transformed)
+        commanded_hues = catalog_hues[selected]
+        ordered_hues = np.sort(commanded_hues)
+        hue_gap = float(np.min(np.diff(np.concatenate((ordered_hues, ordered_hues[:1] + 360.0)))))
+        commanded_foreground_min = float(
+            np.min(np.linalg.norm(commanded[:, None] - commanded_foreground[None, :], axis=2))
+            * 100.0
+        )
+        transformed_foreground_min = float(
+            np.min(np.linalg.norm(transformed[:, None] - transformed_foreground[None, :], axis=2))
+            * 100.0
+        )
+        gates = contract["hard_gates"]
+        if (
+            float(np.min(commanded_pairs)) + 1e-12 < gates["commanded_category_pair_delta_e_ok"]
+            or float(np.min(transformed_pairs)) + 1e-12
+            < gates["nominal_transformed_category_pair_delta_e_ok"]
+            or commanded_foreground_min + 1e-12 < gates["commanded_category_foreground_delta_e_ok"]
+            or transformed_foreground_min + 1e-12
+            < gates["nominal_transformed_category_foreground_delta_e_ok"]
+            or hue_gap + 1e-12 < gates["commanded_minimum_hue_gap_degrees"]
+        ):
+            return None
+        if lane_contract["broad_anchor_count"]:
+            anchor_hues = lane_contract["broad_anchor_hues_degrees"]
+            half_width = float(lane_contract["broad_anchor_half_width_degrees"])
+            if not any(
+                all(
+                    _hue_delta(float(color_hue), float(anchor_hue)) <= half_width
+                    for color_hue, anchor_hue in zip(assignment, anchor_hues, strict=True)
+                )
+                for assignment in itertools.permutations(commanded_hues, len(anchor_hues))
+            ):
+                return None
+        pair_proxy = math.inf
+        fg0_proxy = math.inf
+        fg0 = foreground[0]
+        for coverage in (0.30, 0.45, 0.60):
+            for background in backgrounds:
+                category_points = srgb_to_oklab(
+                    (coverage * rgb + (1.0 - coverage) * background) * gains
+                )
+                foreground_point = srgb_to_oklab(
+                    (coverage * fg0 + (1.0 - coverage) * background) * gains
+                )
+                pair_proxy = min(pair_proxy, float(np.min(pair_values(category_points))))
+                fg0_proxy = min(
+                    fg0_proxy,
+                    float(
+                        np.min(np.linalg.norm(category_points - foreground_point, axis=1)) * 100.0
+                    ),
+                )
+        weakest_three_mean = float(np.mean(np.sort(transformed_pairs)[:3]))
+        materiality_margins = (
+            pair_proxy
+            - baseline["pair_proxy"]
+            - contract["materiality"]["full_bank_1_5px_thin_proxy_delta_e_ok"],
+            fg0_proxy
+            - baseline["fg0_proxy"]
+            - contract["materiality"]["category_fg_0_distinctiveness_delta_e_ok"],
+            weakest_three_mean
+            - baseline["weakest_three_mean"]
+            - contract["materiality"]["selected_weakest_three_dark_cluster_analog_delta_e_ok"],
+        )
+        topology_error = sum(
+            min(_hue_delta(hue, target) for hue in commanded_hues) for target in target_hues
+        )
+        return (
+            min(materiality_margins),
+            sum(min(margin, 0.0) for margin in materiality_margins),
+            pair_proxy,
+            fg0_proxy,
+            weakest_three_mean,
+            float(np.min(transformed_pairs)),
+            float(np.min(commanded_pairs)),
+            hue_gap,
+            -topology_error,
+        )
+
+    current_score = score(current)
+    if current_score is None:
+        raise RuntimeError(f"lane {lane} refinement seed is infeasible")
+    swaps = 0
+    for _ in range(maximum_swaps):
+        best = (current_score, tuple(sorted(hexes[index] for index in current)), current)
+        used = set(current)
+        for position in range(6):
+            for replacement in range(len(catalog)):
+                if replacement in used:
+                    continue
+                proposal = list(current)
+                proposal[position] = replacement
+                proposal_tuple = tuple(proposal)
+                proposal_score = score(proposal_tuple)
+                if proposal_score is None:
+                    continue
+                candidate = (
+                    proposal_score,
+                    tuple(sorted(hexes[index] for index in proposal_tuple)),
+                    proposal_tuple,
+                )
+                best = max(best, candidate)
+        if best[2] == current:
+            break
+        current_score, _, current = best
+        swaps += 1
+    return tuple(sorted(hexes[index] for index in current)), swaps
 
 
 def _permute_roles(
@@ -926,6 +1169,12 @@ def _hard_gate_failures(
         gates["commanded_category_pair_delta_e_ok"],
         metrics["commanded_category_pair"]["binding"],
     )
+    floor(
+        "commanded-minimum-hue-gap",
+        metrics["commanded_hue_topology"]["minimum_circular_gap_degrees"],
+        gates["commanded_minimum_hue_gap_degrees"],
+        metrics["commanded_hue_topology"]["binding"],
+    )
     for name in ("commanded_category_fg_0", "commanded_category_fg_1_fg_2"):
         floor(
             "commanded-category-foreground",
@@ -1089,6 +1338,7 @@ def _candidate_objective(metrics: Mapping[str, Any]) -> tuple[float, ...]:
         _raster_minimum(pair_raster, width="1.5", state="nominal-transformed"),
         _raster_minimum(fg0_raster, width="1.5", state="nominal-transformed"),
         float(metrics["nominal_transformed_j_prime_pair"]["delta_j_prime"]),
+        float(metrics["nominal_transformed_luminance_pair"]["absolute_luminance_difference"]),
         float(metrics["nominal_transformed_solid_category_pair"]["delta_e_ok"]),
         float(metrics["commanded_category_pair"]["delta_e_ok"]),
         _raster_minimum(pair_raster, width="2", state="nominal-transformed"),
@@ -1116,31 +1366,73 @@ def run_optimizer(
     for lane_contract in contract["lanes"]:
         lane = lane_contract["id"]
         admitted = []
-        for support_catalog in support_catalogs:
-            discovered = _discover_bank(support_catalog, lane, inputs, contract)
-            bank, permutation = _permute_roles(discovered, inputs)
-            evaluation = evaluate_bank(bank, inputs, contract)
-            materiality = _materiality_admission(
-                bank, evaluation["metrics"], baseline_metrics, inputs, contract
+        if reduced:
+            search_plans = {
+                "A": (("A", 0.0),),
+                "B": (("C", 10.0),),
+                "C": (("C", 0.0),),
+            }[lane]
+        else:
+            seed_lanes = (lane, "C") if lane == "B" else (lane,)
+            search_plans = tuple(
+                (seed_lane, rotation) for seed_lane in seed_lanes for rotation in (0.0, 10.0, 20.0)
             )
-            if not evaluation["hard_gate_failures"] and _materiality_passes(materiality):
-                admitted.append(
-                    (
-                        _candidate_objective(evaluation["metrics"]),
-                        tuple(bank),
-                        tuple(discovered),
-                        permutation,
-                        evaluation,
-                        materiality,
+        for support_index, support_catalog in enumerate(support_catalogs):
+            for seed_lane, hue_rotation in search_plans:
+                try:
+                    seed = _discover_bank(
+                        support_catalog,
+                        seed_lane,
+                        inputs,
+                        contract,
+                        hue_rotation_degrees=hue_rotation,
                     )
+                    discovered, swaps = _local_refine_bank(
+                        seed,
+                        support_catalog,
+                        lane,
+                        inputs,
+                        contract,
+                        hue_rotation_degrees=hue_rotation,
+                    )
+                except RuntimeError:
+                    continue
+                bank, permutation = _permute_roles(discovered, inputs)
+                evaluation = evaluate_bank(bank, inputs, contract)
+                materiality = _materiality_admission(
+                    bank, evaluation["metrics"], baseline_metrics, inputs, contract
                 )
+                if not evaluation["hard_gate_failures"] and _materiality_passes(materiality):
+                    admitted.append(
+                        (
+                            _candidate_objective(evaluation["metrics"]),
+                            tuple(bank),
+                            tuple(discovered),
+                            permutation,
+                            evaluation,
+                            materiality,
+                            "primary" if support_index == 0 else "coarse-independent",
+                            seed_lane,
+                            hue_rotation,
+                            swaps,
+                        )
+                    )
         if not admitted:
             raise RuntimeError(
                 f"lane {lane} produced no candidate clearing every hard and materiality gate"
             )
-        _, bank, discovered, permutation, evaluation, materiality = max(
-            admitted, key=lambda row: (row[0], row[1])
-        )
+        (
+            _,
+            bank,
+            discovered,
+            permutation,
+            evaluation,
+            materiality,
+            support_name,
+            seed_lane,
+            hue_rotation,
+            swaps,
+        ) = max(admitted, key=lambda row: (row[0], row[1]))
         candidates.append(
             {
                 "candidate_id": p3.sha256_json(
@@ -1152,6 +1444,10 @@ def run_optimizer(
                 ),
                 "lane": lane,
                 "lane_method": lane_contract["method"],
+                "search_support": support_name,
+                "seed_lane": seed_lane,
+                "hue_rotation_degrees": hue_rotation,
+                "local_refinement_swaps": swaps,
                 "broad_anchor_count": lane_contract["broad_anchor_count"],
                 "continuity_anchor_matches": _continuity_anchor_matches(discovered, lane_contract),
                 "discovered_bank": list(discovered),

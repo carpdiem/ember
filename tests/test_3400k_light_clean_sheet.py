@@ -88,6 +88,7 @@ def test_contract_structurally_forbids_historical_search_constraints(contract) -
     assert contract["hard_gates"] == {
         "commanded_category_pair_delta_e_ok": 16.0,
         "commanded_category_foreground_delta_e_ok": 8.0,
+        "commanded_minimum_hue_gap_degrees": 30.0,
         "graphics_contrast_ratio": 3.0,
         "nominal_transformed_category_foreground_delta_e_ok": 5.0,
         "nominal_transformed_category_pair_delta_e_ok": 8.0,
@@ -209,6 +210,7 @@ def test_search_has_three_materially_distinct_lanes_then_role_permutation(result
     )
     for row in candidates:
         assert row["hard_gate_failures"] == []
+        assert row["metrics"]["commanded_hue_topology"]["minimum_circular_gap_degrees"] >= 30.0
         admission = row["materiality_admission"]
         assert admission["policy"] == "deterministic search targets; NOT human floors"
         assert admission["selected_weakest_three_dark_cluster_analog"]["pass"] is True
@@ -277,13 +279,13 @@ def test_objective_maps_2px_then_3px_and_hue_topology_independently(result) -> N
             row["calibrated_delta_e_ok"] += 100.0
     changed_3px = clean._candidate_objective(metrics)
     assert changed_3px != baseline
-    assert changed_3px[6] > baseline[6]
+    assert changed_3px[7] > baseline[7]
 
     metrics = deepcopy(result["candidates"][0]["metrics"])
     metrics["commanded_hue_topology"]["minimum_circular_gap_degrees"] += 10.0
     changed_hue = clean._candidate_objective(metrics)
     assert changed_hue != baseline
-    assert changed_hue[7] > baseline[7]
+    assert changed_hue[8] > baseline[8]
 
 
 @pytest.mark.parametrize("python_flags", [[], ["-O"]], ids=["normal", "optimized"])

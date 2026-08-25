@@ -25,6 +25,7 @@
   "hard_gates": {
     "commanded_category_foreground_delta_e_ok": 8.0,
     "commanded_category_pair_delta_e_ok": 16.0,
+    "commanded_minimum_hue_gap_degrees": 30.0,
     "graphics_contrast_ratio": 3.0,
     "minimum_commanded_oklab_lightness": 0.3,
     "minimum_nominal_transformed_luminance": 0.003,
