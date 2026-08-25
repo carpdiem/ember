@@ -859,13 +859,6 @@ def _search_lane_clique(
                     - margin,
                 )
 
-    vertices = np.flatnonzero(fg_proxy + 1e-12 >= target)
-    if not len(vertices):
-        return None
-    pair_proxy = pair_proxy[np.ix_(vertices, vertices)]
-    commanded = commanded[vertices]
-    transformed = transformed[vertices]
-    hues = hues[vertices]
     commanded_distance = (
         np.linalg.norm(commanded[:, None, :] - commanded[None, :, :], axis=2) * 100.0
     )
@@ -874,75 +867,110 @@ def _search_lane_clique(
     )
     hue_distance = np.abs((hues[:, None] - hues[None, :] + 180.0) % 360.0 - 180.0)
     gates = contract["hard_gates"]
-    graph = (
-        (pair_proxy + 1e-12 >= target)
-        & (commanded_distance + 1e-12 >= gates["commanded_category_pair_delta_e_ok"])
+    hard_graph = (
+        (commanded_distance + 1e-12 >= gates["commanded_category_pair_delta_e_ok"])
         & (transformed_distance + 1e-12 >= gates["nominal_transformed_category_pair_delta_e_ok"])
         & (hue_distance + 1e-12 >= gates["commanded_minimum_hue_gap_degrees"])
     )
-    np.fill_diagonal(graph, False)
-    adjacency: list[int] = []
-    for index in range(len(vertices)):
-        bits = 0
-        for neighbor in np.flatnonzero(graph[index]):
-            bits |= 1 << int(neighbor)
-        adjacency.append(bits)
-    lower = [
-        eligible[int(vertices[index])].commanded_oklab[0] <= 0.45 for index in range(len(vertices))
-    ]
-    calls = 0
+    np.fill_diagonal(hard_graph, False)
 
-    def search(chosen: list[int], candidates: int) -> list[int] | None:
-        nonlocal calls
-        calls += 1
-        if len(chosen) == 6:
-            if lane["id"] != "C" or sum(lower[index] for index in chosen) == 3:
-                return chosen
-            return None
-        needed = 6 - len(chosen)
-        if candidates.bit_count() < needed:
-            return None
-        if lane["id"] == "C":
-            chosen_lower = sum(lower[index] for index in chosen)
-            available = [index for index in range(len(vertices)) if (candidates >> index) & 1]
-            available_lower = sum(lower[index] for index in available)
-            available_upper = len(available) - available_lower
-            if (
-                chosen_lower > 3
-                or chosen_lower + available_lower < 3
-                or len(chosen) - chosen_lower + available_upper < 3
-            ):
-                return None
-        while candidates:
-            options = [index for index in range(len(vertices)) if (candidates >> index) & 1]
-            vertex = max(
-                options,
-                key=lambda index: ((adjacency[index] & candidates).bit_count(), -index),
-            )
-            remaining = candidates & ~(1 << vertex)
-            result = search([*chosen, vertex], remaining & adjacency[vertex])
-            if result is not None:
-                return result
-            candidates = remaining
+    def find_cliques(threshold: float, limit: int) -> tuple[list[list[int]], int, int]:
+        vertices = np.flatnonzero(fg_proxy + 1e-12 >= threshold)
+        if not len(vertices):
+            return [], 0, 0
+        graph = hard_graph[np.ix_(vertices, vertices)] & (
+            pair_proxy[np.ix_(vertices, vertices)] + 1e-12 >= threshold
+        )
+        np.fill_diagonal(graph, False)
+        adjacency: list[int] = []
+        for index in range(len(vertices)):
+            bits = 0
+            for neighbor in np.flatnonzero(graph[index]):
+                bits |= 1 << int(neighbor)
+            adjacency.append(bits)
+        lower = [
+            eligible[int(vertices[index])].commanded_oklab[0] <= 0.45
+            for index in range(len(vertices))
+        ]
+        calls = 0
+        solutions: list[list[int]] = []
+
+        def search(chosen: list[int], candidates: int) -> bool:
+            nonlocal calls
+            calls += 1
+            if len(chosen) == 6:
+                if lane["id"] != "C" or sum(lower[index] for index in chosen) == 3:
+                    solutions.append([int(vertices[index]) for index in chosen])
+                return len(solutions) >= limit
+            needed = 6 - len(chosen)
             if candidates.bit_count() < needed:
-                return None
-        return None
+                return False
+            if lane["id"] == "C":
+                chosen_lower = sum(lower[index] for index in chosen)
+                available = [index for index in range(len(vertices)) if (candidates >> index) & 1]
+                available_lower = sum(lower[index] for index in available)
+                available_upper = len(available) - available_lower
+                if (
+                    chosen_lower > 3
+                    or chosen_lower + available_lower < 3
+                    or len(chosen) - chosen_lower + available_upper < 3
+                ):
+                    return False
+            while candidates:
+                options = [index for index in range(len(vertices)) if (candidates >> index) & 1]
+                vertex = max(
+                    options,
+                    key=lambda index: ((adjacency[index] & candidates).bit_count(), -index),
+                )
+                remaining = candidates & ~(1 << vertex)
+                if search([*chosen, vertex], remaining & adjacency[vertex]):
+                    return True
+                candidates = remaining
+                if candidates.bit_count() < needed:
+                    return False
+            return False
 
-    clique = search([], (1 << len(vertices)) - 1)
-    if clique is None:
+        search([], (1 << len(vertices)) - 1)
+        return solutions, calls, int(np.sum(graph) // 2)
+
+    initial, initial_calls, _ = find_cliques(target, 1)
+    if not initial:
         return None
-    categories = canonical_categories(eligible[int(vertices[index])].hex8 for index in clique)
-    evaluation = evaluate(categories, inputs, contract)
-    if evaluation["hard_gate_failures"] or evaluation["objective"][0] + 1e-12 < target:
-        raise RuntimeError("clique admission disagrees with exact recomputation")
+    finite_pairs = pair_proxy[hard_graph]
+    upper = min(float(np.max(fg_proxy)), float(np.max(finite_pairs)))
+    lower_bound = target
+    total_calls = initial_calls
+    for _ in range(16):
+        midpoint = (lower_bound + upper) / 2.0
+        found, calls, _ = find_cliques(midpoint, 1)
+        total_calls += calls
+        if found:
+            lower_bound = midpoint
+        else:
+            upper = midpoint
+    cliques, calls, edge_count = find_cliques(lower_bound, 24)
+    total_calls += calls
+    if not cliques:
+        raise RuntimeError("maximin clique disappeared at the optimized threshold")
+    finalists = []
+    for clique in cliques:
+        categories = canonical_categories(eligible[index].hex8 for index in clique)
+        evaluation = evaluate(categories, inputs, contract)
+        if evaluation["hard_gate_failures"] or evaluation["objective"][0] + 1e-12 < target:
+            raise RuntimeError("clique admission disagrees with exact recomputation")
+        finalists.append((tuple(evaluation["objective"]), categories, evaluation))
+    _, categories, evaluation = max(finalists, key=lambda row: (row[0], row[1]))
     return categories, {
         "evaluation": evaluation,
         "search": {
-            "algorithm": "deterministic-bitset-target-clique",
-            "target_delta_e_ok": target,
-            "vertex_count": len(vertices),
-            "edge_count": int(np.sum(graph) // 2),
-            "backtracking_calls": calls,
+            "algorithm": "deterministic-bitset-maximin-clique",
+            "materiality_floor_delta_e_ok": target,
+            "optimized_threshold_delta_e_ok": lower_bound,
+            "threshold_iterations": 16,
+            "finalist_clique_count": len(cliques),
+            "vertex_count": len(eligible),
+            "edge_count_at_optimized_threshold": edge_count,
+            "backtracking_calls": total_calls,
             "exact_catalog_local_swaps": False,
         },
     }
