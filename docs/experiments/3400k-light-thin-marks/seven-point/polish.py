@@ -28,7 +28,8 @@ EXPECTED_FILES = ("catalog-summary.json", "results.json")
 MAX_PASSES = 6
 MAX_TOTAL_RUNTIME_SECONDS = 240.0
 MAX_LANE_RUNTIME_SECONDS = 90.0
-MAX_EXACT_EVALUATIONS_PER_LANE = 1 + MAX_PASSES * 6
+MAX_EXACT_FINALISTS_PER_SWEEP = 24
+MAX_EXACT_EVALUATIONS_PER_LANE = 1 + MAX_PASSES * MAX_EXACT_FINALISTS_PER_SWEEP
 MIN_PRIMARY_IMPROVEMENT = 1e-9
 BACKGROUND_NAMES = ("bg_0", "bg_1")
 
@@ -366,6 +367,21 @@ def select_exact_best(rows: Sequence[tuple[Any, ...]]) -> tuple[Any, ...]:
     return max(rows, key=lambda row: (row[0], row[1]))
 
 
+def bounded_primary_ties(
+    proposals: Sequence[tuple[float, int, int, tuple[str, ...]]], remaining: int
+) -> list[tuple[float, int, int, tuple[str, ...]]]:
+    """Dedupe exact-primary ties, prefer canonical maxima, and cap the sweep."""
+
+    if remaining <= 0 or not proposals:
+        return []
+    best_primary = max(row[0] for row in proposals)
+    unique = {
+        proposal[3]: proposal for proposal in proposals if abs(proposal[0] - best_primary) <= 1e-12
+    }
+    ordered = [unique[key] for key in sorted(unique, reverse=True)]
+    return ordered[: min(MAX_EXACT_FINALISTS_PER_SWEEP, remaining)]
+
+
 def polish_lane(
     seed: Mapping[str, Any],
     tables: CatalogTables,
@@ -398,17 +414,11 @@ def polish_lane(
         pair_proxy = catalog_to_bank_proxy(tables, bank_indices)
         proposals, scanned = best_swap_per_slot(tables, contract, lane, bank, pair_proxy)
         proxy_evaluations += scanned
-        if proposals:
-            best_proxy_primary = max(row[0] for row in proposals)
-            unique = {}
-            for proposal in proposals:
-                if abs(proposal[0] - best_proxy_primary) <= 1e-12:
-                    unique[proposal[3]] = proposal
-            proposals = [unique[key] for key in sorted(unique, reverse=True)]
         remaining_exact = MAX_EXACT_EVALUATIONS_PER_LANE - exact_evaluations
-        if len(proposals) > remaining_exact:
+        if remaining_exact <= 0:
             stop_reason = "exact_evaluation_cap"
             break
+        proposals = bounded_primary_ties(proposals, remaining_exact)
         exact_rows = []
         for proxy_primary, slot, catalog_index, candidate_bank in proposals:
             evaluation = seven.evaluate(candidate_bank, inputs, contract)
@@ -551,6 +561,7 @@ def run_polish(*, progress: bool = False) -> dict[str, Any]:
             "lane_runtime_cap_seconds": MAX_LANE_RUNTIME_SECONDS,
             "total_runtime_cap_seconds": MAX_TOTAL_RUNTIME_SECONDS,
             "exact_evaluation_cap_per_lane": MAX_EXACT_EVALUATIONS_PER_LANE,
+            "exact_finalist_cap_per_sweep": MAX_EXACT_FINALISTS_PER_SWEEP,
             "minimum_primary_improvement": MIN_PRIMARY_IMPROVEMENT,
         },
         "seed_source": {

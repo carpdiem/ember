@@ -64,7 +64,8 @@ def test_full_catalog_polish_is_bounded_symmetric_and_monotonic(result, inputs) 
         "pass_cap": 6,
         "lane_runtime_cap_seconds": 90.0,
         "total_runtime_cap_seconds": 240.0,
-        "exact_evaluation_cap_per_lane": 37,
+        "exact_evaluation_cap_per_lane": 145,
+        "exact_finalist_cap_per_sweep": 24,
         "minimum_primary_improvement": 1e-9,
     }
     baseline_frozen = polish.p3.frozen_non_categorical(inputs.baseline)
@@ -74,7 +75,7 @@ def test_full_catalog_polish_is_bounded_symmetric_and_monotonic(result, inputs) 
         assert candidate["primary_improvement_over_seed"] >= 0.0
         assert candidate["hard_gate_failures"] == []
         assert candidate["polish"]["passes_accepted"] <= 6
-        assert candidate["polish"]["exact_evaluation_count"] <= 37
+        assert candidate["polish"]["exact_evaluation_count"] <= 145
         ledger = candidate["polish"]["ledger"]
         assert all(row["after_primary"] > row["before_primary"] for row in ledger)
         family = polish.seven.candidate_family(candidate["categories"], inputs)
@@ -93,6 +94,13 @@ def test_exact_objective_tie_uses_maximum_canonical_category_tuple() -> None:
     higher = (objective, ("#100000", "#300000"), "higher")
     assert polish.select_exact_best([higher, lower]) == higher
     assert polish.select_exact_best([lower, higher]) == higher
+
+
+def test_more_than_24_primary_ties_are_deterministically_truncated_not_aborted() -> None:
+    proposals = [(8.0, index % 6, index, (f"#{index:06X}",)) for index in range(30)]
+    bounded = polish.bounded_primary_ties(proposals, remaining=144)
+    assert len(bounded) == 24
+    assert [row[3] for row in bounded] == sorted([row[3] for row in proposals], reverse=True)[:24]
 
 
 def test_seed_and_result_corruption_reject_with_explicit_exceptions(inputs, contract) -> None:
