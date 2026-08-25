@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "request_sha256", "candidate_id", "serialized_bank_sha256", "input_chain_sha256", "status", "observations", "source_provenance", "replay_receipt", "replay_sha256", "full_image_hash_used", "human_width_capacity"],
   "properties": {
-    "schema_version": {"const": 3},
+    "schema_version": {"const": 4},
     "request_sha256": {"$ref": "#/$defs/hash"},
     "candidate_id": {"$ref": "#/$defs/hash"},
     "serialized_bank_sha256": {"$ref": "#/$defs/hash"},

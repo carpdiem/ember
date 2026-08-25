@@ -1,0 +1,821 @@
+{
+  "artifact_kind": "compact-trusted-frontier-receipt",
+  "baseline": {
+    "candidate_id": "89f6aa0078ce5b425092ccb86ca013d7d9b692c260716342b0cbdbb7e6ca42c9",
+    "failure_count": 83,
+    "hard_floor_status": "REFERENCE_NOT_CANDIDATE",
+    "lineage": null,
+    "pareto": {
+      "commanded_pair_min": 16.63809304383975,
+      "graphics_contrast_min": 2.8795558513774537,
+      "max_commanded_deviation": 0.0,
+      "mean_commanded_deviation": 0.0,
+      "neutral_min": 9.518730110860718,
+      "raster_1_5_min": 7.627912522515658,
+      "raster_2_min": 10.996263425083491,
+      "raster_3_min": 11.401609054497666,
+      "transformed_pair_min": 14.831049664921375
+    },
+    "pareto_frontier_eligible": false,
+    "row_kind": "baseline",
+    "serialized_bank": [
+      "#359984",
+      "#281144",
+      "#A76282",
+      "#6A2600",
+      "#185823",
+      "#445D9B"
+    ],
+    "serialized_bank_sha256": "e0a4e8da3e1bf0f815b14ba2f8d75c479907aa58a3cb2abf4a2d8698f6d67c2b",
+    "source": null,
+    "strict_pareto_improvement": false
+  },
+  "browser_oracle_status": "NOT_RUN",
+  "candidates": [
+    {
+      "candidate_id": "2f841cf76b0705b7b7b7bb7a6543bf4b50af9e88ee9b96c6b7e138abe24d812f",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 12485013394157907679,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "2f841cf76b0705b7b7b7bb7a6543bf4b50af9e88ee9b96c6b7e138abe24d812f"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.998792689757483,
+        "graphics_contrast_min": 3.007529187491193,
+        "max_commanded_deviation": 2.1029735768475013,
+        "mean_commanded_deviation": 1.4486779331482091,
+        "neutral_min": 9.551181997972465,
+        "raster_1_5_min": 7.348061052807244,
+        "raster_2_min": 10.578882089866397,
+        "raster_3_min": 10.948480897298744,
+        "transformed_pair_min": 16.05983880482016
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#2D947E",
+        "#301448",
+        "#A45D7F",
+        "#69250A",
+        "#12541F",
+        "#3A5E99"
+      ],
+      "serialized_bank_sha256": "ed527773fdef44a751a1daaf312dba03634d2d98cfb54f9c0b26530d655c72ad",
+      "source": {
+        "job_index": 1862,
+        "row_position": 12,
+        "shard_descriptor": {
+          "file": "shard-000037.json",
+          "index": 37,
+          "record_count": 50,
+          "sha256": "f6e03c1062b6c52b812e8eb8237a37868982ed3907075461d5c6c6d14681b01f",
+          "start": 1850,
+          "stop": 1900
+        },
+        "source_row_sha256": "a298554751deff7c4c3af33c17fcfccdb2d5f866f7058c499f8777932e3ee7fe"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "19ac839f58c92bf94095e77b176389b5208fb34a1370676d7957c50f859de82a",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 12040085792627241449,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "19ac839f58c92bf94095e77b176389b5208fb34a1370676d7957c50f859de82a"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.6170544714955,
+        "graphics_contrast_min": 3.0393400840330917,
+        "max_commanded_deviation": 2.4030372995851454,
+        "mean_commanded_deviation": 1.7696091981597901,
+        "neutral_min": 9.65637183921692,
+        "raster_1_5_min": 7.684535125898803,
+        "raster_2_min": 10.66821749246259,
+        "raster_3_min": 10.936457370742819,
+        "transformed_pair_min": 15.986413642254451
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#279284",
+        "#2A1045",
+        "#A25E76",
+        "#642505",
+        "#0A521E",
+        "#395B93"
+      ],
+      "serialized_bank_sha256": "7173c8b917f7e2382d7dbda3b66b3bcc7d6d989da17407b20e29980dd523fe89",
+      "source": {
+        "job_index": 3597,
+        "row_position": 47,
+        "shard_descriptor": {
+          "file": "shard-000071.json",
+          "index": 71,
+          "record_count": 50,
+          "sha256": "af6780d77ac2258487479d324afa7a859814af299fdd4eb0ca9016c270e7c639",
+          "start": 3550,
+          "stop": 3600
+        },
+        "source_row_sha256": "8a1fb409537b4e6d4330e55f975829e3ac0efc8f0755706a327b681f38811361"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "4648a9e8c10ea1d90bed18928e91938d796382c2375e8662a99df2f4a8f054b7",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 11576050461828707259,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "4648a9e8c10ea1d90bed18928e91938d796382c2375e8662a99df2f4a8f054b7"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.913640962558958,
+        "graphics_contrast_min": 3.090322049692392,
+        "max_commanded_deviation": 2.533436406704132,
+        "mean_commanded_deviation": 1.8777788709270145,
+        "neutral_min": 9.603751409384955,
+        "raster_1_5_min": 7.151165218181563,
+        "raster_2_min": 10.424282127447508,
+        "raster_3_min": 10.818283866844089,
+        "transformed_pair_min": 15.910751280006053
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#3B947C",
+        "#30164B",
+        "#A05D78",
+        "#652307",
+        "#15531A",
+        "#395B96"
+      ],
+      "serialized_bank_sha256": "7f09dc6561711253e4e6621acd11ce122565c84f1df28548503cb8b627026382",
+      "source": {
+        "job_index": 4087,
+        "row_position": 37,
+        "shard_descriptor": {
+          "file": "shard-000081.json",
+          "index": 81,
+          "record_count": 50,
+          "sha256": "79f3d0f5742a3d6e440fa48275a066051794a5ee3871ad3eb0c0e2464c089240",
+          "start": 4050,
+          "stop": 4100
+        },
+        "source_row_sha256": "00274226febdfc7a27b4547fbb8c5e36d2e5d486aac5e45b5a2fc11d94f91e1e"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "526615169cba4379bfbc28c505e225ec33b1418fbf87860e33a99bc92e9f7fb4",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 6228451094378910873,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "526615169cba4379bfbc28c505e225ec33b1418fbf87860e33a99bc92e9f7fb4"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 17.077531842141727,
+        "graphics_contrast_min": 3.0002236771585924,
+        "max_commanded_deviation": 1.6946630424750566,
+        "mean_commanded_deviation": 1.0502298499511646,
+        "neutral_min": 8.844420120701317,
+        "raster_1_5_min": 7.066168760817645,
+        "raster_2_min": 10.407875231843274,
+        "raster_3_min": 10.841399317567284,
+        "transformed_pair_min": 15.409910501198695
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#3B937F",
+        "#2C113F",
+        "#A35F7C",
+        "#6C2602",
+        "#1A571F",
+        "#3C5C9B"
+      ],
+      "serialized_bank_sha256": "a7b3d8f010e9ff559e2fa3ed5ce7a780f6a71312936ece79cb1fb7423d4fd7bb",
+      "source": {
+        "job_index": 1078,
+        "row_position": 28,
+        "shard_descriptor": {
+          "file": "shard-000021.json",
+          "index": 21,
+          "record_count": 50,
+          "sha256": "86f9de13626bf4a5ed67aa3f32d7773336894635d31cd103acda732a968c697c",
+          "start": 1050,
+          "stop": 1100
+        },
+        "source_row_sha256": "add6556b2d72f593444cab492f79d151f3418fab477339a9ded8b6e1cee67e5e"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "c03a813eae8918ddbabfd56657806e6c2f5d3fc69c292ef3b5955c9d734fd8ed",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 9382895931826650380,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "c03a813eae8918ddbabfd56657806e6c2f5d3fc69c292ef3b5955c9d734fd8ed"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.72920667580417,
+        "graphics_contrast_min": 3.016762457034204,
+        "max_commanded_deviation": 1.6204211233592527,
+        "mean_commanded_deviation": 1.1036534616491642,
+        "neutral_min": 8.989924034245409,
+        "raster_1_5_min": 7.195737817340512,
+        "raster_2_min": 10.175594323446962,
+        "raster_3_min": 10.489454526290187,
+        "transformed_pair_min": 15.281993944345091
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#34947F",
+        "#2C1444",
+        "#A25F7E",
+        "#692506",
+        "#115825",
+        "#3C5B94"
+      ],
+      "serialized_bank_sha256": "523af49c96cb5a7f82ecf91803bd7b927a698e2875e589e59ef2fcf2c97c1150",
+      "source": {
+        "job_index": 3032,
+        "row_position": 32,
+        "shard_descriptor": {
+          "file": "shard-000060.json",
+          "index": 60,
+          "record_count": 50,
+          "sha256": "fae9112fb0da323d3b859dba2483ced1baf5a4f87d40354ce99f858dc4548993",
+          "start": 3000,
+          "stop": 3050
+        },
+        "source_row_sha256": "602318a62bf0055c696241aecfb013339374a93d07181baed4ef7e53dfd78e9b"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "d7173ca6fb71a573775b71276ff983028890079b5d90354c5d2831e09f088293",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 17938293577290269164,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "d7173ca6fb71a573775b71276ff983028890079b5d90354c5d2831e09f088293"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.56213777390666,
+        "graphics_contrast_min": 3.0397273370438755,
+        "max_commanded_deviation": 1.7997178936165616,
+        "mean_commanded_deviation": 1.0491157092793697,
+        "neutral_min": 9.604439147523467,
+        "raster_1_5_min": 7.711676064123017,
+        "raster_2_min": 10.981271839678795,
+        "raster_3_min": 11.33972742434136,
+        "transformed_pair_min": 15.16715908387353
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#39937C",
+        "#2B1044",
+        "#A35C80",
+        "#692501",
+        "#125621",
+        "#3F5B99"
+      ],
+      "serialized_bank_sha256": "0afc16ff057aa8a984e2b9c6674ce2055bb4851e00a4948c9de1c42fdbcf770e",
+      "source": {
+        "job_index": 2823,
+        "row_position": 23,
+        "shard_descriptor": {
+          "file": "shard-000056.json",
+          "index": 56,
+          "record_count": 50,
+          "sha256": "c7247b45209d743d4bb4a04ec330a1ca3fbe1c43a8c8097969ea25f2cd6b5748",
+          "start": 2800,
+          "stop": 2850
+        },
+        "source_row_sha256": "4bee9dcc1f340937827056e514795ecfe0f27e1a1f5cb16227dc3b5b4c91eecf"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "ba08ee6f11d173bc11c4f178fcf85d298e5355dc693d6a22a67150e02b2bf7d3",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 8050003843363406928,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "ba08ee6f11d173bc11c4f178fcf85d298e5355dc693d6a22a67150e02b2bf7d3"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.63658252611914,
+        "graphics_contrast_min": 3.062891138064442,
+        "max_commanded_deviation": 1.8628041206931716,
+        "mean_commanded_deviation": 1.424719347429229,
+        "neutral_min": 9.953682012681284,
+        "raster_1_5_min": 6.763594255776231,
+        "raster_2_min": 10.039650500917483,
+        "raster_3_min": 10.477544892743103,
+        "transformed_pair_min": 14.959207796470187
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#339484",
+        "#271248",
+        "#A25C7C",
+        "#642201",
+        "#1A5423",
+        "#3C5B98"
+      ],
+      "serialized_bank_sha256": "14a7e6165e34b6a9e80136314e23c737bfe26e65f15f6c129b13aed8d60435ef",
+      "source": {
+        "job_index": 3922,
+        "row_position": 22,
+        "shard_descriptor": {
+          "file": "shard-000078.json",
+          "index": 78,
+          "record_count": 50,
+          "sha256": "2dd1b482eb3da7757304625ca8ae07207a689a9d5bdba11a6a201fe10a53f104",
+          "start": 3900,
+          "stop": 3950
+        },
+        "source_row_sha256": "2d4e0f35e44185f593b8ec08beb20e536f30b543fa275d6f015d96ca20b8ca71"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "357124ffe3ad65c080dbc171d8284c00dc9ce7bbf3d698316eb336335a112151",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 9361873779487978546,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "357124ffe3ad65c080dbc171d8284c00dc9ce7bbf3d698316eb336335a112151"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.57006475506729,
+        "graphics_contrast_min": 3.0267934965850403,
+        "max_commanded_deviation": 2.5429195444436563,
+        "mean_commanded_deviation": 1.5653961688970897,
+        "neutral_min": 9.457815376475196,
+        "raster_1_5_min": 6.995614395507808,
+        "raster_2_min": 10.364948672866925,
+        "raster_3_min": 10.820826113148215,
+        "transformed_pair_min": 14.913337984749187
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#339179",
+        "#281649",
+        "#A45C7A",
+        "#641F01",
+        "#1F561C",
+        "#405E9A"
+      ],
+      "serialized_bank_sha256": "af3c737fb6ba295815407dfc113b174f06f87a7fc5304145ad78dc5c4cb89ebe",
+      "source": {
+        "job_index": 4292,
+        "row_position": 42,
+        "shard_descriptor": {
+          "file": "shard-000085.json",
+          "index": 85,
+          "record_count": 50,
+          "sha256": "5368ba14586b9d6826cd0aecd4ab7f90f385067b6332c31a302f27a35b826e0c",
+          "start": 4250,
+          "stop": 4300
+        },
+        "source_row_sha256": "86eaebd543439f2a27d6fc13793dad77d13c2ba8e25face25ab99dbb3578ad90"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "7b6ecbcd10df5d9a8c258399d0d0548af32a707d54067468e0d750327b77fa1a",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 3421557323570942856,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "7b6ecbcd10df5d9a8c258399d0d0548af32a707d54067468e0d750327b77fa1a"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.664349223121466,
+        "graphics_contrast_min": 3.0138034105136207,
+        "max_commanded_deviation": 1.5807956210027039,
+        "mean_commanded_deviation": 1.0096445703047,
+        "neutral_min": 9.343422119651484,
+        "raster_1_5_min": 7.521207525318545,
+        "raster_2_min": 10.525784170409121,
+        "raster_3_min": 10.830856446677966,
+        "transformed_pair_min": 14.7481306782225
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#38947C",
+        "#291244",
+        "#A35E7D",
+        "#6D2608",
+        "#105A29",
+        "#3F5B97"
+      ],
+      "serialized_bank_sha256": "a0adf0c79fc7106213b3982d7e2df8e4c76d5356ef848ea3e94c5d4d91803635",
+      "source": {
+        "job_index": 1898,
+        "row_position": 48,
+        "shard_descriptor": {
+          "file": "shard-000037.json",
+          "index": 37,
+          "record_count": 50,
+          "sha256": "f6e03c1062b6c52b812e8eb8237a37868982ed3907075461d5c6c6d14681b01f",
+          "start": 1850,
+          "stop": 1900
+        },
+        "source_row_sha256": "2dbc6e8eb679471d6c1ec58c37e0a0092400f9d43dee2f7d19094a778b5c36fb"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "7256cdc3e9803e90f66b5766e6702fb2dd2c65735fd7c16b305278962e0f5605",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 10051118834304561949,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "7256cdc3e9803e90f66b5766e6702fb2dd2c65735fd7c16b305278962e0f5605"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.606742184176124,
+        "graphics_contrast_min": 3.0284100219379444,
+        "max_commanded_deviation": 1.5345594019382283,
+        "mean_commanded_deviation": 1.152860905591789,
+        "neutral_min": 9.42352861328529,
+        "raster_1_5_min": 7.670721337403862,
+        "raster_2_min": 10.677331956058547,
+        "raster_3_min": 10.972714336345847,
+        "transformed_pair_min": 14.610685990028191
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#37947D",
+        "#2B1347",
+        "#A25E81",
+        "#6C2906",
+        "#0E5A29",
+        "#3E5A98"
+      ],
+      "serialized_bank_sha256": "eb605340cf2c0e5d050a71e03eadcb3785790672ce2a4b52770730898a0a7269",
+      "source": {
+        "job_index": 3757,
+        "row_position": 7,
+        "shard_descriptor": {
+          "file": "shard-000075.json",
+          "index": 75,
+          "record_count": 50,
+          "sha256": "5e314924c2358e5fee42d7448aaec13d1703729437d011c5134b40d52013deb2",
+          "start": 3750,
+          "stop": 3800
+        },
+        "source_row_sha256": "e8bab23d7aafa40651b02fad13dbeb4a403fac095ec43e0e2e77fac67c859af1"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "cdebcfcf4b1265720f33c837df75e8ef767a4a6b89b8e8f6f44e70d290ce5f33",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 2332027149241881911,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "cdebcfcf4b1265720f33c837df75e8ef767a4a6b89b8e8f6f44e70d290ce5f33"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.612993840797905,
+        "graphics_contrast_min": 3.033298447135164,
+        "max_commanded_deviation": 2.2009606275314746,
+        "mean_commanded_deviation": 1.4141380315669316,
+        "neutral_min": 9.50428302277188,
+        "raster_1_5_min": 7.9090622324323,
+        "raster_2_min": 11.018902944191542,
+        "raster_3_min": 11.316119361222217,
+        "transformed_pair_min": 14.492027024110781
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#2F9283",
+        "#2B1549",
+        "#A15F80",
+        "#692509",
+        "#0C5523",
+        "#3D5A98"
+      ],
+      "serialized_bank_sha256": "f4c7e2a79d4e04ed81da7ac3420de68877caa16add0b321508871ff1ee4b107b",
+      "source": {
+        "job_index": 3662,
+        "row_position": 12,
+        "shard_descriptor": {
+          "file": "shard-000073.json",
+          "index": 73,
+          "record_count": 50,
+          "sha256": "ab37136230a9c632613633cd1864298701481c7dd6590fbc34eeefcd12877cd6",
+          "start": 3650,
+          "stop": 3700
+        },
+        "source_row_sha256": "d8090362cd4d9b14a144528389e61f8dc7b822ee9e3785e4827a4f49bfbf748e"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "d5c55969515fc323c887365020d7d47c4d4e96cd96a889fee7f6c977a5c2f6f2",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 5914729657118254486,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "d5c55969515fc323c887365020d7d47c4d4e96cd96a889fee7f6c977a5c2f6f2"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.518512235309142,
+        "graphics_contrast_min": 3.007868541876765,
+        "max_commanded_deviation": 1.9929072452866563,
+        "mean_commanded_deviation": 1.331120184366917,
+        "neutral_min": 8.907523519165531,
+        "raster_1_5_min": 7.288647913100929,
+        "raster_2_min": 10.854725965796803,
+        "raster_3_min": 11.355673047191987,
+        "transformed_pair_min": 14.179960635014876
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#1C967C",
+        "#2A1342",
+        "#A55C7A",
+        "#69210E",
+        "#215521",
+        "#465B9D"
+      ],
+      "serialized_bank_sha256": "6440c5166f5c9a95274916e7f8297cf1a87061f207e17384062934322efb4c1e",
+      "source": {
+        "job_index": 3503,
+        "row_position": 3,
+        "shard_descriptor": {
+          "file": "shard-000070.json",
+          "index": 70,
+          "record_count": 50,
+          "sha256": "eaedf83142954928eae63ead238e3f97da3df992f7038c1422dbdd811fc44354",
+          "start": 3500,
+          "stop": 3550
+        },
+        "source_row_sha256": "d8666e76e4ba2f12d6c310c520cd339efc518f84c1e3a85fddecc47fa260768f"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "157e8462e3f11e0429d1d13cbdfbb2a288aa6036c8cdd2ecb29e2937eb5e0689",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 13365731172636558229,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "157e8462e3f11e0429d1d13cbdfbb2a288aa6036c8cdd2ecb29e2937eb5e0689"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 17.345956533080468,
+        "graphics_contrast_min": 3.001854617957475,
+        "max_commanded_deviation": 3.220452422687773,
+        "mean_commanded_deviation": 2.047508490294967,
+        "neutral_min": 9.758948823603873,
+        "raster_1_5_min": 8.225496393814781,
+        "raster_2_min": 10.95698442067373,
+        "raster_3_min": 11.173513325296494,
+        "transformed_pair_min": 14.173789695791267
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#289076",
+        "#2B1951",
+        "#A45E76",
+        "#692508",
+        "#045425",
+        "#3C5B95"
+      ],
+      "serialized_bank_sha256": "b3416fb65969dea92cc4a7d76e2e603252060dd0b651f66fa5c1ed47d9ae27d8",
+      "source": {
+        "job_index": 55,
+        "row_position": 5,
+        "shard_descriptor": {
+          "file": "shard-000001.json",
+          "index": 1,
+          "record_count": 50,
+          "sha256": "1ab4ef8844f012a6d9d3d86b04374b2a3c4b7f092ce12d62f578034957ec4042",
+          "start": 50,
+          "stop": 100
+        },
+        "source_row_sha256": "f1019418f140f16eb4f4b5771f24d12e0200af446a07d52f6c98ba667797e150"
+      },
+      "strict_pareto_improvement": false
+    },
+    {
+      "candidate_id": "005015f3e7f4ce8668f61a8db8fc0a7bee6f07cba6dcf523199ec3983ab9e26f",
+      "failure_count": 0,
+      "hard_floor_status": "PASS",
+      "lineage": {
+        "job_seed": 6079022558551045632,
+        "parent_artifact_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+        "parent_candidate_ids": [
+          "005015f3e7f4ce8668f61a8db8fc0a7bee6f07cba6dcf523199ec3983ab9e26f"
+        ],
+        "proposal_mode": "exact-coarse-survivor",
+        "run_seed": 45002
+      },
+      "pareto": {
+        "commanded_pair_min": 16.774106143769128,
+        "graphics_contrast_min": 3.0785428997461928,
+        "max_commanded_deviation": 2.082085700339934,
+        "mean_commanded_deviation": 1.6656696326537974,
+        "neutral_min": 9.075660773632432,
+        "raster_1_5_min": 7.303143299873204,
+        "raster_2_min": 10.343419034590987,
+        "raster_3_min": 10.668552139305566,
+        "transformed_pair_min": 13.944810934191949
+      },
+      "pareto_frontier_eligible": true,
+      "row_kind": "candidate",
+      "serialized_bank": [
+        "#1F9483",
+        "#2D1349",
+        "#A25B7B",
+        "#692812",
+        "#11572D",
+        "#3F5896"
+      ],
+      "serialized_bank_sha256": "3121b9ba1d5a7d5f90222e161fb27e2a379c59be06a3dbc866a87f10d7411611",
+      "source": {
+        "job_index": 1837,
+        "row_position": 37,
+        "shard_descriptor": {
+          "file": "shard-000036.json",
+          "index": 36,
+          "record_count": 50,
+          "sha256": "af7e02c9499fe8d3ee0fb6e187b49df7ec690977d29eaf002ff8879a78353e59",
+          "start": 1800,
+          "stop": 1850
+        },
+        "source_row_sha256": "6c8de88faefb71ad033d5137de69f52a93037046991f4ef42bfd72405a95b8be"
+      },
+      "strict_pareto_improvement": false
+    }
+  ],
+  "frontier_eligibility_policy": "failure-free full recomputation; protected hard floors pass; nondominated with baseline",
+  "frontier_policy_version": "phase3-standard-pareto-v1",
+  "frontier_rows_sha256": "337041fdba19ae5806e9f742c21ae6cf81e3b33dd5778b42c35bb340eb8c616a",
+  "g2_shortlist": [
+    {
+      "candidate_id": "157e8462e3f11e0429d1d13cbdfbb2a288aa6036c8cdd2ecb29e2937eb5e0689",
+      "deterministic_shortlist_delta_e_ok": 0.05,
+      "human_visibility_floor": null,
+      "objective": "maximum-1.5px-improvement",
+      "role": "A"
+    },
+    {
+      "candidate_id": "d7173ca6fb71a573775b71276ff983028890079b5d90354c5d2831e09f088293",
+      "deterministic_shortlist_delta_e_ok": 0.05,
+      "human_visibility_floor": null,
+      "objective": "lowest-commanded-deviation",
+      "role": "B"
+    },
+    {
+      "candidate_id": "19ac839f58c92bf94095e77b176389b5208fb34a1370676d7957c50f859de82a",
+      "deterministic_shortlist_delta_e_ok": 0.05,
+      "human_visibility_floor": null,
+      "objective": "strongest-transformed-pair-minimum",
+      "role": "C"
+    }
+  ],
+  "g2_shortlist_policy": {
+    "deterministic_delta_e_ok": 0.05,
+    "human_visibility_floor": null,
+    "operator": ">",
+    "roles": [
+      "maximum-1.5px-improvement",
+      "lowest-commanded-deviation",
+      "strongest-transformed-pair-minimum"
+    ],
+    "target_metric": "raster_1_5_min"
+  },
+  "human_width_capacity": null,
+  "input_chain_sha256": "55763c938efd8f91dae75d2b20a4c2187ed3e91934180cf8cf4fc2500649feea",
+  "parent": {
+    "canonical_sha256": "87e212adee06be91627daf72ef6b78c471bef60eec8830cb2dab27bc2eb7c5bf",
+    "deduped_survivor_count": 5000,
+    "file": "combined-survivors.json",
+    "file_sha256": "59a5ebe3181974f27c80d2e6734b6bf9b47e4faee2270666a7384fdfc166a79b",
+    "seed_runs": [
+      44001,
+      44002,
+      44003,
+      44004
+    ],
+    "source_manifest_hashes": [
+      "c4b8bbfc45b7e58a8e10c0911e8a280965270177b4e83e9f512552e1a75a6f2e",
+      "c7730526706779597ca0e5c364c399ae70b89250dde8c216b233daed4e6be7b4",
+      "8441f94eadd1b424904529e31a4590967e5cd5f0c8080be0bbec7f45ccf5ecf3",
+      "0423dd303984eb90b6da188bb0ad506de56f63b48496a87dd918d2bb3101d9f4"
+    ]
+  },
+  "pareto_dimensions": [
+    "transformed_pair_min",
+    "commanded_pair_min",
+    "neutral_min",
+    "graphics_contrast_min",
+    "raster_1_5_min",
+    "raster_2_min",
+    "raster_3_min",
+    "max_commanded_deviation",
+    "mean_commanded_deviation"
+  ],
+  "production_promotion_authorized": false,
+  "refine": {
+    "completed_jobs": 5000,
+    "directory": "refined-5000",
+    "manifest_canonical_sha256": "b7f388092b7409ab8c2da3848e43dff360b0f6cd87f64c0eeb21de3e38799703",
+    "manifest_file": "search-manifest.json",
+    "manifest_file_sha256": "f911b587e6f41c8a17a00956888ba2c6321dacf83ba29ecf94581faefa6b08b1",
+    "root_run_seed": 45002,
+    "run_binding_sha256": "cfa1720f994554bbfbb2c76f33d41f96b5317e694c733d37c9e8c4c2d01ae3dd",
+    "shard_descriptor_count": 100,
+    "shard_descriptors_sha256": "f4c6158ac2ad2afc75ee780af863c91e1e290e516d50119bbb8b4c1130b3e882"
+  },
+  "schema_version": 1,
+  "search_contract_sha256": "b8c1148f9fbf5f8b71ff47f67a895e93a0e70e33f42132c2476fbe34563b3c63",
+  "source_engine_commit": "bab62038f80a407923af075957990de2d18546f7",
+  "source_engine_file_sha256": "ac4d70fdcc75407c525947dc20951767e813c3280c7a45fd09a65b532f07128a",
+  "strict_pareto_improvement_informative": true
+}

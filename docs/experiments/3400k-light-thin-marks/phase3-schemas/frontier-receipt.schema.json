@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase3-frontier-receipt.schema.json",
+  "title": "Compact trusted Phase 3 frontier receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "artifact_kind", "source_engine_commit", "source_engine_file_sha256", "frontier_policy_version", "input_chain_sha256", "search_contract_sha256", "parent", "refine", "baseline", "candidates", "pareto_dimensions", "frontier_eligibility_policy", "strict_pareto_improvement_informative", "g2_shortlist_policy", "g2_shortlist", "frontier_rows_sha256", "browser_oracle_status", "human_width_capacity", "production_promotion_authorized"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "artifact_kind": {"const": "compact-trusted-frontier-receipt"},
+    "source_engine_commit": {"const": "bab62038f80a407923af075957990de2d18546f7"},
+    "source_engine_file_sha256": {"$ref": "#/$defs/hash"},
+    "frontier_policy_version": {"const": "phase3-standard-pareto-v1"},
+    "input_chain_sha256": {"$ref": "#/$defs/hash"},
+    "search_contract_sha256": {"$ref": "#/$defs/hash"},
+    "parent": {"type": "object"},
+    "refine": {"type": "object"},
+    "baseline": {"$ref": "#/$defs/summary"},
+    "candidates": {"type": "array", "minItems": 14, "maxItems": 14, "uniqueItems": true, "items": {"$ref": "#/$defs/summary"}},
+    "pareto_dimensions": {"const": ["transformed_pair_min", "commanded_pair_min", "neutral_min", "graphics_contrast_min", "raster_1_5_min", "raster_2_min", "raster_3_min", "max_commanded_deviation", "mean_commanded_deviation"]},
+    "frontier_eligibility_policy": {"const": "failure-free full recomputation; protected hard floors pass; nondominated with baseline"},
+    "strict_pareto_improvement_informative": {"const": true},
+    "g2_shortlist_policy": {"type": "object"},
+    "g2_shortlist": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true},
+    "frontier_rows_sha256": {"$ref": "#/$defs/hash"},
+    "browser_oracle_status": {"const": "NOT_RUN"},
+    "human_width_capacity": {"type": "null"},
+    "production_promotion_authorized": {"const": false}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "bank": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string", "pattern": "^#[0-9A-F]{6}$"}},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidate_id", "row_kind", "serialized_bank", "serialized_bank_sha256", "pareto", "failure_count", "hard_floor_status", "strict_pareto_improvement", "pareto_frontier_eligible", "source", "lineage"],
+      "properties": {
+        "candidate_id": {"$ref": "#/$defs/hash"},
+        "row_kind": {"enum": ["baseline", "candidate"]},
+        "serialized_bank": {"$ref": "#/$defs/bank"},
+        "serialized_bank_sha256": {"$ref": "#/$defs/hash"},
+        "pareto": {"type": "object"},
+        "failure_count": {"type": "integer", "minimum": 0},
+        "hard_floor_status": {"enum": ["REFERENCE_NOT_CANDIDATE", "PASS"]},
+        "strict_pareto_improvement": {"type": "boolean"},
+        "pareto_frontier_eligible": {"type": "boolean"},
+        "source": {"type": ["object", "null"]},
+        "lineage": {"type": ["object", "null"]}
+      }
+    }
+  }
+}

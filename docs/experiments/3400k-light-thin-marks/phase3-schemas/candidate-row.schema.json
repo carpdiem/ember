@@ -4,7 +4,7 @@
   "title": "Exact-Hex8 Phase 3 categorical candidate row",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "row_kind", "candidate_id", "bank_kind", "role_order", "serialized_bank", "serialized_bank_sha256", "input_chain_sha256", "search_contract_sha256", "evaluation_stage", "cheap", "primary", "full", "raster_proxy", "pareto", "failures", "strict_pareto_improvement", "cvd", "browser_oracle_status"],
+  "required": ["schema_version", "row_kind", "candidate_id", "bank_kind", "role_order", "serialized_bank", "serialized_bank_sha256", "input_chain_sha256", "search_contract_sha256", "evaluation_stage", "cheap", "primary", "full", "raster_proxy", "pareto", "failures", "strict_pareto_improvement", "pareto_frontier_eligible", "cvd", "browser_oracle_status"],
   "dependentRequired": {"run_seed": ["job_index", "job_seed", "proposal_mode", "parent_artifact_sha256", "parent_candidate_ids"], "job_index": ["run_seed", "job_seed", "proposal_mode", "parent_artifact_sha256", "parent_candidate_ids"], "job_seed": ["run_seed", "job_index", "proposal_mode", "parent_artifact_sha256", "parent_candidate_ids"], "proposal_mode": ["run_seed", "job_index", "job_seed", "parent_artifact_sha256", "parent_candidate_ids"], "parent_artifact_sha256": ["run_seed", "job_index", "job_seed", "proposal_mode", "parent_candidate_ids"], "parent_candidate_ids": ["run_seed", "job_index", "job_seed", "proposal_mode", "parent_artifact_sha256"]},
   "properties": {
     "schema_version": {"const": 1},
@@ -24,6 +24,7 @@
     "pareto": {"$ref": "#/$defs/pareto"},
     "failures": {"type": "array", "items": {"$ref": "#/$defs/failure"}},
     "strict_pareto_improvement": {"type": "boolean"},
+    "pareto_frontier_eligible": {"type": "boolean"},
     "cvd": {"type": "object", "additionalProperties": false, "required": ["report_only", "used_as_gate", "metrics"], "properties": {"report_only": {"const": true}, "used_as_gate": {"const": false}, "metrics": {"type": "object", "additionalProperties": false, "maxProperties": 0}}},
     "browser_oracle_status": {"const": "NOT_RUN"},
     "run_seed": {"type": "integer", "minimum": 0},

@@ -77,10 +77,13 @@ _REPLAY_CACHE: set[str] = set()
 SEARCH_ALGORITHM_VERSION = "phase3-survivor-driven-v3"
 SEARCH_MANIFEST_SCHEMA_VERSION = 3
 COARSE_ARTIFACT_SCHEMA_VERSION = 3
-FRONTIER_SCHEMA_VERSION = 3
-BROWSER_SCHEMA_VERSION = 3
+FRONTIER_SCHEMA_VERSION = 4
+BROWSER_SCHEMA_VERSION = 4
 APPROVAL_SCHEMA_VERSION = 2
 SEARCH_CONTRACT_SCHEMA_VERSION = 1
+FRONTIER_POLICY_VERSION = "phase3-standard-pareto-v1"
+G2_SHORTLIST_DELTA_E_OK = 0.05
+TRUSTED_PHASE3_SEARCH_HEAD = "bab62038f80a407923af075957990de2d18546f7"
 MAX_COARSE_SURVIVORS = 5_000
 MIN_REFINE_CANDIDATES = 500
 
@@ -97,6 +100,9 @@ _BROWSER_REQUEST_KEYS = {
     "frontier_rows_sha256",
     "parent_artifact_sha256",
     "frontier_rank",
+    "shortlist_role",
+    "deterministic_shortlist_delta_e_ok",
+    "human_visibility_floor",
     "mask_set",
     "requested_roles",
     "requested_role_observations",
@@ -174,6 +180,7 @@ _CANDIDATE_BASE_KEYS = {
     "pareto",
     "failures",
     "strict_pareto_improvement",
+    "pareto_frontier_eligible",
     "cvd",
     "browser_oracle_status",
 }
@@ -1323,6 +1330,7 @@ def evaluate_candidate(
         "pareto": pareto,
         "failures": failures,
         "strict_pareto_improvement": False,
+        "pareto_frontier_eligible": False,
         "cvd": {
             "report_only": True,
             "used_as_gate": False,
@@ -1354,6 +1362,8 @@ def validate_candidate_row(
         expected = evaluate_candidate(row["serialized_bank"], inputs, contract, stage=actual_stage)
         if not isinstance(row["strict_pareto_improvement"], bool):
             raise TypeError("candidate strict Pareto flag is invalid")
+        if not isinstance(row["pareto_frontier_eligible"], bool):
+            raise TypeError("candidate frontier eligibility flag is invalid")
         expected_strict = False
         if actual_stage == "full" and expected["row_kind"] == "candidate":
             baseline = evaluate_candidate(_baseline_bank(inputs), inputs, contract, stage="full")
@@ -1361,6 +1371,7 @@ def validate_candidate_row(
                 expected, baseline
             ) and is_strict_pareto_improvement(expected["pareto"], baseline["pareto"])
         expected["strict_pareto_improvement"] = expected_strict
+        expected["pareto_frontier_eligible"] = row["pareto_frontier_eligible"]
         if canonical_json({key: row[key] for key in _CANDIDATE_BASE_KEYS}) != canonical_json(
             expected
         ):
@@ -1399,6 +1410,18 @@ def is_strict_pareto_improvement(
     return no_regression and strict
 
 
+def dominates(left: Mapping[str, Any], right: Mapping[str, Any]) -> bool:
+    """Return standard Pareto dominance across quality and deviation dimensions."""
+    left_metrics, right_metrics = left["pareto"], right["pareto"]
+    nonworse = all(left_metrics[key] >= right_metrics[key] for key in _MAXIMIZE) and all(
+        left_metrics[key] <= right_metrics[key] for key in _MINIMIZE
+    )
+    better = any(left_metrics[key] > right_metrics[key] for key in _MAXIMIZE) or any(
+        left_metrics[key] < right_metrics[key] for key in _MINIMIZE
+    )
+    return nonworse and better
+
+
 def dedupe_candidate_rows(rows: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
     chosen: dict[str, dict[str, Any]] = {}
     for raw in rows:
@@ -1432,35 +1455,41 @@ def _protected_hard_gates_nonregressed(
     return True
 
 
+def _protected_hard_floors_pass(candidate: Mapping[str, Any]) -> bool:
+    """Require the full recomputation and its declared hard floors, not baseline parity."""
+    return (
+        candidate.get("evaluation_stage") == "full"
+        and candidate.get("full") is not None
+        and not candidate.get("failures")
+    )
+
+
 def pareto_front(
     rows: Iterable[Mapping[str, Any]], baseline: Mapping[str, Any]
 ) -> list[dict[str, Any]]:
-    feasible = [dict(row) for row in dedupe_candidate_rows(rows) if not row.get("failures")]
+    feasible = [
+        dict(row)
+        for row in dedupe_candidate_rows(rows)
+        if _protected_hard_floors_pass(row)
+        and canonical_bank(row["serialized_bank"]) != canonical_bank(baseline["serialized_bank"])
+    ]
     baseline_metrics = baseline["pareto"]
     for row in feasible:
         row["strict_pareto_improvement"] = _protected_hard_gates_nonregressed(
             row, baseline
         ) and is_strict_pareto_improvement(row["pareto"], baseline_metrics)
-    eligible = [row for row in feasible if row["strict_pareto_improvement"]]
-
-    def dominates(left: Mapping[str, Any], right: Mapping[str, Any]) -> bool:
-        lm, rm = left["pareto"], right["pareto"]
-        nonworse = all(lm[key] >= rm[key] for key in _MAXIMIZE) and all(
-            lm[key] <= rm[key] for key in _MINIMIZE
-        )
-        better = any(lm[key] > rm[key] for key in _MAXIMIZE) or any(
-            lm[key] < rm[key] for key in _MINIMIZE
-        )
-        return nonworse and better
 
     anchor = dict(baseline)
     anchor["strict_pareto_improvement"] = False
-    dominance_pool = [anchor, *eligible]
+    anchor["pareto_frontier_eligible"] = False
+    dominance_pool = [anchor, *feasible]
     front = [
         row
-        for row in eligible
+        for row in feasible
         if not any(dominates(other, row) for other in dominance_pool if other is not row)
     ]
+    for row in front:
+        row["pareto_frontier_eligible"] = True
     ranked = sorted(
         front,
         key=lambda row: (
@@ -1470,6 +1499,72 @@ def pareto_front(
         ),
     )
     return [anchor, *[row for row in ranked if row["candidate_id"] != anchor["candidate_id"]]]
+
+
+def deterministic_g2_shortlist(
+    frontier_rows: Sequence[Mapping[str, Any]],
+    *,
+    excluded_candidate_ids: Iterable[str] = (),
+    require_three: bool = True,
+) -> list[dict[str, Any]]:
+    """Select three distinct target-improving frontier tradeoffs deterministically."""
+    if not frontier_rows or frontier_rows[0].get("row_kind") != "baseline":
+        raise ValueError("G2 shortlist requires baseline first")
+    baseline = frontier_rows[0]
+    excluded = set(excluded_candidate_ids)
+    threshold = baseline["pareto"]["raster_1_5_min"] + G2_SHORTLIST_DELTA_E_OK
+    eligible = [
+        dict(row)
+        for row in frontier_rows[1:]
+        if row.get("pareto_frontier_eligible") is True
+        and row["candidate_id"] not in excluded
+        and row["pareto"]["raster_1_5_min"] > threshold
+    ]
+    objectives = (
+        (
+            "A",
+            "maximum-1.5px-improvement",
+            lambda row: (-row["pareto"]["raster_1_5_min"], row["candidate_id"]),
+        ),
+        (
+            "B",
+            "lowest-commanded-deviation",
+            lambda row: (
+                row["pareto"]["max_commanded_deviation"],
+                row["pareto"]["mean_commanded_deviation"],
+                row["candidate_id"],
+            ),
+        ),
+        (
+            "C",
+            "strongest-transformed-pair-minimum",
+            lambda row: (-row["pareto"]["transformed_pair_min"], row["candidate_id"]),
+        ),
+    )
+    selected: list[dict[str, Any]] = []
+    used: set[str] = set()
+    for role, objective, key in objectives:
+        candidate = next(
+            (row for row in sorted(eligible, key=key) if row["candidate_id"] not in used),
+            None,
+        )
+        if candidate is None:
+            if require_three:
+                raise ValueError(
+                    "fewer than three distinct G2 target-improving frontier rows remain"
+                )
+            break
+        used.add(candidate["candidate_id"])
+        selected.append(
+            {
+                "role": role,
+                "objective": objective,
+                "candidate_id": candidate["candidate_id"],
+                "deterministic_shortlist_delta_e_ok": G2_SHORTLIST_DELTA_E_OK,
+                "human_visibility_floor": None,
+            }
+        )
+    return selected
 
 
 def local_gain_refinement(
@@ -1571,8 +1666,10 @@ def validate_browser_oracle_request(
     if request_kind == "frontier-candidate":
         if isinstance(rank, bool) or not isinstance(rank, int) or rank < 1:
             raise StaleArtifactError("browser request frontier rank is invalid")
+        if request.get("shortlist_role") not in {"A", "B", "C"}:
+            raise StaleArtifactError("browser request shortlist role is invalid")
     elif request_kind == "baseline-reference":
-        if rank != 0:
+        if rank != 0 or request.get("shortlist_role") != "REFERENCE":
             raise StaleArtifactError("baseline reference must use frontier rank zero")
     else:
         raise StaleArtifactError("browser request kind is invalid")
@@ -1588,6 +1685,8 @@ def validate_browser_oracle_request(
         raise StaleArtifactError("browser request role-observation enumeration is tampered")
     if (
         request.get("full_image_hash_used") is not False
+        or request.get("deterministic_shortlist_delta_e_ok") != G2_SHORTLIST_DELTA_E_OK
+        or request.get("human_visibility_floor") is not None
         or request.get("human_width_capacity") is not None
     ):
         raise StaleArtifactError("browser request makes a forbidden image/human-capacity claim")
@@ -1635,6 +1734,7 @@ def build_browser_oracle_request(
         if finalist_rank != 0:
             raise ValueError("baseline reference rank must be zero")
         request_kind = "baseline-reference"
+        shortlist_role = "REFERENCE"
     else:
         ranked = frontier_payload["ranked_candidate_ids"]
         if (
@@ -1644,10 +1744,16 @@ def build_browser_oracle_request(
             or canonical_bank(candidate["serialized_bank"]) == _baseline_bank(inputs)
         ):
             raise StaleArtifactError("browser candidates must be failure-free full evaluations")
+        if candidate.get("pareto_frontier_eligible") is not True:
+            raise StaleArtifactError("browser candidate is not Pareto frontier eligible")
         if finalist_rank < 1 or finalist_rank > len(ranked):
             raise ValueError("finalist_rank is outside the exact frontier")
         if ranked[finalist_rank - 1] != candidate["candidate_id"]:
             raise StaleArtifactError("candidate/rank is not bound to the exact frontier")
+        shortlist = {row["candidate_id"]: row["role"] for row in frontier_payload["g2_shortlist"]}
+        shortlist_role = shortlist.get(candidate["candidate_id"])
+        if shortlist_role is None:
+            raise StaleArtifactError("browser candidate is not in the deterministic G2 shortlist")
         request_kind = "frontier-candidate"
     if canonical_json(candidate) != canonical_json(rows_payload["rows"][finalist_rank]):
         raise StaleArtifactError("candidate artifact differs from its exact frontier row")
@@ -1664,6 +1770,9 @@ def build_browser_oracle_request(
         "frontier_rows_sha256": sha256_json(rows_payload),
         "parent_artifact_sha256": frontier_payload["parent_artifact_sha256"],
         "frontier_rank": finalist_rank,
+        "shortlist_role": shortlist_role,
+        "deterministic_shortlist_delta_e_ok": G2_SHORTLIST_DELTA_E_OK,
+        "human_visibility_floor": None,
         "mask_set": {
             "file": INPUT_FILENAMES["raster_masks"],
             "sha256": inputs.source_sha256["raster_masks"],
@@ -1792,6 +1901,7 @@ def schema_bundle_sha256(inputs: Phase3Inputs) -> str:
         "browser-oracle-result.schema.json",
         "candidate-row.schema.json",
         "frontier-manifest.schema.json",
+        "frontier-receipt.schema.json",
         "search-contract.schema.json",
     }
     if {path.name for path in paths} != expected:
@@ -2600,7 +2710,12 @@ def validate_frontier_manifest(
         "frontier_rows_sha256",
         "pareto_dimensions",
         "rank_policy",
+        "frontier_policy_version",
+        "frontier_eligibility_policy",
         "strict_pareto_requires_no_protected_regression",
+        "strict_pareto_improvement_informative",
+        "g2_shortlist_policy",
+        "g2_shortlist",
         "sampled_not_continuous",
         "seed_runs",
         "browser_oracle_status",
@@ -2681,9 +2796,9 @@ def validate_frontier_manifest(
             if (
                 row["row_kind"] != "candidate"
                 or row["failures"]
-                or row["strict_pareto_improvement"] is not True
+                or row["pareto_frontier_eligible"] is not True
             ):
-                raise ValueError("frontier candidate is not a failure-free strict improvement")
+                raise ValueError("frontier candidate is not a failure-free eligible tradeoff")
         ranked = [row["candidate_id"] for row in rows[1:]]
         candidate_ids = [rows[0]["candidate_id"], *ranked]
         if manifest["baseline_candidate_id"] != rows[0]["candidate_id"]:
@@ -2696,11 +2811,34 @@ def validate_frontier_manifest(
             raise ValueError("frontier Pareto dimensions are invalid")
         if (
             manifest["rank_policy"]
-            != "worst-state/pair/geometry, then aggregate, then commanded deviation"
+            != "maximize quality, minimize deviation, deterministic candidate ID tie-break"
         ):
             raise ValueError("frontier rank policy is invalid")
+        if manifest["frontier_policy_version"] != FRONTIER_POLICY_VERSION:
+            raise ValueError("frontier policy version is stale")
+        if (
+            manifest["frontier_eligibility_policy"]
+            != "failure-free full recomputation; protected hard floors pass; nondominated with baseline"
+        ):
+            raise ValueError("frontier eligibility policy is invalid")
         if manifest["strict_pareto_requires_no_protected_regression"] is not True:
-            raise ValueError("frontier protected-regression policy is weakened")
+            raise ValueError("strict Pareto information policy is weakened")
+        if manifest["strict_pareto_improvement_informative"] is not True:
+            raise ValueError("strict Pareto status must remain informative")
+        if manifest["g2_shortlist_policy"] != {
+            "target_metric": "raster_1_5_min",
+            "operator": ">",
+            "deterministic_delta_e_ok": G2_SHORTLIST_DELTA_E_OK,
+            "human_visibility_floor": None,
+            "roles": [
+                "maximum-1.5px-improvement",
+                "lowest-commanded-deviation",
+                "strongest-transformed-pair-minimum",
+            ],
+        }:
+            raise ValueError("G2 shortlist policy is invalid")
+        if manifest["g2_shortlist"] != deterministic_g2_shortlist(rows, require_three=False):
+            raise ValueError("G2 shortlist differs from deterministic frontier selection")
         if manifest["sampled_not_continuous"] is not True:
             raise ValueError("frontier sampled-minimum claim is invalid")
         if manifest["seed_runs"] != parent["seed_runs"]:
@@ -3147,8 +3285,25 @@ def run_search(
             "ranked_candidate_ids": ranked_ids,
             "frontier_rows_sha256": sha256_json(rows_artifact),
             "pareto_dimensions": list(PARETO_DIMENSIONS),
-            "rank_policy": "worst-state/pair/geometry, then aggregate, then commanded deviation",
+            "rank_policy": "maximize quality, minimize deviation, deterministic candidate ID tie-break",
+            "frontier_policy_version": FRONTIER_POLICY_VERSION,
+            "frontier_eligibility_policy": (
+                "failure-free full recomputation; protected hard floors pass; nondominated with baseline"
+            ),
             "strict_pareto_requires_no_protected_regression": True,
+            "strict_pareto_improvement_informative": True,
+            "g2_shortlist_policy": {
+                "target_metric": "raster_1_5_min",
+                "operator": ">",
+                "deterministic_delta_e_ok": G2_SHORTLIST_DELTA_E_OK,
+                "human_visibility_floor": None,
+                "roles": [
+                    "maximum-1.5px-improvement",
+                    "lowest-commanded-deviation",
+                    "strongest-transformed-pair-minimum",
+                ],
+            },
+            "g2_shortlist": deterministic_g2_shortlist(rows, require_three=False),
             "sampled_not_continuous": True,
             "seed_runs": parent_payload["seed_runs"],
             "browser_oracle_status": "NOT_RUN",

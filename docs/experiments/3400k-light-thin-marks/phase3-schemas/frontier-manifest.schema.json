@@ -4,9 +4,9 @@
   "title": "Phase 3 full-evaluated frontier manifest",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_kind", "algorithm_version", "input_chain_sha256", "search_contract_sha256", "parent_artifact_sha256", "parent_source_manifest_hashes", "source_search_manifest", "frontier_rows_file", "baseline_candidate_id", "candidate_ids", "ranked_candidate_ids", "frontier_rows_sha256", "pareto_dimensions", "rank_policy", "strict_pareto_requires_no_protected_regression", "sampled_not_continuous", "seed_runs", "browser_oracle_status", "human_width_capacity"],
+  "required": ["schema_version", "artifact_kind", "algorithm_version", "input_chain_sha256", "search_contract_sha256", "parent_artifact_sha256", "parent_source_manifest_hashes", "source_search_manifest", "frontier_rows_file", "baseline_candidate_id", "candidate_ids", "ranked_candidate_ids", "frontier_rows_sha256", "pareto_dimensions", "rank_policy", "frontier_policy_version", "frontier_eligibility_policy", "strict_pareto_requires_no_protected_regression", "strict_pareto_improvement_informative", "g2_shortlist_policy", "g2_shortlist", "sampled_not_continuous", "seed_runs", "browser_oracle_status", "human_width_capacity"],
   "properties": {
-    "schema_version": {"const": 3},
+    "schema_version": {"const": 4},
     "artifact_kind": {"const": "full-evaluated-frontier"},
     "algorithm_version": {"const": "phase3-survivor-driven-v3"},
     "input_chain_sha256": {"$ref": "#/$defs/hash"},
@@ -20,8 +20,13 @@
     "ranked_candidate_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/hash"}},
     "frontier_rows_sha256": {"$ref": "#/$defs/hash"},
     "pareto_dimensions": {"const": ["transformed_pair_min", "commanded_pair_min", "neutral_min", "graphics_contrast_min", "raster_1_5_min", "raster_2_min", "raster_3_min", "max_commanded_deviation", "mean_commanded_deviation"]},
-    "rank_policy": {"const": "worst-state/pair/geometry, then aggregate, then commanded deviation"},
+    "rank_policy": {"const": "maximize quality, minimize deviation, deterministic candidate ID tie-break"},
+    "frontier_policy_version": {"const": "phase3-standard-pareto-v1"},
+    "frontier_eligibility_policy": {"const": "failure-free full recomputation; protected hard floors pass; nondominated with baseline"},
     "strict_pareto_requires_no_protected_regression": {"const": true},
+    "strict_pareto_improvement_informative": {"const": true},
+    "g2_shortlist_policy": {"$ref": "#/$defs/shortlistPolicy"},
+    "g2_shortlist": {"type": "array", "maxItems": 3, "uniqueItems": true, "items": {"$ref": "#/$defs/shortlistRow"}},
     "sampled_not_continuous": {"const": true},
     "seed_runs": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}},
     "browser_oracle_status": {"const": "NOT_RUN"},
@@ -29,6 +34,8 @@
   },
   "$defs": {
     "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "fileHash": {"type": "object", "additionalProperties": false, "required": ["file", "sha256"], "properties": {"file": {"type": "string", "pattern": "^[^/]+$"}, "sha256": {"$ref": "#/$defs/hash"}}}
+    "fileHash": {"type": "object", "additionalProperties": false, "required": ["file", "sha256"], "properties": {"file": {"type": "string", "pattern": "^[^/]+$"}, "sha256": {"$ref": "#/$defs/hash"}}},
+    "shortlistPolicy": {"type": "object", "additionalProperties": false, "required": ["target_metric", "operator", "deterministic_delta_e_ok", "human_visibility_floor", "roles"], "properties": {"target_metric": {"const": "raster_1_5_min"}, "operator": {"const": ">"}, "deterministic_delta_e_ok": {"const": 0.05}, "human_visibility_floor": {"type": "null"}, "roles": {"const": ["maximum-1.5px-improvement", "lowest-commanded-deviation", "strongest-transformed-pair-minimum"]}}},
+    "shortlistRow": {"type": "object", "additionalProperties": false, "required": ["role", "objective", "candidate_id", "deterministic_shortlist_delta_e_ok", "human_visibility_floor"], "properties": {"role": {"enum": ["A", "B", "C"]}, "objective": {"enum": ["maximum-1.5px-improvement", "lowest-commanded-deviation", "strongest-transformed-pair-minimum"]}, "candidate_id": {"$ref": "#/$defs/hash"}, "deterministic_shortlist_delta_e_ok": {"const": 0.05}, "human_visibility_floor": {"type": "null"}}}
   }
 }

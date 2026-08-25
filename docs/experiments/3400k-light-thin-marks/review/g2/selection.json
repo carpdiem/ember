@@ -1,0 +1,17 @@
+{
+  "allowed": [
+    "A",
+    "B",
+    "C"
+  ],
+  "candidate_ids": {
+    "A": "157e8462e3f11e0429d1d13cbdfbb2a288aa6036c8cdd2ecb29e2937eb5e0689",
+    "B": "d7173ca6fb71a573775b71276ff983028890079b5d90354c5d2831e09f088293",
+    "C": "19ac839f58c92bf94095e77b176389b5208fb34a1370676d7957c50f859de82a"
+  },
+  "human_width_capacity": null,
+  "production_promotion_authorized": false,
+  "schema_version": 1,
+  "selection": null,
+  "status": "AWAITING_MICHAEL_SELECTION"
+}

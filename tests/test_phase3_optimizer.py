@@ -315,6 +315,128 @@ def test_no_regression_required_for_pareto_claim() -> None:
     assert p3.is_strict_pareto_improvement(candidate, baseline) is True
 
 
+def _synthetic_frontier_row(
+    candidate_id: str,
+    bank_last_byte: int,
+    pareto: dict,
+    *,
+    failures: list | None = None,
+    baseline: bool = False,
+) -> dict:
+    full_row = {
+        "id": "sample",
+        "pair_min_cam16_ucs": pareto["transformed_pair_min"],
+        "neutral_min_cam16_ucs": pareto["neutral_min"],
+        "background_policy": "gate",
+        "graphics_contrast": pareto["graphics_contrast_min"],
+    }
+    bank = [f"#{index:02X}{index:02X}{index:02X}" for index in range(1, 6)] + [
+        f"#{bank_last_byte:02X}{bank_last_byte:02X}{bank_last_byte:02X}"
+    ]
+    return {
+        "candidate_id": candidate_id,
+        "serialized_bank_sha256": f"{bank_last_byte:064x}",
+        "serialized_bank": bank,
+        "row_kind": "baseline" if baseline else "candidate",
+        "evaluation_stage": "full",
+        "full": {"rows": [full_row]},
+        "pareto": dict(pareto),
+        "failures": list(failures or []),
+        "strict_pareto_improvement": False,
+        "pareto_frontier_eligible": False,
+    }
+
+
+def test_standard_pareto_tradeoff_is_frontier_eligible() -> None:
+    metrics = {
+        "transformed_pair_min": 10.0,
+        "commanded_pair_min": 10.0,
+        "neutral_min": 10.0,
+        "graphics_contrast_min": 3.0,
+        "raster_1_5_min": 8.0,
+        "raster_2_min": 9.0,
+        "raster_3_min": 10.0,
+        "max_commanded_deviation": 0.0,
+        "mean_commanded_deviation": 0.0,
+    }
+    baseline = _synthetic_frontier_row("baseline", 16, metrics, baseline=True)
+    tradeoff_metrics = dict(metrics)
+    tradeoff_metrics["raster_1_5_min"] = 8.5
+    tradeoff_metrics["transformed_pair_min"] = 9.5
+    tradeoff_metrics["max_commanded_deviation"] = 1.0
+    tradeoff_metrics["mean_commanded_deviation"] = 0.5
+    tradeoff = _synthetic_frontier_row("tradeoff", 17, tradeoff_metrics)
+    rows = p3.pareto_front([tradeoff], baseline)
+    assert [row["candidate_id"] for row in rows] == ["baseline", "tradeoff"]
+    assert rows[1]["pareto_frontier_eligible"] is True
+    assert rows[1]["strict_pareto_improvement"] is False
+
+
+def test_baseline_dominated_and_hard_floor_failure_are_frontier_ineligible() -> None:
+    metrics = {
+        "transformed_pair_min": 10.0,
+        "commanded_pair_min": 10.0,
+        "neutral_min": 10.0,
+        "graphics_contrast_min": 3.0,
+        "raster_1_5_min": 8.0,
+        "raster_2_min": 9.0,
+        "raster_3_min": 10.0,
+        "max_commanded_deviation": 0.0,
+        "mean_commanded_deviation": 0.0,
+    }
+    baseline = _synthetic_frontier_row("baseline", 16, metrics, baseline=True)
+    dominated_metrics = dict(metrics)
+    dominated_metrics["raster_1_5_min"] = 7.9
+    dominated_metrics["max_commanded_deviation"] = 1.0
+    dominated = _synthetic_frontier_row("dominated", 17, dominated_metrics)
+    failed_metrics = dict(metrics)
+    failed_metrics["raster_1_5_min"] = 9.0
+    failed = _synthetic_frontier_row(
+        "failed", 18, failed_metrics, failures=[{"gate": "protected-floor"}]
+    )
+    rows = p3.pareto_front([dominated, failed], baseline)
+    assert [row["candidate_id"] for row in rows] == ["baseline"]
+
+
+def test_deterministic_shortlist_roles_dedupe_and_use_target_delta() -> None:
+    base_metrics = {
+        "transformed_pair_min": 10.0,
+        "commanded_pair_min": 10.0,
+        "neutral_min": 10.0,
+        "graphics_contrast_min": 3.0,
+        "raster_1_5_min": 8.0,
+        "raster_2_min": 9.0,
+        "raster_3_min": 10.0,
+        "max_commanded_deviation": 0.0,
+        "mean_commanded_deviation": 0.0,
+    }
+    baseline = _synthetic_frontier_row("baseline", 16, base_metrics, baseline=True)
+    baseline["pareto_frontier_eligible"] = False
+    candidates = []
+    for index, (target, deviation, transformed) in enumerate(
+        ((9.0, 2.0, 12.0), (8.8, 1.0, 11.0), (8.7, 1.5, 13.0), (8.04, 0.5, 14.0)),
+        start=1,
+    ):
+        values = dict(base_metrics)
+        values.update(
+            raster_1_5_min=target,
+            max_commanded_deviation=deviation,
+            mean_commanded_deviation=deviation / 2,
+            transformed_pair_min=transformed,
+        )
+        row = _synthetic_frontier_row(f"candidate-{index}", 16 + index, values)
+        row["pareto_frontier_eligible"] = True
+        candidates.append(row)
+    shortlist = p3.deterministic_g2_shortlist([baseline, *candidates])
+    assert [(row["role"], row["candidate_id"]) for row in shortlist] == [
+        ("A", "candidate-1"),
+        ("B", "candidate-2"),
+        ("C", "candidate-3"),
+    ]
+    assert all(row["deterministic_shortlist_delta_e_ok"] == 0.05 for row in shortlist)
+    assert all(row["human_visibility_floor"] is None for row in shortlist)
+
+
 def test_authentic_frontier_builds_reference_request_and_replays_browser_rows(
     inputs, contract, authentic_pipeline
 ) -> None:
@@ -332,6 +454,9 @@ def test_authentic_frontier_builds_reference_request_and_replays_browser_rows(
     )
     assert request["schema_version"] == p3.BROWSER_SCHEMA_VERSION
     assert request["request_kind"] == "baseline-reference"
+    assert request["shortlist_role"] == "REFERENCE"
+    assert request["deterministic_shortlist_delta_e_ok"] == 0.05
+    assert request["human_visibility_floor"] is None
     assert len(request["requested_role_observations"]) == 25_920
     result = authentic_browser_result(request, inputs)
     p3.validate_browser_oracle_result(result, request, inputs, contract)
@@ -633,6 +758,7 @@ def test_baseline_conservation_and_all_pareto_dimensions(inputs, contract) -> No
     assert row["row_kind"] == "baseline"
     assert row["serialized_bank"] == list(baseline_bank(inputs))
     assert row["strict_pareto_improvement"] is False
+    assert row["pareto_frontier_eligible"] is False
     assert set(row["pareto"]) == set(p3.PARETO_DIMENSIONS)
     assert row["pareto"]["max_commanded_deviation"] == 0.0
     assert row["pareto"]["mean_commanded_deviation"] == 0.0
@@ -647,6 +773,7 @@ def test_contracts_are_closed_and_forbid_categorical_line() -> None:
         "browser-oracle-result.schema.json",
         "candidate-row.schema.json",
         "frontier-manifest.schema.json",
+        "frontier-receipt.schema.json",
         "search-contract.schema.json",
     ]
     serialized = "\n".join(path.read_text() for path in paths)

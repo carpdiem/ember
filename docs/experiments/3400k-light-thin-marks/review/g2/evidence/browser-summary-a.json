@@ -1,0 +1,2517 @@
+{
+  "artifact_kind": "g2-browser-evidence-summary",
+  "browser_residual_acceptance": {
+    "engineering_metric": "Oklab Euclidean distance x100 (Delta E OK)",
+    "global_pooled_correlation": 0.99986985,
+    "global_pooled_mae_delta_e_ok": 0.04251737,
+    "global_pooled_max_delta_e_ok": 0.64786425,
+    "global_pooled_p95_delta_e_ok": 0.27527061,
+    "local_correlations_diagnostic_only": [
+      {
+        "background": "bg_0",
+        "correlation": 0.99973196,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01498258,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99931946,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01886539,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99975165,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01699696,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99921972,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02360345,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.9996439,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02716118,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99852936,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.04136186,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99936558,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02083805,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99976839,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02900152,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99985494,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01043155,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99970005,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01519133,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99969547,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01620068,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99907194,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.03661318,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99961696,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02029354,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99948738,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0228704,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99983959,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02172663,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99968287,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01593538,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99903072,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02289331,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99986689,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0100689,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99919353,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0245222,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99966027,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02328376,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99860987,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.03248266,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99930426,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02309621,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99965623,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.03503945,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99980193,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0162177,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99945675,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02330055,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99963609,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01794073,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.9993387,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.03075067,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99943141,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02796616,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99944196,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02681857,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99980793,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02185536,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99958266,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01698548,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99907456,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02196295,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.9998657,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01097004,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99930995,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02134959,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99965266,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0234189,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99872278,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02550438,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99929945,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02194764,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99966564,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.03320879,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99978466,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01517113,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99968712,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01680188,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99964433,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01568631,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99921852,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02916276,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99948854,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02608859,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99944866,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0262326,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99982159,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01991165,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "commanded"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99900365,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01401907,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99916373,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01955524,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99931534,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01763808,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99767665,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0374159,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99944325,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02393075,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99814658,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.03831845,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99963419,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0152632,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99938077,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.24406542,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99976297,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01646478,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99914257,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02345803,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99970233,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01524421,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99757628,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.24763301,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99915624,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.1395038,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99821564,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.21773166,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99975066,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.15231943,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.27527061,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.99175148,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.28179319,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.15410348,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.24382532,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_0",
+        "correlation": 0.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.16826148,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99892497,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01287397,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99903216,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0210286,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99944935,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01496475,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99827511,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02964374,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99926433,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02782251,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99812163,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02857872,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99948835,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02185477,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99928533,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.25434316,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99976154,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01573528,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99899776,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02148073,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99963918,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01835618,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99717925,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.25208576,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99913639,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.14378146,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99797489,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.2221523,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99968682,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.15460113,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.27527061,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.99175148,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.28179319,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.15410348,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.24382532,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_1",
+        "correlation": 0.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.16826148,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99898942,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01148482,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99937228,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0149203,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99921216,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.0187769,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99853165,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02291842,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99931605,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02912024,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.9983563,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02536294,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99958853,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01684731,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99913178,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.24148154,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99975151,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01659709,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99923593,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.02217689,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99965073,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.01579824,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99675653,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.24875532,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99863991,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.1507928,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99827622,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.20735107,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99964151,
+        "dpr": 1,
+        "mae_delta_e_ok": 0.15336654,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.27527061,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.0,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.99175148,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.28179319,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.15410348,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 1.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.24382532,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "state": "transformed"
+      },
+      {
+        "background": "bg_2",
+        "correlation": 0.0,
+        "dpr": 2,
+        "mae_delta_e_ok": 0.16826148,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "state": "transformed"
+      }
+    ],
+    "maximum_gate_pair_background_mae_delta_e_ok": 0.75,
+    "maximum_global_pooled_mae_delta_e_ok": 0.75,
+    "minimum_global_pooled_correlation": 0.95,
+    "observed_gate_pair_background_mae_max_delta_e_ok": 0.14132738,
+    "pair_background": [
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00509316,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00674729,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00608248,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.01071599,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00897258,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.01399316,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00633997,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.1372483,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00472343,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00678746,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00552223,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.14132738,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.07805167,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.1213466,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_0",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.08514661,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00505939,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.0077134,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00439632,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00951242,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00897509,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.01072337,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00789412,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.1401136,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00561147,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00786432,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.00637433,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.1410798,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.08015034,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.1228163,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_1",
+        "background_policy": "gate",
+        "mae_delta_e_ok": 0.08556992,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.00499985,
+        "roles": [
+          "cat.five",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.0064773,
+        "roles": [
+          "cat.four",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.00522405,
+        "roles": [
+          "cat.four",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.00777419,
+        "roles": [
+          "cat.one",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.00922673,
+        "roles": [
+          "cat.one",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.00893313,
+        "roles": [
+          "cat.one",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.00681302,
+        "roles": [
+          "cat.one",
+          "cat.three"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.1375334,
+        "roles": [
+          "cat.one",
+          "cat.two"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.00557902,
+        "roles": [
+          "cat.three",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.00684531,
+        "roles": [
+          "cat.three",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.0055292,
+        "roles": [
+          "cat.three",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.14021606,
+        "roles": [
+          "cat.two",
+          "cat.five"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.08105191,
+        "roles": [
+          "cat.two",
+          "cat.four"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.12011406,
+        "roles": [
+          "cat.two",
+          "cat.six"
+        ],
+        "status": "PASS"
+      },
+      {
+        "background": "bg_2",
+        "background_policy": "report-only",
+        "mae_delta_e_ok": 0.08501176,
+        "roles": [
+          "cat.two",
+          "cat.three"
+        ],
+        "status": "PASS"
+      }
+    ],
+    "status": "PASS"
+  },
+  "candidate_id": "157e8462e3f11e0429d1d13cbdfbb2a288aa6036c8cdd2ecb29e2937eb5e0689",
+  "capture": {
+    "browser_seconds": 87.239,
+    "browser_status": {
+      "mode": "launched",
+      "status": "healthy"
+    },
+    "chunks": 204,
+    "tiles": 25920,
+    "total_seconds": 106.611
+  },
+  "human_width_capacity": null,
+  "minimum_pair_by_width": {
+    "1.5": {
+      "background": "bg_0",
+      "case_id": "planned-17445",
+      "observed_delta_e_ok": 9.03845244,
+      "roles": [
+        "cat.five",
+        "cat.six"
+      ],
+      "state": "transformed"
+    },
+    "2": {
+      "background": "bg_0",
+      "case_id": "planned-19350",
+      "observed_delta_e_ok": 11.69848465,
+      "roles": [
+        "cat.five",
+        "cat.six"
+      ],
+      "state": "transformed"
+    },
+    "3": {
+      "background": "bg_0",
+      "case_id": "planned-19815",
+      "observed_delta_e_ok": 11.91310598,
+      "roles": [
+        "cat.five",
+        "cat.six"
+      ],
+      "state": "transformed"
+    }
+  },
+  "observations": {
+    "bytes": 14599312,
+    "count": 25920,
+    "file": "browser-observations-a.json",
+    "sha256": "e6c09868d34c110470d886818c81e00fa8ff9f9db6f73b8775a1b4dd9d259135"
+  },
+  "pairs": {
+    "bytes": 4356926,
+    "count": 32400,
+    "file": "browser-pairs-a.json",
+    "sha256": "59ecf78d5c0469462786f3c28888d309cb6ea972b27bdd827dfd9011ab70127d"
+  },
+  "production_promotion_authorized": false,
+  "request": {
+    "file": "browser-request-a.json",
+    "sha256": "036ce6fa4cb83b36107436a6b0f8b0c9cdf45080e3c4bde408bb3e078a8fcadd"
+  },
+  "result": {
+    "file": "browser-result-a.json",
+    "sha256": "0b398b3842a80e18be37ed356c22a02f932ef9af1ebbf9260e0608d4c5b6667d"
+  },
+  "schema_version": 1,
+  "shortlist_role": "A",
+  "status": "PASS"
+}

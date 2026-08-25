@@ -16,7 +16,11 @@ The frozen current schema-14 `3400k-light` payload reproduces a thin-mark identi
 
 The review specimens cover actual `bg_0` and `bg_1`; `bg_2` is metrics/report-only. They include 1.5, 2, and 3 CSS px marks; DPR 1 and 2 validation; horizontal, diagonal, and curved geometry; solid, dashed, and dotted strokes; crossings; short legends; endpoint markers; sparklines; and deterministic fake Financial Cockpit and Thesis Baskets-style panels. No consumer repository or private data is imported.
 
-This checkpoint does **not** optimize colors, alter a canonical source, claim device calibration, or reuse the dark CAM16-UCS `L_A=8, Y_b=3` conditions. Phase 2B observed all 32,400 planned rows in real Chromium with no unsupported geometry. Global pooled correlation was 0.99998140, pooled MAE 0.00836871 ΔE_OK, and worst gate pair/background MAE 0.01483597 ΔE_OK. The browser machinery therefore authorizes Phase 3 candidate search. Human floors and width capacity remain `UNKNOWN/UNPROVEN`; the preregistered study and G2/G3 gates remain mandatory before production promotion.
+This checkpoint does **not** optimize colors, alter a canonical source, claim device calibration, or reuse the dark CAM16-UCS `L_A=8, Y_b=3` conditions. Phase 2B observed all 32,400 planned rows in real Chromium with no unsupported geometry. Global pooled correlation was 0.99998140, pooled MAE 0.00836871 ΔE_OK, and worst gate pair/background MAE was 0.01483597 ΔE_OK. The browser machinery therefore authorizes Phase 3 candidate search. Human floors and width capacity remain `UNKNOWN/UNPROVEN`; the preregistered human study remains required before final capacity or production promotion.
+
+## G2 finalist review
+
+Phase 3 produced three exact-Hex8 target-improving tradeoffs. Baseline and all three finalists passed fresh Chromium capture and independent pair reconstruction. Review the responsive [G2 comparison](review/g2/index.html) and [decision report](review/g2/report.md). Status remains `AWAITING_MICHAEL_SELECTION`; production values and exports are unchanged.
 
 ## Reproduce
 
