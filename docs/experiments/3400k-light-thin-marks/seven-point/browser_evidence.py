@@ -82,15 +82,15 @@ _REQUEST_KEYS = {
     "human_width_capacity",
     "production_promotion_authorized",
 }
-_BINDING_KEYS = {
+_BASE_BINDING_KEYS = {
     "input_chain_sha256",
     "fixed_fg0",
     "search_contract_sha256",
     "search_artifacts",
     "optimizer_source",
     "polish_source",
-    "warm_pair_source",
 }
+_WARM_BINDING_KEYS = _BASE_BINDING_KEYS | {"warm_pair_source"}
 _SOURCE_KEYS = {"file", "sha256", "commit"}
 _ARTIFACT_KEYS = {"file", "sha256", "canonical_sha256"}
 _COUNTS_KEYS = {
@@ -254,15 +254,20 @@ def _artifact_binding(
         artifacts.append(
             {"file": name, "sha256": sha256_file(path), "canonical_sha256": sha256_json(payload)}
         )
-    return {
+    binding = {
         "input_chain_sha256": p3.input_chain_sha256(inputs),
         "fixed_fg0": contract["fixed"]["fg_0"],
         "search_contract_sha256": sha256_json(contract),
         "search_artifacts": artifacts,
         "optimizer_source": _source_binding("optimizer.py"),
         "polish_source": _source_binding("polish.py"),
-        "warm_pair_source": _source_binding("warm_pair.py"),
     }
+    kind = _load_object(directory / "results.json", "seven-point results artifact").get(
+        "artifact_kind"
+    )
+    if kind == "seven-point-warm-pair-refinement":
+        binding["warm_pair_source"] = _source_binding("warm_pair.py")
+    return binding
 
 
 def _validate_binding(
@@ -271,10 +276,17 @@ def _validate_binding(
     inputs: p3.Phase3Inputs,
     contract: Mapping[str, Any],
 ) -> None:
-    row = exact_keys(binding, _BINDING_KEYS, "evidence binding")
+    kind = _load_object(
+        Path(search_artifacts) / "results.json", "seven-point results artifact"
+    ).get("artifact_kind")
+    expected_keys = (
+        _WARM_BINDING_KEYS if kind == "seven-point-warm-pair-refinement" else _BASE_BINDING_KEYS
+    )
+    row = exact_keys(binding, expected_keys, "evidence binding")
     exact_keys(row["optimizer_source"], _SOURCE_KEYS, "optimizer source")
     exact_keys(row["polish_source"], _SOURCE_KEYS, "polish source")
-    exact_keys(row["warm_pair_source"], _SOURCE_KEYS, "warm-pair source")
+    if kind == "seven-point-warm-pair-refinement":
+        exact_keys(row["warm_pair_source"], _SOURCE_KEYS, "warm-pair source")
     artifacts = row["search_artifacts"]
     require(
         isinstance(artifacts, list) and len(artifacts) == len(SEARCH_FILES),
