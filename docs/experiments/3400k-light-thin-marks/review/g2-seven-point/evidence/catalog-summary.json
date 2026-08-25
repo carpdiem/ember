@@ -1,0 +1,20 @@
+{
+  "canonical_hex8_reparsed_before_metrics": true,
+  "exact_hex8_count": 7184,
+  "lane_eligible_counts": {
+    "A": 6339,
+    "B": 5419,
+    "C": 6566
+  },
+  "mode": "full",
+  "polish_seed_file": "smoke-seeds.json",
+  "polish_seed_sha256": "a07f7e952ec08a8adf638923420fee8ae984226c329f55eec86298e5ec5caf90",
+  "schema_version": 1,
+  "source": "validated clean-sheet exact-Hex catalog",
+  "source_support": {
+    "chroma_bins_occupied": 7,
+    "hue_bins_occupied": 24,
+    "lightness_bins_occupied": 8,
+    "non_baseline_fraction": 1.0
+  }
+}

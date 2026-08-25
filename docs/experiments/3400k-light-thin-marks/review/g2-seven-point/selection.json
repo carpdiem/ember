@@ -1,0 +1,26 @@
+{
+  "allowed_selections": [
+    "A",
+    "B",
+    "C"
+  ],
+  "artifact_kind": "seven-point-human-selection",
+  "candidate_ids": {
+    "A": "112973505132c0022657620e5f20eb34b808c7004e8924b49de96bd50351768b",
+    "B": "dab61ac75d5cdc6515205446d6d81524da131b5b3b32991ec425b733a3f5116a",
+    "C": "22c53c2ac6f861d4778553eb094a6fa899201877086c92c1adbb5e9e68ccf6b5"
+  },
+  "evidence_file_count": 22,
+  "fixed_fg0": "#342F2C",
+  "human_1_5px_capacity": "UNKNOWN",
+  "production_promotion": false,
+  "recommendation": "A",
+  "report_source": {
+    "commit": "ca7ce804dec214a2362cee78e683c8bfd263c349",
+    "file": "report.py",
+    "sha256": "0c0a55467adad92db815e5bc1fd432e7af83ea5da1dd7b2993aa64eedcb8aa33"
+  },
+  "schema_version": 1,
+  "selection": null,
+  "status": "AWAITING_MICHAEL_SELECTION"
+}
