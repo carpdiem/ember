@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import importlib.util
 import itertools
 import json
 import math
@@ -30,11 +31,23 @@ for directory in (HERE, EXPERIMENT):
     if str(directory) not in sys.path:
         sys.path.insert(0, str(directory))
 
+
+def _load_local(name: str, filename: str):
+    spec = importlib.util.spec_from_file_location(name, HERE / filename)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {filename}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
 import g1_browser_validate as g1
 import g2_package as g2
-import optimizer as seven
 import phase3_optimizer as p3
-import polish as polish_search
+
+seven = _load_local("seven_point_optimizer_for_browser", "optimizer.py")
+polish_search = _load_local("seven_point_polish_for_browser", "polish.py")
 
 SCHEMA_VERSION = 1
 BASE_COUNT = 2_160
