@@ -1,0 +1,92 @@
+{
+  "artifact_policy": {
+    "closed_filenames": [
+      "catalog-summary.json",
+      "results.json"
+    ],
+    "explicit_external_directory_only": true,
+    "production": false
+  },
+  "authorization": {
+    "approved_g1_head": "922ba7faa45ccdb56e95356750d353c7602da78a",
+    "input_chain_sha256": "55763c938efd8f91dae75d2b20a4c2187ed3e91934180cf8cf4fc2500649feea",
+    "require_independent_replay": true
+  },
+  "benchmark": {
+    "browser_worst_all_21_1_5px_delta_e_ok": 7.30273837,
+    "recompute_from": "review/g2-clean-sheet/evidence/candidates.json",
+    "source_lane": "C"
+  },
+  "exploration": {
+    "chroma": [0.04, 0.14],
+    "exact_catalog": "canonical Hex8 reparsed before every gate and metric",
+    "hue_degrees": [0.0, 360.0],
+    "lightness": [0.3, 0.64]
+  },
+  "fixed": {
+    "fg_0": "#342F2C",
+    "frozen_non_categorical_sha256": "f80e8be537db7e696acc49ee74833244527388ac5a83d500a09164ee675157d8",
+    "policy": "all surfaces, foregrounds, terminal, sequential, and dark palettes remain byte-for-byte frozen"
+  },
+  "hard_gates": {
+    "commanded_category_foreground_delta_e_ok": 8.0,
+    "commanded_category_pair_delta_e_ok": 16.0,
+    "commanded_minimum_hue_gap_degrees": 30.0,
+    "graphics_contrast_ratio": 3.0,
+    "nominal_transformed_category_foreground_delta_e_ok": 5.0,
+    "nominal_transformed_category_pair_delta_e_ok": 8.0
+  },
+  "lanes": [
+    {
+      "id": "A",
+      "lightness": [0.34, 0.60],
+      "method": "single-mid-band"
+    },
+    {
+      "id": "B",
+      "lightness": [0.42, 0.64],
+      "method": "bright-band"
+    },
+    {
+      "id": "C",
+      "lower_count": 3,
+      "lower_lightness": [0.3, 0.45],
+      "method": "two-tier-lattice",
+      "upper_count": 3,
+      "upper_lightness": [0.48, 0.64]
+    }
+  ],
+  "materiality": {
+    "minimum_proxy_improvement_delta_e_ok": 1.0,
+    "policy": "deterministic shortlist target; NOT human floor"
+  },
+  "objective": {
+    "pair_count": 21,
+    "primary": "raw minimum calibrated nominal-transformed 1.5px raster-proxy separation over the unordered fixed-fg0-plus-six-category set",
+    "secondary_after_exact_primary_equality": [
+      "transformed_2px_all_21_minimum",
+      "transformed_3px_all_21_minimum",
+      "nominal_transformed_solid_all_21_minimum",
+      "commanded_solid_all_21_minimum",
+      "gain_sensitivity_all_21_minimum"
+    ],
+    "symmetric_lane_directions": true
+  },
+  "raster": {
+    "backgrounds": ["bg_0", "bg_1"],
+    "calibrated_error_margin_delta_e_ok": 0.75,
+    "mask_count": 720,
+    "mask_file": "raster-masks.json",
+    "widths_css_px": [1.5, 2.0, 3.0]
+  },
+  "selection": null,
+  "set": {
+    "category_count": 6,
+    "fixed_color_count": 1,
+    "role_permutation": false,
+    "semantics": null,
+    "serialization": "ascending exact commanded Oklab hue, tie canonical Hex8",
+    "unordered": true
+  },
+  "schema_version": 1
+}
