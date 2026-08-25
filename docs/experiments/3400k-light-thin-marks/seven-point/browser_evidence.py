@@ -480,10 +480,10 @@ def _expected_candidates(
     if results["artifact_kind"] == "seven-point-warm-pair-refinement":
         rows = results["browser_roles"]
         require(
-            list(rows) == ["reference", "benchmark-c", "a", "b", "c"],
-            "warm role order differs",
+            set(rows) == {"reference", "benchmark-c", "a", "b", "c"},
+            "warm role set differs",
         )
-        return {role: dict(rows[role]) for role in rows}
+        return {role: dict(rows[role]) for role in ("reference", "benchmark-c", "a", "b", "c")}
     candidates = results["candidates"]
     require([row["lane"] for row in candidates] == ["A", "B", "C"], "candidate lanes differ")
     rows = {row["lane"].lower(): row for row in candidates}
