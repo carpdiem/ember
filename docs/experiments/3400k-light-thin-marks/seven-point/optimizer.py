@@ -806,59 +806,61 @@ def _search_lane(
     return categories, {"evaluation": evaluation, "search": metadata}
 
 
-def _search_lane_clique(
+def _shared_proxy_tables(
     catalog: Sequence[SearchColor],
-    lane: Mapping[str, Any],
     inputs: p3.Phase3Inputs,
     contract: Mapping[str, Any],
-    benchmark_primary: float,
-    *,
-    smoke: bool,
-) -> tuple[tuple[str, ...], dict[str, Any]] | None:
-    """Solve exact target feasibility as a deterministic six-clique problem."""
+    target: float,
+) -> dict[str, Any]:
+    """Compute the expensive raster and hard-pair tables once for all lanes."""
 
-    del smoke
-    target = benchmark_primary + float(
-        contract["materiality"]["minimum_proxy_improvement_delta_e_ok"]
-    )
-    eligible = [row for row in catalog if _lane_color_eligible(row, lane)]
-    rgb = np.asarray([p3.parse_exact_hex8(row.hex8) for row in eligible])
-    commanded = np.asarray([row.commanded_oklab for row in eligible])
-    transformed = np.asarray([row.transformed_oklab for row in eligible])
-    hues = np.asarray([row.hue_degrees for row in eligible])
     surfaces = inputs.baseline["family"]["surfaces"]
     fg0 = p3.parse_exact_hex8(surfaces["fg_0"])
     gains = np.asarray(inputs.viewing["transform"]["gains"], dtype=float)
     margin = float(contract["raster"]["calibrated_error_margin_delta_e_ok"])
-    pair_proxy = np.full((len(eligible), len(eligible)), math.inf)
-    fg_proxy = np.full(len(eligible), math.inf)
-    for geometry, lanes in p3._mask_summaries(inputs).items():
-        if geometry[0] != 1.5:
-            continue
-        for background_name in BACKGROUND_NAMES:
-            background = p3.parse_exact_hex8(surfaces[background_name])
-            points = [
-                srgb_to_oklab((lanes[index] * rgb + (1.0 - lanes[index]) * background) * gains)
-                for index in (0, 1)
-            ]
-            fg_points = [
-                srgb_to_oklab((lanes[index] * fg0 + (1.0 - lanes[index]) * background) * gains)
-                for index in (0, 1)
-            ]
-            for left_lane, right_lane in ((0, 1), (1, 0)):
-                distances = np.sqrt(
-                    np.sum(
-                        (points[left_lane][:, None, :] - points[right_lane][None, :, :]) ** 2,
-                        axis=2,
-                    )
+    all_rgb = np.asarray([p3.parse_exact_hex8(row.hex8) for row in catalog])
+    fg_proxy = np.full(len(catalog), math.inf)
+    contexts = [
+        (lanes, p3.parse_exact_hex8(surfaces[background_name]))
+        for geometry, lanes in p3._mask_summaries(inputs).items()
+        if geometry[0] == 1.5
+        for background_name in BACKGROUND_NAMES
+    ]
+    for lanes, background in contexts:
+        points = [
+            srgb_to_oklab((lanes[index] * all_rgb + (1.0 - lanes[index]) * background) * gains)
+            for index in (0, 1)
+        ]
+        fg_points = [
+            srgb_to_oklab((lanes[index] * fg0 + (1.0 - lanes[index]) * background) * gains)
+            for index in (0, 1)
+        ]
+        for left_lane, right_lane in ((0, 1), (1, 0)):
+            fg_proxy = np.minimum(
+                fg_proxy,
+                np.linalg.norm(points[left_lane] - fg_points[right_lane], axis=1) * 100.0 - margin,
+            )
+    active_indices = np.flatnonzero(fg_proxy + 1e-12 >= target)
+    if len(active_indices) < CATEGORY_COUNT:
+        raise RuntimeError("fewer than six catalog colors clear the fg0 materiality floor")
+    active_rgb = all_rgb[active_indices]
+    pair_proxy = np.full((len(active_indices), len(active_indices)), math.inf)
+    for lanes, background in contexts:
+        points = [
+            srgb_to_oklab((lanes[index] * active_rgb + (1.0 - lanes[index]) * background) * gains)
+            for index in (0, 1)
+        ]
+        for left_lane, right_lane in ((0, 1), (1, 0)):
+            distances = np.sqrt(
+                np.sum(
+                    (points[left_lane][:, None, :] - points[right_lane][None, :, :]) ** 2,
+                    axis=2,
                 )
-                pair_proxy = np.minimum(pair_proxy, distances * 100.0 - margin)
-                fg_proxy = np.minimum(
-                    fg_proxy,
-                    np.linalg.norm(points[left_lane] - fg_points[right_lane], axis=1) * 100.0
-                    - margin,
-                )
-
+            )
+            pair_proxy = np.minimum(pair_proxy, distances * 100.0 - margin)
+    commanded = np.asarray([catalog[int(index)].commanded_oklab for index in active_indices])
+    transformed = np.asarray([catalog[int(index)].transformed_oklab for index in active_indices])
+    hues = np.asarray([catalog[int(index)].hue_degrees for index in active_indices])
     commanded_distance = (
         np.linalg.norm(commanded[:, None, :] - commanded[None, :, :], axis=2) * 100.0
     )
@@ -873,6 +875,43 @@ def _search_lane_clique(
         & (hue_distance + 1e-12 >= gates["commanded_minimum_hue_gap_degrees"])
     )
     np.fill_diagonal(hard_graph, False)
+    return {
+        "active_indices": active_indices,
+        "fg_proxy": fg_proxy[active_indices],
+        "pair_proxy": pair_proxy,
+        "hard_graph": hard_graph,
+    }
+
+
+def _search_lane_clique(
+    catalog: Sequence[SearchColor],
+    lane: Mapping[str, Any],
+    inputs: p3.Phase3Inputs,
+    contract: Mapping[str, Any],
+    benchmark_primary: float,
+    shared: Mapping[str, Any],
+    *,
+    smoke: bool,
+) -> tuple[tuple[str, ...], dict[str, Any]] | None:
+    """Solve exact target feasibility as a deterministic six-clique problem."""
+
+    del smoke
+    target = benchmark_primary + float(
+        contract["materiality"]["minimum_proxy_improvement_delta_e_ok"]
+    )
+    active_indices = np.asarray(shared["active_indices"], dtype=int)
+    lane_positions = np.asarray(
+        [
+            position
+            for position, catalog_index in enumerate(active_indices)
+            if _lane_color_eligible(catalog[int(catalog_index)], lane)
+        ],
+        dtype=int,
+    )
+    eligible = [catalog[int(active_indices[position])] for position in lane_positions]
+    pair_proxy = np.asarray(shared["pair_proxy"])[np.ix_(lane_positions, lane_positions)]
+    fg_proxy = np.asarray(shared["fg_proxy"])[lane_positions]
+    hard_graph = np.asarray(shared["hard_graph"])[np.ix_(lane_positions, lane_positions)]
 
     def find_cliques(threshold: float, limit: int) -> tuple[list[list[int]], int, int]:
         vertices = np.flatnonzero(fg_proxy + 1e-12 >= threshold)
@@ -940,7 +979,8 @@ def _search_lane_clique(
     upper = min(float(np.max(fg_proxy)), float(np.max(finite_pairs)))
     lower_bound = target
     total_calls = initial_calls
-    for _ in range(16):
+    threshold_iterations = 10
+    for _ in range(threshold_iterations):
         midpoint = (lower_bound + upper) / 2.0
         found, calls, _ = find_cliques(midpoint, 1)
         total_calls += calls
@@ -948,7 +988,7 @@ def _search_lane_clique(
             lower_bound = midpoint
         else:
             upper = midpoint
-    cliques, calls, edge_count = find_cliques(lower_bound, 24)
+    cliques, calls, edge_count = find_cliques(lower_bound, 8)
     total_calls += calls
     if not cliques:
         raise RuntimeError("maximin clique disappeared at the optimized threshold")
@@ -966,7 +1006,7 @@ def _search_lane_clique(
             "algorithm": "deterministic-bitset-maximin-clique",
             "materiality_floor_delta_e_ok": target,
             "optimized_threshold_delta_e_ok": lower_bound,
-            "threshold_iterations": 16,
+            "threshold_iterations": threshold_iterations,
             "finalist_clique_count": len(cliques),
             "vertex_count": len(eligible),
             "edge_count_at_optimized_threshold": edge_count,
@@ -988,10 +1028,22 @@ def run_optimizer(
     benchmark_bank = benchmark_categories(inputs, contract)
     benchmark = evaluate(benchmark_bank, inputs, contract)
     benchmark_primary = benchmark["metrics"]["primary_raw_symmetric_scalar"]
+    materiality_target = benchmark_primary + float(
+        contract["materiality"]["minimum_proxy_improvement_delta_e_ok"]
+    )
+    shared = _shared_proxy_tables(catalog, inputs, contract, materiality_target)
     rows = []
     infeasible = []
     for lane in contract["lanes"]:
-        found = _search_lane_clique(catalog, lane, inputs, contract, benchmark_primary, smoke=smoke)
+        found = _search_lane_clique(
+            catalog,
+            lane,
+            inputs,
+            contract,
+            benchmark_primary,
+            shared,
+            smoke=smoke,
+        )
         if found is None:
             infeasible.append(
                 {
