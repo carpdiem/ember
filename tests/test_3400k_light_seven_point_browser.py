@@ -55,7 +55,13 @@ def _fake_search_artifacts(tmp_path: Path, inputs, contract) -> tuple[Path, dict
     artifacts.mkdir()
     (artifacts / "catalog-summary.json").write_text("{}\n")
     (artifacts / "results.json").write_text(
-        json.dumps({"candidates": [candidates[role] for role in ("a", "b", "c")]}) + "\n"
+        json.dumps(
+            {
+                "artifact_kind": "seven-point-bounded-full-catalog-polish",
+                "candidates": [candidates[role] for role in ("a", "b", "c")],
+            }
+        )
+        + "\n"
     )
     return artifacts, candidates
 
@@ -118,9 +124,9 @@ def test_requests_are_exactly_reference_benchmark_c_and_seven_point_abc(
 
     monkeypatch.setattr(browser.seven, "benchmark_categories", lambda *args: benchmark)
     monkeypatch.setattr(
-        browser.seven,
-        "validate_artifacts",
-        lambda *args, **kwargs: calls.append(("full", kwargs["smoke"])),
+        browser.polish_search,
+        "validate",
+        lambda *args, **kwargs: calls.append(("full", kwargs["progress"])),
     )
 
     def validate(request, *args, **kwargs):
@@ -132,7 +138,7 @@ def test_requests_are_exactly_reference_benchmark_c_and_seven_point_abc(
 
     assert list(requests) == ["reference", "benchmark-c", "a", "b", "c"]
     assert writes == [f"browser-request-{role}.json" for role in requests]
-    assert calls == [("full", False), *[(role, False) for role in requests]]
+    assert calls == [("full", True), *[(role, False) for role in requests]]
     assert requests["reference"]["serialized_bank"] == list(production)
     assert requests["benchmark-c"]["serialized_bank"] == list(
         browser.seven.canonical_categories(benchmark)
@@ -299,7 +305,8 @@ def test_request_is_external_compact_and_contains_no_environment_metadata(
             {"file": name, "sha256": "0" * 64, "canonical_sha256": "1" * 64}
             for name in browser.SEARCH_FILES
         ],
-        "optimizer_source": browser._optimizer_source(),
+        "optimizer_source": browser._source_binding("optimizer.py"),
+        "polish_source": browser._source_binding("polish.py"),
     }
     request = browser._request_for(
         "reference",

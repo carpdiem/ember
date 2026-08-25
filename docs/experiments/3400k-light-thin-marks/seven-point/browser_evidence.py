@@ -34,6 +34,7 @@ import g1_browser_validate as g1
 import g2_package as g2
 import optimizer as seven
 import phase3_optimizer as p3
+import polish as polish_search
 
 SCHEMA_VERSION = 1
 BASE_COUNT = 2_160
@@ -73,6 +74,7 @@ _BINDING_KEYS = {
     "search_contract_sha256",
     "search_artifacts",
     "optimizer_source",
+    "polish_source",
 }
 _SOURCE_KEYS = {"file", "sha256", "commit"}
 _ARTIFACT_KEYS = {"file", "sha256", "canonical_sha256"}
@@ -210,8 +212,9 @@ def _write_json(path: Path, value: Any) -> None:
     temporary.replace(path)
 
 
-def _optimizer_source() -> dict[str, str]:
-    relative = str((HERE / "optimizer.py").relative_to(ROOT))
+def _source_binding(filename: str) -> dict[str, str]:
+    source = HERE / filename
+    relative = str(source.relative_to(ROOT))
     completed = subprocess.run(
         ["git", "log", "-1", "--format=%H", "--", relative],
         cwd=ROOT,
@@ -219,10 +222,10 @@ def _optimizer_source() -> dict[str, str]:
         capture_output=True,
         text=True,
     )
-    require(completed.returncode == 0, "optimizer source commit cannot be resolved")
+    require(completed.returncode == 0, f"{filename} source commit cannot be resolved")
     commit = completed.stdout.strip()
-    require(len(commit) == 40, "optimizer source commit is invalid")
-    return {"file": "optimizer.py", "sha256": sha256_file(HERE / "optimizer.py"), "commit": commit}
+    require(len(commit) == 40, f"{filename} source commit is invalid")
+    return {"file": filename, "sha256": sha256_file(source), "commit": commit}
 
 
 def _artifact_binding(
@@ -241,7 +244,8 @@ def _artifact_binding(
         "fixed_fg0": contract["fixed"]["fg_0"],
         "search_contract_sha256": sha256_json(contract),
         "search_artifacts": artifacts,
-        "optimizer_source": _optimizer_source(),
+        "optimizer_source": _source_binding("optimizer.py"),
+        "polish_source": _source_binding("polish.py"),
     }
 
 
@@ -253,6 +257,7 @@ def _validate_binding(
 ) -> None:
     row = exact_keys(binding, _BINDING_KEYS, "evidence binding")
     exact_keys(row["optimizer_source"], _SOURCE_KEYS, "optimizer source")
+    exact_keys(row["polish_source"], _SOURCE_KEYS, "polish source")
     artifacts = row["search_artifacts"]
     require(
         isinstance(artifacts, list) and len(artifacts) == len(SEARCH_FILES),
@@ -367,7 +372,12 @@ def _counts() -> dict[str, int]:
 
 
 def _search_results(search_artifacts: Path) -> dict[str, Any]:
-    return _load_object(Path(search_artifacts) / "results.json", "seven-point results artifact")
+    result = _load_object(Path(search_artifacts) / "results.json", "seven-point results artifact")
+    require(
+        result.get("artifact_kind") == "seven-point-bounded-full-catalog-polish",
+        "seven-point results are not bounded full-catalog polish",
+    )
+    return result
 
 
 def _special_candidate(
@@ -447,7 +457,7 @@ def build_requests(
 ) -> dict[str, dict[str, Any]]:
     """Fully replay search once, then write reference, benchmark-C, and A/B/C requests."""
 
-    seven.validate_artifacts(search_artifacts, inputs, contract, smoke=False)
+    polish_search.validate(search_artifacts, progress=True)
     candidates = _expected_candidates(search_artifacts, inputs, contract)
     binding = _artifact_binding(search_artifacts, inputs, contract)
     observations = build_observation_plan(inputs)
@@ -510,7 +520,7 @@ def validate_request(
         "request fixed fg0 differs",
     )
     if validate_search:
-        seven.validate_artifacts(search_artifacts, inputs, contract, smoke=False)
+        polish_search.validate(search_artifacts, progress=True)
     _validate_binding(row["binding"], search_artifacts, inputs, contract)
     expected = _expected_candidates(search_artifacts, inputs, contract)[role]
     bank = seven.canonical_categories(row["serialized_bank"])
