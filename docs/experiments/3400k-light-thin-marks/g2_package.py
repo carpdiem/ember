@@ -81,6 +81,21 @@ _LINEAGE_KEYS = {
     "parent_artifact_sha256",
     "parent_candidate_ids",
 }
+_OBSERVATION_EVIDENCE_KEYS = {
+    "schema_version",
+    "artifact_kind",
+    "candidate_id",
+    "request_sha256",
+    "observation_count",
+    "observation_order_sha256",
+    "records",
+}
+_OBSERVATION_RECORD_KEYS = {
+    "request_observation_id",
+    "sample_count",
+    "observed_rgb8_median",
+    "observed_rgb8_base64",
+}
 
 
 class G2IntegrityError(RuntimeError):
@@ -852,6 +867,12 @@ def verify_browser_evidence(
     observations = _load_object(observation_path, "browser observations")
     pairs = _load_object(pair_path, "browser pairs")
     p3.validate_browser_oracle_result(result, request, inputs, contract)
+    exact_keys(observations, _OBSERVATION_EVIDENCE_KEYS, "browser observation evidence")
+    require(
+        observations["schema_version"] == OBSERVATION_EVIDENCE_SCHEMA_VERSION
+        and observations["artifact_kind"] == "g2-full-ordered-browser-observations",
+        "browser observation evidence schema is invalid",
+    )
     require(
         observations.get("request_sha256") == sha256_json(request),
         "observation request hash is stale",
@@ -865,6 +886,9 @@ def verify_browser_evidence(
         isinstance(records, list) and len(records) == 25_920,
         "observation evidence count is invalid",
     )
+    require(observations["observation_count"] == len(records), "observation count is contradictory")
+    for index, record in enumerate(records):
+        exact_keys(record, _OBSERVATION_RECORD_KEYS, f"browser observation record {index}")
     require(
         [row["request_observation_id"] for row in records]
         == [row["id"] for row in request["requested_role_observations"]],
@@ -874,6 +898,11 @@ def verify_browser_evidence(
         observations.get("observation_order_sha256")
         == sha256_json([row["request_observation_id"] for row in records]),
         "observation order hash is stale",
+    )
+    expected_result_observations = _browser_result_observations(records, request, inputs, contract)
+    require(
+        canonical_json(result["observations"]) == canonical_json(expected_result_observations),
+        "browser result observations differ from the raw observation evidence",
     )
     expected_pairs = _pair_evidence(records, request, inputs)
     require(

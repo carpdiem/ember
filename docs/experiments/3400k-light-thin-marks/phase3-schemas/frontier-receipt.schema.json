@@ -4,7 +4,28 @@
   "title": "Compact trusted Phase 3 frontier receipt",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "artifact_kind", "source_engine_commit", "source_engine_file_sha256", "frontier_policy_version", "input_chain_sha256", "search_contract_sha256", "parent", "refine", "baseline", "candidates", "pareto_dimensions", "frontier_eligibility_policy", "strict_pareto_improvement_informative", "g2_shortlist_policy", "g2_shortlist", "frontier_rows_sha256", "browser_oracle_status", "human_width_capacity", "production_promotion_authorized"],
+  "required": [
+    "schema_version",
+    "artifact_kind",
+    "source_engine_commit",
+    "source_engine_file_sha256",
+    "frontier_policy_version",
+    "input_chain_sha256",
+    "search_contract_sha256",
+    "parent",
+    "refine",
+    "baseline",
+    "candidates",
+    "pareto_dimensions",
+    "frontier_eligibility_policy",
+    "strict_pareto_improvement_informative",
+    "g2_shortlist_policy",
+    "g2_shortlist",
+    "frontier_rows_sha256",
+    "browser_oracle_status",
+    "human_width_capacity",
+    "production_promotion_authorized"
+  ],
   "properties": {
     "schema_version": {"const": 1},
     "artifact_kind": {"const": "compact-trusted-frontier-receipt"},
@@ -13,15 +34,41 @@
     "frontier_policy_version": {"const": "phase3-standard-pareto-v1"},
     "input_chain_sha256": {"$ref": "#/$defs/hash"},
     "search_contract_sha256": {"$ref": "#/$defs/hash"},
-    "parent": {"type": "object"},
-    "refine": {"type": "object"},
+    "parent": {"$ref": "#/$defs/parent"},
+    "refine": {"$ref": "#/$defs/refine"},
     "baseline": {"$ref": "#/$defs/summary"},
-    "candidates": {"type": "array", "minItems": 14, "maxItems": 14, "uniqueItems": true, "items": {"$ref": "#/$defs/summary"}},
-    "pareto_dimensions": {"const": ["transformed_pair_min", "commanded_pair_min", "neutral_min", "graphics_contrast_min", "raster_1_5_min", "raster_2_min", "raster_3_min", "max_commanded_deviation", "mean_commanded_deviation"]},
-    "frontier_eligibility_policy": {"const": "failure-free full recomputation; protected hard floors pass; nondominated with baseline"},
+    "candidates": {
+      "type": "array",
+      "minItems": 14,
+      "maxItems": 14,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/summary"}
+    },
+    "pareto_dimensions": {
+      "const": [
+        "transformed_pair_min",
+        "commanded_pair_min",
+        "neutral_min",
+        "graphics_contrast_min",
+        "raster_1_5_min",
+        "raster_2_min",
+        "raster_3_min",
+        "max_commanded_deviation",
+        "mean_commanded_deviation"
+      ]
+    },
+    "frontier_eligibility_policy": {
+      "const": "failure-free full recomputation; protected hard floors pass; nondominated with baseline"
+    },
     "strict_pareto_improvement_informative": {"const": true},
-    "g2_shortlist_policy": {"type": "object"},
-    "g2_shortlist": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true},
+    "g2_shortlist_policy": {"$ref": "#/$defs/shortlist_policy"},
+    "g2_shortlist": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/shortlist_entry"}
+    },
     "frontier_rows_sha256": {"$ref": "#/$defs/hash"},
     "browser_oracle_status": {"const": "NOT_RUN"},
     "human_width_capacity": {"type": "null"},
@@ -29,23 +76,167 @@
   },
   "$defs": {
     "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "bank": {"type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": {"type": "string", "pattern": "^#[0-9A-F]{6}$"}},
+    "bank": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^#[0-9A-F]{6}$"}
+    },
+    "pareto": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transformed_pair_min",
+        "commanded_pair_min",
+        "neutral_min",
+        "graphics_contrast_min",
+        "raster_1_5_min",
+        "raster_2_min",
+        "raster_3_min",
+        "max_commanded_deviation",
+        "mean_commanded_deviation"
+      ],
+      "properties": {
+        "transformed_pair_min": {"type": "number"},
+        "commanded_pair_min": {"type": "number"},
+        "neutral_min": {"type": "number"},
+        "graphics_contrast_min": {"type": "number"},
+        "raster_1_5_min": {"type": "number"},
+        "raster_2_min": {"type": "number"},
+        "raster_3_min": {"type": "number"},
+        "max_commanded_deviation": {"type": "number", "minimum": 0},
+        "mean_commanded_deviation": {"type": "number", "minimum": 0}
+      }
+    },
+    "shard_descriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "index", "record_count", "sha256", "start", "stop"],
+      "properties": {
+        "file": {"type": "string", "pattern": "^shard-[0-9]{6}\\.json$"},
+        "index": {"type": "integer", "minimum": 0},
+        "record_count": {"type": "integer", "minimum": 1},
+        "sha256": {"$ref": "#/$defs/hash"},
+        "start": {"type": "integer", "minimum": 0},
+        "stop": {"type": "integer", "minimum": 1}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["job_index", "row_position", "shard_descriptor", "source_row_sha256"],
+      "properties": {
+        "job_index": {"type": "integer", "minimum": 0},
+        "row_position": {"type": "integer", "minimum": 0},
+        "shard_descriptor": {"$ref": "#/$defs/shard_descriptor"},
+        "source_row_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_seed", "job_seed", "proposal_mode", "parent_artifact_sha256", "parent_candidate_ids"],
+      "properties": {
+        "run_seed": {"type": "integer", "minimum": 0},
+        "job_seed": {"type": "integer", "minimum": 0},
+        "proposal_mode": {"type": "string", "minLength": 1},
+        "parent_artifact_sha256": {"$ref": "#/$defs/hash"},
+        "parent_candidate_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/hash"}
+        }
+      }
+    },
     "summary": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["candidate_id", "row_kind", "serialized_bank", "serialized_bank_sha256", "pareto", "failure_count", "hard_floor_status", "strict_pareto_improvement", "pareto_frontier_eligible", "source", "lineage"],
+      "required": [
+        "candidate_id",
+        "row_kind",
+        "serialized_bank",
+        "serialized_bank_sha256",
+        "pareto",
+        "failure_count",
+        "hard_floor_status",
+        "strict_pareto_improvement",
+        "pareto_frontier_eligible",
+        "source",
+        "lineage"
+      ],
       "properties": {
         "candidate_id": {"$ref": "#/$defs/hash"},
         "row_kind": {"enum": ["baseline", "candidate"]},
         "serialized_bank": {"$ref": "#/$defs/bank"},
         "serialized_bank_sha256": {"$ref": "#/$defs/hash"},
-        "pareto": {"type": "object"},
+        "pareto": {"$ref": "#/$defs/pareto"},
         "failure_count": {"type": "integer", "minimum": 0},
         "hard_floor_status": {"enum": ["REFERENCE_NOT_CANDIDATE", "PASS"]},
         "strict_pareto_improvement": {"type": "boolean"},
         "pareto_frontier_eligible": {"type": "boolean"},
-        "source": {"type": ["object", "null"]},
-        "lineage": {"type": ["object", "null"]}
+        "source": {"anyOf": [{"$ref": "#/$defs/source"}, {"type": "null"}]},
+        "lineage": {"anyOf": [{"$ref": "#/$defs/lineage"}, {"type": "null"}]}
+      }
+    },
+    "parent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "file_sha256", "canonical_sha256", "deduped_survivor_count", "seed_runs", "source_manifest_hashes"],
+      "properties": {
+        "file": {"const": "combined-survivors.json"},
+        "file_sha256": {"$ref": "#/$defs/hash"},
+        "canonical_sha256": {"$ref": "#/$defs/hash"},
+        "deduped_survivor_count": {"const": 5000},
+        "seed_runs": {"const": [44001, 44002, 44003, 44004]},
+        "source_manifest_hashes": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/hash"}
+        }
+      }
+    },
+    "refine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["directory", "manifest_file", "manifest_file_sha256", "manifest_canonical_sha256", "run_binding_sha256", "root_run_seed", "completed_jobs", "shard_descriptor_count", "shard_descriptors_sha256"],
+      "properties": {
+        "directory": {"const": "refined-5000"},
+        "manifest_file": {"const": "search-manifest.json"},
+        "manifest_file_sha256": {"$ref": "#/$defs/hash"},
+        "manifest_canonical_sha256": {"$ref": "#/$defs/hash"},
+        "run_binding_sha256": {"$ref": "#/$defs/hash"},
+        "root_run_seed": {"const": 45002},
+        "completed_jobs": {"const": 5000},
+        "shard_descriptor_count": {"const": 100},
+        "shard_descriptors_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "shortlist_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_metric", "operator", "deterministic_delta_e_ok", "human_visibility_floor", "roles"],
+      "properties": {
+        "target_metric": {"const": "raster_1_5_min"},
+        "operator": {"const": ">"},
+        "deterministic_delta_e_ok": {"const": 0.05},
+        "human_visibility_floor": {"type": "null"},
+        "roles": {"const": ["maximum-1.5px-improvement", "lowest-commanded-deviation", "strongest-transformed-pair-minimum"]}
+      }
+    },
+    "shortlist_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "objective", "candidate_id", "deterministic_shortlist_delta_e_ok", "human_visibility_floor"],
+      "properties": {
+        "role": {"enum": ["A", "B", "C"]},
+        "objective": {"enum": ["maximum-1.5px-improvement", "lowest-commanded-deviation", "strongest-transformed-pair-minimum"]},
+        "candidate_id": {"$ref": "#/$defs/hash"},
+        "deterministic_shortlist_delta_e_ok": {"const": 0.05},
+        "human_visibility_floor": {"type": "null"}
       }
     }
   }

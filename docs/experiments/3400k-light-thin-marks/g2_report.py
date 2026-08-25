@@ -281,8 +281,8 @@ def build_review(evidence_dir: Path, output_dir: Path, experiment_dir: Path) -> 
     report_lines = [
         "# G2 categorical palette finalists",
         "",
-        "**Status:** `AWAITING_MICHAEL_SELECTION`  ",
-        "**Selection:** `null`  ",
+        "**Status:** `AWAITING_MICHAEL_SELECTION`",
+        "**Selection:** `null`",
         "**Production promotion:** not authorized",
         "",
         "## Recommendation",
