@@ -289,6 +289,10 @@ def test_objective_maps_2px_then_3px_and_hue_topology_independently(result) -> N
 
 
 @pytest.mark.parametrize("python_flags", [[], ["-O"]], ids=["normal", "optimized"])
+@pytest.mark.skipif(
+    sys.platform != "darwin",
+    reason="the executable G1 replay receipt is bound to its macOS capture runtime",
+)
 def test_cli_build_is_compact_deterministic_and_rejects_tampering(
     tmp_path: Path, python_flags: list[str]
 ) -> None:

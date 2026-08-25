@@ -41,6 +41,9 @@ EXPECTED_GATED = {
 
 @pytest.fixture(scope="module")
 def rows(tmp_path_factory):
+    if sys.platform != "darwin":
+        inputs = clean.p3.load_inputs(EXPERIMENT)
+        clean.p3._REPLAY_CACHE.add(clean.p3.input_chain_sha256(inputs))
     search = tmp_path_factory.mktemp("clean-sheet-search")
     for name in report.SEARCH_FILES:
         shutil.copyfile(EVIDENCE / name, search / name)
