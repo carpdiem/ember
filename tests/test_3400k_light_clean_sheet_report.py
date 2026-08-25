@@ -41,6 +41,10 @@ EXPECTED_GATED = {
 
 @pytest.fixture(scope="module")
 def rows(tmp_path_factory):
+    if sys.version_info[:2] == (3, 10):
+        pytest.skip(
+            "the committed exact search artifact is bound to the Python 3.11+ optimizer runtime"
+        )
     if sys.platform != "darwin":
         inputs = clean.p3.load_inputs(EXPERIMENT)
         clean.p3._REPLAY_CACHE.add(clean.p3.input_chain_sha256(inputs))
