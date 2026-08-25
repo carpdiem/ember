@@ -17,6 +17,12 @@ polish = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = polish
 SPEC.loader.exec_module(polish)
 
+EXACT_RUNTIME_REASON = (
+    "committed exact polish artifact is bound to its Darwin Python 3.11+ capture runtime"
+)
+EXACT_RUNTIME = sys.platform == "darwin" and sys.version_info >= (3, 11)
+exact_runtime_only = pytest.mark.skipif(not EXACT_RUNTIME, reason=EXACT_RUNTIME_REASON)
+
 
 @pytest.fixture(scope="module")
 def inputs():
@@ -30,9 +36,12 @@ def contract():
 
 @pytest.fixture(scope="module")
 def result():
+    if not EXACT_RUNTIME:
+        pytest.skip(EXACT_RUNTIME_REASON)
     return polish.run_polish(progress=False)
 
 
+@exact_runtime_only
 def test_committed_smoke_seeds_preserve_full_quality_search_contract(inputs, contract) -> None:
     seeds = json.loads((SEVEN / "smoke-seeds.json").read_text())
     rows = polish.validate_seeds(seeds, inputs, contract)
@@ -119,6 +128,7 @@ def test_seed_and_result_corruption_reject_with_explicit_exceptions(inputs, cont
     assert "maximin-clique" not in source
 
 
+@exact_runtime_only
 def test_closed_external_artifacts_replay_and_reject_extra_entry(tmp_path: Path) -> None:
     output = tmp_path / "polish"
     polish.build(output, progress=False)
@@ -128,6 +138,7 @@ def test_closed_external_artifacts_replay_and_reject_extra_entry(tmp_path: Path)
         polish.validate(output, progress=False)
 
 
+@exact_runtime_only
 def test_committed_full_polish_artifacts_are_fresh() -> None:
     directory = SEVEN / "full-polish"
     actual = {name: json.loads((directory / name).read_text()) for name in polish.EXPECTED_FILES}
