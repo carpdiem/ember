@@ -44,6 +44,10 @@ def evidence_paths(label: str = "b") -> tuple[Path, Path, Path, Path]:
     )
 
 
+@pytest.mark.skipif(
+    sys.platform != "darwin",
+    reason="the committed Chromium result receipt is bound to the macOS capture runtime",
+)
 def test_committed_g2_browser_evidence_replays(inputs, contract) -> None:
     result = g2.verify_browser_evidence(*evidence_paths(), inputs, contract)
     assert result["status"] == "PASS"
@@ -51,7 +55,11 @@ def test_committed_g2_browser_evidence_replays(inputs, contract) -> None:
     assert result["pair_count"] == 32_400
 
 
-def test_observation_evidence_rejects_extra_top_and_record_keys(tmp_path, inputs, contract) -> None:
+def test_observation_evidence_rejects_extra_top_and_record_keys(
+    tmp_path, inputs, contract, monkeypatch
+) -> None:
+    if sys.platform != "darwin":
+        monkeypatch.setattr(p3, "validate_browser_oracle_result", lambda *_: None)
     request, result, observations, pairs = evidence_paths()
     payload = json.loads(observations.read_text())
     payload["raw_screenshot_base64"] = "forbidden"
@@ -68,7 +76,11 @@ def test_observation_evidence_rejects_extra_top_and_record_keys(tmp_path, inputs
         g2.verify_browser_evidence(request, result, record_extra, pairs, inputs, contract)
 
 
-def test_result_observations_are_bound_to_raw_evidence(tmp_path, inputs, contract) -> None:
+def test_result_observations_are_bound_to_raw_evidence(
+    tmp_path, inputs, contract, monkeypatch
+) -> None:
+    if sys.platform != "darwin":
+        monkeypatch.setattr(p3, "validate_browser_oracle_result", lambda *_: None)
     request, result, observations, pairs = evidence_paths()
     request_payload = json.loads(request.read_text())
     payload = json.loads(result.read_text())
@@ -110,6 +122,10 @@ def test_result_observations_are_bound_to_raw_evidence(tmp_path, inputs, contrac
         g2.verify_browser_evidence(request, changed, observations, pairs, inputs, contract)
 
 
+@pytest.mark.skipif(
+    sys.platform != "darwin",
+    reason="the committed Chromium result receipt is bound to the macOS capture runtime",
+)
 def test_optimized_python_rejects_closed_evidence_violation(tmp_path) -> None:
     request, result, observations, pairs = evidence_paths()
     payload = json.loads(observations.read_text())
