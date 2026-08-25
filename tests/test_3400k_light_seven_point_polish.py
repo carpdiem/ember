@@ -29,16 +29,8 @@ def contract():
 
 
 @pytest.fixture(scope="module")
-def result(monkeypatch_module):
-    monkeypatch_module.setattr(polish, "_source_commit", lambda path: "0" * 40)
+def result():
     return polish.run_polish(progress=False)
-
-
-@pytest.fixture(scope="module")
-def monkeypatch_module():
-    patcher = pytest.MonkeyPatch()
-    yield patcher
-    patcher.undo()
 
 
 def test_committed_smoke_seeds_preserve_full_quality_search_contract(inputs, contract) -> None:
@@ -89,8 +81,7 @@ def test_full_catalog_polish_is_bounded_symmetric_and_monotonic(result, inputs) 
         assert polish.p3.frozen_non_categorical(family) == baseline_frozen
 
 
-def test_polish_replay_is_byte_deterministic(result, monkeypatch_module) -> None:
-    monkeypatch_module.setattr(polish, "_source_commit", lambda path: "0" * 40)
+def test_polish_replay_is_byte_deterministic(result) -> None:
     replay = polish.run_polish(progress=False)
     assert polish._json_bytes(replay) == polish._json_bytes(result)
 
@@ -111,10 +102,7 @@ def test_seed_and_result_corruption_reject_with_explicit_exceptions(inputs, cont
     assert "maximin-clique" not in source
 
 
-def test_closed_external_artifacts_replay_and_reject_extra_entry(
-    tmp_path: Path, monkeypatch, monkeypatch_module
-) -> None:
-    monkeypatch_module.setattr(polish, "_source_commit", lambda path: "0" * 40)
+def test_closed_external_artifacts_replay_and_reject_extra_entry(tmp_path: Path) -> None:
     output = tmp_path / "polish"
     polish.build(output, progress=False)
     polish.validate(output, progress=False)
@@ -123,10 +111,20 @@ def test_closed_external_artifacts_replay_and_reject_extra_entry(
         polish.validate(output, progress=False)
 
 
+def test_committed_full_polish_artifacts_are_fresh() -> None:
+    directory = SEVEN / "full-polish"
+    actual = {name: json.loads((directory / name).read_text()) for name in polish.EXPECTED_FILES}
+    expected = polish._payloads(polish.run_polish(progress=False))
+    assert actual == expected
+
+
 def test_only_new_seven_point_paths_are_in_phase_slice() -> None:
     allowed = {
         "docs/experiments/3400k-light-thin-marks/seven-point/polish.py",
         "docs/experiments/3400k-light-thin-marks/seven-point/smoke-seeds.json",
+        "docs/experiments/3400k-light-thin-marks/seven-point/full-polish/catalog-summary.json",
+        "docs/experiments/3400k-light-thin-marks/seven-point/full-polish/results.json",
+        "docs/experiments/3400k-light-thin-marks/seven-point/full-polish/",
         "tests/test_3400k_light_seven_point_polish.py",
     }
     import subprocess
