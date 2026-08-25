@@ -358,6 +358,14 @@ def best_swap_per_slot(
     return proposals, evaluations
 
 
+def select_exact_best(rows: Sequence[tuple[Any, ...]]) -> tuple[Any, ...]:
+    """Match optimizer.py: maximize objective, then canonical category tuple."""
+
+    if not rows:
+        raise PolishError("cannot select from an empty exact finalist set")
+    return max(rows, key=lambda row: (row[0], row[1]))
+
+
 def polish_lane(
     seed: Mapping[str, Any],
     tables: CatalogTables,
@@ -412,7 +420,7 @@ def polish_lane(
         if not exact_rows:
             stop_reason = "no_admissible_swap"
             break
-        best = max(exact_rows, key=lambda row: (row[0], tuple(reversed(row[1]))))
+        best = select_exact_best(exact_rows)
         _objective, candidate_bank, evaluation, proxy_primary, slot, catalog_index = best
         current_primary = float(current["metrics"]["primary_raw_symmetric_scalar"])
         candidate_primary = float(evaluation["metrics"]["primary_raw_symmetric_scalar"])
@@ -528,6 +536,7 @@ def run_polish(*, progress: bool = False) -> dict[str, Any]:
             "class_normalization": False,
             "role_semantics": False,
             "churn": False,
+            "exact_tie_break": "maximum canonical category tuple after six-component objective",
         },
         "bounds": {
             "pass_cap": MAX_PASSES,

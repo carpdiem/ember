@@ -58,6 +58,7 @@ def test_full_catalog_polish_is_bounded_symmetric_and_monotonic(result, inputs) 
         "class_normalization": False,
         "role_semantics": False,
         "churn": False,
+        "exact_tie_break": "maximum canonical category tuple after six-component objective",
     }
     assert result["bounds"] == {
         "pass_cap": 6,
@@ -84,6 +85,14 @@ def test_full_catalog_polish_is_bounded_symmetric_and_monotonic(result, inputs) 
 def test_polish_replay_is_byte_deterministic(result) -> None:
     replay = polish.run_polish(progress=False)
     assert polish._json_bytes(replay) == polish._json_bytes(result)
+
+
+def test_exact_objective_tie_uses_maximum_canonical_category_tuple() -> None:
+    objective = (8.0, 10.0, 11.0, 12.0, 16.0, 9.0)
+    lower = (objective, ("#100000", "#200000"), "lower")
+    higher = (objective, ("#100000", "#300000"), "higher")
+    assert polish.select_exact_best([higher, lower]) == higher
+    assert polish.select_exact_best([lower, higher]) == higher
 
 
 def test_seed_and_result_corruption_reject_with_explicit_exceptions(inputs, contract) -> None:
