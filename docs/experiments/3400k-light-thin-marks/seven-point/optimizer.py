@@ -15,6 +15,7 @@ import itertools
 import json
 import math
 import sys
+import time
 from collections.abc import Iterable, Mapping, Sequence
 from copy import deepcopy
 from dataclasses import dataclass
@@ -811,9 +812,12 @@ def _shared_proxy_tables(
     inputs: p3.Phase3Inputs,
     contract: Mapping[str, Any],
     target: float,
+    *,
+    progress: bool = False,
 ) -> dict[str, Any]:
     """Compute the expensive raster and hard-pair tables once for all lanes."""
 
+    started = time.perf_counter()
     surfaces = inputs.baseline["family"]["surfaces"]
     fg0 = p3.parse_exact_hex8(surfaces["fg_0"])
     gains = np.asarray(inputs.viewing["transform"]["gains"], dtype=float)
@@ -843,21 +847,45 @@ def _shared_proxy_tables(
     active_indices = np.flatnonzero(fg_proxy + 1e-12 >= target)
     if len(active_indices) < CATEGORY_COUNT:
         raise RuntimeError("fewer than six catalog colors clear the fg0 materiality floor")
+    if progress:
+        matrix_mib = len(active_indices) ** 2 * 8 / (1024**2)
+        print(
+            "[seven-point] fg-filter complete "
+            f"catalog={len(catalog)} active={len(active_indices)} "
+            f"matrix={len(active_indices)}x{len(active_indices)} "
+            f"float64_mib={matrix_mib:.1f} seconds={time.perf_counter() - started:.3f}",
+            file=sys.stderr,
+            flush=True,
+        )
     active_rgb = all_rgb[active_indices]
     pair_proxy = np.full((len(active_indices), len(active_indices)), math.inf)
-    for lanes, background in contexts:
+    pair_started = time.perf_counter()
+    for context_index, (lanes, background) in enumerate(contexts, start=1):
         points = [
             srgb_to_oklab((lanes[index] * active_rgb + (1.0 - lanes[index]) * background) * gains)
             for index in (0, 1)
         ]
         for left_lane, right_lane in ((0, 1), (1, 0)):
-            distances = np.sqrt(
-                np.sum(
-                    (points[left_lane][:, None, :] - points[right_lane][None, :, :]) ** 2,
-                    axis=2,
+            for start in range(0, len(active_indices), 1024):
+                stop = min(start + 1024, len(active_indices))
+                distances = np.sqrt(
+                    np.sum(
+                        (points[left_lane][start:stop, None, :] - points[right_lane][None, :, :])
+                        ** 2,
+                        axis=2,
+                    )
                 )
+                pair_proxy[start:stop] = np.minimum(
+                    pair_proxy[start:stop], distances * 100.0 - margin
+                )
+        if progress and (context_index % 20 == 0 or context_index == len(contexts)):
+            print(
+                "[seven-point] pair-proxy progress "
+                f"context={context_index}/{len(contexts)} "
+                f"seconds={time.perf_counter() - pair_started:.3f}",
+                file=sys.stderr,
+                flush=True,
             )
-            pair_proxy = np.minimum(pair_proxy, distances * 100.0 - margin)
     commanded = np.asarray([catalog[int(index)].commanded_oklab for index in active_indices])
     transformed = np.asarray([catalog[int(index)].transformed_oklab for index in active_indices])
     hues = np.asarray([catalog[int(index)].hue_degrees for index in active_indices])
@@ -875,6 +903,12 @@ def _shared_proxy_tables(
         & (hue_distance + 1e-12 >= gates["commanded_minimum_hue_gap_degrees"])
     )
     np.fill_diagonal(hard_graph, False)
+    if progress:
+        print(
+            f"[seven-point] shared-table complete seconds={time.perf_counter() - started:.3f}",
+            file=sys.stderr,
+            flush=True,
+        )
     return {
         "active_indices": active_indices,
         "fg_proxy": fg_proxy[active_indices],
@@ -892,10 +926,12 @@ def _search_lane_clique(
     shared: Mapping[str, Any],
     *,
     smoke: bool,
+    progress: bool = False,
 ) -> tuple[tuple[str, ...], dict[str, Any]] | None:
     """Solve exact target feasibility as a deterministic six-clique problem."""
 
     del smoke
+    started = time.perf_counter()
     target = benchmark_primary + float(
         contract["materiality"]["minimum_proxy_improvement_delta_e_ok"]
     )
@@ -912,6 +948,12 @@ def _search_lane_clique(
     pair_proxy = np.asarray(shared["pair_proxy"])[np.ix_(lane_positions, lane_positions)]
     fg_proxy = np.asarray(shared["fg_proxy"])[lane_positions]
     hard_graph = np.asarray(shared["hard_graph"])[np.ix_(lane_positions, lane_positions)]
+    if progress:
+        print(
+            f"[seven-point] lane={lane['id']} clique-start vertices={len(eligible)}",
+            file=sys.stderr,
+            flush=True,
+        )
 
     def find_cliques(threshold: float, limit: int) -> tuple[list[list[int]], int, int]:
         vertices = np.flatnonzero(fg_proxy + 1e-12 >= threshold)
@@ -979,7 +1021,7 @@ def _search_lane_clique(
     upper = min(float(np.max(fg_proxy)), float(np.max(finite_pairs)))
     lower_bound = target
     total_calls = initial_calls
-    threshold_iterations = 10
+    threshold_iterations = 16
     for _ in range(threshold_iterations):
         midpoint = (lower_bound + upper) / 2.0
         found, calls, _ = find_cliques(midpoint, 1)
@@ -988,7 +1030,7 @@ def _search_lane_clique(
             lower_bound = midpoint
         else:
             upper = midpoint
-    cliques, calls, edge_count = find_cliques(lower_bound, 8)
+    cliques, calls, edge_count = find_cliques(lower_bound, 24)
     total_calls += calls
     if not cliques:
         raise RuntimeError("maximin clique disappeared at the optimized threshold")
@@ -1000,6 +1042,14 @@ def _search_lane_clique(
             raise RuntimeError("clique admission disagrees with exact recomputation")
         finalists.append((tuple(evaluation["objective"]), categories, evaluation))
     _, categories, evaluation = max(finalists, key=lambda row: (row[0], row[1]))
+    if progress:
+        print(
+            f"[seven-point] lane={lane['id']} clique-complete "
+            f"threshold={lower_bound:.9f} finalists={len(cliques)} calls={total_calls} "
+            f"seconds={time.perf_counter() - started:.3f}",
+            file=sys.stderr,
+            flush=True,
+        )
     return categories, {
         "evaluation": evaluation,
         "search": {
@@ -1022,6 +1072,7 @@ def run_optimizer(
     *,
     smoke: bool = False,
     require_all_lanes: bool = True,
+    progress: bool = False,
 ) -> dict[str, Any]:
     validate_contract(contract, inputs)
     catalog, catalog_summary = build_catalog(inputs, contract, smoke=smoke)
@@ -1031,7 +1082,7 @@ def run_optimizer(
     materiality_target = benchmark_primary + float(
         contract["materiality"]["minimum_proxy_improvement_delta_e_ok"]
     )
-    shared = _shared_proxy_tables(catalog, inputs, contract, materiality_target)
+    shared = _shared_proxy_tables(catalog, inputs, contract, materiality_target, progress=progress)
     rows = []
     infeasible = []
     for lane in contract["lanes"]:
@@ -1043,6 +1094,7 @@ def run_optimizer(
             benchmark_primary,
             shared,
             smoke=smoke,
+            progress=progress,
         )
         if found is None:
             infeasible.append(
@@ -1141,7 +1193,7 @@ def build_artifacts(
             raise ValueError(
                 f"output directory contains unexpected entries: {sorted(existing - expected)}"
             )
-    result = run_optimizer(inputs, contract, smoke=smoke)
+    result = run_optimizer(inputs, contract, smoke=smoke, progress=True)
     payloads = _payloads(result)
     output.mkdir(parents=True, exist_ok=True)
     paths = {}
@@ -1170,7 +1222,7 @@ def validate_artifacts(
     ):
         raise ValueError("artifact directory violates the closed filename schema")
     actual = {name: json.loads((directory / name).read_text()) for name in sorted(expected_names)}
-    expected = _payloads(run_optimizer(inputs, contract, smoke=smoke))
+    expected = _payloads(run_optimizer(inputs, contract, smoke=smoke, progress=True))
     if actual != expected:
         raise ValueError("artifact recomputation mismatch")
 

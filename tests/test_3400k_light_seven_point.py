@@ -100,7 +100,7 @@ def test_three_structural_clique_lanes_clear_hard_gates_and_materiality(result) 
         assert row["proxy_improvement_delta_e_ok"] >= 1.0
         assert row["materiality_pass"] is True
         assert row["search"]["algorithm"] == "deterministic-bitset-maximin-clique"
-        assert row["search"]["optimized_threshold_delta_e_ok"] >= row["objective"][0] - 0.02
+        assert row["search"]["optimized_threshold_delta_e_ok"] >= row["objective"][0] - 1e-3
         assert (
             row["search"]["materiality_floor_delta_e_ok"]
             > result["benchmark"]["proxy"]["metrics"]["primary_raw_symmetric_scalar"]
