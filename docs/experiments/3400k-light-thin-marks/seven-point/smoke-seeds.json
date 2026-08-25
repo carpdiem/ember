@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "seven-point-940-color-smoke-seeds",
+  "input_chain_sha256": "55763c938efd8f91dae75d2b20a4c2187ed3e91934180cf8cf4fc2500649feea",
+  "search_contract_sha256": "73c351d2a5224e4193f143acaddb4bd77342be4bac8db4ec65e6096803f621fd",
+  "source_results_sha256": "73eeae48037472fd129e04a55681daeccc0a6fdf58a9434bbad4e2c196cd242a",
+  "source_command": "optimizer.py build --smoke",
+  "source_exact_catalog_count": 940,
+  "threshold_iterations": 16,
+  "finalist_limit": 24,
+  "objective_tolerance": 0.001,
+  "fixed_fg_0": "#342F2C",
+  "selection": null,
+  "production": false,
+  "candidates": [
+    {
+      "lane": "A",
+      "method": "single-mid-band",
+      "categories": ["#7C140A", "#857D0B", "#03642B", "#2B8CAD", "#5D53AE", "#B34B71"],
+      "category_set_sha256": "f3a9a041948c4a1523cd9107ed7b0064e065bea5fb659061ecf21ff0135a46c7",
+      "primary_raw_symmetric_scalar": 8.458135103726663
+    },
+    {
+      "lane": "B",
+      "method": "bright-band",
+      "categories": ["#7E5403", "#599234", "#0C6A76", "#4687D8", "#654199", "#B34B71"],
+      "category_set_sha256": "575918a5563301f0b221d69ba8a7b9ec993077f02939fb25bcff855d45c2b21c",
+      "primary_raw_symmetric_scalar": 7.855568661852448
+    },
+    {
+      "lane": "C",
+      "method": "two-tier-lattice",
+      "categories": ["#863709", "#857D0B", "#03642B", "#3F849E", "#9F63B9", "#650448"],
+      "category_set_sha256": "061ad33520c9a74b871ac915c4f9b60ea69d6d293a4131e597562b0547187df1",
+      "primary_raw_symmetric_scalar": 7.843563282487517
+    }
+  ]
+}
