@@ -260,6 +260,25 @@ def test_request_contract_contains_no_implicit_output_or_environment_metadata(
     assert len(browser.canonical_json(request)) < browser.EVIDENCE_LIMIT_BYTES
 
 
+def test_verify_can_reuse_one_prior_search_validation(
+    tmp_path, inputs, contract, monkeypatch
+) -> None:
+    paths = []
+    for name in ("request", "result", "observations", "pairs"):
+        path = tmp_path / f"{name}.json"
+        path.write_text("{}")
+        paths.append(path)
+    calls = []
+
+    def record_validate(*args, **kwargs):
+        calls.append(kwargs["validate_search"])
+
+    monkeypatch.setattr(browser, "validate_request", record_validate)
+    with pytest.raises(browser.CleanSheetEvidenceError):
+        browser.verify(*paths, tmp_path, inputs, contract, validate_search=False)
+    assert calls == [False]
+
+
 @pytest.mark.skipif(
     sys.platform != "darwin"
     or not os.environ.get("CLEAN_SHEET_CHROMIUM_REQUEST")

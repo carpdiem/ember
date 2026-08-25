@@ -1,0 +1,18 @@
+{
+  "allowed": [
+    "A",
+    "B",
+    "C"
+  ],
+  "candidate_ids": {
+    "A": "f5a8f394ddb871627f2dc4cc57df5872601b806d0defa30235b26ab2b894c928",
+    "B": "ff333bd25ec58b32526d526e71401bef9b27ab228c11a33c1c207b736ab9a50c",
+    "C": "bc5d5b8645cfb9f8f58414b899cc9727c823c5c7c581cfdcb133c75518c9d112"
+  },
+  "human_1_5px_capacity": "UNKNOWN",
+  "production_promotion_authorized": false,
+  "recommendation": "C",
+  "schema_version": 1,
+  "selection": null,
+  "status": "AWAITING_MICHAEL_SELECTION"
+}

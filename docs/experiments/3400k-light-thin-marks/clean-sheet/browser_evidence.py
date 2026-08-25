@@ -983,12 +983,20 @@ def verify(
     search_artifacts: Path,
     inputs: p3.Phase3Inputs,
     contract: Mapping[str, Any],
+    *,
+    validate_search: bool = True,
 ) -> dict[str, Any]:
     request = _load_object(request_path, "browser request")
     result = _load_object(result_path, "browser result")
     observations = _load_object(observation_path, "browser observations")
     pairs = _load_object(pair_path, "browser pairs")
-    validate_request(request, search_artifacts, inputs, contract)
+    validate_request(
+        request,
+        search_artifacts,
+        inputs,
+        contract,
+        validate_search=validate_search,
+    )
     records = _validate_observations(observations, request, inputs)
     pair_row = _validate_pair_payload(pairs)
     result_row = _validate_result_payload(result)

@@ -1,0 +1,296 @@
+{
+  "candidates": [
+    {
+      "bank": [
+        "#668C1E",
+        "#34136C",
+        "#A45EAD",
+        "#762F06",
+        "#004427",
+        "#3072C1"
+      ],
+      "bank_discovery_precedes_role_permutation": true,
+      "bank_sha256": "2c257b8097a344bc05cafe8fd0f270d44b520c6ec9d7aaa653aff30d45724ad4",
+      "broad_anchor_count": 0,
+      "candidate_id": "f5a8f394ddb871627f2dc4cc57df5872601b806d0defa30235b26ab2b894c928",
+      "continuity_anchor_matches": [],
+      "discovered_bank": [
+        "#004427",
+        "#3072C1",
+        "#34136C",
+        "#668C1E",
+        "#762F06",
+        "#A45EAD"
+      ],
+      "hard_gate_failures": [],
+      "hue_rotation_degrees": 20.0,
+      "lane": "A",
+      "lane_method": "constructive-cool-lighter-warm-darker",
+      "local_refinement_swaps": 6,
+      "materiality_admission": {
+        "category_fg_0_distinctiveness": {
+          "baseline": 4.726045973314013,
+          "candidate": 5.63394880879657,
+          "improvement": 0.9079028354825569,
+          "pass": true,
+          "target": 0.25
+        },
+        "comparison_reference": "current approved categorical bank",
+        "full_bank_1_5px_thin_proxy": {
+          "baseline": 7.627912522515658,
+          "candidate": 9.953913364324135,
+          "improvement": 2.3260008418084777,
+          "pass": true,
+          "target": 0.5
+        },
+        "policy": "deterministic search targets; NOT human floors",
+        "selected_weakest_three_dark_cluster_analog": {
+          "baseline": 13.522779946903798,
+          "candidate": 15.71688008831122,
+          "improvement": 2.1941001414074215,
+          "pass": true,
+          "target": 0.5
+        }
+      },
+      "role_permutation": [
+        {
+          "discovered_index": 3,
+          "hex8": "#668C1E",
+          "role": "cat.one"
+        },
+        {
+          "discovered_index": 2,
+          "hex8": "#34136C",
+          "role": "cat.two"
+        },
+        {
+          "discovered_index": 5,
+          "hex8": "#A45EAD",
+          "role": "cat.three"
+        },
+        {
+          "discovered_index": 4,
+          "hex8": "#762F06",
+          "role": "cat.four"
+        },
+        {
+          "discovered_index": 0,
+          "hex8": "#004427",
+          "role": "cat.five"
+        },
+        {
+          "discovered_index": 1,
+          "hex8": "#3072C1",
+          "role": "cat.six"
+        }
+      ],
+      "search_support": "primary",
+      "seed_lane": "A"
+    },
+    {
+      "bank": [
+        "#0A8FD1",
+        "#004427",
+        "#A160AA",
+        "#720114",
+        "#738800",
+        "#484BA4"
+      ],
+      "bank_discovery_precedes_role_permutation": true,
+      "bank_sha256": "b788b1d69bacb491da44fdb8ef1440e11ea24e4a11cbefe8cde53d6fef58d8b3",
+      "broad_anchor_count": 0,
+      "candidate_id": "ff333bd25ec58b32526d526e71401bef9b27ab228c11a33c1c207b736ab9a50c",
+      "continuity_anchor_matches": [],
+      "discovered_bank": [
+        "#004427",
+        "#0A8FD1",
+        "#484BA4",
+        "#720114",
+        "#738800",
+        "#A160AA"
+      ],
+      "hard_gate_failures": [],
+      "hue_rotation_degrees": 10.0,
+      "lane": "B",
+      "lane_method": "transformed-native-targets-inverted-through-gains",
+      "local_refinement_swaps": 6,
+      "materiality_admission": {
+        "category_fg_0_distinctiveness": {
+          "baseline": 4.726045973314013,
+          "candidate": 5.936023653848474,
+          "improvement": 1.2099776805344602,
+          "pass": true,
+          "target": 0.25
+        },
+        "comparison_reference": "current approved categorical bank",
+        "full_bank_1_5px_thin_proxy": {
+          "baseline": 7.627912522515658,
+          "candidate": 9.62684115995335,
+          "improvement": 1.9989286374376931,
+          "pass": true,
+          "target": 0.5
+        },
+        "policy": "deterministic search targets; NOT human floors",
+        "selected_weakest_three_dark_cluster_analog": {
+          "baseline": 13.522779946903798,
+          "candidate": 14.683638327654728,
+          "improvement": 1.1608583807509305,
+          "pass": true,
+          "target": 0.5
+        }
+      },
+      "role_permutation": [
+        {
+          "discovered_index": 1,
+          "hex8": "#0A8FD1",
+          "role": "cat.one"
+        },
+        {
+          "discovered_index": 0,
+          "hex8": "#004427",
+          "role": "cat.two"
+        },
+        {
+          "discovered_index": 5,
+          "hex8": "#A160AA",
+          "role": "cat.three"
+        },
+        {
+          "discovered_index": 3,
+          "hex8": "#720114",
+          "role": "cat.four"
+        },
+        {
+          "discovered_index": 4,
+          "hex8": "#738800",
+          "role": "cat.five"
+        },
+        {
+          "discovered_index": 2,
+          "hex8": "#484BA4",
+          "role": "cat.six"
+        }
+      ],
+      "search_support": "primary",
+      "seed_lane": "C"
+    },
+    {
+      "bank": [
+        "#038E97",
+        "#024202",
+        "#AD5697",
+        "#6B0621",
+        "#857D0B",
+        "#5257B1"
+      ],
+      "bank_discovery_precedes_role_permutation": true,
+      "bank_sha256": "a40a78d6465745ad6245b62b1262c2754292f9d8e6a8849bd7a60f32646b0012",
+      "broad_anchor_count": 2,
+      "candidate_id": "bc5d5b8645cfb9f8f58414b899cc9727c823c5c7c581cfdcb133c75518c9d112",
+      "continuity_anchor_matches": [
+        {
+          "anchor_hue_degrees": 176.2766872,
+          "half_width_degrees": 30.0,
+          "hue_delta_degrees": 26.45625309091386,
+          "matched_hex8": "#038E97",
+          "matched_hue_degrees": 202.73294029091386
+        },
+        {
+          "anchor_hue_degrees": 266.0687792,
+          "half_width_degrees": 30.0,
+          "hue_delta_degrees": 11.561675719755385,
+          "matched_hex8": "#5257B1",
+          "matched_hue_degrees": 277.6304549197554
+        }
+      ],
+      "discovered_bank": [
+        "#024202",
+        "#038E97",
+        "#5257B1",
+        "#6B0621",
+        "#857D0B",
+        "#AD5697"
+      ],
+      "hard_gate_failures": [],
+      "hue_rotation_degrees": 0.0,
+      "lane": "C",
+      "lane_method": "continuity-compromise-zero-to-two-broad-anchors",
+      "local_refinement_swaps": 6,
+      "materiality_admission": {
+        "category_fg_0_distinctiveness": {
+          "baseline": 4.726045973314013,
+          "candidate": 6.466329045890242,
+          "improvement": 1.7402830725762284,
+          "pass": true,
+          "target": 0.25
+        },
+        "comparison_reference": "current approved categorical bank",
+        "full_bank_1_5px_thin_proxy": {
+          "baseline": 7.627912522515658,
+          "candidate": 9.404306704540582,
+          "improvement": 1.7763941820249247,
+          "pass": true,
+          "target": 0.5
+        },
+        "policy": "deterministic search targets; NOT human floors",
+        "selected_weakest_three_dark_cluster_analog": {
+          "baseline": 13.522779946903798,
+          "candidate": 14.149383644111547,
+          "improvement": 0.6266036972077487,
+          "pass": true,
+          "target": 0.5
+        }
+      },
+      "role_permutation": [
+        {
+          "discovered_index": 1,
+          "hex8": "#038E97",
+          "role": "cat.one"
+        },
+        {
+          "discovered_index": 0,
+          "hex8": "#024202",
+          "role": "cat.two"
+        },
+        {
+          "discovered_index": 5,
+          "hex8": "#AD5697",
+          "role": "cat.three"
+        },
+        {
+          "discovered_index": 3,
+          "hex8": "#6B0621",
+          "role": "cat.four"
+        },
+        {
+          "discovered_index": 4,
+          "hex8": "#857D0B",
+          "role": "cat.five"
+        },
+        {
+          "discovered_index": 2,
+          "hex8": "#5257B1",
+          "role": "cat.six"
+        }
+      ],
+      "search_support": "primary",
+      "seed_lane": "C"
+    }
+  ],
+  "input_chain_sha256": "55763c938efd8f91dae75d2b20a4c2187ed3e91934180cf8cf4fc2500649feea",
+  "objective_policy": {
+    "dimensions": [
+      "nominal_transformed_1_5px_raster_category_pair",
+      "nominal_transformed_1_5px_raster_category_fg_0",
+      "nominal_transformed_j_prime_luminance_pair",
+      "nominal_transformed_solid_category_pair",
+      "commanded_solid_category_pair",
+      "raster_2px_then_3px",
+      "hue_breadth_topology_sensitivity"
+    ],
+    "kind": "lexicographic-worst-case"
+  },
+  "schema_version": 1,
+  "search_contract_sha256": "b855980bc364faa21af4523b8d97274ccab5d8b9546547c1beec763d8a40c06f",
+  "selection": null
+}

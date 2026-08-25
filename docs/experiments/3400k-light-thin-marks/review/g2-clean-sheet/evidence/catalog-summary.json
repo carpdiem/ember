@@ -1,0 +1,41 @@
+{
+  "admission": {
+    "canonical_hex8_reparsed_before_metrics": true,
+    "exact_srgb_gamut": true,
+    "hard_single_color_gates": [
+      "commanded_category_foreground_delta_e_ok",
+      "commanded_category_pair_delta_e_ok",
+      "commanded_minimum_hue_gap_degrees",
+      "graphics_contrast_ratio",
+      "minimum_commanded_oklab_lightness",
+      "minimum_nominal_transformed_luminance",
+      "nominal_transformed_category_foreground_delta_e_ok",
+      "nominal_transformed_category_pair_delta_e_ok"
+    ],
+    "uniform_lightness_ceiling": null,
+    "upper_lightness_derived_from_exact_background_contrast": true
+  },
+  "catalog_mode": "full",
+  "exact_hex8_count": 7184,
+  "requested_domain": {
+    "chroma": [
+      0.04,
+      0.14
+    ],
+    "hue_degrees": [
+      0.0,
+      360.0
+    ],
+    "lightness": [
+      0.3,
+      0.64
+    ]
+  },
+  "schema_version": 1,
+  "support": {
+    "chroma_bins_occupied": 7,
+    "hue_bins_occupied": 24,
+    "lightness_bins_occupied": 8,
+    "non_baseline_fraction": 1.0
+  }
+}
