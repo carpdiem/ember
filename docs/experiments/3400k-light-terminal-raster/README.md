@@ -86,7 +86,7 @@ pytest -q tests/test_3400k_light_terminal_raster_experiment.py
 
 The browser step needs GStack Chromium. The search/test environment needs the `dev` and `experiment` extras.
 
-The captured runtime (`Python 3.11`, `colour-science 0.4.7`, `NumPy 2.4.6`)
+The captured runtime (`macOS arm64`, `Python 3.11`, `colour-science 0.4.7`, `NumPy 2.4.6`)
 must reproduce the recorded payload exactly. Other supported runtimes must preserve
 the exact structural/identity contract and every Candidate ID/Hex/order/count while
 keeping all computed numeric drift within `1e-9`; the recorded payload hash remains

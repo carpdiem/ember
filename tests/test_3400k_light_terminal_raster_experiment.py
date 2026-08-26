@@ -4,6 +4,7 @@ import hashlib
 import importlib.util
 import json
 import math
+import platform
 import sys
 from copy import deepcopy
 from pathlib import Path
@@ -16,6 +17,8 @@ CAPTURE_RUNTIME = {
     "python": (3, 11),
     "colour": "0.4.7",
     "numpy": "2.4.6",
+    "system": "Darwin",
+    "machine": "arm64",
 }
 NUMERIC_TOLERANCE = 1e-9
 
@@ -72,6 +75,8 @@ def capture_runtime_matches(search) -> bool:
         sys.version_info[:2] == CAPTURE_RUNTIME["python"]
         and search.colour.__version__ == CAPTURE_RUNTIME["colour"]
         and search.np.__version__ == CAPTURE_RUNTIME["numpy"]
+        and platform.system() == CAPTURE_RUNTIME["system"]
+        and platform.machine() == CAPTURE_RUNTIME["machine"]
     )
 
 

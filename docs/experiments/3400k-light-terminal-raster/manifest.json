@@ -2,9 +2,9 @@
   "artifact_kind": "3400k-light-terminal-raster-review-package",
   "artifacts": {
     "docs/experiments/3400k-light-terminal-raster/README.md": {
-      "bytes": 4105,
+      "bytes": 4120,
       "mode": "0o644",
-      "sha256": "89985c5fa1e5e58850082e23f702db3493f657fb585e41d285ef0753c3361a6d"
+      "sha256": "56304b5d1f81cec1ad1a0443f05c86726671148e424434b00c2e0bae227ea578"
     },
     "docs/experiments/3400k-light-terminal-raster/browser-evidence.json": {
       "bytes": 212794,
@@ -62,9 +62,9 @@
       "sha256": "1bb0a5b7d9da50b4a60dc7082cdc3622f01ecfa8324e72765dafdb8ac54bfa3a"
     },
     "tests/test_3400k_light_terminal_raster_experiment.py": {
-      "bytes": 9180,
+      "bytes": 9364,
       "mode": "0o644",
-      "sha256": "d23c14c69d47ae683ff9210e74d3f9a319007a94998e2babcfcea18478f52dd4"
+      "sha256": "1318e4106be316cf96c24caaaf5a637c8a20435008cd80901075f4f91f8e4731"
     }
   },
   "eligible_candidates": [
