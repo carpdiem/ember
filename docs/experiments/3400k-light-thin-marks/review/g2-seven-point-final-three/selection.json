@@ -1,0 +1,24 @@
+{
+  "allowed_selections": [
+    "ORIGINAL-A",
+    "FIXED-FOUR-YELLOW",
+    "PINK-RELAXED-GOLDEN"
+  ],
+  "artifact_kind": "seven-point-final-three-human-selection",
+  "automatic_recommendation": null,
+  "candidate_ids": {
+    "Fixed-four de novo yellow": "67f02085994bf7f4d54ccc8bd48e8f56474c94631a6494b55f6add066641f47e",
+    "Original Candidate A": "cdfdcbb18180c3f2f0b9ae47070d81f720043dedcf8a5240248d393ef3d9bf28",
+    "Pink-relaxed golden": "1707140ad052044820f9fdcae2d7a64d2bf2776c438d168c582759380cb4f343"
+  },
+  "fixed_fg0": "#342F2C",
+  "production_promotion": false,
+  "report_source": {
+    "commit": "5851694a26cb0536bdb7d3d5cdef8624fb9bab0b",
+    "file": "final_three_report.py",
+    "sha256": "19b865bbbab721d10df231a0b3dc3cbc773b52c52328607eafdbc314922ae1ac"
+  },
+  "schema_version": 1,
+  "selection": null,
+  "status": "AWAITING_MICHAEL_FINAL_THREE_SELECTION"
+}

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SEVEN = ROOT / "docs/experiments/3400k-light-thin-marks/seven-point"
+REVIEW = ROOT / "docs/experiments/3400k-light-thin-marks/review/g2-seven-point-final-three"
 SPEC = importlib.util.spec_from_file_location(
     "final_three_report_test", SEVEN / "final_three_report.py"
 )
@@ -123,3 +125,32 @@ def test_source_is_narrow_responsive_and_environment_free() -> None:
     assert "@media(max-width:680px)" in source
     assert ".summary-wrap th:nth-child(5),.summary-wrap td:nth-child(5){{display:none}}" in source
     assert report.EXPECTED_EVIDENCE_COUNT == 14
+
+
+def test_committed_final_three_review_is_closed_and_awaiting_selection() -> None:
+    evidence = REVIEW / "evidence"
+    assert len(list(evidence.iterdir())) == 14
+    assert all(path.stat().st_size < 50_000_000 for path in evidence.iterdir())
+    selection = json.loads((REVIEW / "selection.json").read_text())
+    assert selection["status"] == "AWAITING_MICHAEL_FINAL_THREE_SELECTION"
+    assert selection["selection"] is None
+    assert selection["automatic_recommendation"] is None
+    assert selection["allowed_selections"] == [
+        "ORIGINAL-A",
+        "FIXED-FOUR-YELLOW",
+        "PINK-RELAXED-GOLDEN",
+    ]
+    assert selection["production_promotion"] is False
+
+
+def test_committed_final_page_has_exact_metrics_and_all_specimens() -> None:
+    page = (REVIEW / "index.html").read_text()
+    assert "Original A 9.484" in page
+    assert "Fixed-four yellow 9.137" in page
+    assert "Pink-relaxed golden 7.725" in page
+    assert page.count('class="option"') == 3
+    assert page.count('class="finance"') == 3
+    assert page.count('class="terminal"') == 6
+    assert page.count('class="application"') == 6
+    assert "background:#f2f0eb" in page
+    assert "/Users/" not in page
