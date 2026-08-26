@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -101,9 +102,8 @@ def test_phone_and_compact_desktop_breakpoints_are_encoded() -> None:
     assert "Pink-relaxed" not in source
 
 
-def test_committed_review_package_is_closed_when_present() -> None:
-    if not REVIEW.is_dir():
-        return
+def test_committed_review_package_is_closed_and_selection_null() -> None:
+    assert REVIEW.is_dir()
     assert {path.name for path in REVIEW.iterdir()} == {
         "evidence",
         "index.html",
@@ -111,3 +111,43 @@ def test_committed_review_package_is_closed_when_present() -> None:
         "selection.json",
     }
     assert len(list((REVIEW / "evidence").iterdir())) == 22
+    selection = json.loads((REVIEW / "selection.json").read_text())
+    assert selection["selection"] is None
+    assert selection["allowed_selections"] == ["NEW-A", "NEW-B", "NEW-C"]
+    assert selection["automatic_recommendation"] is None
+    assert selection["production_promotion"] is False
+    assert selection["total_unordered_pairs"] == 21
+
+
+def test_committed_review_has_exact_f464924_banks_and_actual_minima() -> None:
+    evidence = REVIEW / "evidence"
+    expected = {
+        "a": (
+            ["#70002D", "#B25809", "#6C8D38", "#016869", "#4081D2", "#84499C"],
+            [9.07455454, 11.35262384, 11.60222538],
+        ),
+        "b": (
+            ["#7F5D08", "#489543", "#0C6A76", "#5783DA", "#6A3A90", "#B34F7F"],
+            [8.8973604, 12.05087956, 12.46810798],
+        ),
+        "c": (
+            ["#922F0C", "#91772A", "#03642B", "#4B90AB", "#5D53AE", "#620045"],
+            [8.36302236, 10.97788204, 11.11565802],
+        ),
+    }
+    for role, (bank, minima) in expected.items():
+        request = json.loads((evidence / f"browser-request-{role}.json").read_text())
+        result = json.loads((evidence / f"browser-result-{role}.json").read_text())
+        assert request["serialized_bank"] == bank
+        assert request["binding"]["forbidden_arc_source"]["commit"] == (
+            "a870212ec303dda5e70cf4b1d762b72adcf7e2e6"
+        )
+        actual = result["pair_metrics_by_family"]["seven_point"]["actual_by_width_state_background"]
+        observed = [
+            min(
+                actual[width]["transformed"][background]["minimum_observed_delta_e_ok"]
+                for background in ("bg_0", "bg_1")
+            )
+            for width in ("1.5", "2", "3")
+        ]
+        assert observed == minima

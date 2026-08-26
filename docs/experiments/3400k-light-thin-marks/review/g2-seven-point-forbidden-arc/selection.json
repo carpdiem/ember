@@ -1,0 +1,33 @@
+{
+  "allowed_selections": [
+    "NEW-A",
+    "NEW-B",
+    "NEW-C"
+  ],
+  "artifact_kind": "seven-point-forbidden-arc-human-selection",
+  "automatic_recommendation": null,
+  "benchmark_ids": {
+    "Candidate A benchmark": "32fc9079e96e2e5619cc6cafd9123dc2c12076eac824b33925c867b88ab4663f",
+    "Prior C benchmark": "66a03c27aebf1623a7dbc56b0dac1c6443b10b588bca7aee81ce01e321f33cb9"
+  },
+  "candidate_ids": {
+    "New A": "0081fe30792b1dc28cb674fdcf0b6e81522907df075f896c2582697df22b5796",
+    "New B": "17cc283012494cf96e09075e56d4de2ce4c3c467bcca1b42720a9918555f4bff",
+    "New C": "566235542ea0d1ece765baa97eae07e3f3aabbac85d1f94ce849d64a81548769"
+  },
+  "fixed_fg0": "#342F2C",
+  "forbidden_commanded_oklch_hue_arc_closed": [
+    92.0,
+    118.0
+  ],
+  "production_promotion": false,
+  "report_source": {
+    "commit": "481b3a5e08f0571a72a9c2babbd217fdac665206",
+    "file": "forbidden_arc_report.py",
+    "sha256": "dca3c232ce3a55628d5d3c95b4f802ab3d440fa04c00c8d0781994bf1d9a6317"
+  },
+  "schema_version": 1,
+  "selection": null,
+  "status": "AWAITING_MICHAEL_FORBIDDEN_ARC_SELECTION",
+  "total_unordered_pairs": 21
+}
