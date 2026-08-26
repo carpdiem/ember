@@ -8,6 +8,12 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+TESTS_DIR = Path(__file__).resolve().parent
+if str(TESTS_DIR) not in sys.path:
+    sys.path.insert(0, str(TESTS_DIR))
+
+from artifact_freshness import assert_committed_artifact_fresh
+
 ROOT = Path(__file__).resolve().parents[1]
 SEVEN = ROOT / "docs/experiments/3400k-light-thin-marks/seven-point"
 SPEC = importlib.util.spec_from_file_location("hue_frontier_test", SEVEN / "hue_frontier.py")
@@ -137,4 +143,4 @@ def test_committed_hue_frontier_artifacts_are_fresh() -> None:
     directory = SEVEN / "hue-frontier"
     actual = {name: json.loads((directory / name).read_text()) for name in frontier.EXPECTED_FILES}
     expected = frontier.payloads(frontier.run())
-    assert actual == expected
+    assert_committed_artifact_fresh(actual, expected)

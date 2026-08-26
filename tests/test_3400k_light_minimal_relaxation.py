@@ -7,6 +7,12 @@ from pathlib import Path
 
 import pytest
 
+TESTS_DIR = Path(__file__).resolve().parent
+if str(TESTS_DIR) not in sys.path:
+    sys.path.insert(0, str(TESTS_DIR))
+
+from artifact_freshness import assert_committed_artifact_fresh
+
 ROOT = Path(__file__).resolve().parents[1]
 SEVEN = ROOT / "docs/experiments/3400k-light-thin-marks/seven-point"
 SPEC = importlib.util.spec_from_file_location(
@@ -135,4 +141,4 @@ def test_committed_minimal_relaxation_artifacts_are_fresh() -> None:
     directory = SEVEN / "minimal-relaxation"
     actual = {name: json.loads((directory / name).read_text()) for name in relax.EXPECTED_FILES}
     expected = relax.payloads(relax.run())
-    assert actual == expected
+    assert_committed_artifact_fresh(actual, expected)
