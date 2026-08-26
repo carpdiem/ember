@@ -2114,21 +2114,21 @@
       "foreground_chroma_order_tolerance": 0.003,
       "terminal_minimum_shifted_foreground_contrast": 4.71,
       "categorical": {
-        "one": "#70002D",
-        "two": "#B25809",
-        "three": "#6C8D38",
-        "four": "#016869",
-        "five": "#4081D2",
-        "six": "#84499C"
+        "one": "#B25809",
+        "two": "#4081D2",
+        "three": "#84499C",
+        "four": "#6C8D38",
+        "five": "#016869",
+        "six": "#70002D"
       },
       "categorical_semantic_slots": null,
       "categorical_transformed_targets": [
-        "#700018",
         "#B24105",
+        "#405F6F",
+        "#843653",
         "#6C681E",
         "#014D38",
-        "#405F6F",
-        "#843653"
+        "#700018"
       ],
       "daylight_minimum_delta_e_ok_target": 16.0,
       "daylight_minimum_hue_gap_degrees_target": 30.0,

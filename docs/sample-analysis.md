@@ -31,8 +31,8 @@ must never increase as the target temperature falls.
 |---|---:|---:|---:|
 | `terminal-commanded.png` | 1.9891% | 0.3563% | 0.0880 |
 | `terminal-simulated.png` | 0.8575% | 1.7097% | 0.1575 |
-| `data-commanded.png` | 1.5676% | 0.5387% | 0.1103 |
-| `data-simulated.png` | 0.7929% | 5.2635% | 0.1858 |
+| `data-commanded.png` | 1.5674% | 0.5332% | 0.1103 |
+| `data-simulated.png` | 0.7928% | 5.2704% | 0.1858 |
 
 Interpretation: small high-contrast edge fractions are expected around glyphs,
 axes, and markers. Commanded high-chroma area should remain scarce. A deep warm

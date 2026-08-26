@@ -14,8 +14,17 @@ from ember.generate import generate_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 PROVENANCE = ROOT / "docs/provenance/3400k-light-forbidden-arc-new-a.json"
-ACCEPTED_BANK = ["#70002D", "#B25809", "#6C8D38", "#016869", "#4081D2", "#84499C"]
-ACCEPTED_TRANSFORMED = ["#700018", "#B24105", "#6C681E", "#014D38", "#405F6F", "#843653"]
+SOURCE_HUE_ORDER_BANK = ["#70002D", "#B25809", "#6C8D38", "#016869", "#4081D2", "#84499C"]
+SOURCE_HUE_ORDER_TRANSFORMED = [
+    "#700018",
+    "#B24105",
+    "#6C681E",
+    "#014D38",
+    "#405F6F",
+    "#843653",
+]
+PRODUCTION_BANK = ["#B25809", "#4081D2", "#84499C", "#6C8D38", "#016869", "#70002D"]
+PRODUCTION_TRANSFORMED = ["#B24105", "#405F6F", "#843653", "#6C681E", "#014D38", "#700018"]
 RETIRED_BANK = ["#359984", "#281144", "#A76282", "#6A2600", "#185823", "#445D9B"]
 EXPECTED_DEFINITION_HASHES = {
     "3400k-dark": "917858abc2fb20d1b01229fb341355575cd0e308c480fe12a7404fe3887b5797",
@@ -44,8 +53,10 @@ def _definition_hashes() -> dict[str, str]:
 def test_canonical_3400k_light_bank_matches_accepted_new_a() -> None:
     family = next(family for family in FAMILIES if family.slug == "3400k-light")
     assert family.surfaces["fg_0"] == "#342F2C"
-    assert list(family.categorical_colors) == ACCEPTED_BANK
-    assert list(family.categorical_transformed_targets) == ACCEPTED_TRANSFORMED
+    assert list(family.categorical_colors) == PRODUCTION_BANK
+    assert list(family.categorical_transformed_targets) == PRODUCTION_TRANSFORMED
+    assert sorted(family.categorical_colors) == sorted(SOURCE_HUE_ORDER_BANK)
+    assert sorted(family.categorical_transformed_targets) == sorted(SOURCE_HUE_ORDER_TRANSFORMED)
     assert family.profile.gains == (1.0, 0.74, 0.53)
 
 
@@ -55,11 +66,11 @@ def test_transformed_targets_are_exactly_derived_from_unchanged_profile() -> Non
         srgb_to_hex(warm_transform(hex_to_srgb(value), family.profile.gains))
         for value in family.categorical_colors
     ]
-    assert transformed == ACCEPTED_TRANSFORMED
+    assert transformed == PRODUCTION_TRANSFORMED
 
 
 def test_accepted_bank_has_no_commanded_hue_in_closed_forbidden_arc() -> None:
-    lab = srgb_to_oklab(np.asarray([hex_to_srgb(value) for value in ACCEPTED_BANK]))
+    lab = srgb_to_oklab(np.asarray([hex_to_srgb(value) for value in PRODUCTION_BANK]))
     hues = np.degrees(np.arctan2(lab[:, 2], lab[:, 1])) % 360.0
     assert all(not (92.0 <= float(hue) <= 118.0) for hue in hues)
 
@@ -73,8 +84,19 @@ def test_provenance_pins_candidate_and_exact_21_pair_accounting() -> None:
     assert record["source_review_url"].startswith(
         "https://github.com/carpdiem/ember/blob/d54473bf58ab7c5cf94fbc159f687a9f93465061/"
     )
-    assert record["categorical"] == ACCEPTED_BANK
-    assert record["categorical_transformed_3400k"] == ACCEPTED_TRANSFORMED
+    assert record["schema_version"] == 2
+    assert record["source_hue_order_categorical"] == SOURCE_HUE_ORDER_BANK
+    assert record["source_hue_order_transformed_3400k"] == SOURCE_HUE_ORDER_TRANSFORMED
+    assert record["categorical"] == PRODUCTION_BANK
+    assert record["categorical_transformed_3400k"] == PRODUCTION_TRANSFORMED
+    assert record["production_cross_theme_order"]["source_hue_indices_one_based"] == [
+        2,
+        5,
+        6,
+        3,
+        4,
+        1,
+    ]
     assert record["selection"] == "NEW-A"
     assert record["production"] is True
     assert record["pair_accounting"] == {
@@ -97,18 +119,18 @@ def test_unrelated_family_and_light_noncategorical_definitions_are_byte_stable()
 def test_generated_consumers_preserve_exact_category_order_and_bytes() -> None:
     manifest = generate_manifest()
     light = manifest["families"]["3400k-light"]
-    assert list(light["categorical"].values()) == ACCEPTED_BANK
-    assert light["categorical_transformed_targets"] == ACCEPTED_TRANSFORMED
+    assert list(light["categorical"].values()) == PRODUCTION_BANK
+    assert light["categorical_transformed_targets"] == PRODUCTION_TRANSFORMED
 
     for relative in ("palettes/ember.json", "src/ember/palettes.json"):
         exported = json.loads((ROOT / relative).read_text())
         family = exported["families"]["3400k-light"]
-        assert list(family["categorical"].values()) == ACCEPTED_BANK
-        assert family["categorical_transformed_targets"] == ACCEPTED_TRANSFORMED
+        assert list(family["categorical"].values()) == PRODUCTION_BANK
+        assert family["categorical_transformed_targets"] == PRODUCTION_TRANSFORMED
 
     css = (ROOT / "palettes/ember.css").read_text()
     block = css.split('[data-ember-palette="3400k-light"] {', 1)[1].split("}", 1)[0]
-    positions = [block.index(value) for value in ACCEPTED_BANK]
+    positions = [block.index(value) for value in PRODUCTION_BANK]
     assert positions == sorted(positions)
 
 
@@ -140,6 +162,7 @@ def test_reader_paths_use_finished_product_language_and_link_provenance() -> Non
     public = "\n".join((ROOT / path).read_text() for path in ("README.md", "index.html"))
     assert "3400k-light-forbidden-arc-new-a.json" in public
     assert "reserving the commanded Oklch hue arc from 92° through 118°" in public
+    assert "keep series IDs and category indices unchanged" in public
     rejected = (
         "promotion required",
         "not canonical",

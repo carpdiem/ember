@@ -176,14 +176,14 @@ def test_accent_selections_have_locked_two_stage_values() -> None:
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
         "3400k-light": {
-            "categorical": ["#70002D", "#B25809", "#6C8D38", "#016869", "#4081D2", "#84499C"],
+            "categorical": ["#B25809", "#4081D2", "#84499C", "#6C8D38", "#016869", "#70002D"],
             "categorical_transformed_targets": [
-                "#700018",
                 "#B24105",
-                "#6C681E",
-                "#014D38",
                 "#405F6F",
                 "#843653",
+                "#6C681E",
+                "#014D38",
+                "#700018",
             ],
             "terminal": ["#430000", "#10420E", "#8A4805", "#131851", "#5D3777", "#007672"],
             "terminal_transformed_targets": [

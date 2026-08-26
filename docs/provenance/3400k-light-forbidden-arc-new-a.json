@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "artifact_kind": "accepted-palette-provenance",
   "family": "3400k-light",
   "accepted_name": "forbidden-arc-new-a",
@@ -8,7 +8,7 @@
   "source_review_url": "https://github.com/carpdiem/ember/blob/d54473bf58ab7c5cf94fbc159f687a9f93465061/docs/experiments/3400k-light-thin-marks/review/g2-seven-point-forbidden-arc/index.html",
   "source_candidate_id": "0081fe30792b1dc28cb674fdcf0b6e81522907df075f896c2582697df22b5796",
   "fixed_fg0": "#342F2C",
-  "categorical": [
+  "source_hue_order_categorical": [
     "#70002D",
     "#B25809",
     "#6C8D38",
@@ -16,7 +16,7 @@
     "#4081D2",
     "#84499C"
   ],
-  "categorical_transformed_3400k": [
+  "source_hue_order_transformed_3400k": [
     "#700018",
     "#B24105",
     "#6C681E",
@@ -24,6 +24,87 @@
     "#405F6F",
     "#843653"
   ],
+  "categorical": [
+    "#B25809",
+    "#4081D2",
+    "#84499C",
+    "#6C8D38",
+    "#016869",
+    "#70002D"
+  ],
+  "categorical_transformed_3400k": [
+    "#B24105",
+    "#405F6F",
+    "#843653",
+    "#6C681E",
+    "#014D38",
+    "#700018"
+  ],
+  "production_cross_theme_order": {
+    "source_hue_indices_one_based": [
+      2,
+      5,
+      6,
+      3,
+      4,
+      1
+    ],
+    "rationale": "Minimize aggregate exact Oklab distance from each 3400K Dark slot to its 3400K Light counterpart across commanded colors and exact transformed targets.",
+    "assignment_count": 720,
+    "objective_direction": "minimize",
+    "production_rank": 1,
+    "total_delta_e_ok": 179.1181628675322,
+    "commanded_total_delta_e_ok": 99.5874265019884,
+    "transformed_total_delta_e_ok": 79.53073636554379,
+    "maximum_hue_mismatch_degrees": 41.75643047766084,
+    "michael_proposed_source_hue_indices_one_based": [
+      2,
+      5,
+      1,
+      3,
+      4,
+      6
+    ],
+    "michael_proposed_rank": 2,
+    "michael_proposed_total_delta_e_ok": 193.0567155023287,
+    "michael_proposed_maximum_hue_mismatch_degrees": 93.90311495838131,
+    "slot_notes": [
+      "Dark slot 3 pink #C7779E aligns to Light violet #84499C.",
+      "Dark slot 6 brown #915E42 aligns to Light deep red #70002D."
+    ]
+  },
+  "source_review_actual_browser_prefix_quality": {
+    "state": "transformed",
+    "widths_css_px": [
+      1.5,
+      2.0,
+      3.0
+    ],
+    "includes_fixed_fg0": true,
+    "first_two_production_minima": [
+      13.08638167,
+      19.60330802,
+      20.93652811
+    ],
+    "first_three_production_minima": [
+      9.09434661,
+      12.74287816,
+      13.18066564
+    ],
+    "first_three_production_floors": [
+      9.09,
+      12.74,
+      13.18
+    ],
+    "first_three_michael_proposed_minima": [
+      9.18132323,
+      12.83863354,
+      13.38044021
+    ],
+    "production_first_three_sum_delta_e_ok": 35.01789041,
+    "michael_proposed_first_three_sum_delta_e_ok": 35.40039698,
+    "production_prefix_sum_tradeoff_delta_e_ok": 0.38250657
+  },
   "transform_gains": [
     1.0,
     0.74,

@@ -35,6 +35,8 @@ The 3400K Light categorical bank spans red, amber, green, teal, blue, and violet
 reserving the commanded Oklch hue arc from 92° through 118°.
 [Production provenance](docs/provenance/3400k-light-forbidden-arc-new-a.json)
 pins the accepted exact Hex bank and browser evidence.
+Category slots are cross-theme assignments: keep series IDs and category indices unchanged
+when switching between 3400K Dark and 3400K Light so each graph series retains its identity.
 
 ### 2000K Dark
 
