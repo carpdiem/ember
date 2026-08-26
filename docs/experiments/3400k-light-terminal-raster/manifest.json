@@ -1,0 +1,65 @@
+{
+  "artifact_kind": "3400k-light-terminal-raster-review-package",
+  "artifacts": {
+    "docs/experiments/3400k-light-terminal-raster/README.md": {
+      "bytes": 3726,
+      "sha256": "bdce63a586d8fceadc2b23cc6d5da7546c4076f3c69eee3907ac1e7d10cf9453"
+    },
+    "docs/experiments/3400k-light-terminal-raster/browser-evidence.json": {
+      "bytes": 212794,
+      "sha256": "7d622bb837b9c6ee2506f80d03fe8619e328b7744645bdbb452d4d1f9bcd5445"
+    },
+    "docs/experiments/3400k-light-terminal-raster/browser_evidence.py": {
+      "bytes": 20796,
+      "sha256": "320c8280900c67cb78782ac8b8e7621007e2599fe2d3a6568256bd4815504a8f"
+    },
+    "docs/experiments/3400k-light-terminal-raster/render_review.py": {
+      "bytes": 10740,
+      "sha256": "ea5a0450e678eadc9d3e6653cc42cea58a676ba9d0f86a7894ed49ccdab25b7b"
+    },
+    "docs/experiments/3400k-light-terminal-raster/results.json": {
+      "bytes": 23495,
+      "sha256": "da7b86988aaa7fa75b1cd8afe05a1f78a1ec0b5fe5c8af8276ce056cca43f2b9"
+    },
+    "docs/experiments/3400k-light-terminal-raster/review/candidate-a-desktop.png": {
+      "bytes": 113214,
+      "sha256": "e8a24583b77cf16fb079dafa734ab5874c1c4a5801201b6ceb499a8b7c4fc469"
+    },
+    "docs/experiments/3400k-light-terminal-raster/review/candidate-a-phone.png": {
+      "bytes": 79119,
+      "sha256": "10d020650670bca005f2383ebc0e0b96eb6cd910867173b9ac439524cf225c19"
+    },
+    "docs/experiments/3400k-light-terminal-raster/review/current-desktop.png": {
+      "bytes": 115515,
+      "sha256": "b12ad5a5a264c81e416e74e3491b9d9443952349558ea3d5c8ed7fc69e95db45"
+    },
+    "docs/experiments/3400k-light-terminal-raster/review/index.html": {
+      "bytes": 18575,
+      "sha256": "22d191364af8f5f834ba3e85709c21e16d6f75932371361dc697b7352936524b"
+    },
+    "docs/experiments/3400k-light-terminal-raster/review/report.md": {
+      "bytes": 1019,
+      "sha256": "61d52f62d5b762a9f887a508984bd432ab8098156129187b0d7a2e512b6e5715"
+    },
+    "docs/experiments/3400k-light-terminal-raster/review/selection.json": {
+      "bytes": 419,
+      "sha256": "8a280534bff0401dc8522f5de572093cd365bdf442e851e177907f34d619f865"
+    },
+    "docs/experiments/3400k-light-terminal-raster/search.py": {
+      "bytes": 27732,
+      "sha256": "63430630f153c8a15d6f29d4be145a38dbb2721131efb039bd4dcc8269130b62"
+    },
+    "tests/test_3400k_light_terminal_raster_experiment.py": {
+      "bytes": 5027,
+      "sha256": "e7221fbb11df2b5426d5ef598ab185cb4ad97d3e026c0daa5fcf2d48f9073639"
+    }
+  },
+  "eligible_candidates": [
+    "A-raster-maximum"
+  ],
+  "human_selection": null,
+  "production_promotion": false,
+  "schema_version": 1,
+  "source_commit": "016c6b37b283baf44711af3330d2872305b9398c",
+  "source_manifest_sha256": "e7044ae9e629975df2db19ef0c472c74b99efb0ce0e56a46f862387a863f9f4c"
+}

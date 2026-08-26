@@ -1,0 +1,12 @@
+{
+  "automatic_recommendation": null,
+  "browser_evidence_sha256": "7d622bb837b9c6ee2506f80d03fe8619e328b7744645bdbb452d4d1f9bcd5445",
+  "eligible_candidates": [
+    "A-raster-maximum"
+  ],
+  "production_promotion": false,
+  "results_sha256": "da7b86988aaa7fa75b1cd8afe05a1f78a1ec0b5fe5c8af8276ce056cca43f2b9",
+  "schema_version": 1,
+  "selection": null,
+  "source_commit": "016c6b37b283baf44711af3330d2872305b9398c"
+}
