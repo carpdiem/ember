@@ -43,7 +43,9 @@ def definition_hashes() -> dict[str, str]:
             ):
                 payload.pop(key)
             label += "-frozen-unrelated"
-        encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+        encoded = json.dumps(
+            payload, sort_keys=True, separators=(",", ":"), allow_nan=False
+        ).encode()
         hashes[label] = hashlib.sha256(encoded).hexdigest()
     return hashes
 
@@ -144,7 +146,9 @@ def test_generated_exports_use_exact_terminal_roles_and_ansi_aliases() -> None:
 
     css = (ROOT / "palettes/ember.css").read_text()
     block = css.split('[data-ember-palette="3400k-light"] {', 1)[1].split("}", 1)[0]
-    assert [block.index(value) for value in ACCEPTED] == sorted(block.index(value) for value in ACCEPTED)
+    assert [block.index(value) for value in ACCEPTED] == sorted(
+        block.index(value) for value in ACCEPTED
+    )
 
 
 def test_dark_and_unrelated_light_definitions_remain_byte_stable() -> None:
