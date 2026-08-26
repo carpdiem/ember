@@ -257,7 +257,7 @@ def exclusion_proof(row: Mapping[str, Any]) -> str:
     return (
         '<div class="proof"><strong>Closed-arc proof: PASS</strong>'
         f"<span>Commanded categorical hues: {values}</span>"
-        "<span>Zero lie within 92.0°–118.0°.</span></div>"
+        f"<span>Zero lie within the closed 92.0°–118.0° arc.</span></div>"
     )
 
 
@@ -274,7 +274,7 @@ def state_specimens(values: Sequence[str], state: str) -> str:
 
 
 def card(row: Mapping[str, Any]) -> str:
-    return f"""<article class="option" id="option-{row["role"]}"><header><p class="eyebrow">Forbidden-arc finalist</p><h2>{html.escape(row["label"])}</h2><p>{html.escape(LANE_COPY[row["role"]])}</p></header><section class="identity-first"><h3>Full commanded identity</h3>{state_specimens(row["bank"], "commanded")}</section><section class="transformed"><h3>Exact 3400K identity</h3>{state_specimens(row["transformed_bank"], "transformed")}</section>{metric_strip(row)}{exclusion_proof(row)}<details open><summary>Contrast on both backgrounds · both states</summary>{contrast_table(row)}</details><details><summary>Exact Hex and Oklch for all seven roles</summary>{identity_table(row)}</details></article>"""
+    return f"""<article class="option" id="option-{row["role"]}"><header><p class="eyebrow">Forbidden-arc finalist</p><h2>{html.escape(row["label"])}</h2><p>{html.escape(LANE_COPY[row["role"]])}</p></header><section class="identity-first"><h3>Full commanded identity</h3>{state_specimens(row["bank"], "commanded")}</section><section class="transformed"><h3>Exact 3400K identity</h3>{state_specimens(row["transformed_bank"], "transformed")}</section>{metric_strip(row)}{exclusion_proof(row)}<details open><summary>Contrast on both backgrounds · both states</summary>{contrast_table(row)}</details><details open><summary>Exact Hex and Oklch for all seven roles</summary>{identity_table(row)}</details></article>"""
 
 
 def benchmark_strip(rows: Mapping[str, Any]) -> str:

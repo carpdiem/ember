@@ -52,6 +52,7 @@ def test_html_is_visual_first_and_has_no_recommendation() -> None:
     assert "Candidate A and prior C are compact evidence controls only" in source
     assert "Automatic recommendation: NONE" in source
     assert "92.0°–118.0°" in source
+    assert source.count("<details open>") == 6
     assert "15 category↔category plus 6 fg₀↔category" in source
     assert "terminal" in source and "finance" in source and "application" in source
 
