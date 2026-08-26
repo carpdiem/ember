@@ -369,6 +369,28 @@ def polish_lane(
     }
 
 
+def benchmark_candidate(
+    lane: str,
+    categories: Sequence[str],
+    inputs: Any,
+    contract: Mapping[str, Any],
+) -> dict[str, Any]:
+    bank = seven.canonical_categories(categories)
+    evaluation = seven.evaluate(bank, inputs, contract)
+    require(evaluation["hard_gate_failures"] == [], f"benchmark {lane} fails gates")
+    return {
+        "lane": lane,
+        "categories": list(bank),
+        "candidate_id": p3.sha256_json(
+            {"lane": lane, "categories": list(bank), "contract": p3.sha256_json(contract)}
+        ),
+        "category_set_sha256": p3.bank_hash(bank),
+        "objective": evaluation["objective"],
+        "metrics": evaluation["metrics"],
+        "hard_gate_failures": evaluation["hard_gate_failures"],
+    }
+
+
 def run() -> dict[str, Any]:
     inputs = seven.load_inputs(replay=False)
     contract = seven.load_contract()
@@ -403,6 +425,21 @@ def run() -> dict[str, Any]:
             bool(np.linalg.norm(transformed[left] - transformed[right]) >= 0.02),
             "finalists are transformed near-clones",
         )
+    full_polish = json.loads((HERE / "full-polish/results.json").read_text())
+    candidate_a_categories = next(
+        row["categories"] for row in full_polish["candidates"] if row["lane"] == "A"
+    )
+    candidate_a = benchmark_candidate("CANDIDATE-A", candidate_a_categories, inputs, contract)
+    prior_c = benchmark_candidate(
+        "PRIOR-C", seven.benchmark_categories(inputs, contract), inputs, contract
+    )
+    browser_roles = {
+        "reference": candidate_a,
+        "benchmark-c": prior_c,
+        "a": finalists[0],
+        "b": finalists[1],
+        "c": finalists[2],
+    }
     return {
         "schema_version": 1,
         "artifact_kind": "seven-point-forbidden-hue-arc-rebuild",
@@ -448,6 +485,7 @@ def run() -> dict[str, Any]:
             "prior_c_actual_1_5": 7.30273837,
             "policy": "evidence only; not search eligibility",
         },
+        "browser_roles": browser_roles,
         "discoveries": discoveries,
         "candidates": finalists,
         "selection": None,
