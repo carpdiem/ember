@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "accepted-terminal-palette-provenance",
+  "family": "3400k-light",
+  "accepted_name": "A-raster-maximum",
+  "source_review_commit": "e702e402771f364f7ff8614cb425b53289e668b8",
+  "source_review_path": "docs/experiments/3400k-light-terminal-raster/review",
+  "source_review_url": "https://github.com/carpdiem/ember/blob/e702e402771f364f7ff8614cb425b53289e668b8/docs/experiments/3400k-light-terminal-raster/review/index.html",
+  "source_candidate_id": "A-raster-maximum",
+  "source_manifest_commit": "016c6b37b283baf44711af3330d2872305b9398c",
+  "source_manifest_path": "src/ember/palettes.json",
+  "source_manifest_sha256": "e7044ae9e629975df2db19ef0c472c74b99efb0ce0e56a46f862387a863f9f4c",
+  "source_results_path": "docs/experiments/3400k-light-terminal-raster/results.json",
+  "source_results_sha256": "da7b86988aaa7fa75b1cd8afe05a1f78a1ec0b5fe5c8af8276ce056cca43f2b9",
+  "source_results_payload_sha256": "d8572f9928ec2c71dbcba1ff544b90264601c55954aa1e77ea664298cb0e7cee",
+  "source_browser_evidence_path": "docs/experiments/3400k-light-terminal-raster/browser-evidence.json",
+  "source_browser_evidence_sha256": "41c3edf9414b474055a0e84dfe70dbcf643c7222cd9f25a162dc196c951680df",
+  "source_browser_script_sha256": "5c3a4f6982dfc652e444afe42390aa20e7aa60f76e79f07a24650242f64c9612",
+  "source_browser_binary_sha256": "dc055b15f24c3d152032ff1c83fcf600b1b9619f47050998b258c9a4673061af",
+  "source_selection_path": "docs/experiments/3400k-light-terminal-raster/review/selection.json",
+  "source_selection_sha256": "859c1489457cbe7caec1d0e8be7768310c1e22738a6bc4b9690547817592eae3",
+  "source_review_html_sha256": "22d191364af8f5f834ba3e85709c21e16d6f75932371361dc697b7352936524b",
+  "audit_ci_commit": "1bf70a46fe8b4f4a7506eb94db6867b308894cec",
+  "audit_ci_run": "https://github.com/carpdiem/ember/actions/runs/33006857825",
+  "audit_ci_result": "success",
+  "role_order": [
+    "red",
+    "green",
+    "yellow",
+    "blue",
+    "magenta",
+    "cyan"
+  ],
+  "terminal": [
+    "#98074F",
+    "#517304",
+    "#844601",
+    "#396EDB",
+    "#8339A7",
+    "#0B7F8C"
+  ],
+  "terminal_transformed_3400k": [
+    "#98052A",
+    "#515502",
+    "#843401",
+    "#395174",
+    "#832A59",
+    "#0B5E4A"
+  ],
+  "terminal_ansi_indices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "transform_gains": [
+    1.0,
+    0.74,
+    0.53
+  ],
+  "cam16_viewing_conditions": {
+    "commanded": {
+      "adapting_luminance": 64.0,
+      "background_luminance": 20.0,
+      "flare_fraction": 0.0075,
+      "rgb_gains": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "label": "normal-daytime"
+    },
+    "transformed": {
+      "adapting_luminance": 8.0,
+      "background_luminance": 3.0,
+      "flare_fraction": 0.0075,
+      "rgb_gains": [
+        1.0,
+        0.74,
+        0.53
+      ],
+      "label": "low-light"
+    }
+  },
+  "browser_contract": {
+    "font": "Menlo",
+    "font_sizes_px": [
+      11,
+      13,
+      15
+    ],
+    "font_weights": [
+      400,
+      600
+    ],
+    "device_pixel_ratios": [
+      1,
+      2
+    ],
+    "backgrounds": [
+      "bg_0",
+      "bg_1"
+    ],
+    "phase_rule": "0 or 0.5/DPR CSS px on each axis",
+    "screenshot_count": 240,
+    "nominal_near_collision_threshold_delta_e_ok": 0.5,
+    "accepted_nominal_near_collision_fraction": 0.0,
+    "gain_corner_browser_status": "report-only-sampled-diagnostic"
+  },
+  "accepted_browser_active_p10_dpr1": {
+    "commanded": {
+      "red": 1.855533837,
+      "green": 1.959489679,
+      "yellow": 1.282207878,
+      "blue": 2.189178112,
+      "magenta": 2.014912103,
+      "cyan": 2.049012374
+    },
+    "transformed": {
+      "red": 1.78505129,
+      "green": 1.039776524,
+      "yellow": 1.017998206,
+      "blue": 1.101361221,
+      "magenta": 1.606904323,
+      "cyan": 1.480777718
+    }
+  },
+  "accepted_browser_minimum_pair_p10_dpr1": {
+    "commanded": 1.3646012250053523,
+    "transformed": 0.9547793823789078
+  },
+  "release_contract": {
+    "commanded_pair_delta_e_ok_floor": 14.0,
+    "transformed_pair_delta_e_ok_floor": 7.5,
+    "transformed_fg_2_delta_e_ok_floor": 6.5,
+    "terminal_canvas_contrast_floor": 4.5,
+    "browser_target_roles": [
+      "red",
+      "green",
+      "blue"
+    ],
+    "browser_other_role_nonregression_ratio": 0.85,
+    "browser_pair_nonregression_required": true,
+    "browser_exact_rgb8_collision_fraction": 0.0
+  },
+  "selection": "A-raster-maximum",
+  "production": true
+}

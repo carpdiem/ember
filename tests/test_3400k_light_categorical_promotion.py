@@ -28,7 +28,7 @@ PRODUCTION_TRANSFORMED = ["#B24105", "#405F6F", "#843653", "#6C681E", "#014D38",
 RETIRED_BANK = ["#359984", "#281144", "#A76282", "#6A2600", "#185823", "#445D9B"]
 EXPECTED_DEFINITION_HASHES = {
     "3400k-dark": "917858abc2fb20d1b01229fb341355575cd0e308c480fe12a7404fe3887b5797",
-    "3400k-light-noncategorical": "7a285169fbb1b345b3aed829c6662f6da4133b34cf6d070c64cdb8d68673f1bd",
+    "3400k-light-frozen-unrelated": "b0ecdc26a8db119c89ac042abb088e9c1594b61189b692ce220ebacf9858a738",
     "2000k-dark": "57590380f10a2a94279a83281650981d73edc748e429d7e825c5efefe023e7e6",
     "1200k-dark": "1c8d4f2121968ed1f189aecc507a8f37f7072bdc9d86e247a12265cbbb2832b1",
 }
@@ -40,9 +40,16 @@ def _definition_hashes() -> dict[str, str]:
         payload = dataclasses.asdict(family)
         label = family.slug
         if family.slug == "3400k-light":
-            payload.pop("categorical_colors")
-            payload.pop("categorical_transformed_targets")
-            label += "-noncategorical"
+            for key in (
+                "categorical_colors",
+                "categorical_transformed_targets",
+                "terminal_colors",
+                "terminal_transformed_targets",
+                "terminal_night_minimum_delta_e_ok",
+                "terminal_night_minimum_fg_2_delta_e_ok",
+            ):
+                payload.pop(key)
+            label += "-frozen-unrelated"
         encoded = json.dumps(
             payload, sort_keys=True, separators=(",", ":"), allow_nan=False
         ).encode()
@@ -112,7 +119,7 @@ def test_provenance_pins_candidate_and_exact_21_pair_accounting() -> None:
     assert sum("fg_0" in pair for pair in pairs) == 6
 
 
-def test_unrelated_family_and_light_noncategorical_definitions_are_byte_stable() -> None:
+def test_unrelated_family_and_frozen_light_definitions_are_byte_stable() -> None:
     assert _definition_hashes() == EXPECTED_DEFINITION_HASHES
 
 

@@ -37,6 +37,10 @@ reserving the commanded Oklch hue arc from 92° through 118°.
 pins the accepted exact Hex bank and browser evidence.
 Category slots are cross-theme assignments: keep series IDs and category indices unchanged
 when switching between 3400K Dark and 3400K Light so each graph series retains its identity.
+The 3400K Light terminal bank is separately tuned from real small-glyph Chromium pixels so
+red, green, blue, and the other ANSI accents remain visibly distinct from ordinary `fg_0`
+text. Its [terminal provenance](docs/provenance/3400k-light-terminal-a.json) pins the accepted
+roles, daytime/low-light CAM16 contract, and browser evidence.
 
 ### 2000K Dark
 

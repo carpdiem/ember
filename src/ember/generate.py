@@ -54,6 +54,8 @@ ANSI_NAMES = (
 
 CAM16_ADAPTING_LUMINANCE = 8.0
 CAM16_BACKGROUND_LUMINANCE = 3.0
+COMMAND_CAM16_ADAPTING_LUMINANCE = 64.0
+COMMAND_CAM16_BACKGROUND_LUMINANCE = 20.0
 CAM16_FLARE_FRACTION = 0.0075
 
 
@@ -137,7 +139,13 @@ def _gain_grid_vectors(
     return [(float(red), float(green), float(blue)) for red, green, blue in product(*axes)]
 
 
-def _cam16_ucs(rgb: np.ndarray, gains: tuple[float, float, float]) -> np.ndarray:
+def _cam16_ucs(
+    rgb: np.ndarray,
+    gains: tuple[float, float, float],
+    *,
+    adapting_luminance: float = CAM16_ADAPTING_LUMINANCE,
+    background_luminance: float = CAM16_BACKGROUND_LUMINANCE,
+) -> np.ndarray:
     """Return flare-aware CAM16-UCS coordinates for transformed encoded sRGB."""
 
     try:
@@ -154,8 +162,8 @@ def _cam16_ucs(rgb: np.ndarray, gains: tuple[float, float, float]) -> np.ndarray
     return np.asarray(
         colour.XYZ_to_CAM16UCS(
             xyz + flare,
-            L_A=CAM16_ADAPTING_LUMINANCE,
-            Y_b=CAM16_BACKGROUND_LUMINANCE,
+            L_A=adapting_luminance,
+            Y_b=background_luminance,
         )
     )
 
@@ -191,6 +199,18 @@ def _cam16_metrics(
     category_cam = _cam16_ucs(categories, gains)
     terminal_cam = _cam16_ucs(terminal_colors, gains)
     foreground_cam = _cam16_ucs(foregrounds, gains)
+    commanded_terminal_cam = _cam16_ucs(
+        terminal_colors,
+        (1.0, 1.0, 1.0),
+        adapting_luminance=COMMAND_CAM16_ADAPTING_LUMINANCE,
+        background_luminance=COMMAND_CAM16_BACKGROUND_LUMINANCE,
+    )
+    commanded_foreground_cam = _cam16_ucs(
+        foregrounds,
+        (1.0, 1.0, 1.0),
+        adapting_luminance=COMMAND_CAM16_ADAPTING_LUMINANCE,
+        background_luminance=COMMAND_CAM16_BACKGROUND_LUMINANCE,
+    )
     surface_cam = _cam16_ucs(unique_surfaces, gains)
     sequence = sequence_row(gains)
     gain_grid = [sequence_row(sample) for sample in _gain_grid_vectors(gains)]
@@ -200,6 +220,20 @@ def _cam16_metrics(
             "background_luminance": CAM16_BACKGROUND_LUMINANCE,
             "flare_fraction": CAM16_FLARE_FRACTION,
         },
+        "terminal_viewing_conditions": {
+            "commanded": {
+                "adapting_luminance": COMMAND_CAM16_ADAPTING_LUMINANCE,
+                "background_luminance": COMMAND_CAM16_BACKGROUND_LUMINANCE,
+                "flare_fraction": CAM16_FLARE_FRACTION,
+                "rgb_gains": [1.0, 1.0, 1.0],
+            },
+            "transformed": {
+                "adapting_luminance": CAM16_ADAPTING_LUMINANCE,
+                "background_luminance": CAM16_BACKGROUND_LUMINANCE,
+                "flare_fraction": CAM16_FLARE_FRACTION,
+                "rgb_gains": list(gains),
+            },
+        },
         "categorical_minimum_pair_distance": round(pair_minimum(category_cam) or 0.0, 4),
         "categorical_minimum_foreground_distance": round(
             float(np.linalg.norm(category_cam[:, None] - foreground_cam[None, :], axis=2).min()),
@@ -207,6 +241,22 @@ def _cam16_metrics(
         ),
         "terminal_minimum_pair_distance": round(pair_minimum(terminal_cam) or 0.0, 4),
         "terminal_minimum_foreground_distance": round(
+            float(np.linalg.norm(terminal_cam[:, None] - foreground_cam[None, :], axis=2).min()),
+            4,
+        ),
+        "terminal_commanded_minimum_pair_distance": round(
+            pair_minimum(commanded_terminal_cam) or 0.0, 4
+        ),
+        "terminal_commanded_minimum_foreground_distance": round(
+            float(
+                np.linalg.norm(
+                    commanded_terminal_cam[:, None] - commanded_foreground_cam[None, :], axis=2
+                ).min()
+            ),
+            4,
+        ),
+        "terminal_transformed_minimum_pair_distance": round(pair_minimum(terminal_cam) or 0.0, 4),
+        "terminal_transformed_minimum_foreground_distance": round(
             float(np.linalg.norm(terminal_cam[:, None] - foreground_cam[None, :], axis=2).min()),
             4,
         ),
@@ -764,13 +814,25 @@ def generate_manifest() -> dict[str, Any]:
         for slug, profile in {family.profile.slug: family.profile for family in FAMILIES}.items()
     }
     return {
-        "schema_version": 14,
+        "schema_version": 15,
         "project": "Ember",
         "model_note": (
             "RGB gains are explicit engineering stress profiles, not device calibrations or "
             "spectral measurements. Metrics are explicitly labeled as commanded or transformed."
         ),
         "quality_targets": {
+            "terminal_cam16_viewing_conditions": {
+                "commanded": {
+                    "adapting_luminance": COMMAND_CAM16_ADAPTING_LUMINANCE,
+                    "background_luminance": COMMAND_CAM16_BACKGROUND_LUMINANCE,
+                    "flare_fraction": CAM16_FLARE_FRACTION,
+                },
+                "transformed": {
+                    "adapting_luminance": CAM16_ADAPTING_LUMINANCE,
+                    "background_luminance": CAM16_BACKGROUND_LUMINANCE,
+                    "flare_fraction": CAM16_FLARE_FRACTION,
+                },
+            },
             "gain_sensitivity_fraction": GAIN_SENSITIVITY_FRACTION,
             "accent_selection_priority": [
                 "match authored transformed perceptual outcomes",

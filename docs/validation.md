@@ -11,14 +11,15 @@ four generated palettes. The README explains the design mechanisms and intended 
 measure used consistently by the generator and tests, not a standardized CIE ΔE
 formula.
 
-The transformed-first table also reports flare-aware CAM16-UCS distances. Its viewing
-conditions are fixed at adapting luminance 8, background luminance 3, and flare fraction
-0.0075. WCAG contrast remains a separate gate.
+The transformed-first table also reports flare-aware CAM16-UCS distances. Transformed
+metrics use low-light conditions with adapting luminance 8 and background luminance 3.
+Terminal commanded metrics use normal-day conditions with adapting luminance 64 and
+background luminance 20. Both use flare fraction 0.0075. WCAG contrast remains a separate gate.
 
 | Family | Categories | Day min ΔEOK | Transformed min ΔEOK | Mean / max raw chroma | Transformed L range | Min ANSI contrast |
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 16.18 | 10.53 | 0.1009 / 0.1107 | 0.2153 | 4.79:1 |
-| 3400K Light | 6 | 16.37 | 11.58 | 0.1266 / 0.1408 | 0.1818 | 4.71:1 |
+| 3400K Light | 6 | 16.37 | 11.58 | 0.1266 / 0.1408 | 0.1818 | 4.51:1 |
 | 2000K Dark | 4 | 20.47 | 14.52 | 0.1034 / 0.1109 | 0.1657 | 4.55:1 |
 | 1200K Dark | 3 | 22.00 | 10.05 | 0.1049 / 0.1103 | 0.1458 | 4.52:1 |
 
@@ -38,7 +39,7 @@ comparisons:
 | Family | Day accent min | Day → `fg_0` | Day → `fg_1` | Day → `fg_2` | Transformed accent min | Transformed → `fg_0` | Transformed → `fg_1` | Transformed → `fg_2` |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 15.23 | 8.61 | 8.35 | 12.75 | 8.94 | 6.80 | 6.83 | 12.67 |
-| 3400K Light | 17.17 | 9.98 | 11.52 | 9.51 | 12.74 | 7.73 | 7.09 | 7.42 |
+| 3400K Light | 14.56 | 18.19 | 11.53 | 9.36 | 7.90 | 17.89 | 11.35 | 6.63 |
 | 2000K Dark | 17.10 | 12.62 | 8.72 | 13.30 | 6.22 | 7.70 | 2.77 | 10.78 |
 | 1200K Dark | 11.12 | 9.51 | 11.86 | 13.80 | 4.34 | 4.89 | 3.14 | 10.75 |
 
@@ -65,16 +66,18 @@ These are digital signal measurements, not physical display luminance. Actual bl
 level still depends on panel technology, brightness, calibration, ambient light, and the
 display's behavior near black.
 
-Transformed-first CAM16-UCS metrics use the unique background ladder, not repeated role
-aliases. The final two columns report nominal sequential-step CV and the maximum CV found
-on the nominal/±5% gain grid.
+CAM16-UCS surface, category, and sequential metrics use the transformed low-light viewing
+condition and the unique background ladder, not repeated role aliases. Terminal columns
+report the separate normal-day commanded and low-light transformed conditions. The final
+two columns report nominal sequential-step CV and the maximum CV found on the nominal/±5%
+gain grid.
 
-| Family | Category min | Terminal min | Unique surface steps | Sequential CV | Gain-grid CV max |
-|---|---:|---:|---:|---:|---:|
-| 3400K Dark | 16.69 | 15.94 | 3.36 / 3.33 / 3.69 / 3.02 | 0.0494 | 0.0846 |
-| 3400K Light | 15.91 | 15.78 | 3.12 / 2.97 / 3.08 / 3.01 / 2.98 | 0.0563 | 0.0699 |
-| 2000K Dark | 17.31 | 13.52 | 5.13 / 4.91 / 4.75 | 0.0493 | 0.0798 |
-| 1200K Dark | 14.14 | 7.58 | 5.63 / 5.95 / 4.82 | 0.0923 | 0.1613 |
+| Family | Category transformed min | Terminal commanded min | Terminal transformed min | Unique surface steps | Sequential CV | Gain-grid CV max |
+|---|---:|---:|---:|---:|---:|---:|
+| 3400K Dark | 16.69 | 20.06 | 15.94 | 3.36 / 3.33 / 3.69 / 3.02 | 0.0494 | 0.0846 |
+| 3400K Light | 15.91 | 27.26 | 16.22 | 3.12 / 2.97 / 3.08 / 3.01 / 2.98 | 0.0563 | 0.0699 |
+| 2000K Dark | 17.31 | 38.20 | 13.52 | 5.13 / 4.91 / 4.75 | 0.0493 | 0.0798 |
+| 1200K Dark | 14.14 | 19.26 | 7.58 | 5.63 / 5.95 / 4.82 | 0.0923 | 0.1613 |
 
 The build also checks `fg_0` against every declared background, verifies endpoint visibility,
 parses every terminal format, and reproduces all generated artifacts from source.
@@ -91,7 +94,7 @@ uv build
 
 The release gates enforce:
 
-- schema 14 with exactly four palette families and categorical capacities `6, 6, 4, 3`;
+- schema 15 with exactly four palette families and categorical capacities `6, 6, 4, 3`;
 - categorical commanded mean Oklab chroma between `0.09` and `0.105`, with no color
   above `0.111`, for the dark families; the accepted 3400K Light bank uses mean `0.1266`
   and maximum `0.1408` while preserving its separation and contrast floors;
@@ -99,6 +102,8 @@ The release gates enforce:
 - categorical separation from every foreground role in both states, plus sampled-corner
   floors for deep-profile category spacing, foreground clearance, and background contrast;
 - terminal day / night capacities `6 / 6`, `6 / 6`, `4 / 4`, `3 / 3`;
+- terminal CAM16-UCS metrics evaluated under normal-day `L_A=64, Y_b=20` for commanded
+  appearance and low-light `L_A=8, Y_b=3` for transformed appearance;
 - no more than `0.15 ΔEOK` between each authored transformed accent target and the
   transformed serialized color that reproduces it;
 - at least 4.5:1 transformed contrast for foreground-capable ANSI slots against the terminal

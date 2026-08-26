@@ -537,11 +537,7 @@ def test_root_landing_page_refinement_interactions() -> None:
     assert "inset:5px 2px" in palette_surface_rule.group(1)
     assert '.pp[aria-pressed="true"]{ color:var(--ember-fg-0); }' in landing
     assert '.pp[aria-pressed="true"]::before{ border-color:var(--ember-terminal-red); }' in landing
-    assert (
-        '.pp[data-palette="3400k-light"][aria-pressed="true"]::before{\n'
-        "  border-color:var(--ember-category-three);\n"
-        "}"
-    ) in landing
+    assert '.pp[data-palette="3400k-light"][aria-pressed="true"]::before' not in landing
 
     assert "Redshift-safe color palettes" in landing
     for role in ("BG-0", "BG-1", "BG-2", "BG-3", "BG-4", "BG-5"):

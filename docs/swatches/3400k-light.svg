@@ -42,17 +42,17 @@
 <rect x="620.33" y="360" width="107.67" height="58" rx="8" fill="#70002D" stroke="#322926"/>
 <text x="674.1666666666667" y="395" fill="#DCD9BF" font-size="16" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" text-anchor="middle">#70002D</text>
 <text x="32" y="456" fill="#9B9784" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">TERMINAL ANSI · 6 IDENTITIES / 16 SLOTS</text>
-<rect x="32.00" y="468" width="107.67" height="58" rx="8" fill="#430000" stroke="#322926"/>
+<rect x="32.00" y="468" width="107.67" height="58" rx="8" fill="#98074F" stroke="#322926"/>
 <text x="85.83333333333334" y="505" fill="#DCD9BF" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">R</text>
-<rect x="149.67" y="468" width="107.67" height="58" rx="8" fill="#10420E" stroke="#322926"/>
+<rect x="149.67" y="468" width="107.67" height="58" rx="8" fill="#517304" stroke="#322926"/>
 <text x="203.50000000000003" y="505" fill="#DCD9BF" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">G</text>
-<rect x="267.33" y="468" width="107.67" height="58" rx="8" fill="#8A4805" stroke="#322926"/>
+<rect x="267.33" y="468" width="107.67" height="58" rx="8" fill="#844601" stroke="#322926"/>
 <text x="321.1666666666667" y="505" fill="#DCD9BF" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">Y</text>
-<rect x="385.00" y="468" width="107.67" height="58" rx="8" fill="#131851" stroke="#322926"/>
+<rect x="385.00" y="468" width="107.67" height="58" rx="8" fill="#396EDB" stroke="#322926"/>
 <text x="438.8333333333333" y="505" fill="#DCD9BF" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">B</text>
-<rect x="502.67" y="468" width="107.67" height="58" rx="8" fill="#5D3777" stroke="#322926"/>
+<rect x="502.67" y="468" width="107.67" height="58" rx="8" fill="#8339A7" stroke="#322926"/>
 <text x="556.5" y="505" fill="#DCD9BF" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">M</text>
-<rect x="620.33" y="468" width="107.67" height="58" rx="8" fill="#007672" stroke="#322926"/>
+<rect x="620.33" y="468" width="107.67" height="58" rx="8" fill="#0B7F8C" stroke="#322926"/>
 <text x="674.1666666666667" y="505" fill="#DCD9BF" font-size="22" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-weight="700" text-anchor="middle">C</text>
 <text x="32" y="564" fill="#9B9784" font-size="15" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">SEQUENTIAL · 256 SAMPLES · LOW → HIGH</text>
 <rect x="32.0000" y="576" width="2.9000" height="32" fill="#2A2424"/>

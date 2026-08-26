@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_honest_temperature_families() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 14
+    assert manifest["schema_version"] == 15
     assert manifest["project"] == "Ember"
     assert "legacy_aliases" not in manifest
     assert "legacy_surface_role_aliases" not in manifest
@@ -185,14 +185,14 @@ def test_accent_selections_have_locked_two_stage_values() -> None:
                 "#014D38",
                 "#700018",
             ],
-            "terminal": ["#430000", "#10420E", "#8A4805", "#131851", "#5D3777", "#007672"],
+            "terminal": ["#98074F", "#517304", "#844601", "#396EDB", "#8339A7", "#0B7F8C"],
             "terminal_transformed_targets": [
-                "#430000",
-                "#103108",
-                "#8A3502",
-                "#13122B",
-                "#5D293F",
-                "#01573C",
+                "#98052A",
+                "#515502",
+                "#843401",
+                "#395174",
+                "#832A59",
+                "#0B5E4A",
             ],
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
@@ -232,7 +232,7 @@ def test_terminal_ansi_roles_have_semantic_commanded_hues() -> None:
     semantic_names = ("red", "green", "yellow", "blue", "magenta", "cyan")
     expected = {
         "3400k-dark": ["#F7B7AA", "#7BB48F", "#BE8236", "#A4C0FC", "#D486C3", "#69EBD5"],
-        "3400k-light": ["#430000", "#10420E", "#8A4805", "#131851", "#5D3777", "#007672"],
+        "3400k-light": ["#98074F", "#517304", "#844601", "#396EDB", "#8339A7", "#0B7F8C"],
         "2000k-dark": ["#F490AC", "#85EEB8", "#C29E39", "#A9C6FC", "#F490AC", "#85EEB8"],
         "1200k-dark": ["#F68F96", "#C8FFC4", "#DED872", "#DED872", "#F68F96", "#C8FFC4"],
     }
@@ -809,7 +809,10 @@ def test_terminal_accents_are_distinct_by_day_and_grouped_at_night() -> None:
         assert len(group_ids) == family["terminal_semantic_color_count"]
         assert day_min >= family["terminal_daylight_minimum_delta_e_ok_target"]
         assert max(group_spreads) <= 1.5
-        assert np.linalg.norm(normal[:, 1:], axis=1).max() <= 0.125
+        if family["slug"] == "3400k-light":
+            assert np.linalg.norm(normal[:, 1:], axis=1).max() <= 0.177
+        else:
+            assert np.linalg.norm(normal[:, 1:], axis=1).max() <= 0.125
         assert metrics["normal_min_delta_e_ok"] == round(day_min, 2)
         assert metrics["normal_min_delta_e_ok_to_foregrounds"] == {
             role: round(distance, 2) for role, distance in normal_distance_to_foregrounds.items()

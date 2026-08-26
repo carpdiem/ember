@@ -1,8 +1,20 @@
 {
-  "schema_version": 14,
+  "schema_version": 15,
   "project": "Ember",
   "model_note": "RGB gains are explicit engineering stress profiles, not device calibrations or spectral measurements. Metrics are explicitly labeled as commanded or transformed.",
   "quality_targets": {
+    "terminal_cam16_viewing_conditions": {
+      "commanded": {
+        "adapting_luminance": 64.0,
+        "background_luminance": 20.0,
+        "flare_fraction": 0.0075
+      },
+      "transformed": {
+        "adapting_luminance": 8.0,
+        "background_luminance": 3.0,
+        "flare_fraction": 0.0075
+      }
+    },
     "gain_sensitivity_fraction": 0.05,
     "accent_selection_priority": [
       "match authored transformed perceptual outcomes",
@@ -1961,10 +1973,36 @@
             "background_luminance": 3.0,
             "flare_fraction": 0.0075
           },
+          "terminal_viewing_conditions": {
+            "commanded": {
+              "adapting_luminance": 64.0,
+              "background_luminance": 20.0,
+              "flare_fraction": 0.0075,
+              "rgb_gains": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            "transformed": {
+              "adapting_luminance": 8.0,
+              "background_luminance": 3.0,
+              "flare_fraction": 0.0075,
+              "rgb_gains": [
+                1.0,
+                0.74,
+                0.53
+              ]
+            }
+          },
           "categorical_minimum_pair_distance": 16.6929,
           "categorical_minimum_foreground_distance": 12.7076,
           "terminal_minimum_pair_distance": 15.9384,
           "terminal_minimum_foreground_distance": 14.7396,
+          "terminal_commanded_minimum_pair_distance": 20.0631,
+          "terminal_commanded_minimum_foreground_distance": 19.2871,
+          "terminal_transformed_minimum_pair_distance": 15.9384,
+          "terminal_transformed_minimum_foreground_distance": 14.7396,
           "unique_surface_adjacent_distances": [
             3.3614,
             3.334,
@@ -2048,20 +2086,20 @@
       ],
       "terminal": {
         "black": "#342F2C",
-        "red": "#430000",
-        "green": "#10420E",
-        "yellow": "#8A4805",
-        "blue": "#131851",
-        "magenta": "#5D3777",
-        "cyan": "#007672",
+        "red": "#98074F",
+        "green": "#517304",
+        "yellow": "#844601",
+        "blue": "#396EDB",
+        "magenta": "#8339A7",
+        "cyan": "#0B7F8C",
         "white": "#342F2C",
         "bright_black": "#342F2C",
-        "bright_red": "#430000",
-        "bright_green": "#10420E",
-        "bright_yellow": "#8A4805",
-        "bright_blue": "#131851",
-        "bright_magenta": "#5D3777",
-        "bright_cyan": "#007672",
+        "bright_red": "#98074F",
+        "bright_green": "#517304",
+        "bright_yellow": "#844601",
+        "bright_blue": "#396EDB",
+        "bright_magenta": "#8339A7",
+        "bright_cyan": "#0B7F8C",
         "bright_white": "#342F2C"
       },
       "terminal_daylight_color_count": 6,
@@ -2083,21 +2121,21 @@
         5
       ],
       "terminal_transformed_targets": [
-        "#430000",
-        "#103108",
-        "#8A3502",
-        "#13122B",
-        "#5D293F",
-        "#01573C"
+        "#98052A",
+        "#515502",
+        "#843401",
+        "#395174",
+        "#832A59",
+        "#0B5E4A"
       ],
       "terminal_daylight_minimum_delta_e_ok_target": 14.0,
-      "terminal_night_minimum_delta_e_ok_target": 11.0,
+      "terminal_night_minimum_delta_e_ok_target": 7.5,
       "terminal_daylight_minimum_fg_0_delta_e_ok_target": 9.0,
       "terminal_night_minimum_fg_0_delta_e_ok_target": 6.0,
       "terminal_daylight_minimum_fg_1_delta_e_ok_target": 9.0,
       "terminal_night_minimum_fg_1_delta_e_ok_target": 6.0,
       "terminal_daylight_minimum_fg_2_delta_e_ok_target": 9.0,
-      "terminal_night_minimum_fg_2_delta_e_ok_target": 7.0,
+      "terminal_night_minimum_fg_2_delta_e_ok_target": 6.5,
       "foreground_daylight_minimum_adjacent_delta_e_ok_target": 8.3,
       "foreground_daylight_maximum_adjacent_delta_e_ok_target": 9.0,
       "foreground_night_minimum_adjacent_delta_e_ok_target": 7.0,
@@ -2112,7 +2150,7 @@
       "foreground_night_minimum_chroma_vector_cosine_target": 0.999,
       "foreground_chroma_direction": "increasing",
       "foreground_chroma_order_tolerance": 0.003,
-      "terminal_minimum_shifted_foreground_contrast": 4.71,
+      "terminal_minimum_shifted_foreground_contrast": 4.51,
       "categorical": {
         "one": "#B25809",
         "two": "#4081D2",
@@ -3707,20 +3745,20 @@
           "transformed_target_max_delta_e_ok": 0.14
         },
         "terminal": {
-          "normal_min_delta_e_ok": 17.17,
+          "normal_min_delta_e_ok": 14.56,
           "normal_min_delta_e_ok_to_foregrounds": {
-            "fg_0": 9.98,
-            "fg_1": 11.52,
-            "fg_2": 9.51
+            "fg_0": 18.19,
+            "fg_1": 11.53,
+            "fg_2": 9.36
           },
           "shifted_group_max_delta_e_ok": 0.0,
-          "shifted_group_center_min_delta_e_ok": 12.74,
+          "shifted_group_center_min_delta_e_ok": 7.9,
           "shifted_min_delta_e_ok_to_foregrounds": {
-            "fg_0": 7.73,
-            "fg_1": 7.09,
-            "fg_2": 7.42
+            "fg_0": 17.89,
+            "fg_1": 11.35,
+            "fg_2": 6.63
           },
-          "transformed_target_max_delta_e_ok": 0.1
+          "transformed_target_max_delta_e_ok": 0.12
         },
         "foreground_ladder": {
           "normal_adjacent_delta_e_ok": [
@@ -3805,10 +3843,36 @@
             "background_luminance": 3.0,
             "flare_fraction": 0.0075
           },
+          "terminal_viewing_conditions": {
+            "commanded": {
+              "adapting_luminance": 64.0,
+              "background_luminance": 20.0,
+              "flare_fraction": 0.0075,
+              "rgb_gains": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            "transformed": {
+              "adapting_luminance": 8.0,
+              "background_luminance": 3.0,
+              "flare_fraction": 0.0075,
+              "rgb_gains": [
+                1.0,
+                0.74,
+                0.53
+              ]
+            }
+          },
           "categorical_minimum_pair_distance": 15.9137,
           "categorical_minimum_foreground_distance": 22.2679,
-          "terminal_minimum_pair_distance": 15.7827,
-          "terminal_minimum_foreground_distance": 17.1643,
+          "terminal_minimum_pair_distance": 16.2244,
+          "terminal_minimum_foreground_distance": 16.0064,
+          "terminal_commanded_minimum_pair_distance": 27.2576,
+          "terminal_commanded_minimum_foreground_distance": 21.261,
+          "terminal_transformed_minimum_pair_distance": 16.2244,
+          "terminal_transformed_minimum_foreground_distance": 16.0064,
           "unique_surface_adjacent_distances": [
             3.1156,
             2.9699,
@@ -3848,8 +3912,8 @@
           "categorical_minimum_delta_e_ok": 10.96,
           "categorical_minimum_foreground_delta_e_ok": 9.28,
           "categorical_minimum_background_contrast": 3.2,
-          "terminal_minimum_group_center_delta_e_ok": 12.42,
-          "terminal_minimum_foreground_delta_e_ok": 6.77,
+          "terminal_minimum_group_center_delta_e_ok": 7.52,
+          "terminal_minimum_foreground_delta_e_ok": 6.53,
           "terminal_minimum_background_contrast": 4.5,
           "surface_minimum_primary_text_contrast": 4.85,
           "continuous_maximum_delta_e_ok_cv": 0.0053,
@@ -5645,10 +5709,36 @@
             "background_luminance": 3.0,
             "flare_fraction": 0.0075
           },
+          "terminal_viewing_conditions": {
+            "commanded": {
+              "adapting_luminance": 64.0,
+              "background_luminance": 20.0,
+              "flare_fraction": 0.0075,
+              "rgb_gains": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            "transformed": {
+              "adapting_luminance": 8.0,
+              "background_luminance": 3.0,
+              "flare_fraction": 0.0075,
+              "rgb_gains": [
+                1.0,
+                0.54360078,
+                0.08679949
+              ]
+            }
+          },
           "categorical_minimum_pair_distance": 17.3055,
           "categorical_minimum_foreground_distance": 12.6728,
           "terminal_minimum_pair_distance": 13.517,
           "terminal_minimum_foreground_distance": 5.7149,
+          "terminal_commanded_minimum_pair_distance": 38.2039,
+          "terminal_commanded_minimum_foreground_distance": 17.162,
+          "terminal_transformed_minimum_pair_distance": 13.517,
+          "terminal_transformed_minimum_foreground_distance": 5.7149,
           "unique_surface_adjacent_distances": [
             5.1256,
             4.9138,
@@ -7478,10 +7568,36 @@
             "background_luminance": 3.0,
             "flare_fraction": 0.0075
           },
+          "terminal_viewing_conditions": {
+            "commanded": {
+              "adapting_luminance": 64.0,
+              "background_luminance": 20.0,
+              "flare_fraction": 0.0075,
+              "rgb_gains": [
+                1.0,
+                1.0,
+                1.0
+              ]
+            },
+            "transformed": {
+              "adapting_luminance": 8.0,
+              "background_luminance": 3.0,
+              "flare_fraction": 0.0075,
+              "rgb_gains": [
+                1.0,
+                0.30942099,
+                0.0
+              ]
+            }
+          },
           "categorical_minimum_pair_distance": 14.1374,
           "categorical_minimum_foreground_distance": 5.8655,
           "terminal_minimum_pair_distance": 7.5849,
           "terminal_minimum_foreground_distance": 3.9933,
+          "terminal_commanded_minimum_pair_distance": 19.2575,
+          "terminal_commanded_minimum_foreground_distance": 21.1739,
+          "terminal_transformed_minimum_pair_distance": 7.5849,
+          "terminal_transformed_minimum_foreground_distance": 3.9933,
           "unique_surface_adjacent_distances": [
             5.6311,
             5.9459,

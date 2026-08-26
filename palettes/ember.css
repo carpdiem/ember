@@ -42,12 +42,12 @@
   --ember-category-four: #6C8D38;
   --ember-category-five: #016869;
   --ember-category-six: #70002D;
-  --ember-terminal-red: #430000;
-  --ember-terminal-green: #10420E;
-  --ember-terminal-yellow: #8A4805;
-  --ember-terminal-blue: #131851;
-  --ember-terminal-magenta: #5D3777;
-  --ember-terminal-cyan: #007672;
+  --ember-terminal-red: #98074F;
+  --ember-terminal-green: #517304;
+  --ember-terminal-yellow: #844601;
+  --ember-terminal-blue: #396EDB;
+  --ember-terminal-magenta: #8339A7;
+  --ember-terminal-cyan: #0B7F8C;
   --ember-sequential: linear-gradient(90deg, #2A2424 0%, #3C3138 10%, #4E3E4A 20%, #604C59 30%, #745C66 40%, #876D6E 50%, #9A7E72 60%, #AD8F73 70%, #C1A27A 80%, #D5B68A 90%, #E8CA9C 100%);
 }
 
