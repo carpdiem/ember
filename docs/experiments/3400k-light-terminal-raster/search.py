@@ -28,8 +28,8 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-import ember  # noqa: E402
-from ember.color import (  # noqa: E402
+import ember
+from ember.color import (
     contrast_ratio,
     hex_to_srgb,
     oklab_to_srgb,
@@ -37,7 +37,7 @@ from ember.color import (  # noqa: E402
     srgb_to_oklab,
     warm_transform,
 )
-from ember.definitions import FAMILIES  # noqa: E402
+from ember.definitions import FAMILIES
 
 if Path(ember.__file__).resolve().parents[1] != SRC.resolve():
     raise RuntimeError(
@@ -124,7 +124,9 @@ def hue_error(values: np.ndarray, center: float) -> np.ndarray:
     return np.abs((values - center + 180.0) % 360.0 - 180.0)
 
 
-def cam16_ucs(values: np.ndarray, gains: tuple[float, float, float], view: dict[str, Any]) -> np.ndarray:
+def cam16_ucs(
+    values: np.ndarray, gains: tuple[float, float, float], view: dict[str, Any]
+) -> np.ndarray:
     transformed = np.clip(np.asarray(values) * np.asarray(gains), 0.0, 1.0)
     xyz = colour.sRGB_to_XYZ(transformed)
     flare = float(view["flare"]) * colour.sRGB_to_XYZ(np.ones_like(transformed))
@@ -172,17 +174,22 @@ def raster_proxy(
         g = np.asarray(state_gains)
         for background in backgrounds:
             for alpha in COVERAGES:
-                candidate_pixel = np.rint(
-                    np.clip((alpha * values + (1.0 - alpha) * background) * g, 0.0, 1.0)
-                    * 255.0
-                ) / 255.0
-                fg_pixel = np.rint(
-                    np.clip((alpha * fg0 + (1.0 - alpha) * background) * g, 0.0, 1.0)
-                    * 255.0
-                ) / 255.0
-                distance = np.linalg.norm(
-                    srgb_to_oklab(candidate_pixel) - srgb_to_oklab(fg_pixel), axis=1
-                ) * 100.0
+                candidate_pixel = (
+                    np.rint(
+                        np.clip((alpha * values + (1.0 - alpha) * background) * g, 0.0, 1.0) * 255.0
+                    )
+                    / 255.0
+                )
+                fg_pixel = (
+                    np.rint(
+                        np.clip((alpha * fg0 + (1.0 - alpha) * background) * g, 0.0, 1.0) * 255.0
+                    )
+                    / 255.0
+                )
+                distance = (
+                    np.linalg.norm(srgb_to_oklab(candidate_pixel) - srgb_to_oklab(fg_pixel), axis=1)
+                    * 100.0
+                )
                 rows.append(distance)
     matrix = np.asarray(rows).T
     return (
@@ -209,10 +216,12 @@ def baseline_metrics(base: Any, foregrounds: np.ndarray) -> dict[str, Any]:
         "low_cam_pair": pair_min(low_cam),
         "normal_cam_fg_by_role": np.linalg.norm(
             normal_cam[:, None] - foreground_normal_cam[None, :], axis=2
-        ).min(axis=1).tolist(),
-        "low_cam_fg_by_role": np.linalg.norm(
-            low_cam[:, None] - foreground_low_cam[None, :], axis=2
-        ).min(axis=1).tolist(),
+        )
+        .min(axis=1)
+        .tolist(),
+        "low_cam_fg_by_role": np.linalg.norm(low_cam[:, None] - foreground_low_cam[None, :], axis=2)
+        .min(axis=1)
+        .tolist(),
     }
 
 
@@ -235,8 +244,7 @@ def generate_role_catalog(
     in_gamut = np.all((raw_rgb >= 0.0) & (raw_rgb <= 1.0), axis=1)
     raw_rgb = raw_rgb[in_gamut]
     quantized_hex = sorted(
-        {srgb_to_hex(value) for value in raw_rgb}
-        | {base.terminal_colors[ROLE_ORDER.index(role)]}
+        {srgb_to_hex(value) for value in raw_rgb} | {base.terminal_colors[ROLE_ORDER.index(role)]}
     )
     values = hex_array(tuple(quantized_hex))
     command_lab = srgb_to_oklab(values)
@@ -245,7 +253,13 @@ def generate_role_catalog(
     command_hue = hue(command_lab)
     transformed_hue = hue(transformed_lab)
     current_transformed_hue = float(
-        hue(srgb_to_oklab(warm_transform(hex_to_srgb(base.terminal_colors[ROLE_ORDER.index(role)]), base.profile.gains))[None, :])[0]
+        hue(
+            srgb_to_oklab(
+                warm_transform(
+                    hex_to_srgb(base.terminal_colors[ROLE_ORDER.index(role)]), base.profile.gains
+                )
+            )[None, :]
+        )[0]
     )
     fg_command_lab = srgb_to_oklab(foregrounds)
     fg_transformed_lab = srgb_to_oklab(warm_transform(foregrounds, base.profile.gains))
@@ -286,9 +300,7 @@ def generate_role_catalog(
         sampled_fg_cam = cam16_ucs(foregrounds, gains, LOW_LIGHT_VIEW)
         sampled_low_cam_fg = np.minimum(
             sampled_low_cam_fg,
-            np.linalg.norm(
-                sampled_cam[:, None] - sampled_fg_cam[None, :], axis=2
-            ).min(axis=1),
+            np.linalg.norm(sampled_cam[:, None] - sampled_fg_cam[None, :], axis=2).min(axis=1),
         )
     proxy_p10, proxy_median, proxy_near = raster_proxy(
         values, foregrounds[0], backgrounds, base.profile.gains
@@ -352,9 +364,7 @@ def generate_role_catalog(
     if not candidates:
         raise SearchError(f"no individually feasible {role} colors")
     # Keep broad objective diversity rather than only one scalar ranking.
-    selected: dict[str, Candidate] = {
-        item.hex: item for item in candidates[: CATALOG_KEEP // 3]
-    }
+    selected: dict[str, Candidate] = {item.hex: item for item in candidates[: CATALOG_KEEP // 3]}
     for key in (
         lambda item: (-item.transformed_l, -item.raster_proxy_p10, item.hex),
         lambda item: (-item.low_cam_fg_min, -item.raster_proxy_p10, item.hex),
@@ -363,9 +373,7 @@ def generate_role_catalog(
         for item in sorted(candidates, key=key)[: CATALOG_KEEP // 4]:
             selected[item.hex] = item
     baseline_hex = base.terminal_colors[ROLE_ORDER.index(role)]
-    baseline_candidate = next(
-        (item for item in candidates if item.hex == baseline_hex), None
-    )
+    baseline_candidate = next((item for item in candidates if item.hex == baseline_hex), None)
     if baseline_candidate is not None:
         selected[baseline_hex] = baseline_candidate
     result = list(selected.values())
@@ -391,8 +399,7 @@ def bank_metrics(values: tuple[str, ...], base: Any) -> dict[str, float]:
         "low_cam_pair": pair_min(cam16_ucs(rgb, base.profile.gains, LOW_LIGHT_VIEW)),
     }
     metrics["sampled_pair_oklab"] = min(
-        pair_min(srgb_to_oklab(warm_transform(rgb, gains))) * 100.0
-        for gains in GAIN_SAMPLES
+        pair_min(srgb_to_oklab(warm_transform(rgb, gains))) * 100.0 for gains in GAIN_SAMPLES
     )
     metrics["sampled_low_cam_pair"] = min(
         pair_min(cam16_ucs(rgb, gains, LOW_LIGHT_VIEW)) for gains in GAIN_SAMPLES
@@ -407,8 +414,7 @@ def feasible_bank(metrics: dict[str, float], baseline: dict[str, Any]) -> bool:
         and metrics["sampled_pair_oklab"] >= TRANSFORMED_PAIR_OKLAB_FLOOR
         and metrics["normal_cam_pair"] >= NORMAL_CAM_PAIR_FLOOR_RATIO * baseline["normal_cam_pair"]
         and metrics["low_cam_pair"] >= LOW_CAM_PAIR_FLOOR_RATIO * baseline["low_cam_pair"]
-        and metrics["sampled_low_cam_pair"]
-        >= LOW_CAM_PAIR_FLOOR_RATIO * baseline["low_cam_pair"]
+        and metrics["sampled_low_cam_pair"] >= LOW_CAM_PAIR_FLOOR_RATIO * baseline["low_cam_pair"]
     )
 
 
@@ -437,12 +443,16 @@ def select_finalists(
         right_role = ROLE_ORDER[right_index]
         left = features[left_role]
         right = features[right_role]
-        command_distance = np.linalg.norm(
-            left["command_lab"][:, None] - right["command_lab"][None, :], axis=2
-        ) * 100.0
-        transformed_distance = np.linalg.norm(
-            left["transformed_lab"][:, None] - right["transformed_lab"][None, :], axis=2
-        ) * 100.0
+        command_distance = (
+            np.linalg.norm(left["command_lab"][:, None] - right["command_lab"][None, :], axis=2)
+            * 100.0
+        )
+        transformed_distance = (
+            np.linalg.norm(
+                left["transformed_lab"][:, None] - right["transformed_lab"][None, :], axis=2
+            )
+            * 100.0
+        )
         normal_cam_distance = np.linalg.norm(
             left["normal_cam"][:, None] - right["normal_cam"][None, :], axis=2
         )
@@ -458,18 +468,14 @@ def select_finalists(
             sampled_right_lab = srgb_to_oklab(warm_transform(right_rgb, gains))
             sampled_transformed_distance = np.minimum(
                 sampled_transformed_distance,
-                np.linalg.norm(
-                    sampled_left_lab[:, None] - sampled_right_lab[None, :], axis=2
-                )
+                np.linalg.norm(sampled_left_lab[:, None] - sampled_right_lab[None, :], axis=2)
                 * 100.0,
             )
             sampled_left_cam = cam16_ucs(left_rgb, gains, LOW_LIGHT_VIEW)
             sampled_right_cam = cam16_ucs(right_rgb, gains, LOW_LIGHT_VIEW)
             sampled_low_cam_distance = np.minimum(
                 sampled_low_cam_distance,
-                np.linalg.norm(
-                    sampled_left_cam[:, None] - sampled_right_cam[None, :], axis=2
-                ),
+                np.linalg.norm(sampled_left_cam[:, None] - sampled_right_cam[None, :], axis=2),
             )
         compatibility[(left_index, right_index)] = (
             (command_distance >= COMMAND_PAIR_OKLAB_FLOOR)
@@ -490,9 +496,13 @@ def select_finalists(
             elif mode == "photopic":
                 chosen.append(max(rows, key=lambda x: (x.transformed_l, x.raster_proxy_p10, x.hex)))
             elif mode == "clearance":
-                chosen.append(max(rows, key=lambda x: (x.low_cam_fg_min, x.raster_proxy_p10, x.hex)))
+                chosen.append(
+                    max(rows, key=lambda x: (x.low_cam_fg_min, x.raster_proxy_p10, x.hex))
+                )
             else:
-                chosen.append(min(rows, key=lambda x: (x.contrast_excess, -x.raster_proxy_p10, x.hex)))
+                chosen.append(
+                    min(rows, key=lambda x: (x.contrast_excess, -x.raster_proxy_p10, x.hex))
+                )
         leader_sets.append(tuple(item.hex for item in chosen))
     candidates = list(leader_sets)
     baseline_values = tuple(base.terminal_colors)
@@ -526,31 +536,24 @@ def select_finalists(
             )
     lookup = {role: {item.hex: item for item in rows} for role, rows in catalogs.items()}
 
-
     def evaluate_values(values: tuple[str, ...]) -> dict[str, Any] | None:
         metrics = bank_metrics(values, base)
         if not feasible_bank(metrics, baseline):
             return None
-        items = [
-            lookup[role][value]
-            for role, value in zip(ROLE_ORDER, values, strict=True)
-        ]
+        items = [lookup[role][value] for role, value in zip(ROLE_ORDER, values, strict=True)]
 
         return {
             "values": list(values),
             "metrics": metrics,
             "individual": [asdict(item) for item in items],
             "objectives": {
-                "minimum_raster_proxy_p10": min(
-                    item.raster_proxy_p10 for item in items
-                ),
+                "minimum_raster_proxy_p10": min(item.raster_proxy_p10 for item in items),
                 "maximum_raster_proxy_near_fraction": max(
                     item.raster_proxy_near_fraction for item in items
                 ),
                 "minimum_transformed_l": min(item.transformed_l for item in items),
                 "minimum_low_cam_fg": min(item.low_cam_fg_min for item in items),
                 "contrast_excess_sum": sum(item.contrast_excess for item in items),
-
             },
         }
 

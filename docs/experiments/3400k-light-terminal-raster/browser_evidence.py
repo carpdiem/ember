@@ -86,7 +86,9 @@ def oklab(values: np.ndarray) -> np.ndarray:
     return np.cbrt(linear @ m1.T) @ m2.T
 
 
-def expected_color(bank: dict[str, Any], role: str, gains: tuple[float, float, float]) -> np.ndarray:
+def expected_color(
+    bank: dict[str, Any], role: str, gains: tuple[float, float, float]
+) -> np.ndarray:
     value = bank["surfaces"][role] if role == "fg_0" else bank["terminal"][role]
     return np.clip(rgb(value) * np.asarray(gains), 0.0, 1.0)
 
@@ -159,7 +161,12 @@ def banks(results: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return output
 
 
-def page(bank: dict[str, Any], gains: tuple[float, float, float], dpr: int, selected_rows: list[dict[str, Any]]) -> str:
+def page(
+    bank: dict[str, Any],
+    gains: tuple[float, float, float],
+    dpr: int,
+    selected_rows: list[dict[str, Any]],
+) -> str:
     tiles = []
     for metadata in selected_rows:
         for role in ROLE_ORDER:
@@ -180,12 +187,12 @@ def page(bank: dict[str, Any], gains: tuple[float, float, float], dpr: int, sele
         ]
     )
     filter_css = "" if gains == (1.0, 1.0, 1.0) else "filter:url(#state-transform);"
-    return f"""<!doctype html><html><head><meta charset='utf-8'><style>*{{box-sizing:border-box}}html,body{{margin:0;padding:0;width:{TILE_WIDTH*len(ROLE_ORDER)}px;background:#000}}#grid{{display:grid;grid-template-columns:repeat({len(ROLE_ORDER)},{TILE_WIDTH}px);grid-auto-rows:{TILE_HEIGHT}px;width:{TILE_WIDTH*len(ROLE_ORDER)}px;height:{len(selected_rows)*TILE_HEIGHT}px;{filter_css}}}.tile{{position:relative;width:{TILE_WIDTH}px;height:{TILE_HEIGHT}px;overflow:hidden}}.tile span{{position:absolute;display:block;margin:0;padding:0;white-space:pre;font-family:Menlo,'SFMono-Regular',monospace;line-height:1;font-style:normal;font-variant-ligatures:none;text-rendering:auto}}svg{{position:absolute;width:0;height:0}}</style></head><body><svg><filter id='state-transform' color-interpolation-filters='sRGB'><feColorMatrix type='matrix' values='{matrix}'/></filter></svg><div id='grid'>{''.join(tiles)}</div></body></html>"""
+    return f"""<!doctype html><html><head><meta charset='utf-8'><style>*{{box-sizing:border-box}}html,body{{margin:0;padding:0;width:{TILE_WIDTH * len(ROLE_ORDER)}px;background:#000}}#grid{{display:grid;grid-template-columns:repeat({len(ROLE_ORDER)},{TILE_WIDTH}px);grid-auto-rows:{TILE_HEIGHT}px;width:{TILE_WIDTH * len(ROLE_ORDER)}px;height:{len(selected_rows) * TILE_HEIGHT}px;{filter_css}}}.tile{{position:relative;width:{TILE_WIDTH}px;height:{TILE_HEIGHT}px;overflow:hidden}}.tile span{{position:absolute;display:block;margin:0;padding:0;white-space:pre;font-family:Menlo,'SFMono-Regular',monospace;line-height:1;font-style:normal;font-variant-ligatures:none;text-rendering:auto}}svg{{position:absolute;width:0;height:0}}</style></head><body><svg><filter id='state-transform' color-interpolation-filters='sRGB'><feColorMatrix type='matrix' values='{matrix}'/></filter></svg><div id='grid'>{"".join(tiles)}</div></body></html>"""
 
 
 def metric_summary(values: np.ndarray, exact: np.ndarray) -> dict[str, float]:
     return {
-        "sample_count": int(len(values)),
+        "sample_count": len(values),
         "delta_e_ok_p10": float(np.quantile(values, 0.10)),
         "delta_e_ok_median": float(np.quantile(values, 0.50)),
         "delta_e_ok_p90": float(np.quantile(values, 0.90)),
@@ -194,7 +201,9 @@ def metric_summary(values: np.ndarray, exact: np.ndarray) -> dict[str, float]:
     }
 
 
-def analyze_tile_pair(left: np.ndarray, right: np.ndarray, selected: np.ndarray) -> dict[str, float]:
+def analyze_tile_pair(
+    left: np.ndarray, right: np.ndarray, selected: np.ndarray
+) -> dict[str, float]:
     left_lab = oklab(left.reshape(-1, 3)).reshape(left.shape)
     right_lab = oklab(right.reshape(-1, 3)).reshape(right.shape)
     distance = np.linalg.norm(left_lab - right_lab, axis=2)[selected] * 100.0
@@ -228,7 +237,14 @@ def capture_and_measure(results: dict[str, Any], output: Path) -> dict[str, Any]
                     BACKGROUNDS, FONT_SIZES, FONT_WEIGHTS, phases
                 )
             ]
-            run_browse(binary, temp, "viewport", f"{TILE_WIDTH*len(ROLE_ORDER)}x{TILE_HEIGHT*ROWS_PER_CHUNK}", "--scale", str(dpr))
+            run_browse(
+                binary,
+                temp,
+                "viewport",
+                f"{TILE_WIDTH * len(ROLE_ORDER)}x{TILE_HEIGHT * ROWS_PER_CHUNK}",
+                "--scale",
+                str(dpr),
+            )
             for bank_id, bank in bank_map.items():
                 for state, gains in GAIN_STATES.items():
                     for chunk_start in range(0, len(rows), ROWS_PER_CHUNK):
@@ -247,7 +263,9 @@ def capture_and_measure(results: dict[str, Any], output: Path) -> dict[str, Any]
                             len(ROLE_ORDER) * TILE_WIDTH * dpr,
                             3,
                         )
-                        require(pixels.shape == expected_shape, f"bad screenshot shape {pixels.shape}")
+                        require(
+                            pixels.shape == expected_shape, f"bad screenshot shape {pixels.shape}"
+                        )
                         for local_row, metadata in enumerate(selected_rows):
                             y0 = local_row * TILE_HEIGHT * dpr
                             y1 = y0 + TILE_HEIGHT * dpr
@@ -345,9 +363,7 @@ def capture_and_measure(results: dict[str, Any], output: Path) -> dict[str, Any]
                             "dpr": dpr,
                             "role": role,
                             "active_min_p10": min(row["delta_e_ok_p10"] for row in selected),
-                            "active_min_median": min(
-                                row["delta_e_ok_median"] for row in selected
-                            ),
+                            "active_min_median": min(row["delta_e_ok_median"] for row in selected),
                             "active_max_near_fraction": max(
                                 row["near_fraction_delta_e_below_0_5"] for row in selected
                             ),
@@ -355,9 +371,7 @@ def capture_and_measure(results: dict[str, Any], output: Path) -> dict[str, Any]
                                 row["exact_rgb8_fraction"] for row in selected
                             ),
                             "edge_min_p10": min(row["delta_e_ok_p10"] for row in edge),
-                            "edge_min_median": min(
-                                row["delta_e_ok_median"] for row in edge
-                            ),
+                            "edge_min_median": min(row["delta_e_ok_median"] for row in edge),
                             "edge_max_near_fraction": max(
                                 row["near_fraction_delta_e_below_0_5"] for row in edge
                             ),
@@ -370,9 +384,7 @@ def capture_and_measure(results: dict[str, Any], output: Path) -> dict[str, Any]
                 selected = [
                     row
                     for row in pair_rows
-                    if row["bank"] == bank_id
-                    and row["state"] == state
-                    and row["dpr"] == dpr
+                    if row["bank"] == bank_id and row["state"] == state and row["dpr"] == dpr
                 ]
                 binding = min(selected, key=lambda row: row["delta_e_ok_p10"])
                 pair_aggregates.append(
@@ -390,9 +402,7 @@ def capture_and_measure(results: dict[str, Any], output: Path) -> dict[str, Any]
         if row["bank"] == "current-light"
     }
     baseline_pair_lookup = {
-        (row["state"], row["dpr"]): row
-        for row in pair_aggregates
-        if row["bank"] == "current-light"
+        (row["state"], row["dpr"]): row for row in pair_aggregates if row["bank"] == "current-light"
     }
     primary_states = ("commanded-normal-light", "transformed-low-light")
     target_roles = ("red", "green", "blue")
@@ -402,9 +412,7 @@ def capture_and_measure(results: dict[str, Any], output: Path) -> dict[str, Any]
             continue
         failures = []
         selected = [
-            row
-            for row in aggregates
-            if row["bank"] == bank_id and row["state"] in primary_states
+            row for row in aggregates if row["bank"] == bank_id and row["state"] in primary_states
         ]
         for row in selected:
             baseline = baseline_lookup[(row["state"], row["dpr"], row["role"])]
@@ -432,9 +440,7 @@ def capture_and_measure(results: dict[str, Any], output: Path) -> dict[str, Any]
                 row["minimum_active_p10"]["delta_e_ok_p10"]
                 < baseline["minimum_active_p10"]["delta_e_ok_p10"] - 1e-9
             ):
-                failures.append(
-                    f"{row['state']} dpr{row['dpr']} accent-pair p10 regressed"
-                )
+                failures.append(f"{row['state']} dpr{row['dpr']} accent-pair p10 regressed")
         acceptance.append(
             {
                 "bank": bank_id,

@@ -112,4 +112,5 @@ def test_review_manifest_binds_every_artifact() -> None:
         path = ROOT / relative
         assert path.is_file(), relative
         assert path.stat().st_size == expected["bytes"], relative
+        assert oct(path.stat().st_mode & 0o777) == expected["mode"], relative
         assert hashlib.sha256(path.read_bytes()).hexdigest() == expected["sha256"], relative

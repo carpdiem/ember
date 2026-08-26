@@ -7040,7 +7040,7 @@
     }
   ],
   "schema_version": 1,
-  "script_sha256": "320c8280900c67cb78782ac8b8e7621007e2599fe2d3a6568256bd4815504a8f",
+  "script_sha256": "5c3a4f6982dfc652e444afe42390aa20e7aa60f76e79f07a24650242f64c9612",
   "source": {
     "commit": "016c6b37b283baf44711af3330d2872305b9398c",
     "manifest_sha256": "e7044ae9e629975df2db19ef0c472c74b99efb0ce0e56a46f862387a863f9f4c"
