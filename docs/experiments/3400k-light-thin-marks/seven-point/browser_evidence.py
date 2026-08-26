@@ -50,6 +50,7 @@ seven = _load_local("seven_point_optimizer_for_browser", "optimizer.py")
 polish_search = _load_local("seven_point_polish_for_browser", "polish.py")
 warm_search = _load_local("seven_point_warm_pair_for_browser", "warm_pair.py")
 hue_search = _load_local("seven_point_hue_frontier_for_browser", "hue_frontier.py")
+minimal_search = _load_local("seven_point_minimal_relaxation_for_browser", "minimal_relaxation.py")
 
 SCHEMA_VERSION = 1
 BASE_COUNT = 2_160
@@ -93,6 +94,7 @@ _BASE_BINDING_KEYS = {
 }
 _WARM_BINDING_KEYS = _BASE_BINDING_KEYS | {"warm_pair_source"}
 _HUE_BINDING_KEYS = _BASE_BINDING_KEYS | {"hue_frontier_source"}
+_MINIMAL_BINDING_KEYS = _BASE_BINDING_KEYS | {"minimal_relaxation_source"}
 _SOURCE_KEYS = {"file", "sha256", "commit"}
 _ARTIFACT_KEYS = {"file", "sha256", "canonical_sha256"}
 _COUNTS_KEYS = {
@@ -271,6 +273,8 @@ def _artifact_binding(
         binding["warm_pair_source"] = _source_binding("warm_pair.py")
     elif kind == "seven-point-hue-frontier":
         binding["hue_frontier_source"] = _source_binding("hue_frontier.py")
+    elif kind == "seven-point-minimal-relaxation-frontier":
+        binding["minimal_relaxation_source"] = _source_binding("minimal_relaxation.py")
     return binding
 
 
@@ -287,6 +291,8 @@ def _validate_binding(
         expected_keys = _WARM_BINDING_KEYS
     elif kind == "seven-point-hue-frontier":
         expected_keys = _HUE_BINDING_KEYS
+    elif kind == "seven-point-minimal-relaxation-frontier":
+        expected_keys = _MINIMAL_BINDING_KEYS
     else:
         expected_keys = _BASE_BINDING_KEYS
     row = exact_keys(binding, expected_keys, "evidence binding")
@@ -296,6 +302,12 @@ def _validate_binding(
         exact_keys(row["warm_pair_source"], _SOURCE_KEYS, "warm-pair source")
     elif kind == "seven-point-hue-frontier":
         exact_keys(row["hue_frontier_source"], _SOURCE_KEYS, "hue-frontier source")
+    elif kind == "seven-point-minimal-relaxation-frontier":
+        exact_keys(
+            row["minimal_relaxation_source"],
+            _SOURCE_KEYS,
+            "minimal-relaxation source",
+        )
     artifacts = row["search_artifacts"]
     require(
         isinstance(artifacts, list) and len(artifacts) == len(SEARCH_FILES),
@@ -417,6 +429,7 @@ def _search_results(search_artifacts: Path) -> dict[str, Any]:
             "seven-point-bounded-full-catalog-polish",
             "seven-point-warm-pair-refinement",
             "seven-point-hue-frontier",
+            "seven-point-minimal-relaxation-frontier",
         },
         "seven-point results kind is unsupported",
     )
@@ -433,6 +446,9 @@ def _validate_search_artifacts(search_artifacts: Path) -> None:
         return
     if kind == "seven-point-hue-frontier":
         hue_search.validate(search_artifacts)
+        return
+    if kind == "seven-point-minimal-relaxation-frontier":
+        minimal_search.validate(search_artifacts)
         return
     raise SevenPointEvidenceError("seven-point results kind is unsupported")
 
@@ -505,6 +521,7 @@ def _expected_candidates(
     if results["artifact_kind"] in {
         "seven-point-warm-pair-refinement",
         "seven-point-hue-frontier",
+        "seven-point-minimal-relaxation-frontier",
     }:
         rows = results["browser_roles"]
         require(

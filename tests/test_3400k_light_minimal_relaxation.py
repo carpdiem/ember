@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -128,3 +129,10 @@ def test_minimal_relaxation_is_byte_deterministic(result) -> None:
     finally:
         relax.source_binding = original
     assert relax.json_bytes(replay) == relax.json_bytes(result)
+
+
+def test_committed_minimal_relaxation_artifacts_are_fresh() -> None:
+    directory = SEVEN / "minimal-relaxation"
+    actual = {name: json.loads((directory / name).read_text()) for name in relax.EXPECTED_FILES}
+    expected = relax.payloads(relax.run())
+    assert actual == expected
