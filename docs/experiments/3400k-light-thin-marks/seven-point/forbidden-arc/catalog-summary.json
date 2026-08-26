@@ -1,0 +1,10 @@
+{
+  "canonical_hex8_reparsed_before_metrics": true,
+  "exact_hex8_count": 7024,
+  "forbidden_arc": [
+    92.0,
+    118.0
+  ],
+  "mode": "forbidden-arc-full",
+  "schema_version": 1
+}

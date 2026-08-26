@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -58,3 +59,32 @@ def test_bounded_alternative_is_explicit_not_global_optimum_claim() -> None:
     assert '"global_optimum_claim": False' in source
     assert "broad 940-color exact catalog" in source
     assert "monotonic exact one-color coordinate search" in source
+
+
+def test_committed_forbidden_arc_artifact_is_closed_and_gate_clean() -> None:
+    directory = SEVEN / "forbidden-arc"
+    assert {path.name for path in directory.iterdir()} == {
+        "catalog-summary.json",
+        "results.json",
+    }
+    result = json.loads((directory / "results.json").read_text())
+    assert result["catalog"]["smoke_before"] == 940
+    assert result["catalog"]["smoke_after"] == 928
+    assert result["catalog"]["full_before"] == 7184
+    assert result["catalog"]["full_after"] == 7024
+    assert result["pair_accounting"] == {
+        "role_count": 7,
+        "total_unordered_pairs": 21,
+        "category_category_pairs": 15,
+        "fg0_category_pairs": 6,
+        "lane_directions": 2,
+    }
+    assert len(result["candidates"]) == 3
+    assert len({tuple(row["categories"]) for row in result["candidates"]}) == 3
+    for row in result["candidates"]:
+        assert row["hard_gate_failures"] == []
+        assert len(row["objective"]) == 6
+        assert row["metrics"]["raster_all_21"]["1.5"]["pair_count"] == 21
+        for value in row["categories"]:
+            lab = arc.srgb_to_oklab(arc.p3.parse_exact_hex8(value))
+            assert arc.hue_allowed(arc.seven._hue(lab))

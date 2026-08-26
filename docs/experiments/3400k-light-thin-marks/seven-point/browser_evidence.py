@@ -51,6 +51,7 @@ polish_search = _load_local("seven_point_polish_for_browser", "polish.py")
 warm_search = _load_local("seven_point_warm_pair_for_browser", "warm_pair.py")
 hue_search = _load_local("seven_point_hue_frontier_for_browser", "hue_frontier.py")
 minimal_search = _load_local("seven_point_minimal_relaxation_for_browser", "minimal_relaxation.py")
+forbidden_search = _load_local("seven_point_forbidden_arc_for_browser", "forbidden_arc.py")
 
 SCHEMA_VERSION = 1
 BASE_COUNT = 2_160
@@ -95,6 +96,7 @@ _BASE_BINDING_KEYS = {
 _WARM_BINDING_KEYS = _BASE_BINDING_KEYS | {"warm_pair_source"}
 _HUE_BINDING_KEYS = _BASE_BINDING_KEYS | {"hue_frontier_source"}
 _MINIMAL_BINDING_KEYS = _BASE_BINDING_KEYS | {"minimal_relaxation_source"}
+_FORBIDDEN_BINDING_KEYS = _BASE_BINDING_KEYS | {"forbidden_arc_source"}
 _SOURCE_KEYS = {"file", "sha256", "commit"}
 _ARTIFACT_KEYS = {"file", "sha256", "canonical_sha256"}
 _COUNTS_KEYS = {
@@ -275,6 +277,8 @@ def _artifact_binding(
         binding["hue_frontier_source"] = _source_binding("hue_frontier.py")
     elif kind == "seven-point-minimal-relaxation-frontier":
         binding["minimal_relaxation_source"] = _source_binding("minimal_relaxation.py")
+    elif kind == "seven-point-forbidden-hue-arc-rebuild":
+        binding["forbidden_arc_source"] = _source_binding("forbidden_arc.py")
     return binding
 
 
@@ -293,6 +297,8 @@ def _validate_binding(
         expected_keys = _HUE_BINDING_KEYS
     elif kind == "seven-point-minimal-relaxation-frontier":
         expected_keys = _MINIMAL_BINDING_KEYS
+    elif kind == "seven-point-forbidden-hue-arc-rebuild":
+        expected_keys = _FORBIDDEN_BINDING_KEYS
     else:
         expected_keys = _BASE_BINDING_KEYS
     row = exact_keys(binding, expected_keys, "evidence binding")
@@ -307,6 +313,12 @@ def _validate_binding(
             row["minimal_relaxation_source"],
             _SOURCE_KEYS,
             "minimal-relaxation source",
+        )
+    elif kind == "seven-point-forbidden-hue-arc-rebuild":
+        exact_keys(
+            row["forbidden_arc_source"],
+            _SOURCE_KEYS,
+            "forbidden-arc source",
         )
     artifacts = row["search_artifacts"]
     require(
@@ -430,6 +442,7 @@ def _search_results(search_artifacts: Path) -> dict[str, Any]:
             "seven-point-warm-pair-refinement",
             "seven-point-hue-frontier",
             "seven-point-minimal-relaxation-frontier",
+            "seven-point-forbidden-hue-arc-rebuild",
         },
         "seven-point results kind is unsupported",
     )
@@ -449,6 +462,9 @@ def _validate_search_artifacts(search_artifacts: Path) -> None:
         return
     if kind == "seven-point-minimal-relaxation-frontier":
         minimal_search.validate(search_artifacts)
+        return
+    if kind == "seven-point-forbidden-hue-arc-rebuild":
+        forbidden_search.validate(search_artifacts)
         return
     raise SevenPointEvidenceError("seven-point results kind is unsupported")
 
@@ -522,6 +538,7 @@ def _expected_candidates(
         "seven-point-warm-pair-refinement",
         "seven-point-hue-frontier",
         "seven-point-minimal-relaxation-frontier",
+        "seven-point-forbidden-hue-arc-rebuild",
     }:
         rows = results["browser_roles"]
         require(
