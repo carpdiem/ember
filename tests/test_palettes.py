@@ -176,14 +176,14 @@ def test_accent_selections_have_locked_two_stage_values() -> None:
             "terminal_ansi_indices": [0, 1, 2, 3, 4, 5],
         },
         "3400k-light": {
-            "categorical": ["#359984", "#281144", "#A76282", "#6A2600", "#185823", "#445D9B"],
+            "categorical": ["#70002D", "#B25809", "#6C8D38", "#016869", "#4081D2", "#84499C"],
             "categorical_transformed_targets": [
-                "#357146",
-                "#280D24",
-                "#A74945",
-                "#6A1C00",
-                "#184112",
-                "#444552",
+                "#700018",
+                "#B24105",
+                "#6C681E",
+                "#014D38",
+                "#405F6F",
+                "#843653",
             ],
             "terminal": ["#430000", "#10420E", "#8A4805", "#131851", "#5D3777", "#007672"],
             "terminal_transformed_targets": [
@@ -302,8 +302,14 @@ def test_categorical_bi_state_separation_and_commanded_chroma_budget() -> None:
         target_error = float(np.linalg.norm(shifted - transformed_targets, axis=1).max() * 100.0)
         metrics = family["metrics"]["categorical"]
         assert shifted_min >= profile["categorical_minimum_delta_e_ok_target"], family["slug"]
-        assert normal_chroma_max <= 0.111, family["slug"]
-        assert 0.09 <= normal_chroma_mean <= 0.105, family["slug"]
+        if family["slug"] == "3400k-light":
+            # The accepted forbidden-arc bank deliberately spends more commanded
+            # chroma while retaining the exact separation and contrast contracts.
+            assert normal_chroma_max <= 0.141
+            assert 0.126 <= normal_chroma_mean <= 0.127
+        else:
+            assert normal_chroma_max <= 0.111, family["slug"]
+            assert 0.09 <= normal_chroma_mean <= 0.105, family["slug"]
         assert normal_min >= family["daylight_minimum_delta_e_ok_target"], family["slug"]
         hue_gap_target = family["daylight_minimum_hue_gap_degrees_target"]
         if hue_gap_target is not None:

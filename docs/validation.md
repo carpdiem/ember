@@ -18,7 +18,7 @@ conditions are fixed at adapting luminance 8, background luminance 3, and flare 
 | Family | Categories | Day min ΔEOK | Transformed min ΔEOK | Mean / max raw chroma | Transformed L range | Min ANSI contrast |
 |---|---:|---:|---:|---:|---:|---:|
 | 3400K Dark | 6 | 16.18 | 10.53 | 0.1009 / 0.1107 | 0.2153 | 4.79:1 |
-| 3400K Light | 6 | 16.64 | 12.15 | 0.1006 / 0.1069 | 0.3137 | 4.71:1 |
+| 3400K Light | 6 | 16.37 | 11.58 | 0.1266 / 0.1408 | 0.1818 | 4.71:1 |
 | 2000K Dark | 4 | 20.47 | 14.52 | 0.1034 / 0.1109 | 0.1657 | 4.55:1 |
 | 1200K Dark | 3 | 22.00 | 10.05 | 0.1049 / 0.1103 | 0.1458 | 4.52:1 |
 
@@ -28,7 +28,7 @@ Contrast here is for graphical category marks, not small text.
 | Family | Day minimum hue gap | Target | Transformed category / `bg_0` | Target |
 |---|---:|---:|---:|---:|
 | 3400K Dark | 20.03° | ≥ 20° | 3.03:1 | ≥ 3:1 |
-| 3400K Light | 30.07° | ≥ 30° | 3.33:1 | ≥ 3:1 |
+| 3400K Light | 44.96° | ≥ 30° | 3.35:1 | ≥ 3:1 |
 | 2000K Dark | 21.04° | ≥ 20° | 3.01:1 | ≥ 3:1 |
 | 1200K Dark | 48.12° | ≥ 45° | 3.07:1 | ≥ 3:1 |
 
@@ -72,7 +72,7 @@ on the nominal/±5% gain grid.
 | Family | Category min | Terminal min | Unique surface steps | Sequential CV | Gain-grid CV max |
 |---|---:|---:|---:|---:|---:|
 | 3400K Dark | 16.69 | 15.94 | 3.36 / 3.33 / 3.69 / 3.02 | 0.0494 | 0.0846 |
-| 3400K Light | 18.15 | 15.78 | 3.12 / 2.97 / 3.08 / 3.01 / 2.98 | 0.0563 | 0.0699 |
+| 3400K Light | 15.91 | 15.78 | 3.12 / 2.97 / 3.08 / 3.01 / 2.98 | 0.0563 | 0.0699 |
 | 2000K Dark | 17.31 | 13.52 | 5.13 / 4.91 / 4.75 | 0.0493 | 0.0798 |
 | 1200K Dark | 14.14 | 7.58 | 5.63 / 5.95 / 4.82 | 0.0923 | 0.1613 |
 
@@ -93,7 +93,8 @@ The release gates enforce:
 
 - schema 14 with exactly four palette families and categorical capacities `6, 6, 4, 3`;
 - categorical commanded mean Oklab chroma between `0.09` and `0.105`, with no color
-  above `0.111`;
+  above `0.111`, for the dark families; the accepted 3400K Light bank uses mean `0.1266`
+  and maximum `0.1408` while preserving its separation and contrast floors;
 - categorical minimum-distance floors in both unshifted and transformed states;
 - categorical separation from every foreground role in both states, plus sampled-corner
   floors for deep-profile category spacing, foreground clearance, and background contrast;

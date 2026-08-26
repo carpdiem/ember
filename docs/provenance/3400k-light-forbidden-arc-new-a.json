@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "artifact_kind": "accepted-palette-provenance",
+  "family": "3400k-light",
+  "accepted_name": "forbidden-arc-new-a",
+  "source_review_commit": "d54473bf58ab7c5cf94fbc159f687a9f93465061",
+  "source_review_path": "docs/experiments/3400k-light-thin-marks/review/g2-seven-point-forbidden-arc",
+  "source_review_url": "https://github.com/carpdiem/ember/blob/d54473bf58ab7c5cf94fbc159f687a9f93465061/docs/experiments/3400k-light-thin-marks/review/g2-seven-point-forbidden-arc/index.html",
+  "source_candidate_id": "0081fe30792b1dc28cb674fdcf0b6e81522907df075f896c2582697df22b5796",
+  "fixed_fg0": "#342F2C",
+  "categorical": [
+    "#70002D",
+    "#B25809",
+    "#6C8D38",
+    "#016869",
+    "#4081D2",
+    "#84499C"
+  ],
+  "categorical_transformed_3400k": [
+    "#700018",
+    "#B24105",
+    "#6C681E",
+    "#014D38",
+    "#405F6F",
+    "#843653"
+  ],
+  "transform_gains": [
+    1.0,
+    0.74,
+    0.53
+  ],
+  "forbidden_commanded_oklch_hue_arc_closed": [
+    92.0,
+    118.0
+  ],
+  "pair_accounting": {
+    "role_count": 7,
+    "total_unordered_pairs": 21,
+    "category_category_pairs": 15,
+    "fg0_category_pairs": 6,
+    "lane_directions": 2
+  },
+  "actual_chromium_transformed_minima": {
+    "1.5px": 9.07455454,
+    "2px": 11.35262384,
+    "3px": 11.60222538
+  },
+  "selection": "NEW-A",
+  "production": true
+}

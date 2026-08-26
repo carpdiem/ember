@@ -2114,21 +2114,21 @@
       "foreground_chroma_order_tolerance": 0.003,
       "terminal_minimum_shifted_foreground_contrast": 4.71,
       "categorical": {
-        "one": "#359984",
-        "two": "#281144",
-        "three": "#A76282",
-        "four": "#6A2600",
-        "five": "#185823",
-        "six": "#445D9B"
+        "one": "#70002D",
+        "two": "#B25809",
+        "three": "#6C8D38",
+        "four": "#016869",
+        "five": "#4081D2",
+        "six": "#84499C"
       },
       "categorical_semantic_slots": null,
       "categorical_transformed_targets": [
-        "#357146",
-        "#280D24",
-        "#A74945",
-        "#6A1C00",
-        "#184112",
-        "#444552"
+        "#700018",
+        "#B24105",
+        "#6C681E",
+        "#014D38",
+        "#405F6F",
+        "#843653"
       ],
       "daylight_minimum_delta_e_ok_target": 16.0,
       "daylight_minimum_hue_gap_degrees_target": 30.0,
@@ -3686,25 +3686,25 @@
       "continuous_source": "generated_from_hex8_anchors",
       "metrics": {
         "categorical": {
-          "normal_min_delta_e_ok": 16.64,
-          "normal_minimum_hue_gap_degrees": 30.07,
-          "shifted_min_delta_e_ok": 12.15,
-          "minimum_shifted_background_contrast": 3.33,
-          "shifted_lightness_mean": 0.3859,
-          "shifted_lightness_range": 0.3137,
-          "normal_chroma_max": 0.1069,
-          "normal_chroma_mean": 0.1006,
+          "normal_min_delta_e_ok": 16.37,
+          "normal_minimum_hue_gap_degrees": 44.96,
+          "shifted_min_delta_e_ok": 11.58,
+          "minimum_shifted_background_contrast": 3.35,
+          "shifted_lightness_mean": 0.4448,
+          "shifted_lightness_range": 0.1818,
+          "normal_chroma_max": 0.1408,
+          "normal_chroma_mean": 0.1266,
           "normal_min_delta_e_ok_to_foregrounds": {
-            "fg_0": 11.28,
-            "fg_1": 9.86,
-            "fg_2": 12.11
+            "fg_0": 13.98,
+            "fg_1": 11.6,
+            "fg_2": 9.42
           },
           "shifted_min_delta_e_ok_to_foregrounds": {
-            "fg_0": 8.76,
-            "fg_1": 7.23,
-            "fg_2": 8.03
+            "fg_0": 13.36,
+            "fg_1": 10.3,
+            "fg_2": 9.64
           },
-          "transformed_target_max_delta_e_ok": 0.12
+          "transformed_target_max_delta_e_ok": 0.14
         },
         "terminal": {
           "normal_min_delta_e_ok": 17.17,
@@ -3805,8 +3805,8 @@
             "background_luminance": 3.0,
             "flare_fraction": 0.0075
           },
-          "categorical_minimum_pair_distance": 18.1478,
-          "categorical_minimum_foreground_distance": 16.6723,
+          "categorical_minimum_pair_distance": 15.9137,
+          "categorical_minimum_foreground_distance": 22.2679,
           "terminal_minimum_pair_distance": 15.7827,
           "terminal_minimum_foreground_distance": 17.1643,
           "unique_surface_adjacent_distances": [
@@ -3845,9 +3845,9 @@
           "fg_2_on_bg_5": 2.91
         },
         "gain_sensitivity": {
-          "categorical_minimum_delta_e_ok": 11.34,
-          "categorical_minimum_foreground_delta_e_ok": 7.04,
-          "categorical_minimum_background_contrast": 3.21,
+          "categorical_minimum_delta_e_ok": 10.96,
+          "categorical_minimum_foreground_delta_e_ok": 9.28,
+          "categorical_minimum_background_contrast": 3.2,
           "terminal_minimum_group_center_delta_e_ok": 12.42,
           "terminal_minimum_foreground_delta_e_ok": 6.77,
           "terminal_minimum_background_contrast": 4.5,

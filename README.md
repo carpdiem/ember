@@ -31,6 +31,10 @@ you already have.
 3400K Dark and 3400K Light use mode-specific 256-sample sequential maps while preserving
 one scalar polarity: low values are dark and high values are bright in both modes. The light
 map is tuned for even daytime progression against its neutral surface system.
+The 3400K Light categorical bank spans red, amber, green, teal, blue, and violet while
+reserving the commanded Oklch hue arc from 92° through 118°.
+[Production provenance](docs/provenance/3400k-light-forbidden-arc-new-a.json)
+pins the accepted exact Hex bank and browser evidence.
 
 ### 2000K Dark
 
