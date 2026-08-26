@@ -1086,7 +1086,11 @@ main > section{ scroll-margin-top:calc(var(--chrome-h) + 1rem); }
           3400K Dark and 3400K Light so each graph series retains its identity. The Light terminal
           bank is independently tuned against real Chromium glyph pixels; its
           <a href="docs/provenance/3400k-light-terminal-a.json">terminal provenance</a> pins the
-          accepted ANSI roles and separate daytime/low-light viewing contract.</p>
+          accepted ANSI roles and separate daytime/low-light viewing contract. This production
+          bank deliberately spends more commanded chroma (allowance 0.125 → 0.177) and lowers
+          the transformed terminal-to-FG-2 floor (7.0 → 6.5 ΔEOK; measured 6.626) while retaining
+          4.5:1 terminal-canvas contrast and improving CAM16 and real-glyph separation from FG-0.
+          FG-2 remains restricted to nonessential metadata.</p>
           <p>The 3400&nbsp;K palettes provide six distinct category colors after filtering. The
           2000&nbsp;K palette provides four. The 1200&nbsp;K palette provides three. Repeated ANSI
           slots are labeled as aliases.</p>

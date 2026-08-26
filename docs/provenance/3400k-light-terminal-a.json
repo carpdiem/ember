@@ -145,6 +145,52 @@
     "browser_pair_nonregression_required": true,
     "browser_exact_rgb8_collision_fraction": 0.0
   },
+  "bounded_contract_changes": {
+    "commanded_terminal_max_oklab_chroma": {
+      "previous_allowance": 0.125,
+      "new_allowance": 0.177,
+      "previous_actual": 0.11280465127102658,
+      "new_actual": 0.17658475260262238
+    },
+    "transformed_terminal_to_fg_2_delta_e_ok": {
+      "previous_floor": 7.0,
+      "new_floor": 6.5,
+      "previous_actual": 7.420943508947807,
+      "new_actual": 6.626029023605009
+    },
+    "terminal_canvas_contrast": {
+      "floor": 4.5,
+      "previous_actual": 4.713042742376014,
+      "new_actual": 4.508400261404682
+    },
+    "oklab_pair_distance": {
+      "commanded_previous": 17.165277446433976,
+      "commanded_new": 14.558727619148193,
+      "transformed_previous": 12.736044354052526,
+      "transformed_new": 7.900695988101719
+    }
+  },
+  "compensating_evidence": {
+    "cam16_ucs_pair_distance": {
+      "commanded_previous": 21.337714365911694,
+      "commanded_new": 27.25758167914538,
+      "transformed_previous": 15.782660296610313,
+      "transformed_new": 16.224425156684465
+    },
+    "browser_transformed_fg_0_active_p10_dpr1": {
+      "red_previous": 0.737,
+      "red_new": 1.78505129,
+      "green_previous": 0.715,
+      "green_new": 1.039776524,
+      "blue_previous": 0.811,
+      "blue_new": 1.101361221
+    },
+    "browser_transformed_minimum_pair_p10_dpr1": {
+      "previous": 0.8499852118410947,
+      "new": 0.9547793823789078
+    },
+    "accepted_nominal_near_collision_fraction": 0.0
+  },
   "selection": "A-raster-maximum",
   "production": true
 }

@@ -52,7 +52,7 @@ def test_promoted_dark_families_equal_the_byte_frozen_approved_lanes() -> None:
 
 def test_promoted_manifest_exposes_usage_and_precision_contracts() -> None:
     manifest = generate_manifest()
-    assert manifest["schema_version"] == 14
+    assert manifest["schema_version"] == 15
     usage = manifest["quality_targets"]["foreground_usage"]
     assert usage["opacity_derived_text_allowed"] is False
     assert usage["alpha_composited_foregrounds_allowed"] is False

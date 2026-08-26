@@ -103,6 +103,29 @@ def test_provenance_binds_review_evidence_and_production_selection() -> None:
     }
     assert record["selection"] == "A-raster-maximum"
     assert record["production"] is True
+    tradeoffs = record["bounded_contract_changes"]
+    assert tradeoffs["commanded_terminal_max_oklab_chroma"] == {
+        "previous_allowance": 0.125,
+        "new_allowance": 0.177,
+        "previous_actual": 0.11280465127102658,
+        "new_actual": 0.17658475260262238,
+    }
+    assert tradeoffs["transformed_terminal_to_fg_2_delta_e_ok"] == {
+        "previous_floor": 7.0,
+        "new_floor": 6.5,
+        "previous_actual": 7.420943508947807,
+        "new_actual": 6.626029023605009,
+    }
+    evidence = record["compensating_evidence"]
+    assert (
+        evidence["cam16_ucs_pair_distance"]["commanded_new"]
+        > evidence["cam16_ucs_pair_distance"]["commanded_previous"]
+    )
+    assert (
+        evidence["cam16_ucs_pair_distance"]["transformed_new"]
+        > evidence["cam16_ucs_pair_distance"]["transformed_previous"]
+    )
+    assert evidence["accepted_nominal_near_collision_fraction"] == 0.0
 
 
 def test_manifest_exposes_dual_viewing_terminal_contract_and_aliases() -> None:
@@ -182,5 +205,9 @@ def test_reader_paths_present_finished_terminal_product() -> None:
 
     assert "3400k-light-terminal-a.json" in public
     assert "real small-glyph Chromium pixels" in public
+    assert "0.125` to\n`0.177" in public
+    assert "7.0` to `6.5 ΔEOK" in public
+    assert "measured `6.626`" in public
+    assert "improves\nnormal-day/low-light CAM16" in public
     for phrase in ("A-raster-maximum", "promotion required", "not production", "branch experiment"):
         assert phrase not in public

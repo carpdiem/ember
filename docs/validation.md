@@ -43,6 +43,27 @@ comparisons:
 | 2000K Dark | 17.10 | 12.62 | 8.72 | 13.30 | 6.22 | 7.70 | 2.77 | 10.78 |
 | 1200K Dark | 11.12 | 9.51 | 11.86 | 13.80 | 4.34 | 4.89 | 3.14 | 10.75 |
 
+### Bounded 3400K Light terminal tradeoff
+
+The accepted Light terminal bank does not preserve every prior scalar gate. It spends
+commanded chroma to keep small ANSI glyphs distinct from ordinary `fg_0` after the 3400 K
+transform. The following values are recomputed from exact serialized Hex colors:
+
+| Contract | Previous actual / floor | Current actual / floor | Outcome |
+|---|---:|---:|---|
+| Commanded maximum Oklab chroma | 0.112805 / ≤ 0.125 | 0.176585 / ≤ 0.177 | bounded increase |
+| Transformed terminal → `fg_2` | 7.4209 / ≥ 7.0 | 6.6260 / ≥ 6.5 | bounded reduction |
+| Terminal canvas contrast | 4.7130:1 / ≥ 4.5:1 | 4.5084:1 / ≥ 4.5:1 | retained narrowly |
+| Commanded Oklab pair minimum | 17.1653 / ≥ 14.0 | 14.5587 / ≥ 14.0 | retained at lower headroom |
+| Transformed Oklab pair minimum | 12.7360 / ≥ 11.0 | 7.9007 / ≥ 7.5 | replacement floor |
+
+The compensating evidence is metric- and use-specific rather than a claim that every old gate
+improved. Normal-day CAM16-UCS pair separation rises from 21.3377 to 27.2576, low-light
+CAM16-UCS pair separation rises from 15.7827 to 16.2244, and the transformed DPR1 browser
+pair p10 rises from 0.8500 to 0.9548. Red/green/blue glyph p10 against `fg_0` rises from
+0.737/0.715/0.811 to 1.785/1.040/1.101, with zero nominal near-collision samples across all
+six accents. `fg_2` is nonessential metadata only; WCAG contrast remains a separate gate.
+
 Foreground coherence is independently gated rather than assumed:
 
 | Family | `fg_0 / fg_1 / fg_2` | Day adjacent steps | Transformed adjacent steps | Day / transformed gap ratio | Day / transformed hue span | Max day chroma |

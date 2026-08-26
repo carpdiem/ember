@@ -41,6 +41,11 @@ The 3400K Light terminal bank is separately tuned from real small-glyph Chromium
 red, green, blue, and the other ANSI accents remain visibly distinct from ordinary `fg_0`
 text. Its [terminal provenance](docs/provenance/3400k-light-terminal-a.json) pins the accepted
 roles, daytime/low-light CAM16 contract, and browser evidence.
+This is a bounded trade: the commanded terminal chroma allowance rises from `0.125` to
+`0.177`, and the transformed terminal-to-`fg_2` floor moves from `7.0` to `6.5 ΔEOK`
+(measured `6.626`). The bank still clears `4.5:1` on the terminal canvas and improves
+normal-day/low-light CAM16 pair separation plus real-glyph separation from `fg_0`.
+`fg_2` remains restricted to nonessential metadata, not body text.
 
 ### 2000K Dark
 
