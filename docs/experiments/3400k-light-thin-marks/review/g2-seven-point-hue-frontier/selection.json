@@ -1,0 +1,28 @@
+{
+  "allowed_selections": [
+    "KEEP-A",
+    "AMBER-ORANGE",
+    "GOLDEN-YELLOW",
+    "YELLOW",
+    "YELLOW-GREEN-EDGE"
+  ],
+  "artifact_kind": "seven-point-hue-frontier-human-selection",
+  "automatic_recommendation": null,
+  "candidate_ids": {
+    "Amber / orange": "ecad7ba9fcb34c8b5572227474a91852b0c0925df5cc3242be31051254518cfb",
+    "Candidate A baseline": "cdfdcbb18180c3f2f0b9ae47070d81f720043dedcf8a5240248d393ef3d9bf28",
+    "Golden yellow": "84225f4ef059538223c3829ecfc348139d93bfe6f5a9943fd0b87a86a117c77f",
+    "Yellow": "67f02085994bf7f4d54ccc8bd48e8f56474c94631a6494b55f6add066641f47e",
+    "Yellow-green edge": "b9d35215f0dba537aeb4b7d9d4eccdae667735723c95dcabd41ce85bb2612d3c"
+  },
+  "fixed_fg0": "#342F2C",
+  "production_promotion": false,
+  "report_source": {
+    "commit": "8dc458ae8cb102c2e2915fc0aabd56f6be3e8fac",
+    "file": "hue_frontier_report.py",
+    "sha256": "6d92c41641bf2a64a5d51965cf23ca26933d04017edf35a0e64eee626e921ec7"
+  },
+  "schema_version": 1,
+  "selection": null,
+  "status": "AWAITING_MICHAEL_HUE_FRONTIER_SELECTION"
+}

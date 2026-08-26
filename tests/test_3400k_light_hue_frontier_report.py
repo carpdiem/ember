@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SEVEN = ROOT / "docs/experiments/3400k-light-thin-marks/seven-point"
+REVIEW = ROOT / "docs/experiments/3400k-light-thin-marks/review/g2-seven-point-hue-frontier"
 SPEC = importlib.util.spec_from_file_location(
     "hue_frontier_report_test", SEVEN / "hue_frontier_report.py"
 )
@@ -118,3 +120,25 @@ def test_source_is_environment_free_and_evidence_count_closed() -> None:
     assert "/Users/" not in source
     assert "timestamp" not in source.lower()
     assert report.EXPECTED_EVIDENCE_COUNT == 22
+
+
+def test_committed_hue_review_is_closed_and_awaiting_human_selection() -> None:
+    evidence = REVIEW / "evidence"
+    assert len(list(evidence.iterdir())) == 22
+    assert all(path.stat().st_size < 50_000_000 for path in evidence.iterdir())
+    selection = json.loads((REVIEW / "selection.json").read_text())
+    assert selection["status"] == "AWAITING_MICHAEL_HUE_FRONTIER_SELECTION"
+    assert selection["selection"] is None
+    assert selection["automatic_recommendation"] is None
+    assert selection["production_promotion"] is False
+
+
+def test_committed_hue_page_reports_actual_frontier_metrics_and_support() -> None:
+    page = (REVIEW / "index.html").read_text()
+    assert "Hue first. No olive anchor." in page
+    assert "258 exact colors" in page
+    assert "1.5px 9.484" in page
+    assert "1.5px 8.024" in page
+    assert "1.5px 8.202" in page
+    assert "1.5px 9.137" in page
+    assert "/Users/" not in page
