@@ -375,6 +375,23 @@ def test_warm_binding_requires_exact_warm_source(inputs, contract) -> None:
         browser._validate_binding(tampered, artifacts, inputs, contract)
 
 
+def test_hue_frontier_binding_requires_exact_hue_source(inputs, contract) -> None:
+    artifacts = SEVEN / "hue-frontier"
+    binding = browser._artifact_binding(artifacts, inputs, contract)
+    assert set(binding) == browser._HUE_BINDING_KEYS
+    browser._validate_binding(binding, artifacts, inputs, contract)
+
+    missing = deepcopy(binding)
+    del missing["hue_frontier_source"]
+    with pytest.raises(browser.SevenPointEvidenceError, match="keys are not closed"):
+        browser._validate_binding(missing, artifacts, inputs, contract)
+
+    tampered = deepcopy(binding)
+    tampered["hue_frontier_source"]["sha256"] = "f" * 64
+    with pytest.raises(browser.SevenPointEvidenceError, match="binding is stale"):
+        browser._validate_binding(tampered, artifacts, inputs, contract)
+
+
 @pytest.mark.skipif(
     sys.platform != "darwin"
     or not os.environ.get("SEVEN_POINT_CHROMIUM_REQUEST")

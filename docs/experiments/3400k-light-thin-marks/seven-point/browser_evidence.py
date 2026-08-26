@@ -49,6 +49,7 @@ import phase3_optimizer as p3
 seven = _load_local("seven_point_optimizer_for_browser", "optimizer.py")
 polish_search = _load_local("seven_point_polish_for_browser", "polish.py")
 warm_search = _load_local("seven_point_warm_pair_for_browser", "warm_pair.py")
+hue_search = _load_local("seven_point_hue_frontier_for_browser", "hue_frontier.py")
 
 SCHEMA_VERSION = 1
 BASE_COUNT = 2_160
@@ -91,6 +92,7 @@ _BASE_BINDING_KEYS = {
     "polish_source",
 }
 _WARM_BINDING_KEYS = _BASE_BINDING_KEYS | {"warm_pair_source"}
+_HUE_BINDING_KEYS = _BASE_BINDING_KEYS | {"hue_frontier_source"}
 _SOURCE_KEYS = {"file", "sha256", "commit"}
 _ARTIFACT_KEYS = {"file", "sha256", "canonical_sha256"}
 _COUNTS_KEYS = {
@@ -267,6 +269,8 @@ def _artifact_binding(
     )
     if kind == "seven-point-warm-pair-refinement":
         binding["warm_pair_source"] = _source_binding("warm_pair.py")
+    elif kind == "seven-point-hue-frontier":
+        binding["hue_frontier_source"] = _source_binding("hue_frontier.py")
     return binding
 
 
@@ -279,14 +283,19 @@ def _validate_binding(
     kind = _load_object(
         Path(search_artifacts) / "results.json", "seven-point results artifact"
     ).get("artifact_kind")
-    expected_keys = (
-        _WARM_BINDING_KEYS if kind == "seven-point-warm-pair-refinement" else _BASE_BINDING_KEYS
-    )
+    if kind == "seven-point-warm-pair-refinement":
+        expected_keys = _WARM_BINDING_KEYS
+    elif kind == "seven-point-hue-frontier":
+        expected_keys = _HUE_BINDING_KEYS
+    else:
+        expected_keys = _BASE_BINDING_KEYS
     row = exact_keys(binding, expected_keys, "evidence binding")
     exact_keys(row["optimizer_source"], _SOURCE_KEYS, "optimizer source")
     exact_keys(row["polish_source"], _SOURCE_KEYS, "polish source")
     if kind == "seven-point-warm-pair-refinement":
         exact_keys(row["warm_pair_source"], _SOURCE_KEYS, "warm-pair source")
+    elif kind == "seven-point-hue-frontier":
+        exact_keys(row["hue_frontier_source"], _SOURCE_KEYS, "hue-frontier source")
     artifacts = row["search_artifacts"]
     require(
         isinstance(artifacts, list) and len(artifacts) == len(SEARCH_FILES),
@@ -407,6 +416,7 @@ def _search_results(search_artifacts: Path) -> dict[str, Any]:
         in {
             "seven-point-bounded-full-catalog-polish",
             "seven-point-warm-pair-refinement",
+            "seven-point-hue-frontier",
         },
         "seven-point results kind is unsupported",
     )
@@ -420,6 +430,9 @@ def _validate_search_artifacts(search_artifacts: Path) -> None:
         return
     if kind == "seven-point-warm-pair-refinement":
         warm_search.validate(search_artifacts)
+        return
+    if kind == "seven-point-hue-frontier":
+        hue_search.validate(search_artifacts)
         return
     raise SevenPointEvidenceError("seven-point results kind is unsupported")
 
@@ -489,11 +502,14 @@ def _expected_candidates(
     search_artifacts: Path, inputs: p3.Phase3Inputs, contract: Mapping[str, Any]
 ) -> dict[str, dict[str, Any]]:
     results = _search_results(search_artifacts)
-    if results["artifact_kind"] == "seven-point-warm-pair-refinement":
+    if results["artifact_kind"] in {
+        "seven-point-warm-pair-refinement",
+        "seven-point-hue-frontier",
+    }:
         rows = results["browser_roles"]
         require(
             set(rows) == {"reference", "benchmark-c", "a", "b", "c"},
-            "warm role set differs",
+            "focused role set differs",
         )
         return {role: dict(rows[role]) for role in ("reference", "benchmark-c", "a", "b", "c")}
     candidates = results["candidates"]

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -130,3 +131,10 @@ def test_frontier_is_byte_deterministic(result) -> None:
     finally:
         frontier.source_binding = original
     assert frontier.json_bytes(replay) == frontier.json_bytes(result)
+
+
+def test_committed_hue_frontier_artifacts_are_fresh() -> None:
+    directory = SEVEN / "hue-frontier"
+    actual = {name: json.loads((directory / name).read_text()) for name in frontier.EXPECTED_FILES}
+    expected = frontier.payloads(frontier.run())
+    assert actual == expected
