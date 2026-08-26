@@ -121,4 +121,5 @@ def test_source_is_narrow_responsive_and_environment_free() -> None:
     assert "timestamp" not in source.lower()
     assert "@media(max-width:1180px)" in source
     assert "@media(max-width:680px)" in source
+    assert ".summary-wrap th:nth-child(5),.summary-wrap td:nth-child(5){{display:none}}" in source
     assert report.EXPECTED_EVIDENCE_COUNT == 14
