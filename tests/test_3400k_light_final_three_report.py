@@ -71,6 +71,8 @@ def test_page_is_three_way_visual_identity_board() -> None:
     assert page.count('class="finance"') == 3
     assert page.count('class="terminal"') == 6
     assert page.count('class="application"') == 6
+    assert "background:#f2f0eb" in page
+    assert "background:#151311" not in page
     assert "Automatic recommendation: NONE" in page
     assert "Original A 9.484" in page
     assert "Fixed-four yellow 9.137" in page
