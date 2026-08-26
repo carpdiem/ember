@@ -273,6 +273,28 @@ def search_seed(
     }
 
 
+def browser_candidate(
+    lane: str,
+    categories: Sequence[str],
+    inputs: Any,
+    contract: Mapping[str, Any],
+) -> dict[str, Any]:
+    bank = seven.canonical_categories(categories)
+    evaluation = seven.evaluate(bank, inputs, contract)
+    require(evaluation["hard_gate_failures"] == [], f"browser candidate {lane} fails")
+    return {
+        "lane": lane,
+        "categories": list(bank),
+        "candidate_id": p3.sha256_json(
+            {"lane": lane, "categories": list(bank), "contract": p3.sha256_json(contract)}
+        ),
+        "category_set_sha256": p3.bank_hash(bank),
+        "objective": evaluation["objective"],
+        "metrics": evaluation["metrics"],
+        "hard_gate_failures": evaluation["hard_gate_failures"],
+    }
+
+
 def run() -> dict[str, Any]:
     inputs = seven.load_inputs(replay=False)
     contract = seven.load_contract()
@@ -302,6 +324,18 @@ def run() -> dict[str, Any]:
         best_search["final_objective"], best_seed["evaluation"]["objective"]
     )
     genuinely_new = best_search["final_categories"] not in [row["categories"] for row in seed_rows]
+    baseline_browser = browser_candidate("BASELINE-A", ORIGINAL_A, inputs, contract)
+    fixed_browser = browser_candidate("FIXED-FOUR-YELLOW", FIXED_FOUR_YELLOW, inputs, contract)
+    new_browser = browser_candidate(
+        "TRUE-SUPERSET", best_search["final_categories"], inputs, contract
+    )
+    browser_roles = {
+        "reference": baseline_browser,
+        "benchmark-c": fixed_browser,
+        "a": new_browser,
+        "b": new_browser,
+        "c": new_browser,
+    }
     return {
         "schema_version": 1,
         "artifact_kind": "seven-point-true-superset-diagnosis",
@@ -339,6 +373,7 @@ def run() -> dict[str, Any]:
         "genuinely_new_candidate": genuinely_new,
         "new_chromium_authorized_by_result": improved and genuinely_new,
         "browser_non_regression_claim": False,
+        "browser_roles": browser_roles,
         "production": False,
         "selection": None,
         "catalog_summary": catalog_summary,

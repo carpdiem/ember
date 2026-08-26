@@ -91,6 +91,27 @@ def test_fixed_three_and_boundedness_are_explicit(result) -> None:
     }
 
 
+def test_browser_roles_bind_required_seeds_and_new_candidate(result) -> None:
+    roles = result["browser_roles"]
+    assert list(roles) == ["reference", "benchmark-c", "a", "b", "c"]
+    assert roles["reference"]["categories"] == list(
+        superset.seven.canonical_categories(superset.ORIGINAL_A)
+    )
+    assert roles["benchmark-c"]["categories"] == list(
+        superset.seven.canonical_categories(superset.FIXED_FOUR_YELLOW)
+    )
+    assert roles["a"]["categories"] == result["best_result"]["final_categories"]
+    assert roles["b"] == roles["a"] and roles["c"] == roles["a"]
+
+
+def test_objective_tolerance_blocks_float_noise_but_keeps_material_improvement() -> None:
+    baseline = (8.0, 12.0, 13.0, 14.0, 15.0, 16.0)
+    noise = (8.00000000001, 11.0, 13.0, 14.0, 15.0, 16.0)
+    material = (8.01, 1.0, 1.0, 1.0, 1.0, 1.0)
+    assert superset.objective_better(noise, baseline) is False
+    assert superset.objective_better(material, baseline) is True
+
+
 def test_source_has_no_hue_proximity_or_churn_restriction() -> None:
     source = (SEVEN / "true_superset.py").read_text()
     assert "target_distance" not in source
