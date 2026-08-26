@@ -1,0 +1,982 @@
+{
+  "artifact_kind": "seven-point-true-superset-diagnosis",
+  "best_included_seed": {
+    "categories": [
+      "#7C140A",
+      "#857D0B",
+      "#0A6109",
+      "#2B8CAD",
+      "#5D53AE",
+      "#B34B71"
+    ],
+    "name": "ORIGINAL-A",
+    "objective": [
+      8.679595273141931,
+      12.00706909360676,
+      12.415377514878912,
+      13.165377514878912,
+      14.917325650292671,
+      12.47123628934246
+    ]
+  },
+  "best_result": {
+    "exact_evaluation_count": 11,
+    "final_categories": [
+      "#790C1A",
+      "#7F8404",
+      "#0A6109",
+      "#2B8CAD",
+      "#5D53AE",
+      "#AC507C"
+    ],
+    "final_objective": [
+      8.733939867972762,
+      11.91562951632423,
+      12.162633390286278,
+      12.912633390286278,
+      14.574323015418319,
+      12.039918204357598
+    ],
+    "hard_gate_failures": [],
+    "ledger": [
+      {
+        "added_hex8": "#7F8404",
+        "after_categories": [
+          "#790C1A",
+          "#7F8404",
+          "#0A6109",
+          "#2B8CAD",
+          "#5D53AE",
+          "#AC507C"
+        ],
+        "after_objective": [
+          8.733939867972762,
+          11.91562951632423,
+          12.162633390286278,
+          12.912633390286278,
+          14.574323015418319,
+          12.039918204357598
+        ],
+        "before_categories": [
+          "#790C1A",
+          "#91772A",
+          "#0A6109",
+          "#2B8CAD",
+          "#5D53AE",
+          "#AC507C"
+        ],
+        "before_objective": [
+          6.839739006294588,
+          9.096759783328226,
+          9.35239195833793,
+          10.10239195833793,
+          14.574323015418319,
+          9.529515567777947
+        ],
+        "pass": 1,
+        "proxy_primary": 8.733939867972769,
+        "removed_hex8": "#91772A"
+      }
+    ],
+    "passes_accepted": 1,
+    "proxy_evaluation_count": 43104,
+    "seed": "BOUNDED-GOLDEN-CHALLENGE",
+    "seed_categories": [
+      "#790C1A",
+      "#91772A",
+      "#0A6109",
+      "#2B8CAD",
+      "#5D53AE",
+      "#AC507C"
+    ],
+    "seed_objective": [
+      6.839739006294588,
+      9.096759783328226,
+      9.35239195833793,
+      10.10239195833793,
+      14.574323015418319,
+      9.529515567777947
+    ],
+    "stop_reason": "coordinate_local_optimum"
+  },
+  "boundedness": {
+    "exact_primary_tie_cap_per_sweep": 24,
+    "global_optimum_claim": false,
+    "method": "multi-seed monotonic full-catalog coordinate search",
+    "objective_equality_tolerance": 0.001,
+    "pass_cap_per_seed": 6
+  },
+  "browser_non_regression_claim": false,
+  "browser_roles": {
+    "a": {
+      "candidate_id": "786dd310a514e85479c1b757d6bf59817caa9e8312589fe92a6ec0bf56c09df5",
+      "categories": [
+        "#790C1A",
+        "#7F8404",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#AC507C"
+      ],
+      "category_set_sha256": "c35b1130ce1685ce34d0cfdcab3d2cbe81ccd074301cb835029d613b49864cbd",
+      "hard_gate_failures": [],
+      "lane": "TRUE-SUPERSET",
+      "metrics": {
+        "commanded_solid_all_21": {
+          "binding": "fg_0 vs category-0",
+          "delta_e_ok": 14.574323015418319,
+          "pair_count": 21
+        },
+        "gain_sensitivity_all_21": {
+          "binding": "category-1 vs category-3",
+          "delta_e_ok": 12.039918204357598,
+          "gain_sample": "g+0.0500_b-0.0500",
+          "pair_count": 21
+        },
+        "nominal_transformed_solid_all_21": {
+          "binding": "category-1 vs category-3",
+          "delta_e_ok": 12.912633390286278,
+          "pair_count": 21
+        },
+        "primary_raw_symmetric_scalar": 8.733939867972762,
+        "raster_all_21": {
+          "1.5": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "fg_0 vs category-2",
+            "calibrated_delta_e_ok": 8.733939867972762,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dotted/horizontal/dpr-1/phase-0.5-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 1.5
+          },
+          "2": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-0 vs category-4",
+            "calibrated_delta_e_ok": 11.91562951632423,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_1/dotted/vertical/dpr-1/phase-0-0.5",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 2.0
+          },
+          "3": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-1 vs category-3",
+            "calibrated_delta_e_ok": 12.162633390286278,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dashed/curved/dpr-1/phase-0-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 3.0
+          }
+        }
+      },
+      "objective": [
+        8.733939867972762,
+        11.91562951632423,
+        12.162633390286278,
+        12.912633390286278,
+        14.574323015418319,
+        12.039918204357598
+      ]
+    },
+    "b": {
+      "candidate_id": "786dd310a514e85479c1b757d6bf59817caa9e8312589fe92a6ec0bf56c09df5",
+      "categories": [
+        "#790C1A",
+        "#7F8404",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#AC507C"
+      ],
+      "category_set_sha256": "c35b1130ce1685ce34d0cfdcab3d2cbe81ccd074301cb835029d613b49864cbd",
+      "hard_gate_failures": [],
+      "lane": "TRUE-SUPERSET",
+      "metrics": {
+        "commanded_solid_all_21": {
+          "binding": "fg_0 vs category-0",
+          "delta_e_ok": 14.574323015418319,
+          "pair_count": 21
+        },
+        "gain_sensitivity_all_21": {
+          "binding": "category-1 vs category-3",
+          "delta_e_ok": 12.039918204357598,
+          "gain_sample": "g+0.0500_b-0.0500",
+          "pair_count": 21
+        },
+        "nominal_transformed_solid_all_21": {
+          "binding": "category-1 vs category-3",
+          "delta_e_ok": 12.912633390286278,
+          "pair_count": 21
+        },
+        "primary_raw_symmetric_scalar": 8.733939867972762,
+        "raster_all_21": {
+          "1.5": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "fg_0 vs category-2",
+            "calibrated_delta_e_ok": 8.733939867972762,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dotted/horizontal/dpr-1/phase-0.5-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 1.5
+          },
+          "2": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-0 vs category-4",
+            "calibrated_delta_e_ok": 11.91562951632423,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_1/dotted/vertical/dpr-1/phase-0-0.5",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 2.0
+          },
+          "3": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-1 vs category-3",
+            "calibrated_delta_e_ok": 12.162633390286278,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dashed/curved/dpr-1/phase-0-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 3.0
+          }
+        }
+      },
+      "objective": [
+        8.733939867972762,
+        11.91562951632423,
+        12.162633390286278,
+        12.912633390286278,
+        14.574323015418319,
+        12.039918204357598
+      ]
+    },
+    "benchmark-c": {
+      "candidate_id": "fd488b5073e2d311973009d76fdedaebf6b44d8f2022861384d0931d38b6c7f4",
+      "categories": [
+        "#7F180E",
+        "#867412",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#B34B71"
+      ],
+      "category_set_sha256": "7414c9bf3659ff4a5291d6a348f70998f0f236efb1010db5682a22f3fc240c12",
+      "hard_gate_failures": [],
+      "lane": "FIXED-FOUR-YELLOW",
+      "metrics": {
+        "commanded_solid_all_21": {
+          "binding": "fg_0 vs category-0",
+          "delta_e_ok": 15.361936958312029,
+          "pair_count": 21
+        },
+        "gain_sensitivity_all_21": {
+          "binding": "category-1 vs category-5",
+          "delta_e_ok": 11.708370902613868,
+          "gain_sample": "g-0.0500_b-0.0500",
+          "pair_count": 21
+        },
+        "nominal_transformed_solid_all_21": {
+          "binding": "category-1 vs category-5",
+          "delta_e_ok": 12.158864100666337,
+          "pair_count": 21
+        },
+        "primary_raw_symmetric_scalar": 8.369826997796647,
+        "raster_all_21": {
+          "1.5": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-1 vs category-5",
+            "calibrated_delta_e_ok": 8.369826997796647,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dotted/horizontal/dpr-1/phase-0.5-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 1.5
+          },
+          "2": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-1 vs category-5",
+            "calibrated_delta_e_ok": 11.092482749317565,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_1/dotted/vertical/dpr-1/phase-0-0.5",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 2.0
+          },
+          "3": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-1 vs category-5",
+            "calibrated_delta_e_ok": 11.408864100666337,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dashed/curved/dpr-1/phase-0-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 3.0
+          }
+        }
+      },
+      "objective": [
+        8.369826997796647,
+        11.092482749317565,
+        11.408864100666337,
+        12.158864100666337,
+        15.361936958312029,
+        11.708370902613868
+      ]
+    },
+    "c": {
+      "candidate_id": "786dd310a514e85479c1b757d6bf59817caa9e8312589fe92a6ec0bf56c09df5",
+      "categories": [
+        "#790C1A",
+        "#7F8404",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#AC507C"
+      ],
+      "category_set_sha256": "c35b1130ce1685ce34d0cfdcab3d2cbe81ccd074301cb835029d613b49864cbd",
+      "hard_gate_failures": [],
+      "lane": "TRUE-SUPERSET",
+      "metrics": {
+        "commanded_solid_all_21": {
+          "binding": "fg_0 vs category-0",
+          "delta_e_ok": 14.574323015418319,
+          "pair_count": 21
+        },
+        "gain_sensitivity_all_21": {
+          "binding": "category-1 vs category-3",
+          "delta_e_ok": 12.039918204357598,
+          "gain_sample": "g+0.0500_b-0.0500",
+          "pair_count": 21
+        },
+        "nominal_transformed_solid_all_21": {
+          "binding": "category-1 vs category-3",
+          "delta_e_ok": 12.912633390286278,
+          "pair_count": 21
+        },
+        "primary_raw_symmetric_scalar": 8.733939867972762,
+        "raster_all_21": {
+          "1.5": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "fg_0 vs category-2",
+            "calibrated_delta_e_ok": 8.733939867972762,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dotted/horizontal/dpr-1/phase-0.5-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 1.5
+          },
+          "2": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-0 vs category-4",
+            "calibrated_delta_e_ok": 11.91562951632423,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_1/dotted/vertical/dpr-1/phase-0-0.5",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 2.0
+          },
+          "3": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-1 vs category-3",
+            "calibrated_delta_e_ok": 12.162633390286278,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dashed/curved/dpr-1/phase-0-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 3.0
+          }
+        }
+      },
+      "objective": [
+        8.733939867972762,
+        11.91562951632423,
+        12.162633390286278,
+        12.912633390286278,
+        14.574323015418319,
+        12.039918204357598
+      ]
+    },
+    "reference": {
+      "candidate_id": "049e7f5ba9784f1d7d2e3202f748bc80643362174f32a4802ab9062fd7f6ca2b",
+      "categories": [
+        "#7C140A",
+        "#857D0B",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#B34B71"
+      ],
+      "category_set_sha256": "b68cf983fc8d618aec0b0ed6520df7cb03fdec29c2e097893fbf4f5e63520c88",
+      "hard_gate_failures": [],
+      "lane": "BASELINE-A",
+      "metrics": {
+        "commanded_solid_all_21": {
+          "binding": "fg_0 vs category-0",
+          "delta_e_ok": 14.917325650292671,
+          "pair_count": 21
+        },
+        "gain_sensitivity_all_21": {
+          "binding": "category-0 vs category-4",
+          "delta_e_ok": 12.47123628934246,
+          "gain_sample": "g-0.0500_b-0.0500",
+          "pair_count": 21
+        },
+        "nominal_transformed_solid_all_21": {
+          "binding": "category-0 vs category-4",
+          "delta_e_ok": 13.165377514878912,
+          "pair_count": 21
+        },
+        "primary_raw_symmetric_scalar": 8.679595273141931,
+        "raster_all_21": {
+          "1.5": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-0 vs category-4",
+            "calibrated_delta_e_ok": 8.679595273141931,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dotted/horizontal/dpr-1/phase-0.5-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 1.5
+          },
+          "2": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-0 vs category-4",
+            "calibrated_delta_e_ok": 12.00706909360676,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dotted/vertical/dpr-1/phase-0-0.5",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 2.0
+          },
+          "3": {
+            "backgrounds": [
+              "bg_0",
+              "bg_1"
+            ],
+            "binding": "category-0 vs category-4",
+            "calibrated_delta_e_ok": 12.415377514878912,
+            "category_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "context": "bg_0/dashed/curved/dpr-1/phase-0-0",
+            "direction": "lane-0-to-1",
+            "geometry_count": 120,
+            "lane_direction_evaluations": 10080,
+            "pair_count": 21,
+            "width_css_px": 3.0
+          }
+        }
+      },
+      "objective": [
+        8.679595273141931,
+        12.00706909360676,
+        12.415377514878912,
+        13.165377514878912,
+        14.917325650292671,
+        12.47123628934246
+      ]
+    }
+  },
+  "fixed_fg0": "#342F2C",
+  "fixed_three": [
+    "#0A6109",
+    "#2B8CAD",
+    "#5D53AE"
+  ],
+  "free_role_count": 3,
+  "genuinely_new_candidate": true,
+  "hue_family_restriction": null,
+  "input_chain_sha256": "55763c938efd8f91dae75d2b20a4c2187ed3e91934180cf8cf4fc2500649feea",
+  "new_chromium_authorized_by_result": true,
+  "production": false,
+  "proximity_or_churn_objective": false,
+  "proxy_nondominated_improvement": true,
+  "schema_version": 1,
+  "search_contract_sha256": "73c351d2a5224e4193f143acaddb4bd77342be4bac8db4ec65e6096803f621fd",
+  "searches": [
+    {
+      "exact_evaluation_count": 19,
+      "final_categories": [
+        "#7C140A",
+        "#857D0B",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#B34B71"
+      ],
+      "final_objective": [
+        8.679595273141931,
+        12.00706909360676,
+        12.415377514878912,
+        13.165377514878912,
+        14.917325650292671,
+        12.47123628934246
+      ],
+      "hard_gate_failures": [],
+      "ledger": [],
+      "passes_accepted": 0,
+      "proxy_evaluation_count": 21552,
+      "seed": "ORIGINAL-A",
+      "seed_categories": [
+        "#7C140A",
+        "#857D0B",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#B34B71"
+      ],
+      "seed_objective": [
+        8.679595273141931,
+        12.00706909360676,
+        12.415377514878912,
+        13.165377514878912,
+        14.917325650292671,
+        12.47123628934246
+      ],
+      "stop_reason": "coordinate_local_optimum"
+    },
+    {
+      "exact_evaluation_count": 36,
+      "final_categories": [
+        "#7C140A",
+        "#857D0B",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#B34B71"
+      ],
+      "final_objective": [
+        8.679595273141931,
+        12.00706909360676,
+        12.415377514878912,
+        13.165377514878912,
+        14.917325650292671,
+        12.47123628934246
+      ],
+      "hard_gate_failures": [],
+      "ledger": [
+        {
+          "added_hex8": "#857D0B",
+          "after_categories": [
+            "#7F180E",
+            "#857D0B",
+            "#0A6109",
+            "#2B8CAD",
+            "#5D53AE",
+            "#B34B71"
+          ],
+          "after_objective": [
+            8.438800675401659,
+            11.875658351516385,
+            12.314965020219377,
+            13.064965020219377,
+            15.361936958312029,
+            12.422822691569396
+          ],
+          "before_categories": [
+            "#7F180E",
+            "#867412",
+            "#0A6109",
+            "#2B8CAD",
+            "#5D53AE",
+            "#B34B71"
+          ],
+          "before_objective": [
+            8.369826997796647,
+            11.092482749317565,
+            11.408864100666337,
+            12.158864100666337,
+            15.361936958312029,
+            11.708370902613868
+          ],
+          "pass": 1,
+          "proxy_primary": 8.438800675401659,
+          "removed_hex8": "#867412"
+        },
+        {
+          "added_hex8": "#7C140A",
+          "after_categories": [
+            "#7C140A",
+            "#857D0B",
+            "#0A6109",
+            "#2B8CAD",
+            "#5D53AE",
+            "#B34B71"
+          ],
+          "after_objective": [
+            8.679595273141931,
+            12.00706909360676,
+            12.415377514878912,
+            13.165377514878912,
+            14.917325650292671,
+            12.47123628934246
+          ],
+          "before_categories": [
+            "#7F180E",
+            "#857D0B",
+            "#0A6109",
+            "#2B8CAD",
+            "#5D53AE",
+            "#B34B71"
+          ],
+          "before_objective": [
+            8.438800675401659,
+            11.875658351516385,
+            12.314965020219377,
+            13.064965020219377,
+            15.361936958312029,
+            12.422822691569396
+          ],
+          "pass": 2,
+          "proxy_primary": 8.679595273141931,
+          "removed_hex8": "#7F180E"
+        }
+      ],
+      "passes_accepted": 2,
+      "proxy_evaluation_count": 64656,
+      "seed": "FIXED-FOUR-YELLOW",
+      "seed_categories": [
+        "#7F180E",
+        "#867412",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#B34B71"
+      ],
+      "seed_objective": [
+        8.369826997796647,
+        11.092482749317565,
+        11.408864100666337,
+        12.158864100666337,
+        15.361936958312029,
+        11.708370902613868
+      ],
+      "stop_reason": "coordinate_local_optimum"
+    },
+    {
+      "exact_evaluation_count": 11,
+      "final_categories": [
+        "#790C1A",
+        "#7F8404",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#AC507C"
+      ],
+      "final_objective": [
+        8.733939867972762,
+        11.91562951632423,
+        12.162633390286278,
+        12.912633390286278,
+        14.574323015418319,
+        12.039918204357598
+      ],
+      "hard_gate_failures": [],
+      "ledger": [
+        {
+          "added_hex8": "#7F8404",
+          "after_categories": [
+            "#790C1A",
+            "#7F8404",
+            "#0A6109",
+            "#2B8CAD",
+            "#5D53AE",
+            "#AC507C"
+          ],
+          "after_objective": [
+            8.733939867972762,
+            11.91562951632423,
+            12.162633390286278,
+            12.912633390286278,
+            14.574323015418319,
+            12.039918204357598
+          ],
+          "before_categories": [
+            "#790C1A",
+            "#91772A",
+            "#0A6109",
+            "#2B8CAD",
+            "#5D53AE",
+            "#AC507C"
+          ],
+          "before_objective": [
+            6.839739006294588,
+            9.096759783328226,
+            9.35239195833793,
+            10.10239195833793,
+            14.574323015418319,
+            9.529515567777947
+          ],
+          "pass": 1,
+          "proxy_primary": 8.733939867972769,
+          "removed_hex8": "#91772A"
+        }
+      ],
+      "passes_accepted": 1,
+      "proxy_evaluation_count": 43104,
+      "seed": "BOUNDED-GOLDEN-CHALLENGE",
+      "seed_categories": [
+        "#790C1A",
+        "#91772A",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#AC507C"
+      ],
+      "seed_objective": [
+        6.839739006294588,
+        9.096759783328226,
+        9.35239195833793,
+        10.10239195833793,
+        14.574323015418319,
+        9.529515567777947
+      ],
+      "stop_reason": "coordinate_local_optimum"
+    }
+  ],
+  "seeds": [
+    {
+      "categories": [
+        "#7C140A",
+        "#857D0B",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#B34B71"
+      ],
+      "hard_gate_failures": [],
+      "name": "ORIGINAL-A",
+      "objective": [
+        8.679595273141931,
+        12.00706909360676,
+        12.415377514878912,
+        13.165377514878912,
+        14.917325650292671,
+        12.47123628934246
+      ]
+    },
+    {
+      "categories": [
+        "#7F180E",
+        "#867412",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#B34B71"
+      ],
+      "hard_gate_failures": [],
+      "name": "FIXED-FOUR-YELLOW",
+      "objective": [
+        8.369826997796647,
+        11.092482749317565,
+        11.408864100666337,
+        12.158864100666337,
+        15.361936958312029,
+        11.708370902613868
+      ]
+    },
+    {
+      "categories": [
+        "#790C1A",
+        "#91772A",
+        "#0A6109",
+        "#2B8CAD",
+        "#5D53AE",
+        "#AC507C"
+      ],
+      "hard_gate_failures": [],
+      "name": "BOUNDED-GOLDEN-CHALLENGE",
+      "objective": [
+        6.839739006294588,
+        9.096759783328226,
+        9.35239195833793,
+        10.10239195833793,
+        14.574323015418319,
+        9.529515567777947
+      ]
+    }
+  ],
+  "selection": null,
+  "source": {
+    "commit": "bc680d76c032da2ed951a8cd84a1639bbad6ab88",
+    "file": "true_superset.py",
+    "sha256": "4898d89b8d9bc00568892b104814cd22370df10a6708bfe8bd9b172f29b338ba"
+  }
+}

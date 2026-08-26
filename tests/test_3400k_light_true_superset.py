@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -133,3 +134,10 @@ def test_true_superset_is_byte_deterministic(result) -> None:
     finally:
         superset.source_binding = original
     assert superset.json_bytes(replay) == superset.json_bytes(result)
+
+
+def test_committed_true_superset_artifacts_are_fresh() -> None:
+    directory = SEVEN / "true-superset"
+    actual = {name: json.loads((directory / name).read_text()) for name in superset.EXPECTED_FILES}
+    expected = superset.payloads(superset.run())
+    assert actual == expected
