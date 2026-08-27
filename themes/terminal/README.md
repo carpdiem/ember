@@ -1,6 +1,6 @@
 # Terminal themes
 
-Generated imports are provided for Alacritty, iTerm2, and Windows Terminal. Each
+Generated imports are provided for Alacritty, iTerm2, Warp, and Windows Terminal. Each
 uses the family’s primary background and foreground. Alternative surfaces live in
 the JSON manifest, generated CSS, and Python `surfaces()` API; substitute them when a
 different canvas is needed. Terminal formats themselves expose only their native primary
@@ -24,6 +24,11 @@ Restart Alacritty or reload its configuration.
 
 Open **Settings → Profiles → Colors → Color Presets… → Import…**, choose a
 `.itermcolors` file, then select the imported preset from **Color Presets…**.
+
+### Warp
+
+Copy one generated YAML file into `~/.warp/themes`, then select it from
+**Settings → Appearance → Current Theme**.
 
 ### Windows Terminal
 

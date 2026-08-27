@@ -1,0 +1,24 @@
+name: 3400K Dark
+accent: '#B4C6F7'
+background: '#090807'
+details: darker
+foreground: '#DDD0B2'
+terminal_colors:
+  bright:
+    black: '#DDD0B2'
+    blue: '#B4C6F7'
+    cyan: '#70DBD8'
+    green: '#7EB798'
+    magenta: '#D895C2'
+    red: '#F5AD9A'
+    white: '#DDD0B2'
+    yellow: '#CA9246'
+  normal:
+    black: '#181612'
+    blue: '#B4C6F7'
+    cyan: '#70DBD8'
+    green: '#7EB798'
+    magenta: '#D895C2'
+    red: '#F5AD9A'
+    white: '#DDD0B2'
+    yellow: '#CA9246'

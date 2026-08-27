@@ -1,0 +1,24 @@
+name: 2000K Dark
+accent: '#A7D1FB'
+background: '#070504'
+details: darker
+foreground: '#EED5AE'
+terminal_colors:
+  bright:
+    black: '#EED5AE'
+    blue: '#A7D1FB'
+    cyan: '#74E5C0'
+    green: '#74E5C0'
+    magenta: '#EC8B96'
+    red: '#EC8B96'
+    white: '#EED5AE'
+    yellow: '#C39C49'
+  normal:
+    black: '#15110E'
+    blue: '#A7D1FB'
+    cyan: '#74E5C0'
+    green: '#74E5C0'
+    magenta: '#EC8B96'
+    red: '#EC8B96'
+    white: '#EED5AE'
+    yellow: '#C39C49'

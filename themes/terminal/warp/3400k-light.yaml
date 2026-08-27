@@ -1,0 +1,24 @@
+name: 3400K Light
+accent: '#162252'
+background: '#FFF7D6'
+details: lighter
+foreground: '#342F2C'
+terminal_colors:
+  bright:
+    black: '#342F2C'
+    blue: '#162252'
+    cyan: '#00766E'
+    green: '#174213'
+    magenta: '#643563'
+    red: '#470D05'
+    white: '#342F2C'
+    yellow: '#894C03'
+  normal:
+    black: '#342F2C'
+    blue: '#162252'
+    cyan: '#00766E'
+    green: '#174213'
+    magenta: '#643563'
+    red: '#470D05'
+    white: '#342F2C'
+    yellow: '#894C03'

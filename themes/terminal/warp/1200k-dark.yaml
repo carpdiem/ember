@@ -1,0 +1,24 @@
+name: 1200K Dark
+accent: '#DDCD81'
+background: '#060302'
+details: darker
+foreground: '#FFE5BD'
+terminal_colors:
+  bright:
+    black: '#FFE5BD'
+    blue: '#DDCD81'
+    cyan: '#C9FFB4'
+    green: '#C9FFB4'
+    magenta: '#F29298'
+    red: '#F29298'
+    white: '#FFE5BD'
+    yellow: '#DDCD81'
+  normal:
+    black: '#130E0B'
+    blue: '#DDCD81'
+    cyan: '#C9FFB4'
+    green: '#C9FFB4'
+    magenta: '#F29298'
+    red: '#F29298'
+    white: '#FFE5BD'
+    yellow: '#DDCD81'
